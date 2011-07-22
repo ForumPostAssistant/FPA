@@ -148,7 +148,12 @@
 						$link = @mysqli_connect('localhost', $mosConfig_user, $mosConfig_password);
 							$sqlErr = mysqli_connect_errno();
 							}
-
+/******************************************************************************
+** IF YOU ARE SEEING A WHITE SCREEN WHNE RUNNING JTS-post OR IF YOU WERE SENT
+** HERE BY THE JTS-WSD TOOL COMMENT OUT THE FOLLOWING LINE BY PLACING TWO
+** forward slashes in front of it, like this;
+** J1.0.x check fails with white screen and class erro - cm210711
+******************************************************************************/
 
 		// Discovery - It's Joomla! 1.0
 		$isJVER         = "10";

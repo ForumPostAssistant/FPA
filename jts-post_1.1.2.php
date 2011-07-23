@@ -22,7 +22,7 @@
 	/** MESSAGE/LANGUAGE SECTION (FOR TRANSALTION) **/
 	// Basic Setup
 		define( '_JTSP_TITLE', 'JTS-post : Joomla! Forum Post Assistant' );
-		define( '_JTSP_VERSION', '1.1.1' );
+		define( '_JTSP_VERSION', '1.1.2' );
 		define( '_JTSP_RELEASE', 'Final' );
 		define( '_JTSP_JTS', 'Joomla! Tools Suite' );
 	// User Instructions, Notes and Data Entry
@@ -136,7 +136,7 @@
 
 	/** BEGIN JOOMLA VERSION CHECKING **/
 	// Check for J! v1.0 version file
-		if (file_exists( './includes/version.php' )) {
+		if (file_exists( './includes/version.php' ) && file_exists( './mambots' )) {
 			@require_once( './includes/version.php' );
 
 				// Build a MySQL connection
@@ -163,7 +163,7 @@
 
 
 		// Check for J! v1.5 or v1.6 version file
-		} else if (file_exists( './libraries/joomla/version.php' )) {  
+		} else if (file_exists( './libraries/joomla/version.php' ) && file_exists( './libraries/joomla/config.php' )) {  
 				@require_once( './libraries/joomla/version.php' );
 
 
@@ -200,8 +200,48 @@
 			$jts_sef_rewrite= $_JCONFIG->sef_rewrite;
 
 
+
+
+		// Check for J! v1.7 version file
+		} else if (file_exists( './includes/version.php' ) && file_exists( './libraries/platform.php' ) ) {  
+				@require_once( './includes/version.php' );
+
+
+//			define('JPATH_BASE', dirname(__FILE__) );
+			if (!defined ('JPATH_BASE') ) {
+				define('JPATH_BASE', dirname(__FILE__) );
+			}
+			define( 'DS', DIRECTORY_SEPARATOR );
+
+			require_once ( JPATH_BASE .DS.'includes'.DS.'defines.php' );
+			require_once ( JPATH_BASE .DS.'includes'.DS.'framework.php' );
+
+			// Not sure this is required, MySQL "get" commands work fine for me, but not for some without it....
+			$mainframe =& JFactory::getApplication('site');
+
+
+			$_VERSION 		= new JVersion();
+			$version 		= $_VERSION->PRODUCT .' '. $_VERSION->RELEASE .'.'. $_VERSION->DEV_LEVEL .' '. $_VERSION->DEV_STATUS.' [ '.$_VERSION->CODENAME .' ] '. $_VERSION->RELDATE .' '. $_VERSION->RELTIME .' '. $_VERSION->RELTZ;
+
+
+
+    				// Discovery - It's Joomla! 1.7		
+    				if ($_VERSION->RELEASE == 1.7) { $isJVER =  "17"; }
+
+
+			$_JCONFIG		= new JConfig();
+			@$jts_legacy - @$_JCONFIG->legacy;
+			$jts_ftp		= $_JCONFIG->ftp_enable;
+			$jts_sef		= $_JCONFIG->sef;
+			$jts_sef_rewrite= $_JCONFIG->sef_rewrite;
+
+
+
+
+
+
 			// Otherwise, assume J! is not installed and the user is doing Pre-Installation check, or a bad/incomplete FTP upload has occured
-			} else if ((@$isJVER != "10") || (@$isJVER != "15") || (@$isJVER != "16")) {
+			} else if ((@$isJVER != "10") || (@$isJVER != "15") || (@$isJVER != "16") || (@$isJVER != "17")) {
 
 				// Set isJVER to Pre-Install (PI) to force Pre-Install Check otpions only
 				$isJVER			= "unknownVer";
@@ -220,7 +260,7 @@
 
 
 
-				if ( ($isJVER == "15") || ($isJVER == "16") ) {
+				if ( ($isJVER == "15") || ($isJVER == "16") || ($isJVER == "17") ) {
 
 					if ($jts_sef == "0") { 
 						$sefstate = "". _DISABLED.""; 
@@ -837,7 +877,7 @@
 		</tr>
 
 
-		<?php if (($isJVER == "15") || ($isJVER == "16")) { ?>
+		<?php if (($isJVER == "15") || ($isJVER == "16") || ($isJVER == "17")) { ?>
 
 		<tr>
 			<td valign="middle"><strong>Legacy Mode</strong></td>
@@ -1264,7 +1304,7 @@ while ($file = readdir($dir_handle)) {
 <?php
 //$isJVER = "15";
 //echo $isJVER;
-if (($isJVER == "15") || ($isJVER == "16")) {
+if (($isJVER == "15") || ($isJVER == "16") || ($isJVER == "17")) {
 
 
 //define the path as relative

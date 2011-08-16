@@ -35,7 +35,7 @@
     define ( '_RES_BRANCH', 'playGround' );    // can be playGround (Alpha/Beta only), currentDevelopment (RC only), masterPublic (Final only)
     define ( '_RES_LANG', 'en-GB' );               // Country/Language Code
     // !TODO update this once the REPO is re-organised
-    define ( '_RES_FPALINK', 'https://github.com/ForumPostAssistant/FPA/archives/masterPublic' ); // where to get the latest 'Final Releases'
+    define ( '_RES_FPALINK', 'https://github.com/ForumPostAssistant/FPA/archives/' ); // where to get the latest 'Final Releases'
     define ( '_RES_FPALATEST', 'Get the latest release of the ' );
 
 
@@ -2444,7 +2444,7 @@
 
 
     //TEST
-    echo '<div style="text-align:center;"><a style="color:#4D8000!important;" href="'. _RES_FPALINK .'" target="_github">'. _RES_FPALATEST .' '. _RES .'</a></div>';
+    echo '<div style="text-align:center;"><a style="color:#4D8000!important;" href="'. _RES_FPALINK .''. _RES_LANG .'" target="_github">'. _RES_FPALATEST .' '. _RES .'</a></div>';
     echo '<div style="clear:both;"></div>';
     echo '</div>';
 
@@ -5925,7 +5925,7 @@
         echo '</div>';
         echo '<div style="clear:both;"><br /></div>';
 
-        echo '<div style="text-align:center!important;"><a style="color:#4D8000!important;" href="'. _RES_FPALINK .'" target="_github">'. _RES_FPALATEST .' '. _RES .'</a></div>';
+        echo '<div style="text-align:center!important;"><a style="color:#4D8000!important;" href="'. _RES_FPALINK .''. _RES_LANG .'" target="_github">'. _RES_FPALATEST .' '. _RES .'</a></div>';
         echo '</div>';
 
 

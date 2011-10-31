@@ -1,6 +1,7 @@
+#!/usr/bin/php
 <?php
 /**
- * @version $Id: languagebuilder.php 567 2011-10-30 17:52:44Z elkuku $
+ * @version $Id: languagebuilder.php 572 2011-10-31 15:51:48Z elkuku $
  * @package    EasyVerifyInstall
  * @subpackage Language checker
  * @author     Nikolai Plath (elkuku) {@link http://www.nik-it.de NiK-IT.de}
@@ -8,17 +9,51 @@
  * @license    GNU/GPL
  */
 
-if($_SERVER['DOCUMENT_ROOT'].$_SERVER['SCRIPT_NAME'] == __FILE__)//direct call
+error_reporting(-1);
+
+require_once 'functions.php';
+
+$direct = false;
+
+$silent = false;
+
+if(isset($argv)
+&& strstr($argv[0], basename(__FILE__)))
+{
+    $direct = true;
+
+    if(isset($argv[1]) && '-s' == $argv[1])
+    $silent = true;
+}
+
+defined('SFB_SILENT') || define('SFB_SILENT', $silent);
+
+if($direct
+|| $_SERVER['DOCUMENT_ROOT'].$_SERVER['SCRIPT_NAME'] == __FILE__)//direct call
 {
     defined('DS') || define('DS', DIRECTORY_SEPARATOR);
     defined('NL') || define('NL', "\n");
 
+    if('cli' == php_sapi_name())
+    {
+        defined('BR') || define('BR', "\n");
+    }
+    else
+    {
+        defined('BR') || define('BR', '<br />');
+    }
+
     try
     {
+        out('sfLanguageBuilder');
+        out('=================');
+
         $options = parse_ini_file('builder.ini', true);
 
         if( ! $options)
         throw new Exception('Invalid builder.ini');
+
+        out('Looking for PHP files to check... ', false);
 
         $fileList = array('template.php');
 
@@ -35,11 +70,22 @@ if($_SERVER['DOCUMENT_ROOT'].$_SERVER['SCRIPT_NAME'] == __FILE__)//direct call
             $fileList[] = 'tpl/'.$fName;
         }
 
+        out('found '.count($fileList));
+
         $checker = new eviLangChecker($fileList, $options);
+
+        out('Creating the template... ', false);
 
         $checker->createTemplate();
 
+        out('OK');
+
+        out('Creating / updating language files:');
+
         $checker->createUpdateAll();
+
+        out();
+        out('Finished =;)');
     }
     catch(Exception $e)
     {
@@ -189,7 +235,7 @@ class EVILangChecker
             $translations->strings = array();
         }//try
 
-        echo 'Processing '.$lang.'... ';
+        out('Processing '.$lang.'... ', false);
 
         $result = array();
 
@@ -211,7 +257,7 @@ class EVILangChecker
             $result[] = '';
         }//foreach
 
-        echo 'OK'.NL;
+        out('OK');
 
         return $result;
     }//function

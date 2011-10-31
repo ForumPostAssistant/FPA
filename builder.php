@@ -1,6 +1,7 @@
+#!/usr/bin/php
 <?php
 /**
- * @version $Id: builder.php 567 2011-10-30 17:52:44Z elkuku $
+ * @version $Id: builder.php 572 2011-10-31 15:51:48Z elkuku $
  * @package    SingleFileBuilder
  * @subpackage Stand alone - Builder
  * @author     Nikolai Plath (elkuku) {@link http://www.nik-it.de NiK-IT.de}
@@ -12,8 +13,19 @@ error_reporting(-1);
 define('DS', DIRECTORY_SEPARATOR);
 define('NL', "\n");
 
+require_once 'functions.php';
+
+$silent = false;
+
 if('cli' == php_sapi_name())
 {
+    if(isset($argv))
+    {
+        if(isset($argv[1])
+        && '-s' == $argv[1])
+        $silent = true;
+    }
+
     define('BR', "\n");
 }
 else
@@ -21,9 +33,12 @@ else
     define('BR', '<br />');
 }
 
+define('SFB_SILENT', $silent);
+
 try
 {
-    echo 'SingleFileBuilder'.BR;
+    out('SingleFileBuilder');
+    out('=================');
 
     $options = parse_ini_file('builder.ini', true);
 
@@ -65,7 +80,7 @@ try
             case 'file' :
                 $contents = file_get_contents('template/tpl/'.$cOptions);
 
-                echo 'Processing file '.$cOptions.'...';
+                out('Processing file '.$cOptions.'...', false);
 
                 if(0 === strpos($contents, '<?php'))
                 $contents = substr($contents, 6);
@@ -73,14 +88,14 @@ try
 
             default:
                 $contents = '';
-            echo 'Processing '.$command.' - '.$cOptions.'...';
+            out('Processing '.$command.' - '.$cOptions.'...', false);
             break;
         }//switch
 
         if($contents)
         $templateContents = str_replace('/**@@'.$replacement.'@@**/', $contents, $templateContents);
 
-        echo 'OK'.BR;
+        out('OK');
     }//foreach
 
     $templateContents .= NL.$languageClass;
@@ -91,7 +106,7 @@ try
 
     foreach ($options['languages'] as $tag => $langName)
     {
-        echo 'Processing language '.$tag.'...';
+        out('Processing language '.$tag.'...', false);
 
         $fileInfo = $langBuilder->parseFile($tag);
 
@@ -106,7 +121,7 @@ try
 
         $languageStrings[] = $s;
 
-        echo 'OK ('.count($fileInfo->strings).' strings)'.BR;
+        out('OK ('.count($fileInfo->strings).' strings)');
     }//foreach
 
     $languageStrings = implode(', ', $languageStrings);
@@ -116,17 +131,18 @@ try
 
     $fileName = 'build/'.$options['common']['result_file_name'];
 
-    echo 'Saving to '.$fileName.BR;
+    out('Saving to '.$fileName);
 
     file_put_contents($fileName, $templateContents);
 
-    echo 'Finished =;)'.BR;
+    out();
+    out('Finished =;)');
 
     exit(0);
 }
 catch (Exception $e)
 {
-    echo $e->getMessage();
+    out($e->getMessage());
 
     exit(1);
 }//try

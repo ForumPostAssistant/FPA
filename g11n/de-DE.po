@@ -1,0 +1,327 @@
+
+#: template.php:58
+msgid "This is a Test"
+msgstr "Dies ist ein Test"
+
+#: template.php:82
+msgid "Generating Post Output..."
+msgstr ""
+
+#: template.php:84
+msgid "Hang on in there while we run some tests..."
+msgstr "Etwas Geduld während wir einige Tests durchführen..."
+
+#: template.php:375
+#: template.php:498
+#: template.php:531
+#: template.php:535
+#: template.php:588
+#: template.php:603
+#: template.php:607
+#: template.php:608
+#: template.php:609
+#: template.php:610
+#: template.php:611
+#: template.php:616
+#: template.php:623
+#: template.php:711
+#: template.php:724
+#: template.php:731
+#: template.php:742
+#: template.php:828
+#: template.php:852
+#: template.php:889
+#: template.php:913
+#: template.php:917
+#: template.php:927
+#: template.php:950
+#: template.php:950
+#: template.php:1010
+#: template.php:1020
+#: template.php:1092
+#: template.php:1092
+#: template.php:1093
+#: template.php:1097
+#: template.php:1222
+#: template.php:1336
+#: template.php:1466
+#: template.php:1467
+#: template.php:1504
+#: template.php:1505
+#: template.php:1519
+#: template.php:1520
+#: template.php:1546
+#: template.php:1547
+#: template.php:1578
+#: template.php:1639
+#: template.php:1645
+#: template.php:1678
+#: template.php:1684
+#: template.php:1686
+#: template.php:1866
+#: template.php:2044
+#: template.php:2058
+#: template.php:2063
+#: template.php:2070
+#: template.php:2164
+#: template.php:2164
+#: template.php:2294
+#: template.php:2308
+#: template.php:2313
+#: template.php:2320
+#: template.php:2419
+#: template.php:2419
+#: template.php:2527
+#: template.php:2538
+#: template.php:2539
+#: template.php:2541
+#: template.php:2553
+#: template.php:2567
+#: template.php:2575
+#: template.php:2587
+#: template.php:2598
+#: template.php:2598
+#: template.php:2673
+#: template.php:2721
+#: template.php:2803
+#: template.php:2845
+#: template.php:2858
+#: template.php:2923
+#: template.php:3002
+#: template.php:3084
+#: template.php:3111
+#: template.php:3113
+#: template.php:3151
+#: template.php:3155
+#: template.php:3159
+#: template.php:3208
+#: template.php:3214
+#: template.php:3236
+#: template.php:3253
+#: template.php:3306
+#: template.php:3434
+#: template.php:3465
+#: template.php:3483
+#: template.php:3565
+#: template.php:3565
+#: template.php:3592
+#: template.php:3718
+#: template.php:3933
+#: template.php:4147
+#: template.php:4176
+#: template.php:4392
+#: template.php:4428
+#: template.php:4430
+#: template.php:4523
+#: template.php:4539
+#: template.php:4636
+#: template.php:4682
+#: template.php:4763
+#: template.php:4809
+#: template.php:4888
+#: template.php:4963
+#: template.php:5009
+#: tpl/functions.php:166
+msgid "Yes"
+msgstr "Ja"
+
+#: template.php:377
+#: template.php:405
+#: template.php:421
+#: template.php:427
+#: template.php:448
+#: template.php:500
+#: template.php:525
+#: template.php:538
+#: template.php:565
+#: template.php:568
+#: template.php:579
+#: template.php:585
+#: template.php:591
+#: template.php:596
+#: template.php:714
+#: template.php:727
+#: template.php:734
+#: template.php:746
+#: template.php:753
+#: template.php:831
+#: template.php:855
+#: template.php:892
+#: template.php:918
+#: template.php:921
+#: template.php:928
+#: template.php:931
+#: template.php:936
+#: template.php:937
+#: template.php:938
+#: template.php:952
+#: template.php:955
+#: template.php:1023
+#: template.php:1100
+#: template.php:1308
+#: template.php:1310
+#: template.php:1317
+#: template.php:1470
+#: template.php:1471
+#: template.php:1508
+#: template.php:1509
+#: template.php:1523
+#: template.php:1524
+#: template.php:1534
+#: template.php:1558
+#: template.php:1559
+#: template.php:1573
+#: template.php:1581
+#: template.php:1582
+#: template.php:1593
+#: template.php:1647
+#: template.php:1650
+#: template.php:1652
+#: template.php:1689
+#: template.php:1691
+#: template.php:2160
+#: template.php:2175
+#: template.php:2415
+#: template.php:2431
+#: template.php:2552
+#: template.php:2554
+#: template.php:2587
+#: template.php:2594
+#: template.php:2610
+#: template.php:2673
+#: template.php:2803
+#: template.php:2845
+#: template.php:2848
+#: template.php:3034
+#: template.php:3052
+#: template.php:3052
+#: template.php:3053
+#: template.php:3067
+#: template.php:3088
+#: template.php:3102
+#: template.php:3102
+#: template.php:3111
+#: template.php:3117
+#: template.php:3140
+#: template.php:3212
+#: template.php:3353
+#: template.php:3363
+#: template.php:3437
+#: template.php:3446
+#: template.php:3462
+#: template.php:3479
+#: template.php:3482
+#: template.php:3485
+#: template.php:3486
+#: template.php:3494
+#: template.php:3541
+#: template.php:3592
+#: template.php:3677
+#: template.php:3718
+#: template.php:3768
+#: template.php:3936
+#: template.php:4150
+#: template.php:4170
+#: template.php:4415
+#: template.php:4432
+#: template.php:4491
+#: template.php:4589
+#: template.php:4659
+#: template.php:4705
+#: template.php:4707
+#: template.php:4786
+#: template.php:4832
+#: template.php:4911
+#: template.php:4986
+#: template.php:5032
+#: tpl/functions.php:169
+msgid "No"
+msgstr "Nein"
+
+#: template.php:519
+#: template.php:2047
+#: template.php:2297
+#: template.php:2528
+#: template.php:2570
+#: template.php:3212
+#: template.php:3363
+#: template.php:3570
+#: template.php:3571
+#: template.php:3572
+#: template.php:3573
+#: template.php:3574
+#: template.php:4491
+#: template.php:4589
+#: template.php:4659
+#: template.php:4707
+#: template.php:4786
+#: template.php:4832
+#: template.php:4911
+#: template.php:4986
+#: template.php:5032
+msgid "Not Found"
+msgstr "Nicht gefunden"
+
+#: template.php:1915
+#: tpl/pieces/legend.php:23
+#: tpl/pieces/legend.php:31
+#: tpl/pieces/legend.php:41
+#: tpl/pieces/legend.php:49
+#: tpl/pieces/legend.php:59
+#: tpl/pieces/legend.php:67
+#: tpl/pieces/legend.php:75
+#: tpl/pieces/legend.php:83
+msgid "Default"
+msgstr "Standard"
+
+#: template.php:2060
+#: template.php:2234
+#: template.php:2537
+msgid "Configured"
+msgstr "Konfiguriert"
+
+#: template.php:3250
+#: tpl/pieces/legend.php:21
+#: tpl/pieces/legend.php:57
+msgid "Enabled"
+msgstr "Aktiviert"
+
+#: template.php:3418
+#: template.php:3480
+#: template.php:3545
+msgid "Not Configured"
+msgstr "Nicht Konfiguriert"
+
+#: template.php:3483
+msgid "Connected"
+msgstr "Verbunden"
+
+#: template.php:3677
+#: template.php:3768
+msgid "Not Connected"
+msgstr "Nicht verbunden"
+
+#: template.php:3866
+msgid "Uploads enabled :"
+msgstr "Uploads aktiviert: "
+
+#: tpl/languageswitcher.php:6
+msgid "Language"
+msgstr "Sprache"
+
+#: tpl/test.php:6
+msgid "This is another TEST"
+msgstr "Dies ist noch ein Test"
+
+#: tpl/functions.php:222
+msgid "Elapsed-runtime: %s seconds"
+msgstr "Benötigte Ausführungaszeit: %s Sekunden"
+
+#: tpl/pieces/legend.php:6
+msgid "Legends and Settings"
+msgstr "Legende und Einstellungen"
+
+#: tpl/pieces/legend.php:23
+#: tpl/pieces/legend.php:59
+msgid "Disabled"
+msgstr "Deaktiviert"

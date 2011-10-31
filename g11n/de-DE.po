@@ -5,7 +5,7 @@ msgstr "Dies ist ein Test"
 
 #: template.php:82
 msgid "Generating Post Output..."
-msgstr ""
+msgstr "Generiere die Post Ausgabe..."
 
 #: template.php:84
 msgid "Hang on in there while we run some tests..."

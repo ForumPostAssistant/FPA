@@ -1,15 +1,15 @@
 
 #: template.php:58
 msgid "This is a Test"
-msgstr ""
+msgstr "Este es un Test"
 
 #: template.php:82
 msgid "Generating Post Output..."
-msgstr ""
+msgstr "Generando el mensaje..."
 
 #: template.php:84
 msgid "Hang on in there while we run some tests..."
-msgstr ""
+msgstr "Un momento, estamos realizando algunas pruebas..."
 
 #: template.php:375
 #: template.php:498
@@ -123,7 +123,7 @@ msgstr ""
 #: template.php:5009
 #: tpl/functions.php:166
 msgid "Yes"
-msgstr ""
+msgstr "Si"
 
 #: template.php:377
 #: template.php:405
@@ -236,7 +236,7 @@ msgstr ""
 #: template.php:5032
 #: tpl/functions.php:169
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #: template.php:519
 #: template.php:2047
@@ -260,7 +260,7 @@ msgstr ""
 #: template.php:4986
 #: template.php:5032
 msgid "Not Found"
-msgstr ""
+msgstr "No encontrado"
 
 #: template.php:1915
 #: tpl/pieces/legend.php:23
@@ -272,56 +272,56 @@ msgstr ""
 #: tpl/pieces/legend.php:75
 #: tpl/pieces/legend.php:83
 msgid "Default"
-msgstr ""
+msgstr "Estandard"
 
 #: template.php:2060
 #: template.php:2234
 #: template.php:2537
 msgid "Configured"
-msgstr ""
+msgstr "Configurado"
 
 #: template.php:3250
 #: tpl/pieces/legend.php:21
 #: tpl/pieces/legend.php:57
 msgid "Enabled"
-msgstr ""
+msgstr "Activado"
 
 #: template.php:3418
 #: template.php:3480
 #: template.php:3545
 msgid "Not Configured"
-msgstr ""
+msgstr "No configurado"
 
 #: template.php:3483
 msgid "Connected"
-msgstr ""
+msgstr "Connectado"
 
 #: template.php:3677
 #: template.php:3768
 msgid "Not Connected"
-msgstr ""
+msgstr "No connectado"
 
 #: template.php:3866
 msgid "Uploads enabled :"
-msgstr ""
+msgstr "Subidas activadas :"
 
 #: tpl/languageswitcher.php:6
 msgid "Language"
-msgstr ""
+msgstr "Idioma"
 
 #: tpl/test.php:6
 msgid "This is another TEST"
-msgstr ""
+msgstr "Este es otro test"
 
 #: tpl/functions.php:222
 msgid "Elapsed-runtime: %s seconds"
-msgstr ""
+msgstr "Tiempo estiomado: %s segundos"
 
 #: tpl/pieces/legend.php:6
 msgid "Legends and Settings"
-msgstr ""
+msgstr "Leyenda y Ajustes"
 
 #: tpl/pieces/legend.php:23
 #: tpl/pieces/legend.php:59
 msgid "Disabled"
-msgstr ""
+msgstr "Desactivado"

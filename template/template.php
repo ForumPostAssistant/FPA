@@ -65,8 +65,6 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 
 <?php /**@@TEST1@@**/ ?>
 
-<?php /**@@FPA_FUNCTIONS@@**/ ?>
-
 <?php
 
 
@@ -5049,22 +5047,6 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
     echo '</div>'; // end half-section container
 
     echo '<div style="clear:both;"></div>';
-?>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<?php
 
 showDev( $fpa );
 
@@ -5076,5 +5058,7 @@ showDev( $fpa );
 </body>
 
 </html>
+
+<?php /**@@FPA_FUNCTIONS@@**/ ?>
 
 <?php

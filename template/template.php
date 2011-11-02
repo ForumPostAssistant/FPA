@@ -43,6 +43,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 <title><?php echo _RES .' : v'. _RES_VERSION .' ('. _RES_RELEASE .')';?></title>
 
 <!-- @TODO different icons ? -->
+<!-- @TODO NOW - the icon does not exist in J! >= 1.6 !! -->
 <link rel="shortcut icon" href="./templates/rhuk_milkyway/favicon.ico" />
 
 <style type="text/css" media="screen">
@@ -64,7 +65,6 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 	<form method="post" id="adminForm" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 
 <?php
-/**@@LANGUAGESWITCHER@@**/
 
 
 ##########################################################################################
@@ -121,9 +121,9 @@ if ( defined ( '_FPA_BRA' ) ) {
     $fpa['diagLOG']         = 'fpa-Diag.log';
 }
 
-$instance = discoverInstance();
-
 $system = discoverSystem();
+
+$instance = discoverInstance($system);
 
 $phpenv = discoverPhpEnv($instance, $system);
 
@@ -159,8 +159,8 @@ $phpreq['mysql']            = '';
 $phpreq['mysqli']           = '';
 $phpreq['mcrypt']           = '';
 $phpreq['suhosin']          = '';
-
 //    $phpreq['test']             = '';
+
 $apachereq['mod_rewrite']   = '';
 $apachereq['mod_expires']   = '';
 $apachereq['mod_deflate']   = '';
@@ -387,7 +387,10 @@ if ( $showElevated == '1' ) {
  ** here we try and find out more about MySQL and if we have an installed instance, see if
  ** talk to it and access the database.
  *****************************************************************************************/
-if ( $instance['instanceCONFIGURED'] == qText('Yes') AND $instance['configDBCREDOK'] == qText('Yes') ) {
+if ( $instance['instanceCONFIGURED'] == qText('Yes')
+// AND $instance['configDBCREDOK'] == qText('Yes') // disabled to allow empty password
+)
+{
     $database['dbDOCHECKS'] = qText('Yes');
 
     // look to see if we are using a remote or local MySQL server
@@ -517,7 +520,6 @@ if ( $instance['instanceCONFIGURED'] == qText('Yes') AND $instance['configDBCRED
 
 
     } elseif ( $instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == qText('Yes') ) { // mysqli
-
         $dBconn = @new mysqli( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'], $instance['configDBNAME'] );
         $database['dbERROR'] = mysqli_connect_errno( $dBconn ) .':'. mysqli_connect_error( $dBconn );
 
@@ -544,7 +546,7 @@ if ( $instance['instanceCONFIGURED'] == qText('Yes') AND $instance['configDBCRED
             }
 
             // find all the dB tables and calculate the size
-            $tblResult = @$dBconn->query( "SHOW TABLE STATUS" );
+            $tblResult = @$dBconn->query( 'SHOW TABLE STATUS' );
 
                 $database['dbSIZE'] = 0;
                 $rowCount           = 0;
@@ -668,6 +670,9 @@ if ( $instance['instanceFOUND'] == qText('Yes') ) { // fix for IIS *shrug*
 /** display the fpa heading ***************************************************************/
 echo '<div class="snapshot-information">';
 echo '<div class="header-title" style="">'. _RES .'</div>';
+
+/**@@LANGUAGE_SWITCHER@@**/
+
 echo '<div class="header-column-title" style="text-align:center;">'. _FPA_VER .': v'. _RES_VERSION .'-'. _RES_RELEASE .' ('. _RES_BRANCH .')</div>';
 
 echo '<br />';
@@ -3545,6 +3550,5 @@ showDev( $fpa );
 /**@@FPA_DISCOVER_SYSTEM@@**/
 
 /**@@FPA_FUNCTIONS@@**/
-?>
 
-<?php
+/**@@LANGUAGE_CLASS@@**/

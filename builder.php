@@ -1,7 +1,6 @@
 #!/usr/bin/php
 <?php
 /**
- * @version $Id: builder.php 572 2011-10-31 15:51:48Z elkuku $
  * @package    SingleFileBuilder
  * @subpackage Stand alone - Builder
  * @author     Nikolai Plath (elkuku) {@link http://www.nik-it.de NiK-IT.de}
@@ -40,96 +39,96 @@ try
     out('SingleFileBuilder');
     out('=================');
 
-    $options = parse_ini_file('builder.ini', true);
+    $config = simplexml_load_file('config.xml');
 
-    if( ! $options)
-    throw new Exception('Invalid builder.ini');
+    if( ! $config)
+    throw new Exception('Invalid config.xml');
 
     include 'languagebuilder.php';
 
-    $ls = array("en-GB' => 'English");
-
-    foreach($options['languages'] as $lang => $name)
-    {
-        if($lang != 'en-GB')
-        {
-            $ls[] = $lang."' => '".$name;
-        }
-    }//foreach
-
-    $definedLanguages = "'".implode("', '", $ls)."'";
-
-    $languageClass = file_get_contents('template/language.php');
-
-    if(0 === strpos($languageClass, '<?php'))
-    $languageClass = substr($languageClass, 6);
+    $ls = array();
 
     $templateContents = file_get_contents('template/template.php');
 
-    $templateContents = str_replace('$sfBuilderDefinedLanguages = array('
-    , '$sfBuilderDefinedLanguages = array('.$definedLanguages, $templateContents);
-
-    foreach ($options['replacements'] as $replacement => $commandString)
+    //-- Replace replacements
+    foreach ($config->replacements->file as $file)
     {
-        $command = substr($commandString, 0, strpos($commandString, ':'));
+        out('Processing file '.$file.'...', false);
 
-        $cOptions = substr($commandString, strpos($commandString, ':') + 1);
+        $contents = file_get_contents('template/tpl/'.$file);
 
-        switch ($command)
-        {
-            case 'file' :
-                $contents = file_get_contents('template/tpl/'.$cOptions);
-
-                out('Processing file '.$cOptions.'...', false);
-
-                if(0 === strpos($contents, '<?php'))
-                $contents = substr($contents, 6);
-                break;
-
-            default:
-                $contents = '';
-            out('Processing '.$command.' - '.$cOptions.'...', false);
-            break;
-        }//switch
+        if(0 === strpos($contents, '<?php'))
+        $contents = substr($contents, 6);
 
         if($contents)
-        $templateContents = str_replace('/**@@'.$replacement.'@@**/', $contents, $templateContents);
+        $templateContents = str_replace('/**@@'.$file->attributes()->tag.'@@**/', $contents, $templateContents);
 
         out('OK');
     }//foreach
 
-    $templateContents .= NL.$languageClass;
-
-    $langBuilder = new EVILangChecker(array(), $options);
-
-    $languageStrings = array();
-
-    foreach ($options['languages'] as $tag => $langName)
+    //-- Process language
+    if(isset($config->languages->language))
     {
-        out('Processing language '.$tag.'...', false);
+        $ls = array("en-GB' => 'English");
 
-        $fileInfo = $langBuilder->parseFile($tag);
-
-        $s = '\''.$tag.'\' => \'';
-
-        foreach ($fileInfo->strings as $key => $info)
+        foreach($config->languages->language as $language)
         {
-            $s .= $key.' = '.$info->string.NL;
+            $tag = (string)$language->attributes()->tag;
+
+            if('en-GB' == $tag)
+            continue;
+
+            $ls[] = $tag."' => '".$language;
         }//foreach
 
-        $s .= "'";
+        $definedLanguages = "'".implode("', '", $ls)."'";
 
-        $languageStrings[] = $s;
+//         $languageClass = file_get_contents('template/language.php');
 
-        out('OK ('.count($fileInfo->strings).' strings)');
-    }//foreach
+//         if(0 === strpos($languageClass, '<?php'))
+//         $languageClass = substr($languageClass, 6);
 
-    $languageStrings = implode(', ', $languageStrings);
 
-    $templateContents = str_replace('$sfBuilderStrings = array('
-    , '$sfBuilderStrings = array('.$languageStrings, $templateContents);
+        $templateContents = str_replace('$sfBuilderDefinedLanguages = array('
+        , '$sfBuilderDefinedLanguages = array('.$definedLanguages, $templateContents);
+        $langBuilder = new EVILangChecker(array(), $config);
 
-    $fileName = 'build/'.$options['common']['result_file_name'];
+        $languageStrings = array();
+
+        foreach($config->languages->language as $language)
+        {
+            $tag = (string)$language->attributes()->tag;
+
+            out('Processing language '.$tag.'...', false);
+
+            $fileInfo = $langBuilder->parseFile($tag);
+
+            $s = '\''.$tag.'\' => \'';
+
+            foreach ($fileInfo->strings as $key => $info)
+            {
+                $s .= $key.' = '.$info->string.NL;
+            }//foreach
+
+            $s .= "'";
+
+            $languageStrings[] = $s;
+
+            out('OK ('.count($fileInfo->strings).' strings)');
+        }//foreach
+
+        $languageStrings = implode(', ', $languageStrings);
+
+        $templateContents = str_replace('$sfBuilderStrings = array('
+        , '$sfBuilderStrings = array('.$languageStrings, $templateContents);
+    }
+
+//     //-- Add the language class to the end of the file
+//     if(isset($languageClass))
+//     $templateContents .= NL.$languageClass;
+
+    //-- Save the result
+    $fileName = 'build/'.$config->resultfile;
 
     out('Saving to '.$fileName);
 

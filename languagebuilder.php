@@ -1,7 +1,6 @@
 #!/usr/bin/php
 <?php
 /**
- * @version $Id: languagebuilder.php 572 2011-10-31 15:51:48Z elkuku $
  * @package    EasyVerifyInstall
  * @subpackage Language checker
  * @author     Nikolai Plath (elkuku) {@link http://www.nik-it.de NiK-IT.de}
@@ -48,31 +47,26 @@ if($direct
         out('sfLanguageBuilder');
         out('=================');
 
-        $options = parse_ini_file('builder.ini', true);
+        $config = simplexml_load_file('config.xml');
 
-        if( ! $options)
-        throw new Exception('Invalid builder.ini');
+        if( ! $config)
+        throw new Exception('Invalid config.xml');
 
         out('Looking for PHP files to check... ', false);
 
         $fileList = array('template.php');
 
-        foreach ($options['replacements'] as $replacement => $commandString)
+        foreach ($config->replacements->file as $file)
         {
-            if('file' != substr($commandString, 0, strpos($commandString, ':')))
+            if('php' != substr($file, strripos($file, '.') + 1))
             continue;
 
-            $fName = substr($commandString, strpos($commandString, ':') + 1);
-
-            if('php' != substr($fName, strripos($fName, '.') + 1))
-            continue;
-
-            $fileList[] = 'tpl/'.$fName;
+            $fileList[] = 'tpl/'.$file;
         }
 
         out('found '.count($fileList));
 
-        $checker = new eviLangChecker($fileList, $options);
+        $checker = new eviLangChecker($fileList, $config);
 
         out('Creating the template... ', false);
 
@@ -116,12 +110,17 @@ class EVILangChecker
 
     private $fileList = array();
 
-    private $options = array();
-
-    public function __construct($fileList = array(), $options = array())
+    public function __construct($fileList = array(), $config = null)
     {
         $this->fileList = (array) $fileList;
-        $this->options = $options;
+
+        if(isset($config->languages->language))
+        {
+            foreach($config->languages->language as $language)
+            {
+                $this->languages[(string)$language->attributes()->tag] = (string)$language;
+            }//foreach
+        }
 
         $this->base = dirname(__FILE__);
     }//function
@@ -138,7 +137,7 @@ class EVILangChecker
 
     public function createUpdateAll()
     {
-        foreach($this->options['languages'] as $tag => $language)
+        foreach(array_keys($this->languages) as $tag)
         {
             $contents = implode("\n", $this->checkLanguage($tag));
 
@@ -216,7 +215,7 @@ class EVILangChecker
      */
     public function checkLanguage($lang)
     {
-        if( ! array_key_exists($lang, $this->options['languages']))
+        if( ! array_key_exists($lang, $this->languages))
         throw new Exception('Invalid language');
 
         if( ! $this->strings)

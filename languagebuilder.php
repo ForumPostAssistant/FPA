@@ -200,7 +200,9 @@ class EVILangChecker
                 $result[] = '#: '.$found;
             }//foreach
 
-            $result[] = 'msgid "'.htmlentities($string).'"'.NL.'msgstr ""'.NL;
+            $result[] = 'msgid "'.$string.'"';
+            $result[] = 'msgstr ""';
+            $result[] = '';
         }//foreach
 
         return implode("\n", $result);
@@ -248,10 +250,10 @@ class EVILangChecker
                 $result[] = '#: '.$found;
             }//foreach
 
-            $result[] = 'msgid "'.htmlspecialchars($string).'"';
+            $result[] = 'msgid "'.$string.'"';
 
             $result[] =(array_key_exists($string, $translations->strings))
-            ? 'msgstr "'.htmlspecialchars($translations->strings[$string]->string).'"'
+            ? 'msgstr "'.$translations->strings[$string]->string.'"'
             : 'msgstr ""';
 
             $result[] = '';

@@ -12,14 +12,16 @@ if ( defined( '_FPA_DEV' ) ) {
     if( function_exists('memory_get_usage') ) {
         echo sprintf(qText('Currently Allocated Memory: %s'), convert( memory_get_usage() )) .'<br />'; // currently allocated memory
     } else {
-        echo _PHP_VERLOW .', memory_get_usage '. _FPA_DNE .'<br />';
+        echo sprintf(qText('PHP version too low. The function %s does not exist'), 'memory_get_usage');
+        echo '<br />';
     }
 
 
     if( function_exists('memory_get_peak_usage') ) {
         echo 'Total Peak Memory: '. convert( memory_get_peak_usage(true) ); // total peak memory usage
     } else {
-        echo _PHP_VERLOW .', memory_get_peak_usage '. _FPA_DNE .'<br />';
+        echo sprintf(qText('PHP version too low. The function %s does not exist'), 'memory_get_peak_usage');
+        echo '<br />';
     }
 
     echo '<p style="font-weight:bold;"><em>'.sprintf(qText('Total runtime : %s seconds'), mt_end()) .'</em></p>';

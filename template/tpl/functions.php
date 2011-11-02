@@ -94,7 +94,7 @@ function getDetails( $path, &$arrname, $loc, $level = 0 ) {
                             $arrname[$loc][$cDir]['author'] = strip_tags( substr( $author[1], 0, 19 ) );
 
                             if ( $author[1] == 'Joomla! Project' OR strtolower( $name[1] ) == 'joomla admin' OR strtolower( $name[1] ) == 'rhuk_milkyway' OR strtolower( $name[1] ) == 'ja_purity' OR strtolower( $name[1] ) == 'khepri' OR strtolower( $name[1] ) == 'bluestork' OR strtolower( $name[1] ) == 'atomic' OR strtolower( $name[1] ) == 'hathor' OR strtolower( substr( $name[1], 0, 4 ) ) == 'beez' ) {
-                                $arrname[$loc][$cDir]['type'] = _FPA_JCORE;
+                                $arrname[$loc][$cDir]['type'] = qText('Core');
 
                             } else {
                                 $arrname[$loc][$cDir]['type'] = _FPA_3PD;
@@ -213,7 +213,7 @@ function showDev( &$section ) {
     // this can only have inline styling because it is outputed before the html styling
     echo '<div style="width:750px;margin: 0px auto;margin-bottom:10px;font-family:arial;font-size:10px;color:#808080;">';
     echo '<div style="text-shadow: 1px 1px 1px #F5F5F5;font-weight:bold;color:#4D8000;text-transform:uppercase;padding-bottom:2px;">';
-    echo '<span style="color: #808080;font-weight:normal;text-transform:lowercase;">['. _FPA_DEVMI .']</span><br />';
+    echo '<span style="color: #808080;font-weight:normal;text-transform:lowercase;">['. qText('developer-mode-information') .']</span><br />';
     echo $section['ARRNAME'] .' Array :';
     echo '</div>';
 

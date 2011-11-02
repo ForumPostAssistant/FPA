@@ -1,6 +1,6 @@
 <?php
 /** SET THE FPA DEFAULTS *****************************************************************/
-// define ( '_FPA_BRA', TRUE );      // bug-report-mode, else it's the standard Forum Post Assistant
+define ( '_FPA_BRA', TRUE );      // bug-report-mode, else it's the standard Forum Post Assistant
 // define ( '_FPA_DEV', TRUE );      // developer-mode, displays raw array data
 // define ( '_FPA_DIAG', TRUE );     // diagnostic-mode, turns on PHP logging errors, display errors and logs error to a file.
 

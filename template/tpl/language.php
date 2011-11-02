@@ -112,13 +112,13 @@ abstract class qLanguage
  */
 function getPredefinedLanguageStrings($lang)
 {
-    if('en-GB' == $lang) return array();
+    if( ! $lang || 'en-GB' == $lang) return array();
 
     //-- AutoFilled
     $sfBuilderStrings = array();//AutoFilled
 
     if( ! array_key_exists($lang, $sfBuilderStrings))
-    throw new Exception('Language not found');//-- Do not translate
+    throw new Exception('Language not found'.$lang);//-- Do not translate
 
     return explode("\n", $sfBuilderStrings[$lang]);
 }//function

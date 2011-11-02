@@ -1,5 +1,5 @@
 <?php
-function discoverInstance()
+function discoverInstance($system)
 {
     $instance = array();
 

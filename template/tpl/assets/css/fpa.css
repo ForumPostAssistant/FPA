@@ -318,3 +318,26 @@ html,body,div,p,span {
 	font-weight: normal;
 	text-transform: none;
 }
+
+fieldset.langSelect {
+	padding: 0;
+}
+
+fieldset.langSelect ul {
+	margin: 0;
+}
+
+fieldset.langSelect li {
+	display: inline;
+	padding-right: 0.5em;
+}
+
+fieldset.langSelect a {
+	font-size: 12px;
+	text-decoration: none;
+	color: #000;
+}
+
+fieldset.langSelect a.active {
+	background-color: #ffc;
+}

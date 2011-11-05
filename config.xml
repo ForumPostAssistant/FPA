@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<build>
+	<resultfile>fpa.php</resultfile>
+	<version>0.0.1</version>
+
+	<languages>
+		<language tag="de-DE">Deutsch</language>
+		<language tag="es-ES">Español</language>
+		<language tag="fi-FI">Suomi</language>
+	</languages>
+
+	<replacements>
+		<file tag="FPA_DEFINES">defines.php</file>
+		<file tag="FPA_FUNCTIONS">functions.php</file>
+
+		<file tag="FPA_DISCOVER_INSTANCE">pieces/discoverinstance.php</file>
+		<file tag="FPA_DISCOVER_PHP">pieces/discoverphp.php</file>
+		<file tag="FPA_DISCOVER_SYSTEM">pieces/discoversystem.php</file>
+
+		<file tag="FPA_LEGEND">pieces/legend.php</file>
+
+		<file tag="FPA_FORMAT_JOOMLACODE">formats/joomlacode.php</file>
+		<file tag="FPA_FORMAT_GITHUB">formats/github.php</file>
+		<file tag="FPA_FORMAT_FORUM">formats/forum.php</file>
+
+		<file tag="FPA_CSS">assets/css/fpa.css</file>
+		<file tag="FPA_JAVASCRIPT">assets/js/fpa.js</file>
+
+		<file tag="LANGUAGE_CLASS">language.php</file>
+		<file tag="LANGUAGE_SWITCHER">languageswitcher.php</file>
+	</replacements>
+</build>

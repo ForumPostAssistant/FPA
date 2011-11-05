@@ -1,3 +1,16 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: FPA\n"
+"Report-Msgid-Bugs-To: https://github.com/ForumPostAssistant/FPA/issues\n"
+"POT-Creation-Date: 2010-12-07 13:58-0500\n"
+"PO-Revision-Date: 2011-10-03 01:51+0000\n"
+"Last-Translator: elkuku <test1@nik-it.de>\n"
+"Language-Team: Spanish (Spain) (http://www.transifex.net/projects/p/opentranslators/team/es_ES/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es_ES\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: template.php:81
 msgid "Generating Post Output..."

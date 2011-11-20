@@ -4,9 +4,15 @@
 	<version>0.0.1</version>
 
 	<languages>
+		<language tag="be-BY">Belarusian</language>
 		<language tag="de-DE">Deutsch</language>
 		<language tag="es-ES">Español</language>
 		<language tag="fi-FI">Suomi</language>
+		<language tag="hu-HU">Hungarian</language>
+		<language tag="id-ID">Indonesian</language>
+		<language tag="it-IT">Italiano</language>
+		<language tag="pl-PL">Polish</language>
+		<language tag="pt-BR">Portuguese</language>
 	</languages>
 
 	<replacements>

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: wp-polyglots@lists.automattic.com\n"
-"POT-Creation-Date: 2011-11-02 11:31 -500\n"
+"POT-Creation-Date: 2011-11-19 22:54 -500\n"
 "PO-Revision-Date: 2010-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -581,6 +581,7 @@ msgstr ""
 
 #: template.php:1209
 #: tpl/pieces/legend.php:34
+#: tpl/formats/forum.php:536
 msgid "Strict"
 msgstr ""
 
@@ -615,6 +616,10 @@ msgstr ""
 #: template.php:1362
 #: template.php:2342
 msgid "Platform"
+msgstr ""
+
+#: template.php:1386
+msgid "N/A"
 msgstr ""
 
 #: template.php:1395
@@ -897,6 +902,7 @@ msgid "Database size"
 msgstr ""
 
 #: template.php:1920
+#: tpl/formats/joomlacode.php:200
 #: tpl/formats/joomlacode.php:516
 #: tpl/formats/github.php:210
 #: tpl/formats/forum.php:184
@@ -1325,6 +1331,10 @@ msgstr ""
 #: tpl/formats/github.php:246
 #: tpl/formats/forum.php:137
 msgid "PHP configuration"
+msgstr ""
+
+#: tpl/formats/joomlacode.php:234
+msgid "Writeable"
 msgstr ""
 
 #: tpl/formats/joomlacode.php:238

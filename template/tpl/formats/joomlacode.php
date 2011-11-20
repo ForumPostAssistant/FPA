@@ -197,7 +197,7 @@ if ( $instance['instanceCONFIGURED'] == qText('Yes') ) {
 
     if ( @$instance['configDBCREDOK'] != qText('Yes') AND $instance['instanceFOUND'] == qText('Yes') ) {
         echo "\n";
-        echo _FPA_MISISNGCRED .':  ';
+        echo qText('Missing credentials detected') .':  ';
 
         if ( $instance['configDBTYPE'] == '' ) {
             echo ' * Connection Type missing * ';
@@ -231,7 +231,7 @@ if ( $instance['instanceCONFIGURED'] == qText('Yes') ) {
     echo "\n";
     echo qText('PHP configuration') .' ::  '. qText('Version') .': '. $phpenv['phpVERSION']
     .' | PHP API: '. $phpenv['phpAPI']
-    .' | Session Path '. _FPA_WRTABLE .': '. $phpenv['phpSESSIONPATHWRITABLE']
+    .' | Session Path '. qText('Writeable') .': '. $phpenv['phpSESSIONPATHWRITABLE']
     .' | Display Errors: '. $phpenv['phpERRORDISPLAY']
     .' | Error Reporting: '. $phpenv['phpERRORREPORT']
     .' | Log Errors To: '. $phpenv['phpERRLOGFILE']

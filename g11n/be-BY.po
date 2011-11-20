@@ -2,118 +2,118 @@
 # Copyright (C) YEAR Free Software Foundation, Inc.
 #
 # Translators:
-# Tero Kankaanperä <tero@terokankaanpera.fi>, 2011.
+#   <alexey.mogilny@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: Forum Post Assistant\n"
 "Report-Msgid-Bugs-To: wp-polyglots@lists.automattic.com\n"
 "POT-Creation-Date: 2011-11-02 11:31 -500\n"
-"PO-Revision-Date: 2011-11-17 13:09+0000\n"
-"Last-Translator: TeroKankaanpera <tero@terokankaanpera.fi>\n"
-"Language-Team: Finnish (Finland) (http://www.transifex.net/projects/p/opentranslators/team/fi_FI/)\n"
+"PO-Revision-Date: 2011-11-14 14:02+0000\n"
+"Last-Translator: alexo <alexey.mogilny@gmail.com>\n"
+"Language-Team: Belarusian (Belarus) (http://www.transifex.net/projects/p/opentranslators/team/be_BY/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: fi_FI\n"
+"Language: be_BY\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: g11n by elkuku\n"
 
 #: template.php:81
 msgid "Generating Post Output..."
-msgstr "Luodaan raporttikoodia..."
+msgstr "Стварэнне рэзультата паведамлення..."
 
 #: template.php:83
 msgid "Hang on in there while we run some tests..."
-msgstr "Odota hetki, suoritamme kokeita..."
+msgstr "Пачакайте калі ласка, пакуль мы выконваем некалькі тэстаў ..."
 
 #: template.php:132
 msgid "PHP Environment"
-msgstr "PHP-ympäristö"
+msgstr "Асяроддзе PHP"
 
 #: template.php:133
 msgid "Environment Support Snapshot"
-msgstr "Ympäristön tuen pikasilmäys"
+msgstr "Здымак асяроддзя"
 
 #: template.php:134
 msgid "Application Instance"
-msgstr "Sovellusinstanssi"
+msgstr "Адзінка прылажэння"
 
 #: template.php:135
 msgid "System Environment"
-msgstr "Järjestelmäympäristö"
+msgstr "Сістэмнае асяродзе"
 
 #: template.php:136
 #: tpl/formats/forum.php:235
 msgid "PHP Extensions"
-msgstr "PHP laajennukset"
+msgstr "Пашырэння PHP"
 
 #: template.php:137
 msgid "PHP Requirements"
-msgstr "PHP vaatimukset"
+msgstr "Патрабаванні PHP"
 
 #: template.php:138
 #: tpl/pieces/legend.php:38
 #: tpl/formats/forum.php:361
 msgid "Elevated Permissions"
-msgstr "Korotetut oikeudet"
+msgstr ""
 
 #: template.php:139
 #: tpl/pieces/legend.php:64
 #: tpl/formats/forum.php:478
 #: tpl/formats/forum.php:486
 msgid "Components"
-msgstr "Komponentit"
+msgstr "Кампаненты"
 
 #: template.php:140
 #: tpl/pieces/legend.php:72
 #: tpl/formats/forum.php:497
 #: tpl/formats/forum.php:505
 msgid "Modules"
-msgstr "Moduulit"
+msgstr "Модулі"
 
 #: template.php:141
 #: tpl/pieces/legend.php:80
 #: tpl/formats/forum.php:516
 msgid "Plugins"
-msgstr "Liitännäiset"
+msgstr "Плагіны"
 
 #: template.php:142
 #: tpl/formats/forum.php:533
 #: tpl/formats/forum.php:541
 #: tpl/formats/forum.php:549
 msgid "Templates"
-msgstr "Sivupohjat"
+msgstr "Шаблоны"
 
 #: template.php:143
 #: tpl/formats/forum.php:290
 msgid "Apache Modules"
-msgstr "Apache moduulit"
+msgstr "Модулі Apache"
 
 #: template.php:144
 msgid "Apache Requirements"
-msgstr "Apache vaatimukset"
+msgstr "Патрабаванні Apache"
 
 #: template.php:145
 msgid "Database Instance"
-msgstr "Tietokantainstanssi"
+msgstr ""
 
 #: template.php:146
 #: tpl/pieces/legend.php:46
 msgid "Table Structure"
-msgstr "Taulujen rakenne"
+msgstr "Структура табліц"
 
 #: template.php:147
 msgid "Permissions Checks"
-msgstr "Oikeuksien tarkastus"
+msgstr ""
 
 #: template.php:148
 #: tpl/formats/forum.php:333
 msgid "Core Folders"
-msgstr "Ydinhakemistot"
+msgstr "Асноўныя папкі"
 
 #: template.php:227
 msgid "DEVELOPER MODE is enabled"
-msgstr "KEHITYSTILA on päällä"
+msgstr "Рэжым распрацоўніка уключаны"
 
 #: template.php:228
 msgid "This means that a variety of additional information will be displayed on-screen to assist with troubleshooting this script."
@@ -121,7 +121,7 @@ msgstr ""
 
 #: template.php:240
 msgid "DIGNOSTIC MODE is enabled"
-msgstr "DIAGNOSTINEN TILA on päällä"
+msgstr "Рэжым дыягностыкі уключаны"
 
 #: template.php:241
 msgid "This means that all php and script errors will be displayed on-screen and logged out to a file named %s."
@@ -129,11 +129,11 @@ msgstr ""
 
 #: template.php:256
 msgid "Last DIGNOSTIC MODE Error in %s"
-msgstr "Viimeisin DIAGNOSTISEN TILAN virhe lokissa %s"
+msgstr "Рэжым дыягностыкі: апошняя памылка ў %s."
 
 #: template.php:257
 msgid "No Errors Reported"
-msgstr "Ei raportoituja virheitä"
+msgstr "Няма паведамленняў пра памылкі"
 
 #: template.php:320
 #: template.php:330
@@ -253,7 +253,7 @@ msgstr "Ei raportoituja virheitä"
 #: tpl/formats/forum.php:468
 #: tpl/formats/forum.php:532
 msgid "Yes"
-msgstr "Kyllä"
+msgstr "Так"
 
 #: template.php:333
 #: template.php:401
@@ -354,17 +354,17 @@ msgstr "Kyllä"
 #: tpl/formats/forum.php:455
 #: tpl/formats/forum.php:458
 msgid "No"
-msgstr "Ei"
+msgstr "Не"
 
 #: template.php:611
 msgid "May not be an error, check with host for remote access requirements."
-msgstr "Ei välttämättä ole virhe, tarkasta palveluntarjoajalta etäyhteysvaatimukset."
+msgstr "вашага хоста."
 
 #: template.php:761
 #: template.php:803
 #: template.php:817
 msgid "PHP Supports %s"
-msgstr "PHP tukee %s"
+msgstr ""
 
 #: template.php:764
 #: template.php:776
@@ -390,26 +390,26 @@ msgstr "PHP tukee %s"
 #: template.php:2417
 #: template.php:2537
 msgid "Unknown"
-msgstr "Tuntematon"
+msgstr ""
 
 #: template.php:833
 #: template.php:872
 msgid "MySQL Supports %s"
-msgstr "MySQL tukee %s"
+msgstr ""
 
 #: template.php:843
 #: template.php:855
 msgid "Maybe"
-msgstr "Ehkä"
+msgstr ""
 
 #: template.php:843
 #: template.php:855
 msgid "Special Note"
-msgstr "Erityishuomautus"
+msgstr ""
 
 #: template.php:911
 msgid "MySQL default collation"
-msgstr "MySQL oletusaakkostus"
+msgstr ""
 
 #: template.php:925
 #: template.php:964
@@ -417,60 +417,60 @@ msgstr "MySQL oletusaakkostus"
 #: template.php:2151
 #: template.php:2351
 msgid "%s version"
-msgstr "%s versio"
+msgstr ""
 
 #: template.php:938
 msgid "Known Buggy PHP"
-msgstr "Tunnetusti virheellinen PHP"
+msgstr ""
 
 #: template.php:976
 msgid "Known Buggy Zend"
-msgstr "Tunnetusti virheellinen Zend"
+msgstr ""
 
 #: template.php:1049
 msgid "Instructions"
-msgstr "Ohjeet"
+msgstr ""
 
 #: template.php:1053
 msgid "Enter your problem description <i>(optional)</i>"
-msgstr "Kirjoita kuvaus ongelmastasi <i>(valinnainen)</i>"
+msgstr ""
 
 #: template.php:1054
 msgid "Enter any error messages you see <i>(optional)</i>"
-msgstr "Kopioi tai kirjoita tähän virheilmoitus/-kset <i>(valinnainen)</i>"
+msgstr ""
 
 #: template.php:1055
 msgid "Enter any actions taken to resolve the issue <i>(optional)</i>"
-msgstr "Miten olen yrittänyt ratkaista ongelmaa? <i>(valinnainen)</i>"
+msgstr ""
 
 #: template.php:1056
 msgid "Select detail level options of output <i>(optional)</i>"
-msgstr "Valitse tuotettavan raportin yksityskohtien taso <i>(valinnainen)</i>"
+msgstr ""
 
 #: template.php:1057
 #: template.php:1231
 msgid "Click the %s post button to build the post content"
-msgstr "Paina %s -nappia luodaksesi foorumille liitettävän koodin"
+msgstr ""
 
 #: template.php:1057
 #: template.php:1231
 msgid "Generate"
-msgstr "Luo raportti"
+msgstr ""
 
 #: template.php:1058
 #: template.php:1297
 msgid "Copy the contents of the %s box and paste it into a post"
-msgstr "Kopioi %s ruudun sisältö kokonaisuudessaan ja liitä se foorumiviestiisi"
+msgstr ""
 
 #: template.php:1058
 #: template.php:1262
 #: template.php:1297
 msgid "Post Detail"
-msgstr "Raporttikoodi"
+msgstr "Падрабязнасці паведамлення"
 
 #: template.php:1066
 msgid "Optional Information"
-msgstr "Lisätietoja"
+msgstr ""
 
 #: template.php:1071
 #: tpl/formats/joomlacode.php:7
@@ -478,7 +478,7 @@ msgstr "Lisätietoja"
 #: tpl/formats/github.php:6
 #: tpl/formats/forum.php:6
 msgid "Problem Description"
-msgstr "Ongelman kuvaus"
+msgstr ""
 
 #: template.php:1076
 #: template.php:1085
@@ -491,77 +491,77 @@ msgstr "Ongelman kuvaus"
 #: tpl/formats/forum.php:10
 #: tpl/formats/forum.php:16
 msgid "Log/Error Message"
-msgstr "Loki/virheilmoitus"
+msgstr ""
 
 #: template.php:1082
 msgid "Last error"
-msgstr "Viimeisin virhe"
+msgstr ""
 
 #: template.php:1093
 #: tpl/formats/joomlacode.php:35
 #: tpl/formats/joomlacode.php:342
 #: tpl/formats/github.php:38
 msgid "Actions To ReCreate Issue"
-msgstr "Toimet ongelman toisintamiseksi"
+msgstr ""
 
 #: template.php:1095
 msgid "Actions Taken To Resolve"
-msgstr "Ongelman korjaamiseksi tehdyt toimet"
+msgstr ""
 
 #: template.php:1100
 msgid "Leave ALL fields blank/empty to simply post diagnostic information."
-msgstr "Voit jättää kaikki kentät tyhjiksi kerätäksesi vain diagnostiset tiedot."
+msgstr ""
 
 #: template.php:1163
 msgid "Optional Settings"
-msgstr "Valinnaiset asetukset"
+msgstr ""
 
 #: template.php:1164
 #: tpl/pieces/legend.php:24
 #: tpl/pieces/legend.php:60
 msgid "Disabled"
-msgstr "Poissa käytöstä"
+msgstr ""
 
 #: template.php:1170
 msgid "Show elevated folder permissions"
-msgstr "Näytä korotetut kansioiden oikeudet"
+msgstr ""
 
 #: template.php:1171
 msgid "Show database table statistics"
-msgstr "Näytä tietokantataulujen tilastot"
+msgstr ""
 
 #: template.php:1175
 msgid "Show Components"
-msgstr "Listaa komponentit"
+msgstr ""
 
 #: template.php:1176
 msgid "Show Modules"
-msgstr "Listaa modullit"
+msgstr ""
 
 #: template.php:1177
 msgid "Show Plugins"
-msgstr "Listaa liitännäiset"
+msgstr ""
 
 #: template.php:1201
 #: tpl/pieces/legend.php:28
 #: tpl/formats/forum.php:209
 #: tpl/formats/forum.php:536
 msgid "Information Privacy"
-msgstr "Tietosuoja"
+msgstr ""
 
 #: template.php:1203
 #: tpl/pieces/legend.php:30
 msgid "None"
-msgstr "Ei mitään"
+msgstr ""
 
 #: template.php:1204
 msgid "No elements are masked"
-msgstr "Mitään ei peitetä"
+msgstr ""
 
 #: template.php:1206
 #: tpl/pieces/legend.php:32
 msgid "Partial"
-msgstr "Osittainen"
+msgstr ""
 
 #: template.php:1206
 #: tpl/pieces/legend.php:24
@@ -573,33 +573,33 @@ msgstr "Osittainen"
 #: tpl/pieces/legend.php:76
 #: tpl/pieces/legend.php:84
 msgid "Default"
-msgstr "Oletus"
+msgstr ""
 
 #: template.php:1207
 msgid "Some elements are masked"
-msgstr "Jotkin tiedot peitetään"
+msgstr ""
 
 #: template.php:1209
 #: tpl/pieces/legend.php:34
 #: tpl/formats/forum.php:536
 msgid "Strict"
-msgstr "Tiukka"
+msgstr ""
 
 #: template.php:1210
 msgid "All indentifiable elements are masked"
-msgstr "Kaikki tunnistettavat tiedot peitetään"
+msgstr ""
 
 #: template.php:1227
 msgid "Click Here To Generate Post"
-msgstr "Luo raportti"
+msgstr ""
 
 #: template.php:1244
 msgid "PHP %1s or %2s errors ?"
-msgstr "PHP %1s tai %2s virheet?"
+msgstr ""
 
 #: template.php:1246
 msgid "Temporarily increase PHP Memory and Execution Time"
-msgstr "Lisää väliaikaisesti PHP muistia ja suoritusaikaa"
+msgstr ""
 
 #: template.php:1322
 #: template.php:1715
@@ -607,16 +607,16 @@ msgstr "Lisää väliaikaisesti PHP muistia ja suoritusaikaa"
 #: template.php:2337
 #: template.php:2596
 msgid "%s discovery"
-msgstr "%s selvitys"
+msgstr ""
 
 #: template.php:1330
 msgid "CMS found"
-msgstr "CMS löytyi"
+msgstr ""
 
 #: template.php:1362
 #: template.php:2342
 msgid "Platform"
-msgstr "Alusta"
+msgstr ""
 
 #: template.php:1386
 msgid "N/A"
@@ -624,29 +624,29 @@ msgstr ""
 
 #: template.php:1395
 msgid "Config exists"
-msgstr "Asetukset olemassa"
+msgstr ""
 
 #: template.php:1412
 #: template.php:1672
 msgid "Config version"
-msgstr "Asetusten versio"
+msgstr ""
 
 #: template.php:1416
 msgid "Matches CMS"
-msgstr "Täsmää CMS:n"
+msgstr ""
 
 #: template.php:1420
 msgid "CMS mis-match"
-msgstr "CMS ristiriita"
+msgstr ""
 
 #: template.php:1439
 #: template.php:1680
 msgid "Config valid"
-msgstr "Asetukset kelvot"
+msgstr ""
 
 #: template.php:1458
 msgid "Config mode"
-msgstr "Asetusmoodi"
+msgstr ""
 
 #: template.php:1487
 #: template.php:2292
@@ -661,7 +661,7 @@ msgstr "Asetusmoodi"
 #: tpl/formats/forum.php:53
 #: tpl/formats/forum.php:152
 msgid "Writable"
-msgstr "Kirjoitettava"
+msgstr ""
 
 #: template.php:1491
 #: tpl/formats/joomlacode.php:71
@@ -669,11 +669,11 @@ msgstr "Kirjoitettava"
 #: tpl/formats/github.php:75
 #: tpl/formats/forum.php:55
 msgid "Read-Only"
-msgstr "Vain luku"
+msgstr ""
 
 #: template.php:1502
 msgid "Config Owner"
-msgstr "Asetusten omistaja"
+msgstr ""
 
 #: template.php:1508
 #: template.php:1523
@@ -701,11 +701,11 @@ msgstr "Asetusten omistaja"
 #: tpl/formats/forum.php:372
 #: tpl/formats/forum.php:438
 msgid "Protected"
-msgstr "Suojattu"
+msgstr ""
 
 #: template.php:1517
 msgid "Config Group"
-msgstr "Asetusten ryhmä"
+msgstr ""
 
 #: template.php:1541
 #: template.php:2887
@@ -718,7 +718,7 @@ msgstr "Asetusten ryhmä"
 #: template.php:3452
 #: template.php:3511
 msgid "Instance Not Found"
-msgstr "Instanssia ei löytynyt"
+msgstr ""
 
 #: template.php:1541
 #: template.php:1693
@@ -733,25 +733,25 @@ msgstr "Instanssia ei löytynyt"
 #: template.php:3452
 #: template.php:3511
 msgid "No %s tests performed"
-msgstr "%s testejä ei suoritettu"
+msgstr ""
 
 #: template.php:1544
 msgid "But configuration found"
-msgstr "Mutta asetukset löytyivät"
+msgstr ""
 
 #: template.php:1561
 msgid "%s :: Configuration"
-msgstr "%s :: asetukset"
+msgstr ""
 
 #: template.php:1579
 #: tpl/pieces/legend.php:22
 #: tpl/pieces/legend.php:58
 msgid "Enabled"
-msgstr "Käytössä"
+msgstr ""
 
 #: template.php:1621
 msgid "Database"
-msgstr "Tietokanta"
+msgstr ""
 
 #: template.php:1624
 #: template.php:3019
@@ -770,104 +770,104 @@ msgstr "Tietokanta"
 #: tpl/formats/forum.php:137
 #: tpl/formats/forum.php:215
 msgid "Version"
-msgstr "Versio"
+msgstr ""
 
 #: template.php:1633
 msgid "Database credentials"
-msgstr "Tietokannan tunnukset"
+msgstr ""
 
 #: template.php:1636
 msgid "Appear in-complete"
-msgstr "Näyttäisi puutteelliselta"
+msgstr ""
 
 #: template.php:1638
 msgid "Appear complete"
-msgstr "Näyttäisi täydelliseltä"
+msgstr ""
 
 #: template.php:1647
 msgid "Security"
-msgstr "Turvallisuus"
+msgstr ""
 
 #: template.php:1658
 msgid "Features"
-msgstr "Ominaisuudet"
+msgstr ""
 
 #: template.php:1683
 msgid "Could be empty"
-msgstr "Saattaa olla tyhjä"
+msgstr ""
 
 #: template.php:1692
 msgid "Configuration not found or invalid"
-msgstr "Asetukset hukassa tai kelvottomat"
+msgstr ""
 
 #: template.php:1724
 #: template.php:1727
 msgid "Server"
-msgstr "Palvelin"
+msgstr ""
 
 #: template.php:1731
 #: template.php:1734
 msgid "Client"
-msgstr "Asiakas"
+msgstr ""
 
 #: template.php:1743
 #: template.php:2369
 msgid "Hostname"
-msgstr "Isäntänimi"
+msgstr ""
 
 #: template.php:1752
 #: template.php:1820
 #: template.php:1893
 msgid "Not Configured"
-msgstr "Ei asetettu"
+msgstr ""
 
 #: template.php:1765
 #: template.php:1922
 msgid "Connection Type"
-msgstr "Yhteystyyppi"
+msgstr ""
 
 #: template.php:1771
 msgid "Local"
-msgstr "Paikallinen"
+msgstr ""
 
 #: template.php:1776
 #: template.php:1783
 msgid "Remote"
-msgstr "Etä"
+msgstr ""
 
 #: template.php:1797
 #: template.php:2190
 msgid "%s support"
-msgstr "%s tuki"
+msgstr ""
 
 #: template.php:1801
 msgid "%s is not supported by PHP %s"
-msgstr "%s ei ole PHP %s tukema"
+msgstr ""
 
 #: template.php:1804
 msgid "%s is supported by PHP %s"
-msgstr "%s on PHP %s tukema"
+msgstr ""
 
 #: template.php:1807
 msgid "PHP %s support is unknown"
-msgstr "PHP %s tuki tuntematon"
+msgstr ""
 
 #: template.php:1816
 msgid "Connect to %s"
-msgstr "Yhdistä %s"
+msgstr ""
 
 #: template.php:1820
 msgid "Not Attempted"
-msgstr "Ei yritetty"
+msgstr ""
 
 #: template.php:1823
 msgid "Connected"
-msgstr "Yhdistetty"
+msgstr ""
 
 #: template.php:1826
 #: tpl/formats/forum.php:209
 msgid "Error(s) reported"
-msgstr "Virhe(itä) raportoitiin"
+msgstr ""
 
 #: template.php:1838
 #: tpl/formats/joomlacode.php:221
@@ -875,7 +875,7 @@ msgstr "Virhe(itä) raportoitiin"
 #: tpl/formats/github.php:232
 #: tpl/formats/forum.php:206
 msgid "Connection Error"
-msgstr "Yhteysvirhe"
+msgstr ""
 
 #: template.php:1851
 #: tpl/formats/joomlacode.php:224
@@ -883,15 +883,15 @@ msgstr "Yhteysvirhe"
 #: tpl/formats/github.php:237
 #: tpl/formats/forum.php:224
 msgid "Character Set"
-msgstr "Merkistö"
+msgstr ""
 
 #: template.php:1867
 msgid "Default Character Set"
-msgstr "Oletusmerkistö"
+msgstr ""
 
 #: template.php:1883
 msgid "Database collation"
-msgstr "Tietokannan aakkostus"
+msgstr ""
 
 #: template.php:1902
 #: tpl/formats/joomlacode.php:225
@@ -899,7 +899,7 @@ msgstr "Tietokannan aakkostus"
 #: tpl/formats/github.php:238
 #: tpl/formats/forum.php:225
 msgid "Database size"
-msgstr "Tietokannan koko"
+msgstr ""
 
 #: template.php:1920
 #: tpl/formats/joomlacode.php:200
@@ -907,7 +907,7 @@ msgstr "Tietokannan koko"
 #: tpl/formats/github.php:210
 #: tpl/formats/forum.php:184
 msgid "Missing credentials detected"
-msgstr "Puuttuva valtuutus havaittiin"
+msgstr ""
 
 #: template.php:1922
 #: template.php:1923
@@ -915,27 +915,27 @@ msgstr "Puuttuva valtuutus havaittiin"
 #: template.php:1925
 #: template.php:1928
 msgid "%s not found"
-msgstr "%s ei löytynyt"
+msgstr ""
 
 #: template.php:1923
 msgid "MySQL Hostname"
-msgstr "MySQL isäntänimi"
+msgstr ""
 
 #: template.php:1924
 msgid "Table Prefix"
-msgstr "Taulun etuliite"
+msgstr ""
 
 #: template.php:1925
 msgid "Database user"
-msgstr "Tietokannan käyttäjätunnus"
+msgstr ""
 
 #: template.php:1928
 msgid "Database password"
-msgstr "Tietokannan salasana"
+msgstr ""
 
 #: template.php:1942
 msgid "Performance"
-msgstr "Suorituskyky"
+msgstr ""
 
 #: template.php:2016
 #: tpl/formats/joomlacode.php:226
@@ -943,16 +943,16 @@ msgstr "Suorituskyky"
 #: tpl/formats/github.php:239
 #: tpl/formats/forum.php:226
 msgid "Table"
-msgstr "Taulu"
+msgstr ""
 
 #: template.php:2033
 #: template.php:2125
 msgid "Not Connected"
-msgstr "Ei yhdistetty"
+msgstr ""
 
 #: template.php:2034
 msgid "No %s performance tests performed"
-msgstr "%s suorituskykytestejä ei suoritettu"
+msgstr ""
 
 #: template.php:2062
 #: template.php:3018
@@ -963,27 +963,27 @@ msgstr "%s suorituskykytestejä ei suoritettu"
 #: template.php:3403
 #: template.php:3465
 msgid "Name"
-msgstr "Nimi"
+msgstr ""
 
 #: template.php:2063
 msgid "Size"
-msgstr "Koko"
+msgstr ""
 
 #: template.php:2064
 msgid "Table records"
-msgstr "Taulussa tietueita"
+msgstr ""
 
 #: template.php:2065
 msgid "Avg. Length"
-msgstr "Keskipituus"
+msgstr ""
 
 #: template.php:2066
 msgid "Fragment Size"
-msgstr "Osan koko"
+msgstr ""
 
 #: template.php:2067
 msgid "Engine"
-msgstr "Moottori"
+msgstr ""
 
 #: template.php:2068
 #: tpl/formats/joomlacode.php:224
@@ -991,40 +991,40 @@ msgstr "Moottori"
 #: tpl/formats/github.php:236
 #: tpl/formats/forum.php:223
 msgid "Collation"
-msgstr "Aakkostus"
+msgstr ""
 
 #: template.php:2069
 #: template.php:3020
 msgid "Created"
-msgstr "Luotu"
+msgstr ""
 
 #: template.php:2070
 msgid "Updated"
-msgstr "Päivitetty"
+msgstr ""
 
 #: template.php:2071
 msgid "Checked"
-msgstr "Tarkastettu"
+msgstr ""
 
 #: template.php:2215
 #: template.php:2259
 msgid "increased by user, was %s"
-msgstr "käyttäjän korottama, oli %s"
+msgstr ""
 
 #: template.php:2226
 msgid "Uploads enabled :"
-msgstr "Lataukset sallittu:"
+msgstr ""
 
 #: template.php:2317
 msgid "Last known PHP error"
-msgstr "Viimeisin havaittu PHP virhe"
+msgstr ""
 
 #: template.php:2360
 #: tpl/formats/joomlacode.php:497
 #: tpl/formats/github.php:193
 #: tpl/formats/forum.php:129
 msgid "Technology"
-msgstr "Arkkitehtuuri"
+msgstr ""
 
 #: template.php:2427
 #: template.php:2444
@@ -1033,23 +1033,23 @@ msgstr "Arkkitehtuuri"
 #: template.php:2488
 #: template.php:2516
 msgid "Server %s:"
-msgstr "Palvelin %s:"
+msgstr ""
 
 #: template.php:2461
 msgid "Signature"
-msgstr "Allekirjoitus"
+msgstr ""
 
 #: template.php:2470
 #: tpl/formats/joomlacode.php:499
 #: tpl/formats/github.php:195
 #: tpl/formats/forum.php:131
 msgid "Encoding"
-msgstr "Koodaus"
+msgstr ""
 
 #: template.php:2479
 #: template.php:2488
 msgid "User"
-msgstr "Käyttäjä"
+msgstr ""
 
 #: template.php:2498
 #: tpl/formats/joomlacode.php:188
@@ -1057,39 +1057,39 @@ msgstr "Käyttäjä"
 #: tpl/formats/github.php:196
 #: tpl/formats/forum.php:132
 msgid "Document Root"
-msgstr "Document Root"
+msgstr ""
 
 #: template.php:2516
 msgid "Temp"
-msgstr "Temp"
+msgstr ""
 
 #: template.php:2542
 msgid "Server temp writable: %s"
-msgstr "Järjestelmän temp kirjoitettavissa: %s"
+msgstr ""
 
 #: template.php:2551
 msgid "Switch user configuration"
-msgstr "Vaihda käyttäjäasetukset"
+msgstr ""
 
 #: template.php:2647
 #: tpl/formats/forum.php:262
 msgid "Potential Missing Extensions"
-msgstr "Mahdollisesti puuttuvat laajennukset"
+msgstr ""
 
 #: template.php:2736
 #: tpl/formats/forum.php:315
 msgid "Potential Missing Modules"
-msgstr "Mahdollisesti puuttuvat moduulit"
+msgstr ""
 
 #: template.php:2779
 #: template.php:2911
 msgid "Mode"
-msgstr "Moodi"
+msgstr ""
 
 #: template.php:2781
 #: template.php:2913
 msgid "Folder"
-msgstr "Hakemisto"
+msgstr ""
 
 #: template.php:2782
 #: tpl/formats/joomlacode.php:76
@@ -1097,7 +1097,7 @@ msgstr "Hakemisto"
 #: tpl/formats/github.php:81
 #: tpl/formats/forum.php:68
 msgid "Group"
-msgstr "Ryhmä"
+msgstr ""
 
 #: template.php:2783
 #: tpl/formats/joomlacode.php:74
@@ -1105,12 +1105,12 @@ msgstr "Ryhmä"
 #: tpl/formats/github.php:79
 #: tpl/formats/forum.php:66
 msgid "Owner"
-msgstr "Omistaja"
+msgstr ""
 
 #: template.php:2907
 #: tpl/formats/forum.php:361
 msgid "First %d"
-msgstr "Ensimmäinen %d"
+msgstr ""
 
 #: template.php:3015
 #: template.php:3166
@@ -1130,7 +1130,7 @@ msgstr "Ensimmäinen %d"
 #: tpl/formats/forum.php:516
 #: tpl/formats/forum.php:541
 msgid "SITE"
-msgstr "SIVUSTO"
+msgstr ""
 
 #: template.php:3021
 #: template.php:3083
@@ -1140,7 +1140,7 @@ msgstr "SIVUSTO"
 #: template.php:3406
 #: template.php:3468
 msgid "Author"
-msgstr "Tekijä"
+msgstr ""
 
 #: template.php:3022
 #: template.php:3084
@@ -1150,7 +1150,7 @@ msgstr "Tekijä"
 #: template.php:3407
 #: template.php:3469
 msgid "Address"
-msgstr "Osoite"
+msgstr ""
 
 #: template.php:3023
 #: template.php:3085
@@ -1160,7 +1160,7 @@ msgstr "Osoite"
 #: template.php:3408
 #: template.php:3470
 msgid "Status"
-msgstr "Tila"
+msgstr ""
 
 #: template.php:3077
 #: template.php:3228
@@ -1175,7 +1175,7 @@ msgstr "Tila"
 #: tpl/formats/forum.php:505
 #: tpl/formats/forum.php:549
 msgid "ADMIN"
-msgstr "YLLÄPITÄJÄ"
+msgstr ""
 
 #: template.php:3082
 #: template.php:3171
@@ -1184,19 +1184,19 @@ msgstr "YLLÄPITÄJÄ"
 #: template.php:3405
 #: template.php:3467
 msgid "Credentials"
-msgstr "Valtuutus"
+msgstr ""
 
 #: tpl/functions.php:97
 msgid "Core"
-msgstr "Ydin"
+msgstr ""
 
 #: tpl/functions.php:216
 msgid "developer-mode-information"
-msgstr "kehittäjätilan-tiedot"
+msgstr ""
 
 #: tpl/functions.php:222
 msgid "Elapsed-runtime: %s seconds"
-msgstr "Kulunut suoritusaika: %s sekuntia"
+msgstr ""
 
 #: tpl/pieces/discoverinstance.php:167
 #: tpl/formats/joomlacode.php:51
@@ -1205,23 +1205,23 @@ msgstr "Kulunut suoritusaika: %s sekuntia"
 #: tpl/formats/forum.php:34
 #: tpl/formats/forum.php:116
 msgid "Not Found"
-msgstr "Ei löydy"
+msgstr ""
 
 #: tpl/pieces/legend.php:6
 msgid "Legends and Settings"
-msgstr "Selitteet ja asetukset"
+msgstr ""
 
 #: tpl/pieces/legend.php:11
 msgid "OK/GOOD"
-msgstr "OK/KELPO"
+msgstr ""
 
 #: tpl/pieces/legend.php:12
 msgid "WARNINGS"
-msgstr "VAROITUKSET"
+msgstr ""
 
 #: tpl/pieces/legend.php:13
 msgid "ALERTS"
-msgstr "HÄLYTYKSET"
+msgstr ""
 
 #: tpl/pieces/legend.php:40
 #: tpl/pieces/legend.php:48
@@ -1229,7 +1229,7 @@ msgstr "HÄLYTYKSET"
 #: tpl/pieces/legend.php:74
 #: tpl/pieces/legend.php:82
 msgid "Show"
-msgstr "Näytä"
+msgstr ""
 
 #: tpl/pieces/legend.php:42
 #: tpl/pieces/legend.php:50
@@ -1237,86 +1237,86 @@ msgstr "Näytä"
 #: tpl/pieces/legend.php:76
 #: tpl/pieces/legend.php:84
 msgid "Hide"
-msgstr "Piilota"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:43
 #: tpl/formats/joomlacode.php:351
 #: tpl/formats/github.php:47
 #: tpl/formats/forum.php:26
 msgid "Basic Environment"
-msgstr "Perusympäristö"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:45
 msgid "Joomla instance"
-msgstr "Joomla-instanssi"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:56
 #: tpl/formats/joomlacode.php:364
 #: tpl/formats/github.php:60
 msgid "Platform instance"
-msgstr "Alustainstanssi"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:65
 #: tpl/formats/joomlacode.php:300
 msgid "Instance configured"
-msgstr "Instanssi määritetty"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:80
 #: tpl/formats/joomlacode.php:389
 #: tpl/formats/github.php:85
 #: tpl/formats/forum.php:73
 msgid "Configuration options"
-msgstr "Asetusvalinnat"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:104
 #: tpl/formats/joomlacode.php:411
 #: tpl/formats/github.php:107
 #: tpl/formats/forum.php:106
 msgid "Database Credentials Present"
-msgstr "Tietokannan tunnukset olemassa"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:183
 #: tpl/formats/joomlacode.php:495
 #: tpl/formats/github.php:191
 #: tpl/formats/forum.php:127
 msgid "Host configuration"
-msgstr "Isäntäasetukset"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:184
 #: tpl/formats/joomlacode.php:496
 #: tpl/formats/forum.php:128
 msgid "OS version"
-msgstr "Käyttöjärjestelmäversio"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:185
 msgid "Technology: %s"
-msgstr "Arkkitehtuuri: %s"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:186
 msgid "Web Server: %s"
-msgstr "Web-palvelin: %s"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:187
 msgid "Encoding: %s"
-msgstr "Koodaus: %s"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:189
 msgid "System TMP writable: %s"
-msgstr "Järjestelmän TMP kirjoitettavissa: %s"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:193
 #: tpl/formats/joomlacode.php:508
 #: tpl/formats/github.php:202
 #: tpl/formats/forum.php:178
 msgid "MySQL configuration"
-msgstr "MySQL asetukset"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:195
 #: tpl/formats/joomlacode.php:510
 #: tpl/formats/github.php:204
 #: tpl/formats/forum.php:180
 msgid "Database credentials incomplete or not available"
-msgstr "Tietokannan tunnukset puutteelliset tai puuttuvat"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:195
 #: tpl/formats/joomlacode.php:510
@@ -1324,14 +1324,14 @@ msgstr "Tietokannan tunnukset puutteelliset tai puuttuvat"
 #: tpl/formats/forum.php:180
 #: tpl/formats/forum.php:537
 msgid "Nothing to display."
-msgstr "Ei näytettävää"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:232
 #: tpl/formats/joomlacode.php:552
 #: tpl/formats/github.php:246
 #: tpl/formats/forum.php:137
 msgid "PHP configuration"
-msgstr "PHP asetukset"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:234
 msgid "Writeable"
@@ -1339,99 +1339,99 @@ msgstr ""
 
 #: tpl/formats/joomlacode.php:238
 msgid "Last known errors: %s"
-msgstr "Viimeisimmät havaitut virheet: %s"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:353
 #: tpl/formats/github.php:49
 #: tpl/formats/forum.php:29
 msgid "Joomla! instance"
-msgstr "Joomla!-instanssi"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:373
 #: tpl/formats/joomlacode.php:624
 #: tpl/formats/github.php:69
 #: tpl/formats/github.php:317
 msgid "Instance configuration"
-msgstr "Instanssin asetukset"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:498
 #: tpl/formats/github.php:194
 #: tpl/formats/forum.php:130
 msgid "Web Server"
-msgstr "Web-palvelin"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:499
 #: tpl/formats/joomlacode.php:503
 #: tpl/formats/github.php:195
 #: tpl/formats/github.php:197
 msgid "**%1s**: %2s"
-msgstr "**%1s**: %2s"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:503
 #: tpl/formats/github.php:197
 #: tpl/formats/forum.php:133
 msgid "System TMP writable"
-msgstr "Järjestelmän TMP kirjoitettavissa"
+msgstr ""
 
 #: tpl/formats/joomlacode.php:558
 #: tpl/formats/github.php:252
 #: tpl/formats/forum.php:164
 msgid "Last known errors"
-msgstr "Viimeisimmät havaitut virheet"
+msgstr ""
 
 #: tpl/formats/github.php:192
 msgid "OS Version"
-msgstr "Käyttöjärjestelmäversio"
+msgstr ""
 
 #: tpl/formats/forum.php:14
 msgid "Last PHP error"
-msgstr "Viimeisin PHP virhe"
+msgstr ""
 
 #: tpl/formats/forum.php:20
 msgid "Actions Taken To Resolve by %s"
-msgstr "Ongelman ratkaisemiseksi %s tekemät toimenpiteet "
+msgstr ""
 
 #: tpl/formats/forum.php:40
 msgid "Joomla! platform"
-msgstr "Joomla! alusta"
+msgstr ""
 
 #: tpl/formats/forum.php:47
 msgid "Joomla! configured"
-msgstr "Joomla! määritetty"
+msgstr ""
 
 #: tpl/formats/forum.php:133
 msgid "[b]%1s[/b]: %2s"
-msgstr "[b]%1s[/b]: %2s"
+msgstr ""
 
 #: tpl/formats/forum.php:211
 msgid "Database credentials present in configuration ? ..."
-msgstr "Tietokannan tunnukset asetuksissa? ..."
+msgstr ""
 
 #: tpl/formats/forum.php:218
 #: tpl/formats/forum.php:220
 msgid "Host"
-msgstr "Isäntä"
+msgstr ""
 
 #: tpl/formats/forum.php:233
 msgid "Detailed Environment"
-msgstr "Ympäristön tiedot"
+msgstr ""
 
 #: tpl/formats/forum.php:268
 msgid "Switch User Environment"
-msgstr "Vaihda käyttäjäympäristö"
+msgstr ""
 
 #: tpl/formats/forum.php:268
 msgid "Experimental"
-msgstr "Kokeellinen"
+msgstr ""
 
 #: tpl/formats/forum.php:275
 msgid "Potential Ownership Issues"
-msgstr "Mahdollisia omistajuusongelmia"
+msgstr ""
 
 #: tpl/formats/forum.php:416
 msgid "Database Statistics"
-msgstr "Tietokantatilastot"
+msgstr ""
 
 #: tpl/languageswitcher.php:6
 msgid "Language"
-msgstr "Kieli"
+msgstr ""

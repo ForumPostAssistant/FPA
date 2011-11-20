@@ -107,7 +107,7 @@ try
 
             foreach ($fileInfo->strings as $key => $info)
             {
-                $s .= $key.' = '.$info->string.NL;
+                $s .= $key.' = '.str_replace("'", "\'", $info->string).NL;
             }//foreach
 
             $s .= "'";

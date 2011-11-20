@@ -1,9 +1,13 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+#
+# Translators:
 msgid ""
 msgstr ""
-"Project-Id-Version: FPA\n"
-"Report-Msgid-Bugs-To: https://github.com/ForumPostAssistant/FPA/issues\n"
-"POT-Creation-Date: 2010-12-07 13:58-0500\n"
-"PO-Revision-Date: 2011-10-03 01:51+0000\n"
+"Project-Id-Version: Forum Post Assistant\n"
+"Report-Msgid-Bugs-To: wp-polyglots@lists.automattic.com\n"
+"POT-Creation-Date: 2011-11-02 11:31 -500\n"
+"PO-Revision-Date: 2011-11-05 19:02+0000\n"
 "Last-Translator: elkuku <test1@nik-it.de>\n"
 "Language-Team: German (Germany) (http://www.transifex.net/projects/p/opentranslators/team/de_DE/)\n"
 "MIME-Version: 1.0\n"
@@ -11,6 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de_DE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Generator: g11n by elkuku\n"
 
 #: template.php:81
 msgid "Generating Post Output..."
@@ -575,6 +580,7 @@ msgstr ""
 
 #: template.php:1209
 #: tpl/pieces/legend.php:34
+#: tpl/formats/forum.php:536
 msgid "Strict"
 msgstr ""
 
@@ -609,6 +615,10 @@ msgstr ""
 #: template.php:1362
 #: template.php:2342
 msgid "Platform"
+msgstr ""
+
+#: template.php:1386
+msgid "N/A"
 msgstr ""
 
 #: template.php:1395
@@ -891,6 +901,7 @@ msgid "Database size"
 msgstr ""
 
 #: template.php:1920
+#: tpl/formats/joomlacode.php:200
 #: tpl/formats/joomlacode.php:516
 #: tpl/formats/github.php:210
 #: tpl/formats/forum.php:184
@@ -1319,6 +1330,10 @@ msgstr ""
 #: tpl/formats/github.php:246
 #: tpl/formats/forum.php:137
 msgid "PHP configuration"
+msgstr ""
+
+#: tpl/formats/joomlacode.php:234
+msgid "Writeable"
 msgstr ""
 
 #: tpl/formats/joomlacode.php:238

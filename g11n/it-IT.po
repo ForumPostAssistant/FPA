@@ -1,0 +1,1437 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+#
+# Translators:
+# Luca  <luca@jeckodevelopment.it>, 2011.
+msgid ""
+msgstr ""
+"Project-Id-Version: Forum Post Assistant\n"
+"Report-Msgid-Bugs-To: wp-polyglots@lists.automattic.com\n"
+"POT-Creation-Date: 2011-11-02 11:31 -500\n"
+"PO-Revision-Date: 2011-11-14 14:06+0000\n"
+"Last-Translator: jeckodevelopment <luca@jeckodevelopment.it>\n"
+"Language-Team: Italian (Italy) (http://www.transifex.net/projects/p/opentranslators/team/it_IT/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: it_IT\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Generator: g11n by elkuku\n"
+
+#: template.php:81
+msgid "Generating Post Output..."
+msgstr "Generazione output del post in corso..."
+
+#: template.php:83
+msgid "Hang on in there while we run some tests..."
+msgstr "Attendi mentre eseguiamo alcuni test ..."
+
+#: template.php:132
+msgid "PHP Environment"
+msgstr "Ambiente PHP"
+
+#: template.php:133
+msgid "Environment Support Snapshot"
+msgstr "Snapshot ambiente supporto"
+
+#: template.php:134
+msgid "Application Instance"
+msgstr "Istanza applicazione"
+
+#: template.php:135
+msgid "System Environment"
+msgstr "Ambiente di Sistema"
+
+#: template.php:136
+#: tpl/formats/forum.php:235
+msgid "PHP Extensions"
+msgstr "Estensioni PHP"
+
+#: template.php:137
+msgid "PHP Requirements"
+msgstr "Requisiti PHP"
+
+#: template.php:138
+#: tpl/pieces/legend.php:38
+#: tpl/formats/forum.php:361
+msgid "Elevated Permissions"
+msgstr "Permessi elevati"
+
+#: template.php:139
+#: tpl/pieces/legend.php:64
+#: tpl/formats/forum.php:478
+#: tpl/formats/forum.php:486
+msgid "Components"
+msgstr "Componenti"
+
+#: template.php:140
+#: tpl/pieces/legend.php:72
+#: tpl/formats/forum.php:497
+#: tpl/formats/forum.php:505
+msgid "Modules"
+msgstr "Moduli"
+
+#: template.php:141
+#: tpl/pieces/legend.php:80
+#: tpl/formats/forum.php:516
+msgid "Plugins"
+msgstr "Plugins"
+
+#: template.php:142
+#: tpl/formats/forum.php:533
+#: tpl/formats/forum.php:541
+#: tpl/formats/forum.php:549
+msgid "Templates"
+msgstr "Templates"
+
+#: template.php:143
+#: tpl/formats/forum.php:290
+msgid "Apache Modules"
+msgstr "Moduli di Apache"
+
+#: template.php:144
+msgid "Apache Requirements"
+msgstr "Requisiti Apache"
+
+#: template.php:145
+msgid "Database Instance"
+msgstr "Istanza Database"
+
+#: template.php:146
+#: tpl/pieces/legend.php:46
+msgid "Table Structure"
+msgstr "Struttura tabelle"
+
+#: template.php:147
+msgid "Permissions Checks"
+msgstr "Controllo dei permessi"
+
+#: template.php:148
+#: tpl/formats/forum.php:333
+msgid "Core Folders"
+msgstr "Cartelle Core"
+
+#: template.php:227
+msgid "DEVELOPER MODE is enabled"
+msgstr "Il DEVELOPER MODE è abilitato"
+
+#: template.php:228
+msgid "This means that a variety of additional information will be displayed on-screen to assist with troubleshooting this script."
+msgstr ""
+
+#: template.php:240
+msgid "DIGNOSTIC MODE is enabled"
+msgstr "La MODALITÀ DIAGNOSTICA è attiva"
+
+#: template.php:241
+msgid "This means that all php and script errors will be displayed on-screen and logged out to a file named %s."
+msgstr ""
+
+#: template.php:256
+msgid "Last DIGNOSTIC MODE Error in %s"
+msgstr "Ultimo errore MODALITÀ DIAGNOSTICA in %s"
+
+#: template.php:257
+msgid "No Errors Reported"
+msgstr "Nessun errore riportato"
+
+#: template.php:320
+#: template.php:330
+#: template.php:390
+#: template.php:391
+#: template.php:394
+#: template.php:398
+#: template.php:522
+#: template.php:635
+#: template.php:768
+#: template.php:769
+#: template.php:806
+#: template.php:807
+#: template.php:820
+#: template.php:821
+#: template.php:847
+#: template.php:848
+#: template.php:879
+#: template.php:942
+#: template.php:948
+#: template.php:981
+#: template.php:987
+#: template.php:989
+#: template.php:1159
+#: template.php:1332
+#: template.php:1414
+#: template.php:1441
+#: template.php:1443
+#: template.php:1481
+#: template.php:1485
+#: template.php:1489
+#: template.php:1537
+#: template.php:1543
+#: template.php:1565
+#: template.php:1582
+#: template.php:1635
+#: template.php:1770
+#: template.php:1803
+#: template.php:1823
+#: template.php:1915
+#: template.php:1915
+#: template.php:1946
+#: template.php:2075
+#: template.php:2294
+#: template.php:2530
+#: template.php:2565
+#: template.php:2788
+#: template.php:2824
+#: template.php:2826
+#: template.php:2919
+#: template.php:2935
+#: template.php:3032
+#: template.php:3090
+#: template.php:3183
+#: template.php:3241
+#: template.php:3332
+#: template.php:3417
+#: template.php:3476
+#: tpl/functions.php:166
+#: tpl/pieces/discoverinstance.php:22
+#: tpl/pieces/discoverinstance.php:146
+#: tpl/pieces/discoverinstance.php:179
+#: tpl/pieces/discoverinstance.php:183
+#: tpl/pieces/discoverinstance.php:237
+#: tpl/pieces/discoverinstance.php:252
+#: tpl/pieces/discoverinstance.php:256
+#: tpl/pieces/discoverinstance.php:257
+#: tpl/pieces/discoverinstance.php:258
+#: tpl/pieces/discoverinstance.php:259
+#: tpl/pieces/discoverinstance.php:260
+#: tpl/pieces/discoverinstance.php:265
+#: tpl/pieces/discoverinstance.php:272
+#: tpl/pieces/discoverinstance.php:368
+#: tpl/pieces/discoverinstance.php:381
+#: tpl/pieces/discoverinstance.php:388
+#: tpl/pieces/discoverinstance.php:399
+#: tpl/pieces/discoverphp.php:26
+#: tpl/pieces/discoverphp.php:63
+#: tpl/pieces/discoverphp.php:87
+#: tpl/pieces/discoverphp.php:91
+#: tpl/pieces/discoverphp.php:101
+#: tpl/pieces/discoverphp.php:122
+#: tpl/pieces/discoverphp.php:124
+#: tpl/pieces/discoversystem.php:76
+#: tpl/formats/joomlacode.php:47
+#: tpl/formats/joomlacode.php:63
+#: tpl/formats/joomlacode.php:68
+#: tpl/formats/joomlacode.php:97
+#: tpl/formats/joomlacode.php:198
+#: tpl/formats/joomlacode.php:198
+#: tpl/formats/joomlacode.php:355
+#: tpl/formats/joomlacode.php:371
+#: tpl/formats/joomlacode.php:376
+#: tpl/formats/joomlacode.php:404
+#: tpl/formats/joomlacode.php:513
+#: tpl/formats/joomlacode.php:514
+#: tpl/formats/github.php:51
+#: tpl/formats/github.php:67
+#: tpl/formats/github.php:72
+#: tpl/formats/github.php:100
+#: tpl/formats/github.php:207
+#: tpl/formats/github.php:208
+#: tpl/formats/forum.php:31
+#: tpl/formats/forum.php:49
+#: tpl/formats/forum.php:50
+#: tpl/formats/forum.php:52
+#: tpl/formats/forum.php:82
+#: tpl/formats/forum.php:107
+#: tpl/formats/forum.php:122
+#: tpl/formats/forum.php:153
+#: tpl/formats/forum.php:183
+#: tpl/formats/forum.php:183
+#: tpl/formats/forum.php:277
+#: tpl/formats/forum.php:330
+#: tpl/formats/forum.php:413
+#: tpl/formats/forum.php:455
+#: tpl/formats/forum.php:468
+#: tpl/formats/forum.php:532
+msgid "Yes"
+msgstr "Sì"
+
+#: template.php:333
+#: template.php:401
+#: template.php:607
+#: template.php:609
+#: template.php:616
+#: template.php:772
+#: template.php:773
+#: template.php:810
+#: template.php:811
+#: template.php:824
+#: template.php:825
+#: template.php:835
+#: template.php:859
+#: template.php:860
+#: template.php:874
+#: template.php:882
+#: template.php:883
+#: template.php:894
+#: template.php:950
+#: template.php:953
+#: template.php:955
+#: template.php:992
+#: template.php:994
+#: template.php:1364
+#: template.php:1382
+#: template.php:1382
+#: template.php:1383
+#: template.php:1397
+#: template.php:1418
+#: template.php:1432
+#: template.php:1432
+#: template.php:1441
+#: template.php:1447
+#: template.php:1470
+#: template.php:1682
+#: template.php:1773
+#: template.php:1782
+#: template.php:1800
+#: template.php:1819
+#: template.php:1822
+#: template.php:1825
+#: template.php:1834
+#: template.php:1889
+#: template.php:1946
+#: template.php:2075
+#: template.php:2297
+#: template.php:2533
+#: template.php:2559
+#: template.php:2811
+#: template.php:2828
+#: template.php:3125
+#: tpl/functions.php:169
+#: tpl/pieces/discoverinstance.php:24
+#: tpl/pieces/discoverinstance.php:52
+#: tpl/pieces/discoverinstance.php:68
+#: tpl/pieces/discoverinstance.php:74
+#: tpl/pieces/discoverinstance.php:96
+#: tpl/pieces/discoverinstance.php:148
+#: tpl/pieces/discoverinstance.php:173
+#: tpl/pieces/discoverinstance.php:186
+#: tpl/pieces/discoverinstance.php:214
+#: tpl/pieces/discoverinstance.php:217
+#: tpl/pieces/discoverinstance.php:228
+#: tpl/pieces/discoverinstance.php:234
+#: tpl/pieces/discoverinstance.php:240
+#: tpl/pieces/discoverinstance.php:245
+#: tpl/pieces/discoverinstance.php:371
+#: tpl/pieces/discoverinstance.php:384
+#: tpl/pieces/discoverinstance.php:391
+#: tpl/pieces/discoverinstance.php:403
+#: tpl/pieces/discoverinstance.php:408
+#: tpl/pieces/discoverphp.php:29
+#: tpl/pieces/discoverphp.php:66
+#: tpl/pieces/discoverphp.php:92
+#: tpl/pieces/discoverphp.php:95
+#: tpl/pieces/discoverphp.php:102
+#: tpl/pieces/discoverphp.php:105
+#: tpl/pieces/discoverphp.php:110
+#: tpl/pieces/discoverphp.php:111
+#: tpl/pieces/discoverphp.php:112
+#: tpl/pieces/discoverphp.php:129
+#: tpl/pieces/discoverphp.php:132
+#: tpl/pieces/discoversystem.php:79
+#: tpl/formats/joomlacode.php:194
+#: tpl/formats/joomlacode.php:219
+#: tpl/formats/joomlacode.php:509
+#: tpl/formats/joomlacode.php:536
+#: tpl/formats/github.php:203
+#: tpl/formats/github.php:230
+#: tpl/formats/forum.php:80
+#: tpl/formats/forum.php:84
+#: tpl/formats/forum.php:155
+#: tpl/formats/forum.php:179
+#: tpl/formats/forum.php:205
+#: tpl/formats/forum.php:279
+#: tpl/formats/forum.php:413
+#: tpl/formats/forum.php:455
+#: tpl/formats/forum.php:458
+msgid "No"
+msgstr "No"
+
+#: template.php:611
+msgid "May not be an error, check with host for remote access requirements."
+msgstr "accesso remoto."
+
+#: template.php:761
+#: template.php:803
+#: template.php:817
+msgid "PHP Supports %s"
+msgstr "PHP supporta %s"
+
+#: template.php:764
+#: template.php:776
+#: template.php:796
+#: template.php:836
+#: template.php:864
+#: template.php:875
+#: template.php:904
+#: template.php:917
+#: template.php:969
+#: template.php:1673
+#: template.php:1727
+#: template.php:1734
+#: template.php:1783
+#: template.php:1786
+#: template.php:1858
+#: template.php:1874
+#: template.php:1890
+#: template.php:1909
+#: template.php:2023
+#: template.php:2301
+#: template.php:2391
+#: template.php:2417
+#: template.php:2537
+msgid "Unknown"
+msgstr "Sconosciuto"
+
+#: template.php:833
+#: template.php:872
+msgid "MySQL Supports %s"
+msgstr "MySQL Supporta %s"
+
+#: template.php:843
+#: template.php:855
+msgid "Maybe"
+msgstr "Potrebbe"
+
+#: template.php:843
+#: template.php:855
+msgid "Special Note"
+msgstr "Nota speciale"
+
+#: template.php:911
+msgid "MySQL default collation"
+msgstr "MySQL collation predefinita"
+
+#: template.php:925
+#: template.php:964
+#: template.php:1720
+#: template.php:2151
+#: template.php:2351
+msgid "%s version"
+msgstr "%s versione"
+
+#: template.php:938
+msgid "Known Buggy PHP"
+msgstr "PHP con problemi noti"
+
+#: template.php:976
+msgid "Known Buggy Zend"
+msgstr "Zend con problemi noti"
+
+#: template.php:1049
+msgid "Instructions"
+msgstr "Istruzioni"
+
+#: template.php:1053
+msgid "Enter your problem description <i>(optional)</i>"
+msgstr "Inserisci la descrizione del tuo problema <i>(opzionale)</i>"
+
+#: template.php:1054
+msgid "Enter any error messages you see <i>(optional)</i>"
+msgstr "Inserisci i messaggi di errore visualizzati <i>(opzionale)</i>"
+
+#: template.php:1055
+msgid "Enter any actions taken to resolve the issue <i>(optional)</i>"
+msgstr "Scrivi le azioni intraprese per risolvere il problema <i>(opzionale)</i>"
+
+#: template.php:1056
+msgid "Select detail level options of output <i>(optional)</i>"
+msgstr "Seleziona le opzioni del livello di dettaglio dell'output <i>(opzionale)</i>"
+
+#: template.php:1057
+#: template.php:1231
+msgid "Click the %s post button to build the post content"
+msgstr "Fai click sul pulsante %s del post per creare il contenuto del post"
+
+#: template.php:1057
+#: template.php:1231
+msgid "Generate"
+msgstr "Genera"
+
+#: template.php:1058
+#: template.php:1297
+msgid "Copy the contents of the %s box and paste it into a post"
+msgstr "Copia il contenuto del box %s e incollalo in un post"
+
+#: template.php:1058
+#: template.php:1262
+#: template.php:1297
+msgid "Post Detail"
+msgstr "Dettagli post"
+
+#: template.php:1066
+msgid "Optional Information"
+msgstr "Informazioni opzionali"
+
+#: template.php:1071
+#: tpl/formats/joomlacode.php:7
+#: tpl/formats/joomlacode.php:310
+#: tpl/formats/github.php:6
+#: tpl/formats/forum.php:6
+msgid "Problem Description"
+msgstr "Descrizione problema"
+
+#: template.php:1076
+#: template.php:1085
+#: tpl/formats/joomlacode.php:15
+#: tpl/formats/joomlacode.php:22
+#: tpl/formats/joomlacode.php:320
+#: tpl/formats/joomlacode.php:329
+#: tpl/formats/github.php:16
+#: tpl/formats/github.php:25
+#: tpl/formats/forum.php:10
+#: tpl/formats/forum.php:16
+msgid "Log/Error Message"
+msgstr "Messaggi Log/Errore"
+
+#: template.php:1082
+msgid "Last error"
+msgstr "Ultimo errore"
+
+#: template.php:1093
+#: tpl/formats/joomlacode.php:35
+#: tpl/formats/joomlacode.php:342
+#: tpl/formats/github.php:38
+msgid "Actions To ReCreate Issue"
+msgstr "Azioni per ricreare il problema"
+
+#: template.php:1095
+msgid "Actions Taken To Resolve"
+msgstr "Azioni intraprese per la risoluzione"
+
+#: template.php:1100
+msgid "Leave ALL fields blank/empty to simply post diagnostic information."
+msgstr "diagnostiche."
+
+#: template.php:1163
+msgid "Optional Settings"
+msgstr "Impostazioni Opzionali"
+
+#: template.php:1164
+#: tpl/pieces/legend.php:24
+#: tpl/pieces/legend.php:60
+msgid "Disabled"
+msgstr "Disabilitato"
+
+#: template.php:1170
+msgid "Show elevated folder permissions"
+msgstr "Mostra permessi elevati cartelle"
+
+#: template.php:1171
+msgid "Show database table statistics"
+msgstr "Mostra statistiche tabella database"
+
+#: template.php:1175
+msgid "Show Components"
+msgstr "Mostra Componenti"
+
+#: template.php:1176
+msgid "Show Modules"
+msgstr "Mostra Moduli"
+
+#: template.php:1177
+msgid "Show Plugins"
+msgstr "Mostra Plugins"
+
+#: template.php:1201
+#: tpl/pieces/legend.php:28
+#: tpl/formats/forum.php:209
+#: tpl/formats/forum.php:536
+msgid "Information Privacy"
+msgstr "Privacy informazioni"
+
+#: template.php:1203
+#: tpl/pieces/legend.php:30
+msgid "None"
+msgstr "No"
+
+#: template.php:1204
+msgid "No elements are masked"
+msgstr "Nessun elemento nascosto"
+
+#: template.php:1206
+#: tpl/pieces/legend.php:32
+msgid "Partial"
+msgstr "Parziale"
+
+#: template.php:1206
+#: tpl/pieces/legend.php:24
+#: tpl/pieces/legend.php:32
+#: tpl/pieces/legend.php:42
+#: tpl/pieces/legend.php:50
+#: tpl/pieces/legend.php:60
+#: tpl/pieces/legend.php:68
+#: tpl/pieces/legend.php:76
+#: tpl/pieces/legend.php:84
+msgid "Default"
+msgstr "Predefinito"
+
+#: template.php:1207
+msgid "Some elements are masked"
+msgstr "Alcuni elementi sono nascosti"
+
+#: template.php:1209
+#: tpl/pieces/legend.php:34
+#: tpl/formats/forum.php:536
+msgid "Strict"
+msgstr "Strict"
+
+#: template.php:1210
+msgid "All indentifiable elements are masked"
+msgstr "Tutti gli elementi identificabili sono nascosti"
+
+#: template.php:1227
+msgid "Click Here To Generate Post"
+msgstr "Clicca qui per generare il post"
+
+#: template.php:1244
+msgid "PHP %1s or %2s errors ?"
+msgstr "Errori PHP %1s o %2s ?"
+
+#: template.php:1246
+msgid "Temporarily increase PHP Memory and Execution Time"
+msgstr "Aumenta temporaneamente la memoria PHP ed il tempo di esecuzione"
+
+#: template.php:1322
+#: template.php:1715
+#: template.php:2146
+#: template.php:2337
+#: template.php:2596
+msgid "%s discovery"
+msgstr "%s scoperto"
+
+#: template.php:1330
+msgid "CMS found"
+msgstr "CMS trovato"
+
+#: template.php:1362
+#: template.php:2342
+msgid "Platform"
+msgstr "Piattaforma"
+
+#: template.php:1386
+msgid "N/A"
+msgstr ""
+
+#: template.php:1395
+msgid "Config exists"
+msgstr "Config. esistente"
+
+#: template.php:1412
+#: template.php:1672
+msgid "Config version"
+msgstr "Versione Config."
+
+#: template.php:1416
+msgid "Matches CMS"
+msgstr "CMS corrispondente"
+
+#: template.php:1420
+msgid "CMS mis-match"
+msgstr "CMS non corrispondente"
+
+#: template.php:1439
+#: template.php:1680
+msgid "Config valid"
+msgstr "Config. valida"
+
+#: template.php:1458
+msgid "Config mode"
+msgstr "Modalità Config."
+
+#: template.php:1487
+#: template.php:2292
+#: template.php:2780
+#: template.php:2912
+#: tpl/formats/joomlacode.php:69
+#: tpl/formats/joomlacode.php:377
+#: tpl/formats/joomlacode.php:502
+#: tpl/formats/joomlacode.php:554
+#: tpl/formats/github.php:73
+#: tpl/formats/github.php:248
+#: tpl/formats/forum.php:53
+#: tpl/formats/forum.php:152
+msgid "Writable"
+msgstr "Scrivibile"
+
+#: template.php:1491
+#: tpl/formats/joomlacode.php:71
+#: tpl/formats/joomlacode.php:379
+#: tpl/formats/github.php:75
+#: tpl/formats/forum.php:55
+msgid "Read-Only"
+msgstr "Sola lettura"
+
+#: template.php:1502
+msgid "Config Owner"
+msgstr "Proprietario Config."
+
+#: template.php:1508
+#: template.php:1523
+#: template.php:1756
+#: template.php:1779
+#: template.php:2088
+#: template.php:2376
+#: template.php:2434
+#: template.php:2451
+#: template.php:2506
+#: template.php:2523
+#: template.php:2867
+#: template.php:2970
+#: template.php:3053
+#: template.php:3111
+#: template.php:3204
+#: template.php:3262
+#: template.php:3353
+#: template.php:3438
+#: template.php:3497
+#: tpl/pieces/legend.php:14
+#: tpl/formats/forum.php:218
+#: tpl/formats/forum.php:218
+#: tpl/formats/forum.php:340
+#: tpl/formats/forum.php:372
+#: tpl/formats/forum.php:438
+msgid "Protected"
+msgstr "Protetto"
+
+#: template.php:1517
+msgid "Config Group"
+msgstr "Gruppo Config."
+
+#: template.php:1541
+#: template.php:2887
+#: template.php:2985
+#: template.php:3067
+#: template.php:3127
+#: template.php:3218
+#: template.php:3276
+#: template.php:3367
+#: template.php:3452
+#: template.php:3511
+msgid "Instance Not Found"
+msgstr "Istanza non trovata"
+
+#: template.php:1541
+#: template.php:1693
+#: template.php:2125
+#: template.php:2887
+#: template.php:2985
+#: template.php:3067
+#: template.php:3127
+#: template.php:3218
+#: template.php:3276
+#: template.php:3367
+#: template.php:3452
+#: template.php:3511
+msgid "No %s tests performed"
+msgstr "Nessun %s test eseguito"
+
+#: template.php:1544
+msgid "But configuration found"
+msgstr "Ma la configurazione è stata trovata"
+
+#: template.php:1561
+msgid "%s :: Configuration"
+msgstr "%s :: Configurazione"
+
+#: template.php:1579
+#: tpl/pieces/legend.php:22
+#: tpl/pieces/legend.php:58
+msgid "Enabled"
+msgstr "Abilitato"
+
+#: template.php:1621
+msgid "Database"
+msgstr "Database"
+
+#: template.php:1624
+#: template.php:3019
+#: template.php:3081
+#: template.php:3170
+#: template.php:3232
+#: template.php:3318
+#: template.php:3404
+#: template.php:3466
+#: tpl/formats/joomlacode.php:223
+#: tpl/formats/joomlacode.php:232
+#: tpl/formats/joomlacode.php:540
+#: tpl/formats/joomlacode.php:552
+#: tpl/formats/github.php:234
+#: tpl/formats/github.php:246
+#: tpl/formats/forum.php:137
+#: tpl/formats/forum.php:215
+msgid "Version"
+msgstr "Versione"
+
+#: template.php:1633
+msgid "Database credentials"
+msgstr "Credenziali Database"
+
+#: template.php:1636
+msgid "Appear in-complete"
+msgstr "Sembra incompleta"
+
+#: template.php:1638
+msgid "Appear complete"
+msgstr "Sembra completa"
+
+#: template.php:1647
+msgid "Security"
+msgstr "Sicurezza"
+
+#: template.php:1658
+msgid "Features"
+msgstr "Caratteristiche"
+
+#: template.php:1683
+msgid "Could be empty"
+msgstr "Può essere vuoto"
+
+#: template.php:1692
+msgid "Configuration not found or invalid"
+msgstr "Configurazione non trovata o non valida"
+
+#: template.php:1724
+#: template.php:1727
+msgid "Server"
+msgstr "Server"
+
+#: template.php:1731
+#: template.php:1734
+msgid "Client"
+msgstr "Client"
+
+#: template.php:1743
+#: template.php:2369
+msgid "Hostname"
+msgstr "Nome host"
+
+#: template.php:1752
+#: template.php:1820
+#: template.php:1893
+msgid "Not Configured"
+msgstr "Non configurato"
+
+#: template.php:1765
+#: template.php:1922
+msgid "Connection Type"
+msgstr "Tipo di connessione"
+
+#: template.php:1771
+msgid "Local"
+msgstr "Locale"
+
+#: template.php:1776
+#: template.php:1783
+msgid "Remote"
+msgstr "Remota"
+
+#: template.php:1797
+#: template.php:2190
+msgid "%s support"
+msgstr "supporto %s"
+
+#: template.php:1801
+msgid "%s is not supported by PHP %s"
+msgstr "%s non è supportato da PHP %s"
+
+#: template.php:1804
+msgid "%s is supported by PHP %s"
+msgstr "%s è supportato da PHP %s"
+
+#: template.php:1807
+msgid "PHP %s support is unknown"
+msgstr "Il supporto di PHP %s è sconosciuto"
+
+#: template.php:1816
+msgid "Connect to %s"
+msgstr "Connetti a %s"
+
+#: template.php:1820
+msgid "Not Attempted"
+msgstr "Nessun tentativo"
+
+#: template.php:1823
+msgid "Connected"
+msgstr "Connesso"
+
+#: template.php:1826
+#: tpl/formats/forum.php:209
+msgid "Error(s) reported"
+msgstr "Errore(i) riportato(i)"
+
+#: template.php:1838
+#: tpl/formats/joomlacode.php:221
+#: tpl/formats/joomlacode.php:538
+#: tpl/formats/github.php:232
+#: tpl/formats/forum.php:206
+msgid "Connection Error"
+msgstr "Errore di connessione"
+
+#: template.php:1851
+#: tpl/formats/joomlacode.php:224
+#: tpl/formats/joomlacode.php:543
+#: tpl/formats/github.php:237
+#: tpl/formats/forum.php:224
+msgid "Character Set"
+msgstr "Set di caratteri"
+
+#: template.php:1867
+msgid "Default Character Set"
+msgstr "Set di caratteri predefinito"
+
+#: template.php:1883
+msgid "Database collation"
+msgstr "Collation Database"
+
+#: template.php:1902
+#: tpl/formats/joomlacode.php:225
+#: tpl/formats/joomlacode.php:544
+#: tpl/formats/github.php:238
+#: tpl/formats/forum.php:225
+msgid "Database size"
+msgstr "Dimensione Database"
+
+#: template.php:1920
+#: tpl/formats/joomlacode.php:200
+#: tpl/formats/joomlacode.php:516
+#: tpl/formats/github.php:210
+#: tpl/formats/forum.php:184
+msgid "Missing credentials detected"
+msgstr "Rilevata mancanza di credenziali"
+
+#: template.php:1922
+#: template.php:1923
+#: template.php:1924
+#: template.php:1925
+#: template.php:1928
+msgid "%s not found"
+msgstr "%s non trovato"
+
+#: template.php:1923
+msgid "MySQL Hostname"
+msgstr "Nome host MySQL"
+
+#: template.php:1924
+msgid "Table Prefix"
+msgstr "Prefisso Tabelle"
+
+#: template.php:1925
+msgid "Database user"
+msgstr "Utente Database"
+
+#: template.php:1928
+msgid "Database password"
+msgstr "Password Database"
+
+#: template.php:1942
+msgid "Performance"
+msgstr "Performance"
+
+#: template.php:2016
+#: tpl/formats/joomlacode.php:226
+#: tpl/formats/joomlacode.php:545
+#: tpl/formats/github.php:239
+#: tpl/formats/forum.php:226
+msgid "Table"
+msgstr "Tabella"
+
+#: template.php:2033
+#: template.php:2125
+msgid "Not Connected"
+msgstr "Non connesso"
+
+#: template.php:2034
+msgid "No %s performance tests performed"
+msgstr "Nessun %s test di performance eseguito"
+
+#: template.php:2062
+#: template.php:3018
+#: template.php:3080
+#: template.php:3169
+#: template.php:3231
+#: template.php:3317
+#: template.php:3403
+#: template.php:3465
+msgid "Name"
+msgstr "Nome"
+
+#: template.php:2063
+msgid "Size"
+msgstr "Dimensione"
+
+#: template.php:2064
+msgid "Table records"
+msgstr "Records Tabella"
+
+#: template.php:2065
+msgid "Avg. Length"
+msgstr "Lunghezza media"
+
+#: template.php:2066
+msgid "Fragment Size"
+msgstr "Dimensione frammento"
+
+#: template.php:2067
+msgid "Engine"
+msgstr "Motore"
+
+#: template.php:2068
+#: tpl/formats/joomlacode.php:224
+#: tpl/formats/joomlacode.php:542
+#: tpl/formats/github.php:236
+#: tpl/formats/forum.php:223
+msgid "Collation"
+msgstr "Collation"
+
+#: template.php:2069
+#: template.php:3020
+msgid "Created"
+msgstr "Creato"
+
+#: template.php:2070
+msgid "Updated"
+msgstr "Aggiornato"
+
+#: template.php:2071
+msgid "Checked"
+msgstr "Controllato"
+
+#: template.php:2215
+#: template.php:2259
+msgid "increased by user, was %s"
+msgstr "aumentato dall'utente, era %s"
+
+#: template.php:2226
+msgid "Uploads enabled :"
+msgstr "Uploads abilitati :"
+
+#: template.php:2317
+msgid "Last known PHP error"
+msgstr "Ultimo errore PHP conosciuto"
+
+#: template.php:2360
+#: tpl/formats/joomlacode.php:497
+#: tpl/formats/github.php:193
+#: tpl/formats/forum.php:129
+msgid "Technology"
+msgstr "Tecnologia"
+
+#: template.php:2427
+#: template.php:2444
+#: template.php:2461
+#: template.php:2470
+#: template.php:2488
+#: template.php:2516
+msgid "Server %s:"
+msgstr "Server %s:"
+
+#: template.php:2461
+msgid "Signature"
+msgstr "Firma"
+
+#: template.php:2470
+#: tpl/formats/joomlacode.php:499
+#: tpl/formats/github.php:195
+#: tpl/formats/forum.php:131
+msgid "Encoding"
+msgstr "Codifica"
+
+#: template.php:2479
+#: template.php:2488
+msgid "User"
+msgstr "Utente"
+
+#: template.php:2498
+#: tpl/formats/joomlacode.php:188
+#: tpl/formats/joomlacode.php:501
+#: tpl/formats/github.php:196
+#: tpl/formats/forum.php:132
+msgid "Document Root"
+msgstr "Root documento"
+
+#: template.php:2516
+msgid "Temp"
+msgstr "Temp"
+
+#: template.php:2542
+msgid "Server temp writable: %s"
+msgstr "Temp del server scrivibile: %s"
+
+#: template.php:2551
+msgid "Switch user configuration"
+msgstr "Cambia configurazione utente"
+
+#: template.php:2647
+#: tpl/formats/forum.php:262
+msgid "Potential Missing Extensions"
+msgstr "Potenziali estensioni mancanti"
+
+#: template.php:2736
+#: tpl/formats/forum.php:315
+msgid "Potential Missing Modules"
+msgstr "Potenziali moduli mancanti"
+
+#: template.php:2779
+#: template.php:2911
+msgid "Mode"
+msgstr "Modalità"
+
+#: template.php:2781
+#: template.php:2913
+msgid "Folder"
+msgstr "Cartella"
+
+#: template.php:2782
+#: tpl/formats/joomlacode.php:76
+#: tpl/formats/joomlacode.php:385
+#: tpl/formats/github.php:81
+#: tpl/formats/forum.php:68
+msgid "Group"
+msgstr "Grupp"
+
+#: template.php:2783
+#: tpl/formats/joomlacode.php:74
+#: tpl/formats/joomlacode.php:383
+#: tpl/formats/github.php:79
+#: tpl/formats/forum.php:66
+msgid "Owner"
+msgstr "Proprietario"
+
+#: template.php:2907
+#: tpl/formats/forum.php:361
+msgid "First %d"
+msgstr "Primo %d"
+
+#: template.php:3015
+#: template.php:3166
+#: template.php:3314
+#: template.php:3400
+#: tpl/formats/joomlacode.php:114
+#: tpl/formats/joomlacode.php:140
+#: tpl/formats/joomlacode.php:165
+#: tpl/formats/joomlacode.php:422
+#: tpl/formats/joomlacode.php:449
+#: tpl/formats/joomlacode.php:475
+#: tpl/formats/github.php:118
+#: tpl/formats/github.php:145
+#: tpl/formats/github.php:171
+#: tpl/formats/forum.php:478
+#: tpl/formats/forum.php:497
+#: tpl/formats/forum.php:516
+#: tpl/formats/forum.php:541
+msgid "SITE"
+msgstr "SITO"
+
+#: template.php:3021
+#: template.php:3083
+#: template.php:3172
+#: template.php:3234
+#: template.php:3320
+#: template.php:3406
+#: template.php:3468
+msgid "Author"
+msgstr "Autore"
+
+#: template.php:3022
+#: template.php:3084
+#: template.php:3173
+#: template.php:3235
+#: template.php:3321
+#: template.php:3407
+#: template.php:3469
+msgid "Address"
+msgstr "Indirizzo"
+
+#: template.php:3023
+#: template.php:3085
+#: template.php:3174
+#: template.php:3236
+#: template.php:3322
+#: template.php:3408
+#: template.php:3470
+msgid "Status"
+msgstr "Stato"
+
+#: template.php:3077
+#: template.php:3228
+#: template.php:3462
+#: tpl/formats/joomlacode.php:125
+#: tpl/formats/joomlacode.php:150
+#: tpl/formats/joomlacode.php:433
+#: tpl/formats/joomlacode.php:459
+#: tpl/formats/github.php:129
+#: tpl/formats/github.php:155
+#: tpl/formats/forum.php:486
+#: tpl/formats/forum.php:505
+#: tpl/formats/forum.php:549
+msgid "ADMIN"
+msgstr "ADMIN"
+
+#: template.php:3082
+#: template.php:3171
+#: template.php:3233
+#: template.php:3319
+#: template.php:3405
+#: template.php:3467
+msgid "Credentials"
+msgstr "Credenzial"
+
+#: tpl/functions.php:97
+msgid "Core"
+msgstr "Core"
+
+#: tpl/functions.php:216
+msgid "developer-mode-information"
+msgstr "informazioni-developer-mode"
+
+#: tpl/functions.php:222
+msgid "Elapsed-runtime: %s seconds"
+msgstr "Tempo di esecuzione trascorso: %s secondi"
+
+#: tpl/pieces/discoverinstance.php:167
+#: tpl/formats/joomlacode.php:51
+#: tpl/formats/joomlacode.php:359
+#: tpl/formats/github.php:55
+#: tpl/formats/forum.php:34
+#: tpl/formats/forum.php:116
+msgid "Not Found"
+msgstr "Non trovato"
+
+#: tpl/pieces/legend.php:6
+msgid "Legends and Settings"
+msgstr "Leggende e impostazioni"
+
+#: tpl/pieces/legend.php:11
+msgid "OK/GOOD"
+msgstr "OK/BUONO"
+
+#: tpl/pieces/legend.php:12
+msgid "WARNINGS"
+msgstr "AVVERTENZE"
+
+#: tpl/pieces/legend.php:13
+msgid "ALERTS"
+msgstr "AVVISI"
+
+#: tpl/pieces/legend.php:40
+#: tpl/pieces/legend.php:48
+#: tpl/pieces/legend.php:66
+#: tpl/pieces/legend.php:74
+#: tpl/pieces/legend.php:82
+msgid "Show"
+msgstr "Mostra"
+
+#: tpl/pieces/legend.php:42
+#: tpl/pieces/legend.php:50
+#: tpl/pieces/legend.php:68
+#: tpl/pieces/legend.php:76
+#: tpl/pieces/legend.php:84
+msgid "Hide"
+msgstr "Nascondi"
+
+#: tpl/formats/joomlacode.php:43
+#: tpl/formats/joomlacode.php:351
+#: tpl/formats/github.php:47
+#: tpl/formats/forum.php:26
+msgid "Basic Environment"
+msgstr "Ambiente base"
+
+#: tpl/formats/joomlacode.php:45
+msgid "Joomla instance"
+msgstr "Istanza Joomla"
+
+#: tpl/formats/joomlacode.php:56
+#: tpl/formats/joomlacode.php:364
+#: tpl/formats/github.php:60
+msgid "Platform instance"
+msgstr "Istanza Platform"
+
+#: tpl/formats/joomlacode.php:65
+#: tpl/formats/joomlacode.php:300
+msgid "Instance configured"
+msgstr "Istanza configurata"
+
+#: tpl/formats/joomlacode.php:80
+#: tpl/formats/joomlacode.php:389
+#: tpl/formats/github.php:85
+#: tpl/formats/forum.php:73
+msgid "Configuration options"
+msgstr "Opzioni di configurazione"
+
+#: tpl/formats/joomlacode.php:104
+#: tpl/formats/joomlacode.php:411
+#: tpl/formats/github.php:107
+#: tpl/formats/forum.php:106
+msgid "Database Credentials Present"
+msgstr "Credenziali Database presenti"
+
+#: tpl/formats/joomlacode.php:183
+#: tpl/formats/joomlacode.php:495
+#: tpl/formats/github.php:191
+#: tpl/formats/forum.php:127
+msgid "Host configuration"
+msgstr "Configurazione Host"
+
+#: tpl/formats/joomlacode.php:184
+#: tpl/formats/joomlacode.php:496
+#: tpl/formats/forum.php:128
+msgid "OS version"
+msgstr "Versione OS"
+
+#: tpl/formats/joomlacode.php:185
+msgid "Technology: %s"
+msgstr "Tecnologia: %s"
+
+#: tpl/formats/joomlacode.php:186
+msgid "Web Server: %s"
+msgstr "Web Server: %s"
+
+#: tpl/formats/joomlacode.php:187
+msgid "Encoding: %s"
+msgstr "Codifica: %s"
+
+#: tpl/formats/joomlacode.php:189
+msgid "System TMP writable: %s"
+msgstr "TMP di sistema scrivibile: %s"
+
+#: tpl/formats/joomlacode.php:193
+#: tpl/formats/joomlacode.php:508
+#: tpl/formats/github.php:202
+#: tpl/formats/forum.php:178
+msgid "MySQL configuration"
+msgstr "Configurazione MySQL"
+
+#: tpl/formats/joomlacode.php:195
+#: tpl/formats/joomlacode.php:510
+#: tpl/formats/github.php:204
+#: tpl/formats/forum.php:180
+msgid "Database credentials incomplete or not available"
+msgstr "Credenziali database non complete o non disponibili"
+
+#: tpl/formats/joomlacode.php:195
+#: tpl/formats/joomlacode.php:510
+#: tpl/formats/github.php:204
+#: tpl/formats/forum.php:180
+#: tpl/formats/forum.php:537
+msgid "Nothing to display."
+msgstr "Nulla da visualizzare."
+
+#: tpl/formats/joomlacode.php:232
+#: tpl/formats/joomlacode.php:552
+#: tpl/formats/github.php:246
+#: tpl/formats/forum.php:137
+msgid "PHP configuration"
+msgstr "Configurazione PHP"
+
+#: tpl/formats/joomlacode.php:234
+msgid "Writeable"
+msgstr ""
+
+#: tpl/formats/joomlacode.php:238
+msgid "Last known errors: %s"
+msgstr "Ultimi errori noti: %s"
+
+#: tpl/formats/joomlacode.php:353
+#: tpl/formats/github.php:49
+#: tpl/formats/forum.php:29
+msgid "Joomla! instance"
+msgstr "Istanza Joomla!"
+
+#: tpl/formats/joomlacode.php:373
+#: tpl/formats/joomlacode.php:624
+#: tpl/formats/github.php:69
+#: tpl/formats/github.php:317
+msgid "Instance configuration"
+msgstr "Configurazione istanza"
+
+#: tpl/formats/joomlacode.php:498
+#: tpl/formats/github.php:194
+#: tpl/formats/forum.php:130
+msgid "Web Server"
+msgstr "Web Server"
+
+#: tpl/formats/joomlacode.php:499
+#: tpl/formats/joomlacode.php:503
+#: tpl/formats/github.php:195
+#: tpl/formats/github.php:197
+msgid "**%1s**: %2s"
+msgstr "**%1s**: %2s"
+
+#: tpl/formats/joomlacode.php:503
+#: tpl/formats/github.php:197
+#: tpl/formats/forum.php:133
+msgid "System TMP writable"
+msgstr "TMP di sistema scrivibile"
+
+#: tpl/formats/joomlacode.php:558
+#: tpl/formats/github.php:252
+#: tpl/formats/forum.php:164
+msgid "Last known errors"
+msgstr "Ultimi errori noti"
+
+#: tpl/formats/github.php:192
+msgid "OS Version"
+msgstr "Versione OS"
+
+#: tpl/formats/forum.php:14
+msgid "Last PHP error"
+msgstr "Ultimo errore PHP"
+
+#: tpl/formats/forum.php:20
+msgid "Actions Taken To Resolve by %s"
+msgstr "Azioni per risolvere intraprese da %s"
+
+#: tpl/formats/forum.php:40
+msgid "Joomla! platform"
+msgstr "Joomla! platform"
+
+#: tpl/formats/forum.php:47
+msgid "Joomla! configured"
+msgstr "Joomla! configurato"
+
+#: tpl/formats/forum.php:133
+msgid "[b]%1s[/b]: %2s"
+msgstr "[b]%1s[/b]: %2s"
+
+#: tpl/formats/forum.php:211
+msgid "Database credentials present in configuration ? ..."
+msgstr "Le credenziali del Database sono presenti nella Configurazione ? ..."
+
+#: tpl/formats/forum.php:218
+#: tpl/formats/forum.php:220
+msgid "Host"
+msgstr "Host"
+
+#: tpl/formats/forum.php:233
+msgid "Detailed Environment"
+msgstr "Ambiente dettagliato"
+
+#: tpl/formats/forum.php:268
+msgid "Switch User Environment"
+msgstr "Cambia Ambiente Utente"
+
+#: tpl/formats/forum.php:268
+msgid "Experimental"
+msgstr "Sperimentale"
+
+#: tpl/formats/forum.php:275
+msgid "Potential Ownership Issues"
+msgstr "Possibili problemi di permessi/owning"
+
+#: tpl/formats/forum.php:416
+msgid "Database Statistics"
+msgstr "Statistiche Database"
+
+#: tpl/languageswitcher.php:6
+msgid "Language"
+msgstr "Lingua"

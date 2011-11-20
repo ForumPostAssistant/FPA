@@ -1383,7 +1383,7 @@ if ( @$_POST['doIT'] == '1' ) {
             echo '<div class="warn" style="margin: 0px auto;">'. qText('No') .'</div>';
 
         } else {
-            echo _FPA_NA;
+            echo qText('N/A');
         }
 
         echo '</div>';

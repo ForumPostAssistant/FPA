@@ -533,7 +533,7 @@ if ( $instance['instanceFOUND'] == qText('Yes') ) {
     echo '[quote="'. qText('Templates') .' Discovered ::"][size=85]';
 
     if ( $_POST['showProtected'] == '3' ) {
-        echo '[color=orange][b]'. _FPA_STRICT .'[/b] '. qText('Information Privacy') .'[/color] '
+        echo '[color=orange][b]'. qText('Strict') .'[/b] '. qText('Information Privacy') .'[/color] '
         . qText('Nothing to display.');
         echo '[/size][/quote]';
     } else {

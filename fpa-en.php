@@ -9,6 +9,8 @@
  **  @release playGround
  **  @date 24/06/2011
  **  @author RussW
+ **  @author PhilD
+ **  Edits 4-8-12 by Phil
  **/
 
 
@@ -178,10 +180,11 @@
     define ( '_FPA_ER', 'Error(s) Reported' );
     define ( '_FPA_ERR', 'error' );
     define ( '_FPA_ERRS', 'errors' );
-    define ( '_FPA_YMATCH', 'matches' );
-    define ( '_FPA_NMATCH', 'mis-match' );
-    define ( '_FPA_NACOMP', 'appear complete' );
-    define ( '_FPA_YACOMP', 'appear in-complete' );
+    define ( '_FPA_YMATCH', 'Matches' );
+    define ( '_FPA_NMATCH', 'Mis-Match' );
+	/** swapped messages of the NACOMP and YACOMP as they were backwards - 4-8-12 - Phil ****/
+    define ( '_FPA_NACOMP', 'Appear Incomplete' );
+    define ( '_FPA_YACOMP', 'Appear Complete' );
     define ( '_FPA_SEC', 'Security' );
     define ( '_FPA_FEAT', 'Features' );
     define ( '_FPA_PERF', 'Performance' );
@@ -207,6 +210,7 @@
     define ( '_FPA_AUTH', 'Author' );
     define ( '_FPA_ADDR', 'Address' );
     define ( '_FPA_STATUS', 'Status' );
+	define ( '_FPA_TYPE', 'Type' );   // added this tag 4-8-12 - Phil
     define ( '_FPA_TREC', 'Rcds' );  // Number of table records
     define ( '_FPA_TAVL', 'Avg. Length' );
     define ( '_FPA_MODE', 'Mode' );
@@ -217,6 +221,7 @@
     define ( '_FPA_OWNER', 'Owner' );
     define ( '_FPA_GROUP', 'Group' );
     define ( '_FPA_VER', 'Version' );
+	define ( '_FPA_CRE', 'Created' ); // added this missing tag 4-8-12 - Phil
     define ( '_FPA_LOCAL', 'Local' );
     define ( '_FPA_REMOTE', 'Remote' );
     define ( '_FPA_SECONDS', 'seconds' );
@@ -277,7 +282,7 @@
         $showElevated  = 1;
 
     } else {
-        $showElevated = 0; // default (hide)
+        $showElevated = 1; // default (show)
 
     }
 
@@ -781,6 +786,7 @@
 
 
         /** if present, is the configuration file valid? *****************************************/
+		/** added code to fix the config version mis-match on 2.5 versions of Joomla - 4-8-12 - Phil *****/
         $cmsCContent = file_get_contents( $instance['configPATH'] );
 
             if ( preg_match ( '#(\$mosConfig_)#', $cmsCContent ) ) {
@@ -792,8 +798,12 @@
             } elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] == _FPA_N ) {
                 $instance['configVALIDFOR'] = '1.6';
 
-            } elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] != _FPA_N ) {
+            } elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] != _FPA_N  AND $instance['cmsVFILE'] != 'libraries/cms/version/version.php') {
                 $instance['configVALIDFOR'] = '1.7 and above';
+				
+			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] != _FPA_N ) {
+                $instance['configVALIDFOR'] = '2.5 and above';
+		$instance['cmsVFILE'] = 'libraries/cms/version/version.php';	
 
             } else {
                 $instance['configVALIDFOR'] = _FPA_U;
@@ -1109,7 +1119,9 @@
     $phpenv['phpSESSIONPATH']       = session_save_path();
     $phpenv['phpOPENBASE']          = ini_get( 'open_basedir' );
     // if open_basedir is in effect, don't bother doing session_save.path test, will error if path not in open_basedir
-    if ( isset( $phpenv['phpOPENBASE'] ) ) {
+	// changed this line to a not isset - I think this is right now - and is what we want (to not check if it is writable 
+	// if the  open_basedir is set - 4-8-12 - Phil
+    if ( !isset( $phpenv['phpOPENBASE'] ) ) {
 
         // is the session_save.path writable to this user?
         if ( is_writable( session_save_path() ) ) {
@@ -1119,7 +1131,8 @@
             $phpenv['phpSESSIONPATHWRITABLE'] = _FPA_N;
         }
 
-    } else {
+    } 
+	else {
         $phpenv['phpSESSIONPATHWRITABLE'] = _FPA_U;
     }
 
@@ -1173,9 +1186,16 @@
          ** try and cater for custom "su" environments, like cluster, grid and cloud computing.
          ** this would include weird ownership combinations that allow group access to non-owner files
          ** (like GoDaddy and a couple of grid and cloud providers I know of)
-         *****************************************************************************************/
-        if ( ( $instance['instanceCONFIGURED'] == _FPA_Y ) AND ( $system['sysCURRUSER'] != $instance['configOWNER']['name'] ) AND ( $instance['configWRITABLE'] == _FPA_Y ) AND ( ( substr( $instance['configMODE'],0 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],1 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],2 ,1 ) <= '6' ) ) ) {
-            $phpenv['phpCUSTOMSU'] = _FPA_M;
+         *****************************************************************************************
+		 ** took out this part: AND ( $instance['configWRITABLE'] == _FPA_Y )  as Joomla sets config file 
+		 ** to 444 so is read only permissions. Also changed this section:
+		 ** ( $system['sysCURRUSER'] != $instance['configOWNER']['name'] from != to == 
+		 ** If config owner is same as current user then we are probably using a custom "su" enviroment 
+		 ** such as LiteSpeed uses - 4-8-12 - Phil **/
+		 
+        if ( ( $instance['instanceCONFIGURED'] == _FPA_Y ) AND ( $system['sysCURRUSER'] == $instance['configOWNER']['name'] ) AND ( ( substr( $instance['configMODE'],0 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],1 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],2 ,1 ) <= '6' ) ) ) {
+		/** changed from maybe to yes - 4-8-12 - Phil **/
+		   $phpenv['phpCUSTOMSU'] = _FPA_Y;
             $phpenv['phpOWNERPROB'] = _FPA_N;
 
         } else {
@@ -1689,7 +1709,7 @@
 
 
                                 if ( preg_match( '#<author>(.*)</author>#', $content, $author ) ) {
-                                    $arrname[$loc][$cDir]['author'] = strip_tags( substr( $author[1], 0, 19 ) );
+                                    $arrname[$loc][$cDir]['author'] = strip_tags( substr( $author[1], 0, 25 ) );
 
                                     if ( $author[1] == 'Joomla! Project' OR strtolower( $name[1] ) == 'joomla admin' OR strtolower( $name[1] ) == 'rhuk_milkyway' OR strtolower( $name[1] ) == 'ja_purity' OR strtolower( $name[1] ) == 'khepri' OR strtolower( $name[1] ) == 'bluestork' OR strtolower( $name[1] ) == 'atomic' OR strtolower( $name[1] ) == 'hathor' OR strtolower( substr( $name[1], 0, 4 ) ) == 'beez' ) {
                                         $arrname[$loc][$cDir]['type'] = _FPA_JCORE;
@@ -1861,7 +1881,7 @@
                 margin-top:10px;
                 margin-bottom:10px;
                 padding: 5px;
-                width:740px;
+                width:780px;
                 background-color:#E0FFFF;
                 border:1px solid #42AEC2;
                 min-height: 188px;
@@ -1949,14 +1969,15 @@
                 /** CSS3 **/
                 text-shadow: 1px 1px 1px #FFF;
             }
-
+			<?php // Adjusted Box Height to accomodate long Database version names
+				  // under application instance - configuration area - 4-8-12 - Phil ?>
             .mini-content-box {
                 font-size: 10px !important;
                 text-align:center;
                 margin: 0px auto;
                 padding: 4px;
                 border: 1px solid #42AEC2;
-                height: 45px;
+                height: 65px;
                 background-color: #FFFFFF;
                 /** CSS3 **/
                 border-radius: 5px;
@@ -3411,7 +3432,7 @@
                         }
 
                         echo "\r\n\r\n";
-                        echo '[color=#000000][b]Switch User '. _FPA_ENVIRO .'[/b] [i](Experimental)[/i][b] :: [/b][/color] [b]PHP CGI:[/b] '. $phpenv['phpCGI'] .' | [b]Server SU:[/b] '. $phpenv['phpAPACHESUEXEC'] .' |  [b]PHP SU:[/b] '. $phpenv['phpPHPSUEXEC'] .' |   [b]Custom SU (Cloud/Grid):[/b] '. $phpenv['phpCUSTOMSU'];
+                        echo '[color=#000000][b]Switch User '. _FPA_ENVIRO .'[/b] [i](Experimental)[/i][b] :: [/b][/color] [b]PHP CGI:[/b] '. $phpenv['phpCGI'] .' | [b]Server SU:[/b] '. $phpenv['phpAPACHESUEXEC'] .' |  [b]PHP SU:[/b] '. $phpenv['phpPHPSUEXEC'] .' |   [b]Custom SU (LiteSpeed/Cloud/Grid):[/b] '. $phpenv['phpCUSTOMSU'];
                         echo "\r\n";
                         echo '[b]'. _FPA_POTOI .':[/b] ';
                             if ( $phpenv['phpOWNERPROB'] == _FPA_Y ) { echo '[color=#800000]'; } elseif ( $phpenv['phpOWNERPROB'] == _FPA_N ) { echo '[color=#008000]'; } else { echo '[color=orange]'; }
@@ -3827,11 +3848,11 @@
 
             if ( @$instance['instanceCFGVERMATCH'] == _FPA_Y ) {
                 echo $instance['configVALIDFOR'];
-                echo '<div class="ok" style="width:99%;margin: 0px auto;">'. _FPA_YMATCH .' cms</div>';
+                echo '<div class="ok" style="width:99%;margin: 0px auto;">'. _FPA_YMATCH .' CMS</div>';
 
             } elseif ( @$instance['instanceCFGVERMATCH'] == _FPA_N ) {
                 echo $instance['configVALIDFOR'];
-                echo '<div class="warn" style="width:99%;margin: 0px auto;">cms '. _FPA_NMATCH .'</div>';
+                echo '<div class="warn" style="width:99%;margin: 0px auto;">CMS '. _FPA_NMATCH .'</div>';
 
             } elseif ( @$instance['configVALIDFOR'] == _FPA_U ) {
                 echo '<div class="warn" style="width:99%;margin: 0px auto;">'. $instance['configVALIDFOR'] .'</div>';
@@ -5245,6 +5266,8 @@
 ?>
 
 
+
+
 <?php
     /** display the folders with elevated permissions ************************************/
     if ( $showElevated == '1' ) {
@@ -5343,17 +5366,8 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
 <?php
+	// Components
     if ( $showComponents == '1' ) {
 
         echo '<div class="section-information">';
@@ -5363,10 +5377,10 @@
         echo '<div class="column-title-container" style="width:99%;margin: 0px auto;clear:both;display:block;">';
         echo '<div class="column-title" style="width:20%;float:left;text-align:left;">'. _FPA_TNAM .'</div>';
         echo '<div class="column-title" style="width:14%;float:left;text-align:center;">'. _FPA_VER .'</div>';
-        echo '<div class="column-title" style="width:14%;float:left;">'. _FPA_TCRE .'</div>';
+        echo '<div class="column-title" style="width:14%;float:left;">'. _FPA_CRE .'</div>';
         echo '<div class="column-title" style="width:14%;float:left;">'. _FPA_AUTH .'</div>';
         echo '<div class="column-title" style="width:19%;float:left;">'. _FPA_ADDR .'</div>';
-        echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_STATUS .'</div>';
+        echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_TYPE .'</div>';
         echo '<div style="clear:both;"></div>';
         echo '</div>';
 
@@ -5388,9 +5402,9 @@
                 echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
 
                 if ( $showProtected <= 2 ) {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
                 } else {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
                 }
 
                 echo '</div>';
@@ -5416,7 +5430,7 @@
         echo '<div class="column-title" style="width:14%;float:left;">'. _FPA_CRE .'</div>';
         echo '<div class="column-title" style="width:14%;float:left;">'. _FPA_AUTH .'</div>';
         echo '<div class="column-title" style="width:19%;float:left;">'. _FPA_ADDR .'</div>';
-        echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_STATUS .'</div>';
+        echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_TYPE .'</div>';
         echo '<div style="clear:both;"></div>';
         echo '</div>';
 
@@ -5434,9 +5448,9 @@
                 echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
 
                 if ( $showProtected <= 2 ) {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
                 } else {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
                 }
 
                 echo '</div>';
@@ -5473,14 +5487,8 @@
 
 
 
-
-
-
-
-
-
-
 <?php
+	//Modules
     if ( $showModules == '1' ) {
 
         echo '<div class="section-information">';
@@ -5493,7 +5501,7 @@
         echo '<div class="column-title" style="width:14%;float:left;">'. _FPA_CRE .'</div>';
         echo '<div class="column-title" style="width:14%;float:left;">'. _FPA_AUTH .'</div>';
         echo '<div class="column-title" style="width:19%;float:left;">'. _FPA_ADDR .'</div>';
-        echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_STATUS .'</div>';
+        echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_TYPE .'</div>';
         echo '<div style="clear:both;"></div>';
         echo '</div>';
 
@@ -5515,9 +5523,9 @@
                 echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
 
                 if ( $showProtected <= 2 ) {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
                 } else {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
                 }
 
                 echo '</div>';
@@ -5543,7 +5551,7 @@
         echo '<div class="column-title" style="width:14%;float:left;">'. _FPA_CRE .'</div>';
         echo '<div class="column-title" style="width:14%;float:left;">'. _FPA_AUTH .'</div>';
         echo '<div class="column-title" style="width:19%;float:left;">'. _FPA_ADDR .'</div>';
-        echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_STATUS .'</div>';
+        echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_TYPE .'</div>';
         echo '<div style="clear:both;"></div>';
         echo '</div>';
 
@@ -5561,9 +5569,9 @@
                 echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
 
                 if ( $showProtected <= 2 ) {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
                 } else {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
                 }
 
                 echo '</div>';
@@ -5598,13 +5606,8 @@
 
 
 
-
-
-
-
-
-
 <?php
+	//Plugins
     if ( $showPlugins == '1' ) {
 
         echo '<div class="section-information">';
@@ -5617,7 +5620,7 @@
         echo '<div class="column-title" style="width:14%;float:left;">'. _FPA_CRE .'</div>';
         echo '<div class="column-title" style="width:14%;float:left;">'. _FPA_AUTH .'</div>';
         echo '<div class="column-title" style="width:19%;float:left;">'. _FPA_ADDR .'</div>';
-        echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_STATUS .'</div>';
+        echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_TYPE .'</div>';
         echo '<div style="clear:both;"></div>';
         echo '</div>';
 
@@ -5640,9 +5643,9 @@
                 echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
 
                 if ( $showProtected <= 2 ) {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
                 } else {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
                 }
 
                 echo '</div>';
@@ -5676,13 +5679,8 @@
 
 
 
-
-
-
-
-
-
 <?php
+		// Templates
         echo '<div class="section-information">';
 
         echo '<div class="section-title" style="text-align:center;">'. $template['ARRNAME'] .' :: '. _FPA_SITE .'</div>';
@@ -5693,7 +5691,7 @@
         echo '<div class="column-title" style="width:14%;float:left;">'. _FPA_CRE .'</div>';
         echo '<div class="column-title" style="width:14%;float:left;">'. _FPA_AUTH .'</div>';
         echo '<div class="column-title" style="width:19%;float:left;">'. _FPA_ADDR .'</div>';
-        echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_STATUS .'</div>';
+        echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_TYPE .'</div>';
         echo '<div style="clear:both;"></div>';
         echo '</div>';
 
@@ -5715,9 +5713,9 @@
                 echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
 
                 if ( $showProtected <= 2 ) {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
                 } else {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
                 }
 
                 echo '</div>';
@@ -5743,7 +5741,7 @@
         echo '<div class="column-title" style="width:14%;float:left;">'. _FPA_CRE .'</div>';
         echo '<div class="column-title" style="width:14%;float:left;">'. _FPA_AUTH .'</div>';
         echo '<div class="column-title" style="width:19%;float:left;">'. _FPA_ADDR .'</div>';
-        echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_ADDR .'</div>';
+        echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_TYPE .'</div>';
         echo '<div style="clear:both;"></div>';
         echo '</div>';
 
@@ -5761,9 +5759,9 @@
                 echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
 
                 if ( $showProtected <= 2 ) {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
                 } else {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
                 }
 
                 echo '</div>';
@@ -5791,17 +5789,8 @@
     echo '</div>'; // end half-section container
 
     echo '<div style="clear:both;"></div>';
+	// end show templates
 ?>
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -5934,7 +5923,6 @@
 
 
 ?>
-
 
 
     </body>

@@ -11,6 +11,7 @@
  **  @author RussW
  **  @author PhilD
  **  Edits 4-8-12 by Phil
+ **  Edite 4-17-12 by Phil
  **/
 
 
@@ -75,6 +76,13 @@
     // v1.2.0
     define ( '_FPA_SLOWGENPOST', 'Generating Post Output...' );
     define ( '_FPA_SLOWRUNTEST', 'Hang on in there while we run some tests...' );
+	
+	// remove script notice content - Phil 4-17-12
+	define ( '_FPA_DELNOTE_LN1', '<h3><p /><font color="#FF0000" size="2">** SECURITY NOTICE **</font color></size></h3><p /><font size="1">Due to the highly sensitive nature of the information displayed by the FPA script,<p /> it should be removed from the server immediately after use.</font>' );
+	define ( '_FPA_DELNOTE_LN2', '<p /><font size="1">  If the script is left on the site, it can be used to gather enough information to hack your site.</font>' );
+	define ( '_FPA_DELNOTE_LN3', '<p /><font color="#FF0000" size="3" ;">After use, <a href="fpa-en.php?act=delete">Click Here</a>  to delete this script.</font>' );
+	
+	
     // dev/diag-mode content
     // v1.2.0
     define ( '_FPA_DEVMI', 'developer-mode-information' );
@@ -92,8 +100,18 @@
     define ( '_FPA_INS_2', 'Enter any error messages you see <i>(optional)</i>' );
     define ( '_FPA_INS_3', 'Enter any actions taken to resolve the issue <i>(optional)</i>' );
     define ( '_FPA_INS_4', 'Select detail level options of output <i>(optional)</i>' );
-    define ( '_FPA_INS_5', 'Click the <span class="normal-note">Generate</span> post button to build the post content' );
-    define ( '_FPA_INS_6', 'Copy the contents of the <span class="ok-hilite">&nbsp;Post Detail&nbsp;</span> box and paste it into a post' );
+    define ( '_FPA_INS_5', 'Click the <span class="normal-note">Click Here To Generate Post</span> button to build the post content' );
+    define ( '_FPA_INS_6', 'Copy the contents of the <span class="ok-hilite">&nbsp;Post Detail&nbsp;</span> box and paste it into a post following the instructions below the genersted text box' );
+    define ( '_FPA_INS_7', ' <div align="center"><font size="2">To copy the contents of the Post Detail box:
+  </font></div>
+  <p align="left" />  
+  <div align="left"><font size="2">1.) Place the computers cursor within the above box of generated text,</font></div>
+<p align="left" />  
+  <div align="left"><font size="2">2.) Use CTRL-a to select all the text within the box</font></div>
+<p align="left" />  
+  <div align="left"><font size="2">3.) Use CTRL-c to copy the generated text to the browser clipboard.</font></div>
+<p align="left" />  
+  <div align="left"><font size="2">4.) Use CTRL-v to paste the copied text into your forum posting at the desired spot.</font></div>' );
     define ( '_FPA_POST_NOTE', 'Leave ALL fields blank/empty to simply post diagnostic information.' );
     define ( '_FPA_PROB_DSC', 'Problem Description' );
     define ( '_FPA_PROB_MSG', 'Log/Error Message' );
@@ -252,6 +270,7 @@
 
 
 
+
     /** DISPLAY A "PROCESSING" MESSAGE, if the the routines take too long ********************/
     // !TODO slowScreenSplash seems to be a little flaky
     echo '<div id="slowScreenSplash" style="padding:20px;border: 2px solid #4D8000;background-color:#FFFAF0;border-radius: 10px;-moz-border-radius: 10px;-webkit-border-radius: 10px;margin: 0 auto; margin-top:50px;margin-bottom:20px;width:700px;position:relative;z-index:9999;top:10%;" align="center">';
@@ -265,9 +284,21 @@
     }
 
     echo '<br />v'. _RES_VERSION .'-'. _RES_RELEASE .' ('. _RES_BRANCH .'-'. _RES_LANG.')';
+	echo _FPA_DELNOTE_LN1;
+	echo _FPA_DELNOTE_LN2;
+	echo _FPA_DELNOTE_LN3;
     echo '</div>';
 
 
+
+// ** delete script when done - Phil 4-17-12
+
+if ($_GET['act'] == 'delete') {
+
+  unlink('fpa-en.php');
+    
+}
+// end delete script 
 
     // setup the default runtime parameters and collect the POST data changes, if any
     if ( @$_POST['showProtected'] ) {
@@ -1043,7 +1074,6 @@
         $system['sysDOCROOT'] = substr( $absolutepath, 0, strpos( $absolutepath, $localpath ) );
         $system['sysEXECUSER'] = $system['sysCURRUSER']; // Windows work-around for not using EXEC User (this limits the cpability of discovering SU Environments though)
     }
-
 
     // looking for the Apache "suExec" Utility
     if ( function_exists( 'exec' ) AND $system['sysSHORTOS'] != 'WIN' ) { // find the owner of the current process running this script
@@ -1977,7 +2007,7 @@
                 margin: 0px auto;
                 padding: 4px;
                 border: 1px solid #42AEC2;
-                height: 65px;
+                height: 70px;
                 background-color: #FFFFFF;
                 /** CSS3 **/
                 border-radius: 5px;
@@ -2164,7 +2194,16 @@
     echo '<div style="width:85%;margin:0 auto;margin-top:10px;">';
 
     /** SUPPORT SECTIONS *************************************************************/
-    if ( @$instance['cmsRELEASE'] == '1.7' ) {
+	/** added a 2.5 section - Phil 4-20-12 *******/
+    if ( @$instance['cmsRELEASE'] == '2.5' ) {
+        $fpa['supportENV']['minPHP']        = '5.2.4';
+        $fpa['supportENV']['minSQL']        = '5.0.4';
+        $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
+        $fpa['supportENV']['maxSQL']        = '5.5.0';  // latest release?
+        $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
+        $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+		
+	} elseif ( @$instance['cmsRELEASE'] == '1.7' ) {
         $fpa['supportENV']['minPHP']        = '5.2.4';
         $fpa['supportENV']['minSQL']        = '5.0.4';
         $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
@@ -2601,7 +2640,7 @@
                                 if ( @$_POST['showElevated'] ) {
                                     $selectshowElevated = 'CHECKED';
                                 } else {
-                                    $selectshowElevated = '';
+                                    $selectshowElevated = 'CHECKED';
                                 }
 
                                 if ( @$_POST['showTables'] ) {
@@ -2613,19 +2652,19 @@
                                 if ( @$_POST['showComponents'] ) {
                                     $selectshowComponents = 'CHECKED';
                                 } else {
-                                    $selectshowComponents = '';
+                                    $selectshowComponents = 'CHECKED';
                                 }
 
                                 if ( @$_POST['showModules'] ) {
                                     $selectshowModules = 'CHECKED';
                                 } else {
-                                    $selectshowModules = '';
+                                    $selectshowModules = 'CHECKED';
                                 }
 
                                 if ( @$_POST['showPlugins'] ) {
                                     $selectshowPlugins = 'CHECKED';
                                 } else {
-                                    $selectshowPlugins = '';
+                                    $selectshowPlugins = 'CHECKED';
                                 }
 
                                 if ( $instance['instanceFOUND'] != _FPA_Y ) {
@@ -2752,7 +2791,7 @@
                  ** NOTE IF MODIFYING: carriage returns and line breaks MUST be double-quoted, not single-
                  ** quote, hence some of the weird quoting and formating
                  *****************************************************************************************/
-                echo '<textarea class="protected" style="width:700px;height:35px;font-size:9px;margin-top:5px;" type="text" rows="10" cols="100" name="postOUTPUT" id="postOUTPUT">';
+                echo '<textarea class="protected" style="width:700px;height:400px;font-size:9px;margin-top:5px;" type="text" rows="20" cols="100" name="postOUTPUT" id="postOUTPUT">';
 
 
 
@@ -3728,7 +3767,7 @@
 
                 echo '</textarea>';
                 echo '<div style="clear:both;"><br /></div>';
-                echo '<span class="ok">'. _FPA_INS_6 .'</span>';
+                echo '<span class="ok">'. _FPA_INS_7 .'</span>';
                 echo '<div style="clear:both;"><br /></div>';
                 echo '</div>';
             }
@@ -5920,8 +5959,7 @@
 
         echo '<div style="text-align:center!important;"><a style="color:#4D8000!important;" href="'. _RES_FPALINK .''. _RES_LANG .'" target="_github">'. _RES_FPALATEST .' '. _RES .'</a></div>';
         echo '</div>';
-
-
+		
 ?>
 
 

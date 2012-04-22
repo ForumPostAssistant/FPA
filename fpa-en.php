@@ -34,7 +34,7 @@
         define ( '_RES', 'Forum Post Assistant' );
     }
 
-    define ( '_RES_VERSION', '1.2.0' );
+    define ( '_RES_VERSION', '1.2.1' );
     define ( '_RES_RELEASE', 'Beta' );         // can be Alpha, Beta, RC, Final
     define ( '_RES_BRANCH', 'playGround' );    // can be playGround (Alpha/Beta only), currentDevelopment (RC only), masterPublic (Final only)
     define ( '_RES_LANG', 'en-GB' );               // Country/Language Code

@@ -12,6 +12,7 @@
  **  @author PhilD
  **  Edits 4-8-12 by Phil
  **  Edite 4-17-12 by Phil
+ **  Edits 4-20-12 by Phil
  **/
 
 
@@ -101,7 +102,7 @@
     define ( '_FPA_INS_3', 'Enter any actions taken to resolve the issue <i>(optional)</i>' );
     define ( '_FPA_INS_4', 'Select detail level options of output <i>(optional)</i>' );
     define ( '_FPA_INS_5', 'Click the <span class="normal-note">Click Here To Generate Post</span> button to build the post content' );
-    define ( '_FPA_INS_6', 'Copy the contents of the <span class="ok-hilite">&nbsp;Post Detail&nbsp;</span> box and paste it into a post following the instructions below the genersted text box' );
+    define ( '_FPA_INS_6', 'Copy the contents of the <span class="ok-hilite">&nbsp;Post Detail&nbsp;</span> box and paste it into a post following the instructions below the genersted text box' ); //changed wording Phil 4-20-12
     define ( '_FPA_INS_7', ' <div align="center"><font size="2">To copy the contents of the Post Detail box:
   </font></div>
   <p align="left" />  
@@ -111,7 +112,7 @@
 <p align="left" />  
   <div align="left"><font size="2">3.) Use CTRL-c to copy the generated text to the browser clipboard.</font></div>
 <p align="left" />  
-  <div align="left"><font size="2">4.) Use CTRL-v to paste the copied text into your forum posting at the desired spot.</font></div>' );
+  <div align="left"><font size="2">4.) Use CTRL-v to paste the copied text into your forum posting at the desired spot.</font></div>' ); //added instruction lines Phil 4-20-12
     define ( '_FPA_POST_NOTE', 'Leave ALL fields blank/empty to simply post diagnostic information.' );
     define ( '_FPA_PROB_DSC', 'Problem Description' );
     define ( '_FPA_PROB_MSG', 'Log/Error Message' );
@@ -313,7 +314,7 @@ if ($_GET['act'] == 'delete') {
         $showElevated  = 1;
 
     } else {
-        $showElevated = 1; // default (show)
+        $showElevated = 1; // default 1(show) changed default to 1 Phil 4-20-12
 
     }
 
@@ -321,7 +322,7 @@ if ($_GET['act'] == 'delete') {
         $showTables  = 1;
 
     } else {
-        $showTables = 0; // default (hide)
+        $showTables = 0; // default 0 (hide) changed default to 1 Phil 4-20-12
 
     }
 
@@ -329,7 +330,7 @@ if ($_GET['act'] == 'delete') {
         $showComponents  = 1;
 
     } else {
-        $showComponents = 0; // default (hide)
+        $showComponents = 1; // default 0 (hide) changed default to 1 Phil 4-20-12
 
     }
 
@@ -337,7 +338,7 @@ if ($_GET['act'] == 'delete') {
         $showModules  = 1;
 
     } else {
-        $showModules = 0; // default (hide)
+        $showModules = 1; // default 0 (hide) changed default to 1 Phil 4-20-12
 
     }
 
@@ -345,7 +346,7 @@ if ($_GET['act'] == 'delete') {
         $showPlugins  = 1;
 
     } else {
-        $showPlugins = 0; // default (hide)
+        $showPlugins = 1; // default 0(hide) changed default to 1 Phil 4-20-12
 
     }
 
@@ -2640,7 +2641,7 @@ if ($_GET['act'] == 'delete') {
                                 if ( @$_POST['showElevated'] ) {
                                     $selectshowElevated = 'CHECKED';
                                 } else {
-                                    $selectshowElevated = 'CHECKED';
+                                    $selectshowElevated = 'CHECKED'; // changed to checked - Phil - 4-20-12
                                 }
 
                                 if ( @$_POST['showTables'] ) {
@@ -2652,19 +2653,19 @@ if ($_GET['act'] == 'delete') {
                                 if ( @$_POST['showComponents'] ) {
                                     $selectshowComponents = 'CHECKED';
                                 } else {
-                                    $selectshowComponents = 'CHECKED';
+                                    $selectshowComponents = 'CHECKED'; // changed to checked - Phil - 4-20-12
                                 }
 
                                 if ( @$_POST['showModules'] ) {
                                     $selectshowModules = 'CHECKED';
                                 } else {
-                                    $selectshowModules = 'CHECKED';
+                                    $selectshowModules = 'CHECKED'; // changed to checked - Phil - 4-20-12
                                 }
 
                                 if ( @$_POST['showPlugins'] ) {
                                     $selectshowPlugins = 'CHECKED';
                                 } else {
-                                    $selectshowPlugins = 'CHECKED';
+                                    $selectshowPlugins = 'CHECKED'; // changed to checked - Phil - 4-20-12
                                 }
 
                                 if ( $instance['instanceFOUND'] != _FPA_Y ) {
@@ -3767,7 +3768,7 @@ if ($_GET['act'] == 'delete') {
 
                 echo '</textarea>';
                 echo '<div style="clear:both;"><br /></div>';
-                echo '<span class="ok">'. _FPA_INS_7 .'</span>';
+                echo '<span class="ok">'. _FPA_INS_7 .'</span>'; // changed to _FPA_INS_7 from _FPA_INS_6  Phil - 4-21-12
                 echo '<div style="clear:both;"><br /></div>';
                 echo '</div>';
             }

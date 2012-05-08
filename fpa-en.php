@@ -101,7 +101,9 @@
     define ( '_FPA_INS_2', 'Enter any error messages you see <i>(optional)</i>' );
     define ( '_FPA_INS_3', 'Enter any actions taken to resolve the issue <i>(optional)</i>' );
     define ( '_FPA_INS_4', 'Select detail level options of output <i>(optional)</i>' );
-    define ( '_FPA_INS_5', 'Click the <span class="normal-note">Click Here To Generate Post</span> button to build the post content' );
+	// changed wording of  _FPA_INS_5, _FPA_INS_6, and added _FPA_INS_7  - Phil 4-22-12
+    define ( '_FPA_INS_5', 'Click the <span class="normal-note">Click Here To Generate Post</span> button to build the post content
+	Once the post content is generated, it will appear inside a text box with instructions on how to copy and insert the content into a forum post ' );
     define ( '_FPA_INS_6', 'Copy the contents of the <span class="ok-hilite">&nbsp;Post Detail&nbsp;</span> box and paste it into a post following the instructions below the genersted text box' ); //changed wording Phil 4-20-12
     define ( '_FPA_INS_7', ' <div align="center"><font size="2">To copy the contents of the Post Detail box:
   </font></div>
@@ -269,7 +271,7 @@
     define ( '_FPA_HIDE', 'Hide' );
     /** END LANGUAGE STRINGS *****************************************************************/
 
-
+	define("act", "");
 
 
     /** DISPLAY A "PROCESSING" MESSAGE, if the the routines take too long ********************/

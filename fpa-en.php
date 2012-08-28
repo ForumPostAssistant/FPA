@@ -3,6 +3,8 @@
 
 
 <?php
+
+
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
  **  @version 1.2.0
@@ -23,7 +25,7 @@
 
     /** SET THE JOOMLA! PARENT FLAG AND CONSTANTS ********************************************/
     define ( '_VALID_MOS', 1 );         // for J!1.0
-    define ( '_JEXEC', 1 );             // for J!1.5, J!1.6, J!1.7
+    define ( '_JEXEC', 1 );             // for J!1.5, J!1.6, J!1.7, J!2.5, J!3.0
 
 
 
@@ -34,13 +36,15 @@
         define ( '_RES', 'Forum Post Assistant' );
     }
 
-    define ( '_RES_VERSION', '1.2.1' );
+    define ( '_RES_VERSION', '1.2.2' );
     define ( '_RES_RELEASE', 'Beta' );         // can be Alpha, Beta, RC, Final
     define ( '_RES_BRANCH', 'playGround' );    // can be playGround (Alpha/Beta only), currentDevelopment (RC only), masterPublic (Final only)
     define ( '_RES_LANG', 'en-GB' );               // Country/Language Code
     // !TODO update this once the REPO is re-organised
-    define ( '_RES_FPALINK', 'https://github.com/ForumPostAssistant/FPA/archives/' ); // where to get the latest 'Final Releases'
-    define ( '_RES_FPALATEST', 'Get the latest release of the ' );
+    define ( '_RES_FPALINK', 'https://github.com/ForumPostAssistant/FPA/tarball/en-GB/' ); // where to get the latest 'Final Releases'
+    define ( '_RES_FPALATEST', 'Get the latest zip release of the ' );
+	define ( '_RES_FPALINK2', 'https://github.com/ForumPostAssistant/FPA/zipball/en-GB/' ); // where to get the latest 'Final Releases'
+    define ( '_RES_FPALATEST2', 'Get the latest tar.gz release of the ' );
 
 
 
@@ -101,9 +105,7 @@
     define ( '_FPA_INS_2', 'Enter any error messages you see <i>(optional)</i>' );
     define ( '_FPA_INS_3', 'Enter any actions taken to resolve the issue <i>(optional)</i>' );
     define ( '_FPA_INS_4', 'Select detail level options of output <i>(optional)</i>' );
-	// changed wording of  _FPA_INS_5, _FPA_INS_6, and added _FPA_INS_7  - Phil 4-22-12
-    define ( '_FPA_INS_5', 'Click the <span class="normal-note">Click Here To Generate Post</span> button to build the post content
-	Once the post content is generated, it will appear inside a text box with instructions on how to copy and insert the content into a forum post ' );
+    define ( '_FPA_INS_5', 'Click the <span class="normal-note">Click Here To Generate Post</span> button to build the post content' );
     define ( '_FPA_INS_6', 'Copy the contents of the <span class="ok-hilite">&nbsp;Post Detail&nbsp;</span> box and paste it into a post following the instructions below the genersted text box' ); //changed wording Phil 4-20-12
     define ( '_FPA_INS_7', ' <div align="center"><font size="2">To copy the contents of the Post Detail box:
   </font></div>
@@ -271,7 +273,39 @@
     define ( '_FPA_HIDE', 'Hide' );
     /** END LANGUAGE STRINGS *****************************************************************/
 
-	define("act", "");
+// ** delete script when done - Phil 8-07-12
+// attempts to delete file from site. If it fails then message to manually delete the file is presented.	
+	if ($_GET['act'] == 'delete') {
+		$host  = $_SERVER['HTTP_HOST'];
+		$uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+		$extra = 'index.php'; // add index (or other) page if desired	
+					
+	// try to make sure we have permission to delete
+		chmod("fpa-en.php", 0777);  // octal; correct value of mode
+	// Delete the file.
+		unlink('fpa-en.php');
+						
+	/* Message and link to home page of site. */ 
+		
+		echo '<div id="slowScreenSplash" style="padding:20px;border: 2px solid #4D8000;background-color:#FFFAF0;border-radius: 10px;-moz-border-radius: 10px;-webkit-border-radius: 10px;margin: 0 auto; margin-top:50px;margin-bottom:20px;width:700px;position:relative;z-index:9999;top:10%;" align="center">';
+
+		$page= ("http://$host$uri/");
+		$filename = 'fpa-en.php';
+
+	if (file_exists($filename)) {
+		
+		echo "<p><font color='#FF0000' size='4'>Oops!</size></font color>";
+		echo "<p><font color='#FF0000' size='3'>Something went wrong with the delete process and the file </font color><font color='#000000'size='3'>$filename</font color></size><font color='#FF0000'> still exists. </font color></p>";
+		echo "<p><font color='#FF0000' size='3'>For site security, please remove the file </font color><font color='#000000'size='3'>$filename</font color></size><font color='#FF0000'> manually using your ftp program.</font color></p>";
+
+	} else {
+		echo "<p><font color='#000000' size='3'>Thank You for using the FPA. </font color></p>";
+	}
+		echo "<a href='$page'>Go to your Home Page.</a>";
+
+		exit;  
+	}
+// end delete script 
 
 
     /** DISPLAY A "PROCESSING" MESSAGE, if the the routines take too long ********************/
@@ -292,16 +326,6 @@
 	echo _FPA_DELNOTE_LN3;
     echo '</div>';
 
-
-
-// ** delete script when done - Phil 4-17-12
-
-if ($_GET['act'] == 'delete') {
-
-  unlink('fpa-en.php');
-    
-}
-// end delete script 
 
     // setup the default runtime parameters and collect the POST data changes, if any
     if ( @$_POST['showProtected'] ) {
@@ -756,7 +780,7 @@ if ($_GET['act'] == 'delete') {
 //              if ( preg_match( '#require.*[\"|\'](.*)[\"|\']#', $configContent ) ) {
 //                  preg_match ( '#require.*[\"|\'](.*)[\"|\']#', $configContent, $findConfig );
 
-//                  $instance['configPATH'] =  dirname( __FILE__ ) . $findConfig[1];
+//                 $instance['configPATH'] =  dirname( __FILE__ ) . $findConfig[1];
 //              } else {
 //                  $instance['configPATH'] =  dirname( __FILE__ ) .'/'. $findConfig[1];
 //              }
@@ -819,26 +843,40 @@ if ($_GET['act'] == 'delete') {
         }
 
 
-        /** if present, is the configuration file valid? *****************************************/
+       /** if present, is the configuration file valid? *****************************************/
 		/** added code to fix the config version mis-match on 2.5 versions of Joomla - 4-8-12 - Phil *****/
+		/** reworked code block to better determine version in 1.7 - 3.0+ versions of Joomla - 8-06-12 - Phil *****/
         $cmsCContent = file_get_contents( $instance['configPATH'] );
-
+		
+		// start with 1.0
             if ( preg_match ( '#(\$mosConfig_)#', $cmsCContent ) ) {
                 $instance['configVALIDFOR'] = '1.0';
-
+				$instance['instanceCFGVERMATCH'] = _FPA_Y;
+		// for 1.5
             } elseif ( preg_match ( '#(var)#', $cmsCContent ) ) {
                 $instance['configVALIDFOR'] = '1.5';
-
+				$instance['instanceCFGVERMATCH'] = _FPA_Y;
+		//for 1.6
             } elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] == _FPA_N ) {
                 $instance['configVALIDFOR'] = '1.6';
-
+				$instance['instanceCFGVERMATCH'] = _FPA_Y;
+		//for 1.7
             } elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] != _FPA_N  AND $instance['cmsVFILE'] != 'libraries/cms/version/version.php') {
-                $instance['configVALIDFOR'] = '1.7 and above';
-				
-			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] != _FPA_N ) {
-                $instance['configVALIDFOR'] = '2.5 and above';
-		$instance['cmsVFILE'] = 'libraries/cms/version/version.php';	
+                $instance['cmsVFILE'] = 'includes/version.php';
+				$instance['configVALIDFOR'] = $instance['cmsRELEASE'];
+				$instance['instanceCFGVERMATCH'] = _FPA_Y;
+		//for 2.5				
+			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND substr( $instance['platformRELEASE'],0,2 ) == '11' ) {
+                $instance['configVALIDFOR'] = $instance['cmsRELEASE'];
+				$instance['cmsVFILE'] = 'libraries/cms/version/version.php';
+				$instance['instanceCFGVERMATCH'] = _FPA_Y;				
+		//for 3.0
+			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND substr( $instance['platformRELEASE'],0,2 ) == '12' ) {
+                $instance['configVALIDFOR'] = $instance['cmsRELEASE'];
+				$instance['cmsVFILE'] = 'libraries/cms/version/version.php';
+				$instance['instanceCFGVERMATCH'] = _FPA_Y;		
 
+         
             } else {
                 $instance['configVALIDFOR'] = _FPA_U;
             }
@@ -854,13 +892,16 @@ if ($_GET['act'] == 'delete') {
 
             // check if the configuration.php version matches the discovered version
             if ( $instance['configVALIDFOR'] != _FPA_U AND $instance['cmsVFILE'] != _FPA_N ) {
-
-                if ( version_compare( $instance['cmsRELEASE'], substr( $instance['configVALIDFOR'],0,3 ), '==' ) ) {
+			
+			/** begin remove code block -- 8-06-12 - Phil
+			Removed following code block as it is moved up to the config file valid test area
+               if ( version_compare( $instance['cmsRELEASE'], substr( $instance['configVALIDFOR'],0,3 ), '==' ) ) {
                     $instance['instanceCFGVERMATCH'] = _FPA_Y;
 
                 } else {
                     $instance['instanceCFGVERMATCH'] = _FPA_N;
-                }
+                }   
+				--end of remove block ***/
 
 
             // set defaults for the configuration's validity and a sanity score of zero
@@ -1226,15 +1267,21 @@ if ($_GET['act'] == 'delete') {
 		 ** If config owner is same as current user then we are probably using a custom "su" enviroment 
 		 ** such as LiteSpeed uses - 4-8-12 - Phil **/
 		 
-        if ( ( $instance['instanceCONFIGURED'] == _FPA_Y ) AND ( $system['sysCURRUSER'] == $instance['configOWNER']['name'] ) AND ( ( substr( $instance['configMODE'],0 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],1 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],2 ,1 ) <= '6' ) ) ) {
+        if ( ( $instance['instanceCONFIGURED'] == _FPA_Y ) AND ( @$phpenv['phpAPI'] == 'litespeed' ) AND ( $system['sysCURRUSER'] == $instance['configOWNER']['name'] ) AND ( ( substr( $instance['configMODE'],0 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],1 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],2 ,1 ) <= '6' ) ) ) {
 		/** changed from maybe to yes - 4-8-12 - Phil **/
 		   $phpenv['phpCUSTOMSU'] = _FPA_Y;
             $phpenv['phpOWNERPROB'] = _FPA_N;
+			
+		} elseif( ( $instance['instanceCONFIGURED'] == _FPA_Y ) AND ( $system['sysCURRUSER'] == $instance['configOWNER']['name'] ) AND ( ( substr( $instance['configMODE'],0 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],1 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],2 ,1 ) <= '6' ) ) ) {
+		/** changed from maybe to yes - 4-8-12 - Phil **/
+		   $phpenv['phpCUSTOMSU'] = _FPA_Y;
+            $phpenv['phpOWNERPROB'] = _FPA_N;	
 
         } else {
             $phpenv['phpCUSTOMSU'] = _FPA_N;
             $phpenv['phpOWNERPROB'] = _FPA_M;
-        }
+        }	
+		
         /*****************************************************************************************/
         /** THIS IS A TEST FEATURE AND AS SUCH NOT GUARANTEED TO BE 100% ACCURATE ****************/
         /*****************************************************************************************/
@@ -1246,6 +1293,7 @@ if ($_GET['act'] == 'delete') {
     }
 
     $phpextensions['Zend Engine'] = zend_version();
+	
 ?>
 
 
@@ -1744,7 +1792,17 @@ if ($_GET['act'] == 'delete') {
                                 if ( preg_match( '#<author>(.*)</author>#', $content, $author ) ) {
                                     $arrname[$loc][$cDir]['author'] = strip_tags( substr( $author[1], 0, 25 ) );
 
-                                    if ( $author[1] == 'Joomla! Project' OR strtolower( $name[1] ) == 'joomla admin' OR strtolower( $name[1] ) == 'rhuk_milkyway' OR strtolower( $name[1] ) == 'ja_purity' OR strtolower( $name[1] ) == 'khepri' OR strtolower( $name[1] ) == 'bluestork' OR strtolower( $name[1] ) == 'atomic' OR strtolower( $name[1] ) == 'hathor' OR strtolower( substr( $name[1], 0, 4 ) ) == 'beez' ) {
+                                    if ( $author[1] == 'Joomla! Project' 
+									OR strtolower( $name[1] ) == 'joomla admin' 
+									OR strtolower( $name[1] ) == 'rhuk_milkyway' 
+									OR strtolower( $name[1] ) == 'ja_purity' 
+									OR strtolower( $name[1] ) == 'khepri' 
+									OR strtolower( $name[1] ) == 'bluestork' 
+									OR strtolower( $name[1] ) == 'atomic' 
+									OR strtolower( $name[1] ) == 'hathor' 
+									OR strtolower( $name[1] ) == 'beez5' 
+									OR strtolower( $name[1] ) == 'beez_20' 
+									OR strtolower( substr( $name[1], 0, 4 ) ) == 'beez' ) {
                                         $arrname[$loc][$cDir]['type'] = _FPA_JCORE;
 
                                     } else {
@@ -2178,18 +2236,18 @@ if ($_GET['act'] == 'delete') {
      ** can support the discovered version of Joomla!
      **
      ** REQUIREMENTS: (as far as I know!)
-     **          ____________________________________________
-     **          | J1.7/6 | J!1.5.0-14 | J1.5.0-23 |  J!1.0  |
+     **          ______________________________________________________
+     **          | J3.0   | J1.7/6 | J!1.5.0-14 | J1.5.0-23 |  J!1.0  |
      ** ------------------------------------------------------
-     ** MIN PHP  | 5.2.4  |   4.3.10   |  4.3.10   |  3.0.1  |
-     ** MAX PHP  | -----  |   5.2.17   |  5.3.6    |  4.4.9  | // 5.0.0 was first release to include MySQLi support
+     ** MIN PHP  | 5.3.1  | 5.2.4  |   4.3.10   |  4.3.10   |  3.0.1  |
+     ** MAX PHP  | -----  | -----  |   5.2.17   |  5.3.6    |  4.4.9  | // 5.0.0 was first release to include MySQLi support
      ** ------------------------------------------------------
-     ** MIN MYSQL| 5.0.4  |   3.23.0   |  3.23.0   |  3.0.0  |
-     ** MAX MYSQL| -----  |   5.1.43   |  5.1.43   |  5.0.91 | // only limited to 4.1.29 & 5.1 because install sql still has ENGINE TYPE statements (removed in MySQL 5.5)
+     ** MIN MYSQL | 5.1.6 | 5.0.4  |   3.23.0   |  3.23.0   |  3.0.0  |
+     ** MAX MYSQL | ----- | -----  |   5.1.43   |  5.1.43   |  5.0.91 | // only limited to 4.1.29 & 5.1 because install sql still has ENGINE TYPE statements (removed in MySQL 5.5)
      ** ------------------------------------------------------
-     ** BAD PHP  | -----  |   4.39, 4.4.2, 5.0.5   |  -----  |
-     ** BAD SQL  | -----  |        >5.0.0          |  -----  |
-     ** BAD ZEND | -----  |         2.5.10         |  -----  |
+     ** BAD PHP  | -----  | -----  |   4.39, 4.4.2, 5.0.5   |  -----  |
+     ** BAD SQL  | -----  | -----  |        >5.0.0          |  -----  |
+     ** BAD ZEND | -----  | -----  |         2.5.10         |  -----  |
      *****************************************************************************************/
     $fpa['supportENV'] = '';
 
@@ -2198,7 +2256,14 @@ if ($_GET['act'] == 'delete') {
 
     /** SUPPORT SECTIONS *************************************************************/
 	/** added a 2.5 section - Phil 4-20-12 *******/
-    if ( @$instance['cmsRELEASE'] == '2.5' ) {
+	if ( @$instance['cmsRELEASE'] == '3.0' ) {
+        $fpa['supportENV']['minPHP']        = '5.3.1';
+        $fpa['supportENV']['minSQL']        = '5.1.6';
+        $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
+        $fpa['supportENV']['maxSQL']        = '5.5.0';  // latest release?
+        $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
+        $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+    } elseif ( @$instance['cmsRELEASE'] == '2.5' ) {
         $fpa['supportENV']['minPHP']        = '5.2.4';
         $fpa['supportENV']['minSQL']        = '5.0.4';
         $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
@@ -2513,8 +2578,9 @@ if ($_GET['act'] == 'delete') {
     //TEST
     echo '<div style="text-align:center;"><a style="color:#4D8000!important;" href="'. _RES_FPALINK .''. _RES_LANG .'" target="_github">'. _RES_FPALATEST .' '. _RES .'</a></div>';
     echo '<div style="clear:both;"></div>';
+	echo "<p></p>";
+	echo '<div style="text-align:center!important;"><a style="color:#4D8000!important;" href="'. _RES_FPALINK2 .''. _RES_LANG .'" target="_github">'. _RES_FPALATEST2 .' '. _RES .'</a></div>';
     echo '</div>';
-
     showDev ( $snapshot );
     ?>
 
@@ -5431,32 +5497,42 @@ if ($_GET['act'] == 'delete') {
 
 
         echo '<div class="mini-content-box-small" style="">';
-        if ( $instance['instanceFOUND'] == _FPA_Y ) { // an instance wasn't found in the initial checks, so no folders to check
-
-            foreach ( $component['SITE'] as $key => $show ) {
-
-                if ( $show['type'] != '3rd Party' ) {
-                    $typeColor = '404040';
-                } else {
-                    $typeColor = '000080';
-                }
-
-                echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
-
-                if ( $showProtected <= 2 ) {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-                } else {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-                }
-
-                echo '</div>';
-            }
-
-        } else {
-            echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
+        if ( $instance['instanceFOUND'] == _FPA_N ) { // an instance wasn't found in the initial checks, so no folders to check
+			echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
             echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
             echo '</div>';
-        }
+        } else
+		// Site components - 8-06-12 - Phil
+		// section was redone to only show 3rd party Site components with the idea to cut down on clutter in posts 
+		// and make it easier to see what are 3rd party. The old code is marked out below.
+            foreach ( $component['SITE'] as $key => $show ) {
+
+                if ( $show['type'] == _FPA_3PD AND $showProtected <= 2) {
+                    $typeColor = '404040';
+					 echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+               
+                } elseif ( $showProtected > 2 ) {
+                    $typeColor = '000080';
+					 echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+              
+                }
+}
+// - 8-06-12 - Phil  
+  //   echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
+//show site components
+//blocked core display Origional is: if ( $showProtected <= 2 ) {
+            //    if ( $showProtected <= 2 AND $show['type'] == _FPA_3PD) {
+           //         echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+           //     } elseif ( $showProtected > 2 AND $show['type'] == _FPA_3PD) { 
+           //         echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+          //      }
+
+           //    echo '</div>';
+        //    }
+
+       // } else {
+	  
+           
 
         echo '</div></div>';
 
@@ -5477,34 +5553,43 @@ if ($_GET['act'] == 'delete') {
         echo '</div>';
 
         echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
-        if ( $instance['instanceFOUND'] == _FPA_Y ) { // an instance wasn't found in the initial checks, so no folders to check
-
-            foreach ( $component['ADMIN'] as $key => $show ) {
-
-                if ( $show['type'] != _FPA_3PD ) {
-                    $typeColor = '404040';
-                } else {
-                    $typeColor = '000080';
-                }
-
-                echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
-
-                if ( $showProtected <= 2 ) {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-                } else {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-                }
-
-                echo '</div>';
-            }
-
-
-        } else {
-//        if ( $instance['instanceFOUND'] == _FPA_N ) { // an instance wasn't found in the initial checks, so no folders to check
-            echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
+       if ( $instance['instanceFOUND'] == _FPA_N ) { // an instance wasn't found in the initial checks, so no folders to check
+			echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
             echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
             echo '</div>';
-        }
+        } else
+		// Admin components - 8-06-12 - Phil
+		// section was redone to only show 3rd party Admin components with the idea to cut down on clutter in posts 
+		// and make it easier to see what are 3rd party. The old code is marked out below.
+            foreach ( $component['ADMIN'] as $key => $show ) {
+
+                if ( $show['type'] == _FPA_3PD AND $showProtected <= 2) {
+                    $typeColor = '404040';
+					 echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+               
+                } elseif ( $showProtected > 2 ) {
+                    $typeColor = '000080';
+					 echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+              
+                }
+}
+//  - 8-06-12 - Phil
+         //       echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
+//Show admin components
+//blocked core display Origional is: if ( $showProtected <= 2 ) {
+     //           if ( $showProtected <= 2 and $show['type'] == _FPA_3PD) {
+     //               echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+     //          } else {
+     //               echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+     //           }
+
+     //           echo '</div>';
+    //        }
+
+
+   //     } else {
+
+         
 
 
         echo '</div></div>';
@@ -5552,32 +5637,44 @@ if ($_GET['act'] == 'delete') {
 
 
         echo '<div class="mini-content-box-small" style="">';
-        if ( $instance['instanceFOUND'] == _FPA_Y ) { // an instance wasn't found in the initial checks, so no folders to check
-
+        if ( $instance['instanceFOUND'] == _FPA_N ) { // an instance wasn't found in the initial checks, so no folders to check
+			echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
+            echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
+            echo '</div>';
+        } else
+		// Site modules - 8-06-12 - Phil
+		// section was redone to only show 3rd party Site modules with the idea to cut down on clutter in posts 
+		// and make it easier to see what are 3rd party. The old code is marked out below.
             foreach ( $module['SITE'] as $key => $show ) {
 
-                if ( $show['type'] != _FPA_3PD ) {
+                if ( $show['type'] == _FPA_3PD AND $showProtected <= 2) {
                     $typeColor = '404040';
-                } else {
+					 echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+               
+                } elseif ( $showProtected > 2 ) {
                     $typeColor = '000080';
+					 echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+              
                 }
+}
 
-                echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
+ //- 8-06-12 - Phil 
+ //        echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
+//blocked core display Origional is: if ( $showProtected <= 2 ) {
+      //          if ( $showProtected <= 2 and $show['type'] = '3rd Party') {
+      //              echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+      //          } else {
+      //              echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+      //          }
 
-                if ( $showProtected <= 2 ) {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-                } else {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-                }
+       //         echo '</div>';
+      //      }
 
-                echo '</div>';
-            }
-
-        } else {
-            echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-            echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $module['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-            echo '</div>';
-        }
+    //    } else {
+   //         echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
+   //         echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $module['ARRNAME'] .' '. _FPA_TESTP .'</div>';
+    //        echo '</div>';
+   //     }
 
         echo '</div></div>';
 
@@ -5598,32 +5695,44 @@ if ($_GET['act'] == 'delete') {
         echo '</div>';
 
         echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
-        if ( $instance['instanceFOUND'] == _FPA_Y ) { // an instance wasn't found in the initial checks, so no folders to check
-
+        if ( $instance['instanceFOUND'] == _FPA_N ) { // an instance wasn't found in the initial checks, so no folders to check
+			echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
+            echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
+            echo '</div>';
+        } else
+		// Admin modules - 8-06-12 - Phil
+		// section was redone to only show 3rd party Admin modules with the idea to cut down on clutter in posts 
+		// and make it easier to see what are 3rd party. The old code is marked out below.
             foreach ( $module['ADMIN'] as $key => $show ) {
 
-                if ( $show['type'] != _FPA_3PD ) {
+                if ( $show['type'] == _FPA_3PD AND $showProtected <= 2) {
                     $typeColor = '404040';
-                } else {
+					 echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+               
+                } elseif ( $showProtected > 2 ) {
                     $typeColor = '000080';
+					 echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+              
                 }
+}
 
-                echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
+// - 8-06-12 - Phil
+         //       echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
+//blocked core display Origional is: if ( $showProtected <= 2 ) {
+        //        if ( $showProtected <= 2 and $show['type'] = '3rd Party') {
+        //            echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+        //        } else {
+        //            echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+        //        }
 
-                if ( $showProtected <= 2 ) {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-                } else {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-                }
+       //         echo '</div>';
+       //     }
 
-                echo '</div>';
-            }
-
-        } else {
-            echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-            echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $module['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-            echo '</div>';
-        }
+    //    } else {
+    //        echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
+    //        echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $module['ARRNAME'] .' '. _FPA_TESTP .'</div>';
+    //        echo '</div>';
+    //    }
 
         echo '</div></div>';
 
@@ -5672,32 +5781,44 @@ if ($_GET['act'] == 'delete') {
 
 
         echo '<div class="mini-content-box-small" style="">';
-        if ( $instance['instanceFOUND'] == _FPA_Y ) { // an instance wasn't found in the initial checks, so no folders to check
-
+        if ( $instance['instanceFOUND'] == _FPA_N ) { // an instance wasn't found in the initial checks, so no folders to check
+			echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
+            echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
+            echo '</div>';
+        } else
+		// Site Plugins - 8-06-12 - Phil
+		// section was redone to only show 3rd party site plugins with the idea to cut down on clutter in posts 
+		// and make it easier to see what are 3rd party. The old code is marked out below.
             foreach ( $plugin['SITE'] as $key => $show ) {
 
-                if ( $show['type'] != _FPA_3PD ) {
+                if ( $show['type'] == _FPA_3PD AND $showProtected <= 2) {
                     $typeColor = '404040';
-                } else {
+					 echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+               
+                } elseif ( $showProtected > 2 ) {
                     $typeColor = '000080';
+					 echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+              
                 }
+}
 
-                echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
+// - 8-06-12 - Phil
+        //        echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
+//blocked core display Origional is: if ( $showProtected <= 2 ) {
+        //        if ( $showProtected <= 2 and $show['type'] = '3rd Party') {
+       //             echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+        //        } else {
+        //            echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+        //        }
 
-                if ( $showProtected <= 2 ) {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-                } else {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-                }
+         //       echo '</div>';
+        //    }
 
-                echo '</div>';
-            }
-
-        } else {
-            echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-            echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $plugin['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-            echo '</div>';
-        }
+     //   } else {
+     //       echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
+     //       echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $plugin['ARRNAME'] .' '. _FPA_TESTP .'</div>';
+     //       echo '</div>';
+     //   }
 
         echo '</div></div>';
 
@@ -5742,32 +5863,44 @@ if ($_GET['act'] == 'delete') {
 
 
         echo '<div class="mini-content-box-small" style="">';
-        if ( $instance['instanceFOUND'] == _FPA_Y ) { // an instance wasn't found in the initial checks, so no folders to check
-
+        if ( $instance['instanceFOUND'] == _FPA_N ) { // an instance wasn't found in the initial checks, so no folders to check
+			echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
+            echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
+            echo '</div>';
+        } else
+		// Site templates - 8-06-12 - Phil
+		// section was redone to only show 3rd party Site templates with the idea to cut down on clutter in posts 
+		// and make it easier to see what are 3rd party. The old code is marked out below.
             foreach ( $template['SITE'] as $key => $show ) {
 
-                if ( $show['type'] != _FPA_3PD ) {
+                if ( $show['type'] == _FPA_3PD AND $showProtected <= 2) {
                     $typeColor = '404040';
-                } else {
+					 echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+               
+                } elseif ( $showProtected > 2 ) {
                     $typeColor = '000080';
+					 echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+              
                 }
+}
 
-                echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
+// - 8-06-12 - Phil
+         //       echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
+//blocked core display Origional is: if ( $showProtected <= 2 ) {
+         //       if ( $showProtected <= 2 AND $show['type'] = '3rd Party') {
+        //            echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+         //       } else {
+         //           echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+         //       }
 
-                if ( $showProtected <= 2 ) {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-                } else {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-                }
+         //       echo '</div>';
+        //    }
 
-                echo '</div>';
-            }
-
-        } else {
-            echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-            echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $template['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-            echo '</div>';
-        }
+    //    } else {
+    //        echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
+    //        echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $template['ARRNAME'] .' '. _FPA_TESTP .'</div>';
+    //        echo '</div>';
+    //    }
 
         echo '</div></div>';
 
@@ -5788,32 +5921,43 @@ if ($_GET['act'] == 'delete') {
         echo '</div>';
 
         echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
-        if ( $instance['instanceFOUND'] == _FPA_Y ) { // an instance wasn't found in the initial checks, so no folders to check
-
-            foreach ( @$template['ADMIN'] as $key => $show ) {
-
-                if ( $show['type'] != _FPA_3PD ) {
-                    $typeColor = '404040';
-                } else {
-                    $typeColor = '000080';
-                }
-
-                echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
-
-                if ( $showProtected <= 2 ) {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-                } else {
-                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-                }
-
-                echo '</div>';
-            }
-
-        } else {
-            echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-            echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $template['ARRNAME'] .' '. _FPA_TESTP .'</div>';
+        if ( $instance['instanceFOUND'] == _FPA_N ) { // an instance wasn't found in the initial checks, so no folders to check
+			echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
+            echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
             echo '</div>';
-        }
+        } else
+		// Admin templates - 8-06-12 - Phil
+		// section was redone to only show 3rd party Admin templates with the idea to cut down on clutter in posts 
+		// and make it easier to see what are 3rd party. The old code is marked out below.
+            foreach ( $template['ADMIN'] as $key => $show ) {
+
+                if ( $show['type'] == _FPA_3PD AND $showProtected <= 2) {
+                    $typeColor = '404040';
+					 echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+               
+                } elseif ( $showProtected > 2 ) {
+                    $typeColor = '000080';
+					 echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+              
+                }
+}
+
+ //               echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
+//blocked core display Origional is: if ( $showProtected <= 2 ) {
+ //               if ( $showProtected <= 2 and $show['type'] = '3rd Party') {
+//                   echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+//                } else {
+//                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
+//                }
+
+//                echo '</div>';
+//            }
+
+ //       } else {
+//            echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
+ //           echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $template['ARRNAME'] .' '. _FPA_TESTP .'</div>';
+//            echo '</div>';
+//       }
 
         echo '</div></div>';
 
@@ -5961,6 +6105,8 @@ if ($_GET['act'] == 'delete') {
         echo '<div style="clear:both;"><br /></div>';
 
         echo '<div style="text-align:center!important;"><a style="color:#4D8000!important;" href="'. _RES_FPALINK .''. _RES_LANG .'" target="_github">'. _RES_FPALATEST .' '. _RES .'</a></div>';
+		echo "<p></p>";
+		echo '<div style="text-align:center!important;"><a style="color:#4D8000!important;" href="'. _RES_FPALINK2 .''. _RES_LANG .'" target="_github">'. _RES_FPALATEST2 .' '. _RES .'</a></div>';
         echo '</div>';
 		
 ?>

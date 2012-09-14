@@ -1623,7 +1623,7 @@
                 $database['dbHOSTINFO']     = @mysqli_get_host_info( $dBconn );         // connection type to dB
                 $database['dbHOSTPROTO']    = @mysqli_get_proto_info( $dBconn );        // server protocol type
                 $database['dbHOSTCLIENT']   = @mysqli_get_client_info();                // client library version
-                $database['dbHOSTDEFCHSET'] = @mysqli_client_encoding( $dBconn );       // this is the hosts default character-set
+                $database['dbHOSTDEFCHSET'] = @mysqli_character_set_name( $dBconn );       // this is the hosts default character-set
                 $database['dbHOSTSTATS']    = explode("  ", @mysqli_stat( $dBconn ) );  // latest statistics
 
                 // find the database collation

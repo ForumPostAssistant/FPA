@@ -7,7 +7,7 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.2.0
+ **  @version 1.2.2
  **  @release playGround
  **  @date 24/06/2011
  **  @author RussW
@@ -37,6 +37,12 @@
     }
 
     define ( '_RES_VERSION', '1.2.2' );
+	define ( '_COPYRIGHT_STMT', ' Copyright (C) 2011, 2012 Russell Winter, Phil DeGruy &nbsp;' );
+	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
+	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. &nbsp; This is free software, 
+	and covered under the GNU GPLv3 or later license. You are welcome to redistribute it under certain conditions.  
+	For details read the LICENSE.txt file included in the download package with this script. 
+	A copy of the license may also be obtained at ' );
     define ( '_RES_RELEASE', 'Beta' );         // can be Alpha, Beta, RC, Final
     define ( '_RES_BRANCH', 'playGround' );    // can be playGround (Alpha/Beta only), currentDevelopment (RC only), masterPublic (Final only)
     define ( '_RES_LANG', 'en-GB' );               // Country/Language Code
@@ -1616,7 +1622,13 @@
         } elseif ( $instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_Y ) { // mysqli
 
             $dBconn = @new mysqli( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'], $instance['configDBNAME'] );
-            $database['dbERROR'] = mysqli_connect_errno( $dBconn ) .':'. mysqli_connect_error( $dBconn );
+            $database['dbERROR'] = mysqli_connect_errno( $dBconn ) .':'. mysqli_connect_error( $dBconn );	
+	// These database connection tests below are the cause of the white screen issues and non working on latest xampp stuff Phil
+	/**  Replaced alias in line 1626 with actual function
+		Changed line 1626 replacing the Alias function "mysqli_client_encoding" which has been DEPRECATED as of PHP 5.3.0 and REMOVED 
+	as of PHP 5.4.0 and replacing it with the actual function "mysqli_character_set_name". 
+	This will help maintain php 5 compatibility and possibly eliminate the user reported issue of "FPA never finishes" complaints 
+	when running FPA on some systems. Phil 09-14-2012 **/
 
             if ( $dBconn ) {
                 $database['dbHOSTSERV']     = @mysqli_get_server_info( $dBconn );       // SQL server version
@@ -6107,7 +6119,8 @@
         echo '<div style="text-align:center!important;"><a style="color:#4D8000!important;" href="'. _RES_FPALINK .''. _RES_LANG .'" target="_github">'. _RES_FPALATEST .' '. _RES .'</a></div>';
 		echo "<p></p>";
 		echo '<div style="text-align:center!important;"><a style="color:#4D8000!important;" href="'. _RES_FPALINK2 .''. _RES_LANG .'" target="_github">'. _RES_FPALATEST2 .' '. _RES .'</a></div>';
-        echo '</div>';
+        echo "<br></br><p>FPA " . _RES_VERSION . " " . _COPYRIGHT_STMT . " "  . _LICENSE_FOOTER . " "  . _LICENSE_LINK . "</p>";	
+		echo '</div>';
 		
 ?>
 

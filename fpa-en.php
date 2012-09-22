@@ -7,7 +7,7 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.2.2
+ **  @version 1.2.3
  **  @release playGround
  **  @date 24/06/2011
  **  @author RussW
@@ -15,13 +15,15 @@
  **  Edits 4-8-12 by Phil
  **  Edite 4-17-12 by Phil
  **  Edits 4-20-12 by Phil
+ **  Edits 08-07-12 by Phil
+ **  Edits 09-20-12 by Phil
  **/
 
 
     /** SET THE FPA DEFAULTS *****************************************************************/
     //define ( '_FPA_BRA', TRUE );      // bug-report-mode, else it's the standard Forum Post Assistant
-    //define ( '_FPA_DEV', TRUE );      // developer-mode, displays raw array data
-    //define ( '_FPA_DIAG', TRUE );     // diagnostic-mode, turns on PHP logging errors, display errors and logs error to a file.
+    define ( '_FPA_DEV', TRUE );      // developer-mode, displays raw array data
+   // define ( '_FPA_DIAG', TRUE );     // diagnostic-mode, turns on PHP logging errors, display errors and logs error to a file.
 
     /** SET THE JOOMLA! PARENT FLAG AND CONSTANTS ********************************************/
     define ( '_VALID_MOS', 1 );         // for J!1.0
@@ -36,7 +38,7 @@
         define ( '_RES', 'Forum Post Assistant' );
     }
 
-    define ( '_RES_VERSION', '1.2.2' );
+    define ( '_RES_VERSION', '1.2.3' );
 	define ( '_COPYRIGHT_STMT', ' Copyright (C) 2011, 2012 Russell Winter, Phil DeGruy &nbsp;' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. &nbsp; This is free software, 
@@ -44,8 +46,8 @@
 	For details read the LICENSE.txt file included in the download package with this script. 
 	A copy of the license may also be obtained at ' );
     define ( '_RES_RELEASE', 'Beta' );         // can be Alpha, Beta, RC, Final
-    define ( '_RES_BRANCH', 'playGround' );    // can be playGround (Alpha/Beta only), currentDevelopment (RC only), masterPublic (Final only)
-    define ( '_RES_LANG', 'en-GB' );               // Country/Language Code
+    define ( '_RES_BRANCH', 'Branch en-GB' );    // can be playGround (Alpha/Beta only), currentDevelopment (RC only), masterPublic (Final only)
+    define ( '_RES_LANG', '&nbsp Language en-GB' );               // Country/Language Code
     // !TODO update this once the REPO is re-organised
     define ( '_RES_FPALINK', 'https://github.com/ForumPostAssistant/FPA/tarball/en-GB/' ); // where to get the latest 'Final Releases'
     define ( '_RES_FPALATEST', 'Get the latest zip release of the ' );
@@ -86,7 +88,7 @@
     // slow screen message
     // v1.2.0
     define ( '_FPA_SLOWGENPOST', 'Generating Post Output...' );
-    define ( '_FPA_SLOWRUNTEST', 'Hang on in there while we run some tests...' );
+    define ( '_FPA_SLOWRUNTEST', 'Hang on while we run some tests...' );
 	
 	// remove script notice content - Phil 4-17-12
 	define ( '_FPA_DELNOTE_LN1', '<h3><p /><font color="#FF0000" size="2">** SECURITY NOTICE **</font color></size></h3><p /><font size="1">Due to the highly sensitive nature of the information displayed by the FPA script,<p /> it should be removed from the server immediately after use.</font>' );
@@ -280,13 +282,14 @@
     /** END LANGUAGE STRINGS *****************************************************************/
 
 // ** delete script when done - Phil 8-07-12
-// attempts to delete file from site. If it fails then message to manually delete the file is presented.	
-	if ($_GET['act'] == 'delete') {
+// attempts to delete file from site. If it fails then message to manually delete the file is presented.
+// fixed undefined index when server uses E_STRICT - Phil 9-20-12	
+ if (isset($_GET['act']) == "delete"){ 
 		$host  = $_SERVER['HTTP_HOST'];
 		$uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
 		$extra = 'index.php'; // add index (or other) page if desired	
 					
-	// try to make sure we have permission to delete
+	// try to set script to 777 to make sure we have permission to delete
 		chmod("fpa-en.php", 0777);  // octal; correct value of mode
 	// Delete the file.
 		unlink('fpa-en.php');
@@ -297,9 +300,8 @@
 
 		$page= ("http://$host$uri/");
 		$filename = 'fpa-en.php';
-
+// Something went wrong and the script was not deleted so it must be removed manually so we tell the user to do so - Phil 8-07-12
 	if (file_exists($filename)) {
-		
 		echo "<p><font color='#FF0000' size='4'>Oops!</size></font color>";
 		echo "<p><font color='#FF0000' size='3'>Something went wrong with the delete process and the file </font color><font color='#000000'size='3'>$filename</font color></size><font color='#FF0000'> still exists. </font color></p>";
 		echo "<p><font color='#FF0000' size='3'>For site security, please remove the file </font color><font color='#000000'size='3'>$filename</font color></size><font color='#FF0000'> manually using your ftp program.</font color></p>";
@@ -313,11 +315,11 @@
 	}
 // end delete script 
 
-
     /** DISPLAY A "PROCESSING" MESSAGE, if the the routines take too long ********************/
     // !TODO slowScreenSplash seems to be a little flaky
     echo '<div id="slowScreenSplash" style="padding:20px;border: 2px solid #4D8000;background-color:#FFFAF0;border-radius: 10px;-moz-border-radius: 10px;-webkit-border-radius: 10px;margin: 0 auto; margin-top:50px;margin-bottom:20px;width:700px;position:relative;z-index:9999;top:10%;" align="center">';
     echo '<h1>'. _RES .'</h1>';
+	echo  _RES_VERSION .'-'. _RES_RELEASE .' ('. _RES_BRANCH . _RES_LANG.')';
 
     if ( @$_POST['doIT'] == 1 ) {
         echo '<h3 style="color:#4D8000;">'. _FPA_SLOWGENPOST .'</h3>';
@@ -326,7 +328,7 @@
 
     }
 
-    echo '<br />v'. _RES_VERSION .'-'. _RES_RELEASE .' ('. _RES_BRANCH .'-'. _RES_LANG.')';
+    
 	echo _FPA_DELNOTE_LN1;
 	echo _FPA_DELNOTE_LN2;
 	echo _FPA_DELNOTE_LN3;
@@ -536,9 +538,11 @@
 
     // if the user see's Out Of Memory or Execution Timer pops, double the current memory_limit and max_execution_time
     // !FIXME doubling limits, seems a bit flaky on very secure hosts
+	// !! This does not work properly. Fails badly (fatal) if we try changing memory 
+	// ** Fixed this code by adding the missing M to the result ** //  - Phil 09-20-12
     if ( @$_POST['increasePOPS'] == 1 ) {
-        ini_set ( 'memory_limit', $fpa['ORIGphpMEMLIMIT']*2 );
-        ini_set ( 'max_execution_time', $fpa['ORIGphpMAXEXECTIME']*2 );
+        ini_set ( 'memory_limit', ($fpa['ORIGphpMEMLIMIT']*2)."M" );
+        ini_set ( 'max_execution_time', ($fpa['ORIGphpMAXEXECTIME']*2) );
     }
 
 
@@ -561,11 +565,14 @@
         // get the current time in seconds
         $now_time = time();
 
-            // if the file was modified less than one day ago, grab the last error entry
-            if ( $file_time - $now_time < $age ) {
-                // !FIXME memory allocation error on large php_error file
-                $phpenv['phpLASTERR'] = array_pop( file( $phpenv['phpERRLOGFILE'] ) );
-            }
+             /** if the file was modified less than one day ago, grab the last error entry
+			  ** Changed this section to get rid of the "Strict Standards: Only variables should be passed by reference" 
+			  ** error  Phil - 9-20-12 */
+        if ( $file_time - $now_time < $age ) {
+            // !FIXME memory allocation error on large php_error file
+            $lines = file( $phpenv['phpERRLOGFILE'] );
+            $phpenv['phpLASTERR'] = array_pop( $lines );
+        }
     }
 ?>
 
@@ -1468,8 +1475,9 @@
             // Close the directory handle
             closedir( $dh );
         }
-
-            if ( $dirCount == '0' ) {
+		/** Fixed Warning: Illegal string offset 'mode' on line 1476
+		 ** Warning: Illegal string offset 'writable' on line 1477 - Phil 09-20-12*/
+            if (isset( $dirCount) == '0' ) {
                 $elevated['None'] = _FPA_NONE;
                 $elevated['None']['mode'] = '-';
                 $elevated['None']['writable'] = '-';

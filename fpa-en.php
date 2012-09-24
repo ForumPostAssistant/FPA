@@ -8,7 +8,7 @@
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
  **  @version 1.2.3
- **  @release playGround
+ **  @release Beta
  **  @date 24/06/2011
  **  @author RussW
  **  @author PhilD
@@ -17,6 +17,7 @@
  **  Edits 4-20-12 by Phil
  **  Edits 08-07-12 by Phil
  **  Edits 09-20-12 by Phil
+ **  Edits 09-23-12 by Phil
  **/
 
 
@@ -70,6 +71,7 @@
     define ( '_FPA_APAMOD_TITLE', 'Apache Modules' );
     define ( '_FPA_APAREQ_TITLE', 'Apache Requirements' );
     define ( '_FPA_DB_TITLE', 'Database Instance' );
+	define ( '_FPA_TABLE', 'Tables' );
     define ( '_FPA_DBTBL_TITLE', 'Table Structure' );
     define ( '_FPA_PERMCHK_TITLE', 'Permissions Checks' );
     define ( '_FPA_COREDIR_TITLE', 'Core Folders' );
@@ -252,11 +254,11 @@
     define ( '_FPA_OWNER', 'Owner' );
     define ( '_FPA_GROUP', 'Group' );
     define ( '_FPA_VER', 'Version' );
-	define ( '_FPA_CRE', 'Created' ); // added this missing tag 4-8-12 - Phil
+	define ( '_FPA_CRE', 'Created' ); // added this missing variable define 4-8-12 - Phil
     define ( '_FPA_LOCAL', 'Local' );
     define ( '_FPA_REMOTE', 'Remote' );
     define ( '_FPA_SECONDS', 'seconds' );
-    define ( '_FPA_TBL', 'Table' );
+    define ( '_FPA_TBL', 'Table' );   // added this missing variable define - Phil 09-23-12
     define ( '_FPA_STAT', 'Statistics' );
     define ( '_FPA_BASIC', 'Basic' );
     define ( '_FPA_DETAILED', 'Detailed' );
@@ -613,7 +615,7 @@
 			
         }
 			}
-	
+	// ************** End Fix for memory allocation error when reading php_error file
 ?>
 
 <?php
@@ -2699,7 +2701,7 @@
                                 <div style="text-align:right;padding:2px;"><div class="normal" style="text-align:left;width:120px;float:left;"><?php echo _FPA_PROB_MSG; ?>:</div> <input class="normal-note" style="background-color: #FFFFCC;width:175px;font-size:9px;" type="text" name="probMSG1" /></div>
 
                                 <?php
-                                    if ( $phpenv['phpLASTERR'] ) {
+                                    if ( isset($phpenv['phpLASTERR']) ) {
                                         echo '<div style="text-align:right;padding:2px;"><div class="warn-text" style="text-align:left;width:120px;float:left;">'. _FPA_LAST .' '. _FPA_ER .':</div> <input class="normal-note" style="color: #800000;background-color: #FFFFCC;width:175px;font-size:9px;" type="text" value="'. $phpenv['phpLASTERR'] .'" name="probMSG2" /><br /><span class="normal" style="font-size:8px;">auto-completed from your php error log&nbsp;&nbsp;</span></div>';
                                     } else {
                                         echo '<div style="text-align:right;padding:2px;"><div class="normal" style="text-align:left;width:120px;float:left;">'. _FPA_PROB_MSG .':</div> <input class="normal-note" style="background-color: #FFFFCC;width:175px;font-size:9px;" type="text" name="probMSG2" /></div>';
@@ -3473,7 +3475,7 @@
 
                         if ( substr( $instance['configMODE'],1 ,1 ) == '7' OR substr( $instance['configMODE'],2 ,1 ) >= '5' OR substr( $instance['configMODE'],3 ,1 ) >= '5' ) { echo '[color=#800000]'; } else { echo '[color=#008000]'; }
                         echo $instance['configMODE'] .'[/color]) | ';
-                        echo '[b]'. _FPA_OWNER .':[/b] '. $instance['configOWNER']['name'] .' (uid: '. $instance['configOWNER']['uid'] .'/gid: '. $instance['configOWNER']['gid'] .') | [b]'. _FPA_GROUP .':[/b] '. $instance['configGROUP']['name'] .' (gid: '. $instance['configGROUP']['gid'] .') | [b]Valid For:[/b] '. $instance['configVALIDFOR'];
+                        echo '[b]'. _FPA_OWNER .':[/b] '. $instance['configOWNER']['name'] .' (uid: '. isset($instance['configOWNER']['uid']) .'/gid: '. isset($instance['configOWNER']['gid']) .') | [b]'. _FPA_GROUP .':[/b] '. $instance['configGROUP']['name'] .' (gid: '. isset($instance['configGROUP']['gid']) .') | [b]Valid For:[/b] '. $instance['configVALIDFOR'];
 
                     echo "\r\n";
 
@@ -3552,13 +3554,11 @@
 
                             if ( $_POST['showProtected'] >= '1' ) { echo '[b]'. _FPA_HOST .':[/b]  [color=orange]--'. _FPA_HIDDEN .'--[/color] ([color=orange]--'. _FPA_HIDDEN .'--[/color]) | ';
                             } else { echo '[b]'. _FPA_HOST .':[/b] '. $instance['configDBHOST'] .' ('. $database['dbHOSTINFO'] .') | '; }
-// fixed minor syntax error _to clear a php generated error - Phil 09-23-12
-                            echo '[b]'. _FPA_TCOL .':[/b] '. $database['dbCOLLATION'] .' ([b]'. _FPA_CHARS .':[/b] '. $database['dbCHARSET'] .') | [b]'. _FPA_DB .' '. _FPA_TSIZ .':[/b] '. $database['dbSIZE'] .' | [b]#'. _FPA_OF .'&nbsp'. _FPA_TABLE .':[/b] '. $database['dbTABLECOUNT'];
+// fixed minor syntax error - Phil 09-23-12
+                            echo '[b]'. _FPA_TCOL .':[/b] '. $database['dbCOLLATION'] .' ([b]'. _FPA_CHARS .':[/b] '. $database['dbCHARSET'] .') | [b]'. _FPA_DB .' '. _FPA_TSIZ .':[/b] '. $database['dbSIZE'] .' | [b]#'. _FPA_OF .'&nbsp'. _FPA_TABLE .':&nbsp[/b] '. $database['dbTABLECOUNT'];
                     }
 
-
-
-                    echo '[/size][/quote]';
+		echo '[/size][/quote]';
 
 
 

@@ -22,7 +22,7 @@
 
     /** SET THE FPA DEFAULTS *****************************************************************/
     //define ( '_FPA_BRA', TRUE );      // bug-report-mode, else it's the standard Forum Post Assistant
-    define ( '_FPA_DEV', TRUE );      // developer-mode, displays raw array data
+    //define ( '_FPA_DEV', TRUE );      // developer-mode, displays raw array data
    // define ( '_FPA_DIAG', TRUE );     // diagnostic-mode, turns on PHP logging errors, display errors and logs error to a file.
 
     /** SET THE JOOMLA! PARENT FLAG AND CONSTANTS ********************************************/
@@ -559,7 +559,8 @@
         $phpenv['phpLASTERRDATE'] = date ("dS F Y H:i:s.", filemtime( $phpenv['phpERRLOGFILE'] ));
 
         // determine the number of seconds for one day
-        $age = 1 * 60*60*24;
+        $age = 1 * 24 * 60 * 60;
+		// $age = strtotime('tomorrow') - time();
         // get the modified time in seconds
         $file_time = filemtime( $phpenv['phpERRLOGFILE'] );
         // get the current time in seconds
@@ -568,15 +569,52 @@
              /** if the file was modified less than one day ago, grab the last error entry
 			  ** Changed this section to get rid of the "Strict Standards: Only variables should be passed by reference" 
 			  ** error  Phil - 9-20-12 */
-        if ( $file_time - $now_time < $age ) {
-            // !FIXME memory allocation error on large php_error file
-            $lines = file( $phpenv['phpERRLOGFILE'] );
-            $phpenv['phpLASTERR'] = array_pop( $lines );
+		if ( $file_time - $now_time < $age ) {
+            /*  !FIXME memory allocation error on large php_error file - RussW
+			 ** replaced these two lines with code below - Phil 09-23-12
+            **  $lines = file( $phpenv['phpERRLOGFILE'] );
+            **  $phpenv['phpLASTERR'] = array_pop( $lines );
+
+	*********************************************
+		** Begin the fix for the memory allocation error on large php_error file
+		** Solution is to read the file line by line; not reading the whole file in memory. 
+	    ** I just open a kind of a pointer to it, then seek it char by char.
+		** This is a more efficient way to work with large files.   - Phil 09-23-12  */
+	$line = '';
+
+	$f = fopen(($phpenv['phpERRLOGFILE']), 'r');
+	$cursor = -1;
+
+	fseek($f, $cursor, SEEK_END);
+	$char = fgetc($f);
+
+	/**
+	* Trim trailing newline chars of the file
+	*/
+	while ($char === "\n" || $char === "\r") {
+		fseek($f, $cursor--, SEEK_END);
+		$char = fgetc($f);
+		}
+
+	/**
+	* Read until the start of file or first newline char
+	*/
+	while ($char !== false && $char !== "\n" && $char !== "\r") {
+    /**
+     * Prepend the new char
+     */
+		$line = $char . $line;
+		fseek($f, $cursor--, SEEK_END);
+		$char = fgetc($f);
+		}
+
+	// echo $line;
+	$phpenv['phpLASTERR'] = $line;	
+			
         }
-    }
+			}
+	
 ?>
-
-
 
 <?php
     /** SEEING A WHITE SCREEN WHILST RUNNING FPA? OR SOMEONE HELPING YOU SENT YOU HERE? *******
@@ -2247,7 +2285,7 @@
     /** display the fpa heading ***************************************************************/
     echo '<div class="snapshot-information">';
     echo '<div class="header-title" style="">'. _RES .'</div>';
-    echo '<div class="header-column-title" style="text-align:center;">'. _FPA_VER .': v'. _RES_VERSION .'-'. _RES_RELEASE .' ('. _RES_BRANCH .'/'. _RES_LANG .')</div>';
+    echo '<div class="header-column-title" style="text-align:center;">'. _FPA_VER .': v'. _RES_VERSION .'-'. _RES_RELEASE .' ('. _RES_BRANCH .'&nbsp -'. _RES_LANG .')</div>';
 
     echo '<br />';
 
@@ -3514,8 +3552,8 @@
 
                             if ( $_POST['showProtected'] >= '1' ) { echo '[b]'. _FPA_HOST .':[/b]  [color=orange]--'. _FPA_HIDDEN .'--[/color] ([color=orange]--'. _FPA_HIDDEN .'--[/color]) | ';
                             } else { echo '[b]'. _FPA_HOST .':[/b] '. $instance['configDBHOST'] .' ('. $database['dbHOSTINFO'] .') | '; }
-
-                            echo '[b]'. _FPA_TCOL .':[/b] '. $database['dbCOLLATION'] .' ([b]'. _FPA_CHARS .':[/b] '. $database['dbCHARSET'] .') | [b]'. _FPA_DB .' '. _FPA_TSIZ .':[/b] '. $database['dbSIZE'] .' | [b]#'. _FPA_OF .' '. _FPA_TABLE .':[/b] '. $database['dbTABLECOUNT'];
+// fixed minor syntax error _to clear a php generated error - Phil 09-23-12
+                            echo '[b]'. _FPA_TCOL .':[/b] '. $database['dbCOLLATION'] .' ([b]'. _FPA_CHARS .':[/b] '. $database['dbCHARSET'] .') | [b]'. _FPA_DB .' '. _FPA_TSIZ .':[/b] '. $database['dbSIZE'] .' | [b]#'. _FPA_OF .'&nbsp'. _FPA_TABLE .':[/b] '. $database['dbTABLECOUNT'];
                     }
 
 

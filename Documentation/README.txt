@@ -37,6 +37,7 @@ To run the script:  http://www.<your-domain-name>.com/cms/fpa-en.php
 
 
 Due to the highly sensitive nature of the information displayed by the FPA script, it should be removed from the server immediately after use.
+
 To remove the script from your website use the delete script link provided at the top of the scripts page. If using the removal link fails to remove the script, then use your ftp program to manually remove the script or otherwise change the name once the script has generated 
 the Site Data and the message has been prepared and posted to the forum. If the script is left on the site, it can be used to gather enough information to hack your site.
 Removing the script will prevent outsiders from using it to take a look at how your site is structured and possibly utilize any flaws that may be present.

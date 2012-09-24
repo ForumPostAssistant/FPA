@@ -6,10 +6,10 @@ The idea is to make the information collection, and subsequent posting, as simpl
 USE AT YOUR OWN RISK Accuracy and completeness of this script and documentation is not assured and no responsibility will be accepted for any damage, issues or confusion caused by using versions contained within these branches. 
 
 Compatibility:
-	PHP 4.1,PHP4, 5, 6DEV		MySQL 3.2 - 5.5 		MySQLi from 4.1 ( @ >=PHP 4.4.9)
+	PHP 4.1,PHP4, 5, 6DEV	  MySQL 3.2 - 5.5 	MySQLi from 4.1 ( @ >=PHP 4.4.9)
  	
 Joomla! Version Support:
-	- v 1.0.x		- v 1.5.x		- v 1.6.x		- v 1.7.x
+	  | J!3.0 | J!2.5.xx | J!1.7.xx | J!1.6.xx | J1.5.xx |  J!1.0.xx  | 
 	
 Language Support:
 English (USA/UK/AU)
@@ -36,5 +36,7 @@ Upload the fpa-en.php script to:  <your-domain-name.com>/public_html/cms/
 To run the script:  http://www.<your-domain-name>.com/cms/fpa-en.php
 
 
-Please remove the script from your website or otherwise change the name once the script has generated the Site Data and the message has been prepared and posted to the forum. 
-This is so outsiders can't take a look at how your site is structured and possibly utilize any flaws that may be present.
+Due to the highly sensitive nature of the information displayed by the FPA script, it should be removed from the server immediately after use.
+To remove the script from your website use the delete script link provided at the top of the scripts page. If using the removal link fails to remove the script, then use your ftp program to manually remove the script or otherwise change the name once the script has generated 
+the Site Data and the message has been prepared and posted to the forum. If the script is left on the site, it can be used to gather enough information to hack your site.
+Removing the script will prevent outsiders from using it to take a look at how your site is structured and possibly utilize any flaws that may be present.

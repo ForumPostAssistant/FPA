@@ -36,7 +36,5 @@ Upload the fpa-en.php script to:  <your-domain-name.com>/public_html/cms/
 To run the script:  http://www.<your-domain-name>.com/cms/fpa-en.php
 
 
-Please remove the script from your website or otherwise change the name once the script has generated 
-the Site Data and the message has been prepared and posted to the forum. 
-This is so outsiders can't take a look at how your site is structured and possibly utilize any flaws 
-that may be present.
+Please remove the script from your website or otherwise change the name once the script has generated the Site Data and the message has been prepared and posted to the forum. 
+This is so outsiders can't take a look at how your site is structured and possibly utilize any flaws that may be present.

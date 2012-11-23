@@ -281,15 +281,16 @@
     define ( '_PHP_VERLOW', 'PHP version too low' );
     define ( '_FPA_SHOW', 'Show' );
     define ( '_FPA_HIDE', 'Hide' );
+	define ( 'act', '');
     /** END LANGUAGE STRINGS *****************************************************************/
 
 // ** delete script when done - Phil 8-07-12
 // attempts to delete file from site. If it fails then message to manually delete the file is presented.
 // fixed undefined index when server uses E_STRICT - Phil 9-20-12	
- if (isset($_GET['act']) == "delete"){ 
+ if (isset($_GET['act']) && $_GET['act']  == 'delete') { 
 		$host  = $_SERVER['HTTP_HOST'];
 		$uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-		$extra = 'index.php'; // add index (or other) page if desired	
+		$extra = ''; // add index (or other) page if desired	
 					
 	// try to set script to 777 to make sure we have permission to delete
 		chmod("fpa-en.php", 0777);  // octal; correct value of mode
@@ -304,6 +305,7 @@
 		$filename = 'fpa-en.php';
 // Something went wrong and the script was not deleted so it must be removed manually so we tell the user to do so - Phil 8-07-12
 	if (file_exists($filename)) {
+	    chmod("fpa-en.php", 0644);  // octal; correct value of mode
 		echo "<p><font color='#FF0000' size='4'>Oops!</size></font color>";
 		echo "<p><font color='#FF0000' size='3'>Something went wrong with the delete process and the file </font color><font color='#000000'size='3'>$filename</font color></size><font color='#FF0000'> still exists. </font color></p>";
 		echo "<p><font color='#FF0000' size='3'>For site security, please remove the file </font color><font color='#000000'size='3'>$filename</font color></size><font color='#FF0000'> manually using your ftp program.</font color></p>";

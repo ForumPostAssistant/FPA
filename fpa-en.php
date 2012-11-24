@@ -563,7 +563,7 @@
         $phpenv['phpLASTERRDATE'] = date ("dS F Y H:i:s.", filemtime( $phpenv['phpERRLOGFILE'] ));
 
         // determine the number of seconds for one day
-        $age = 1 * 24 * 60 * 60;
+        $age = 86400;
 		// $age = strtotime('tomorrow') - time();
         // get the modified time in seconds
         $file_time = filemtime( $phpenv['phpERRLOGFILE'] );
@@ -741,7 +741,7 @@
     } elseif ( file_exists( 'includes/version.php' ) AND file_exists( 'libraries/platform.php' ) ) {
         $instance['cmsVFILE'] = 'includes/version.php';
 		
-	// J2.5 libraries/joomla/platform.php files
+	// J2.5 & J3.0 libraries/joomla/platform.php files
     } elseif ( file_exists( 'libraries/cms/version/version.php' ) AND file_exists( 'libraries/platform.php' ) ) {
         $instance['cmsVFILE'] = 'libraries/cms/version/version.php';
 
@@ -2242,7 +2242,7 @@
                 color: #800000;
                 border: 1px solid #800000;
                 /** CSS3 **/
-                border-radius: %px;
+                border-radius: 5px;
                 -moz-border-radius: 5px;
                 -webkit-border-radius: 5px;
             }

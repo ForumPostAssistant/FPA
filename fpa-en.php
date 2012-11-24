@@ -741,7 +741,7 @@
     } elseif ( file_exists( 'includes/version.php' ) AND file_exists( 'libraries/platform.php' ) ) {
         $instance['cmsVFILE'] = 'includes/version.php';
 		
-	// J2.5 libraries/joomla/platform.php files
+	// J2.5 & J3.0 libraries/joomla/platform.php files
     } elseif ( file_exists( 'libraries/cms/version/version.php' ) AND file_exists( 'libraries/platform.php' ) ) {
         $instance['cmsVFILE'] = 'libraries/cms/version/version.php';
 

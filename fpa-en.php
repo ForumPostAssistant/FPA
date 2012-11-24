@@ -563,7 +563,7 @@
         $phpenv['phpLASTERRDATE'] = date ("dS F Y H:i:s.", filemtime( $phpenv['phpERRLOGFILE'] ));
 
         // determine the number of seconds for one day
-        $age = 1 * 24 * 60 * 60;
+        $age = 86400;
 		// $age = strtotime('tomorrow') - time();
         // get the modified time in seconds
         $file_time = filemtime( $phpenv['phpERRLOGFILE'] );

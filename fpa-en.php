@@ -2242,7 +2242,7 @@
                 color: #800000;
                 border: 1px solid #800000;
                 /** CSS3 **/
-                border-radius: %px;
+                border-radius: 5px;
                 -moz-border-radius: 5px;
                 -webkit-border-radius: 5px;
             }

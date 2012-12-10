@@ -1247,23 +1247,15 @@
     $phpenv['phpMAGICQUOTES']       = ini_get( 'magic_quotes_gpc' );
     $phpenv['phpSESSIONPATH']       = session_save_path();
     $phpenv['phpOPENBASE']          = ini_get( 'open_basedir' );
-    // if open_basedir is in effect, don't bother doing session_save.path test, will error if path not in open_basedir
-	// changed this line to a not isset - I think this is right now - and is what we want (to not check if it is writable 
-	// if the  open_basedir is set - 4-8-12 - Phil
-    if ( !isset( $phpenv['phpOPENBASE'] ) ) {
 
-        // is the session_save.path writable to this user?
-        if ( is_writable( session_save_path() ) ) {
+           // is the session_save_path writable?
+       if (is_writable( session_save_path() ) ) {
             $phpenv['phpSESSIONPATHWRITABLE'] = _FPA_Y;
 
         } else {
             $phpenv['phpSESSIONPATHWRITABLE'] = _FPA_N;
         }
 
-    } 
-	else {
-        $phpenv['phpSESSIONPATHWRITABLE'] = _FPA_U;
-    }
 
     // input and upload related settings
     $phpenv['phpUPLOADS']           = ini_get( 'file_uploads' );

@@ -3768,7 +3768,7 @@
 
                         echo '[/size][/quote]';
 
-                    } elseif ( ( $database['dbDOCHECKS'] != _FPA_Y OR $database['dbERROR'] != _FPA_N ) AND $_POST['showTables'] == '1' ) {
+                    } elseif ( ( $database['dbDOCHECKS'] != _FPA_Y OR $database['dbERROR'] != _FPA_N ) AND @$_POST['showTables'] == '1' ) {
 
                                                     // only show the tables if we can connect to the database
 //                                if ( $database['dbERROR'] == _FPA_N ) {
@@ -4266,7 +4266,7 @@
 
                 echo '<div class="mini-content-container">';
                 echo '<div class="mini-content-box">';
-                echo '<div class="mini-content-title">'. _FPA_CF .' '. _VER .'</div>';
+                echo '<div class="mini-content-title">'. _FPA_CF .' '. _FPA_VER .'</div>';
                 echo '<div class="warn" style="width:50px;margin: 0px auto;">'. _FPA_U .'</div>';
                 echo '</div>';
                 echo '</div>';

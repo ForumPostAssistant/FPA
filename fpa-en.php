@@ -7,7 +7,8 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.2.3
+ **  @version 1.2.4
+ **  @last updated 01/01/2014
  **  @release Beta
  **  @date 24/06/2011
  **  @author RussW
@@ -19,6 +20,9 @@
  **  Edits 09-20-12 by Phil
  **  Edits 09-23-12 by Phil
  **  Edits 12-09-12 by Phil 
+ **	 added a 3.1, 3.2 section - Phil 01-01-14 
+ **
+ ** Remember to revision and last updated date below on about lines 47-48
  **/
 
 
@@ -40,7 +44,8 @@
         define ( '_RES', 'Forum Post Assistant' );
     }
 
-    define ( '_RES_VERSION', '1.2.3' );
+    define ( '_RES_VERSION', '1.2.4' );
+	define ( '_last_updated', '01/01/2014' );
 	define ( '_COPYRIGHT_STMT', ' Copyright (C) 2011, 2012 Russell Winter, Phil DeGruy &nbsp;' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. &nbsp; This is free software, 
@@ -322,9 +327,11 @@
 
     /** DISPLAY A "PROCESSING" MESSAGE, if the the routines take too long ********************/
     // !TODO slowScreenSplash seems to be a little flaky
-    echo '<div id="slowScreenSplash" style="padding:20px;border: 2px solid #4D8000;background-color:#FFFAF0;border-radius: 10px;-moz-border-radius: 10px;-webkit-border-radius: 10px;margin: 0 auto; margin-top:50px;margin-bottom:20px;width:700px;position:relative;z-index:9999;top:10%;" align="center">';
+	// this is the top pink box
+    echo '<div id="slowScreenSplash" style="padding:20px;border: 2px solid #4D8000;background-color:#FFFAF0;border-radius: 10px;-moz-border-radius: 10px;-webkit-border-radius: 10px;margin: 0 auto; margin-top:50px;margin-bottom:20px;width:810px;position:relative;z-index:9999;top:10%;" align="center">';
     echo '<h1>'. _RES .'</h1>';
 	echo  _RES_VERSION .'-'. _RES_RELEASE .' ('. _RES_BRANCH . _RES_LANG.')';
+	echo '<p>FPA last updated on: '. _last_updated . '</p>' ;
 
     if ( @$_POST['doIT'] == 1 ) {
         echo '<h3 style="color:#4D8000;">'. _FPA_SLOWGENPOST .'</h3>';
@@ -927,7 +934,7 @@
 				$instance['cmsVFILE'] = 'libraries/cms/version/version.php';
 				$instance['instanceCFGVERMATCH'] = _FPA_Y;				
 		//for 3.0
-			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND substr( $instance['platformRELEASE'],0,2 ) == '12' ) {
+			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] != _FPA_N ) {
                 $instance['configVALIDFOR'] = $instance['cmsRELEASE'];
 				$instance['cmsVFILE'] = 'libraries/cms/version/version.php';
 				$instance['instanceCFGVERMATCH'] = _FPA_Y;		
@@ -1929,8 +1936,9 @@
 
         <head>
         <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-        <title><?php echo _RES .' : v'. _RES_VERSION .' ('. _RES_RELEASE .' / '. _RES_LANG .')';?></title>
-
+        <title><?php echo _RES .' : v'. _RES_VERSION .' ('. _RES_RELEASE .' / '. _RES_LANG .')';
+		echo '<p>FPA last updated on: '. _last_updated . '</p>' ;
+		?></title>
         <?php //!TODO different icons ?>
         <link rel="shortcut icon" href="./templates/rhuk_milkyway/favicon.ico" />
 
@@ -1946,7 +1954,7 @@
                 margin-top:10px;
                 margin-bottom:10px;
                 padding: 5px;
-                width:750px;
+                width:830px;
                 background-color:#CAFFD8;
                 border:1px solid #4D8000;
                 /** CSS3 **/
@@ -1970,7 +1978,7 @@
                 margin-top:10px;
                 margin-bottom:10px;
                 padding: 5px;
-                width:740px;
+                width:840px;
                 background-color:#F3EFE0;
                 border:1px solid #999966;
                 /** CSS3 **/
@@ -1987,7 +1995,7 @@
                 margin-top:10px;
                 margin-bottom:10px;
                 padding: 5px;
-                width:740px;
+                width:840px;
                 background-color:#E0FFFF;
                 border:1px solid #42AEC2;
                 /** CSS3 **/
@@ -2027,7 +2035,7 @@
                 margin-top:10px;
                 margin-bottom:10px;
                 padding: 5px;
-                width:780px;
+                width:830px;
                 background-color:#E0FFFF;
                 border:1px solid #42AEC2;
                 min-height: 188px;
@@ -2043,7 +2051,7 @@
             .half-section-container {
                 margin: 0px auto;
                 padding: 5px;
-                width:750px;
+                width:840px;
             }
 
             .half-section-information-left {
@@ -2283,7 +2291,7 @@
     echo '<div class="snapshot-information">';
     echo '<div class="header-title" style="">'. _RES .'</div>';
     echo '<div class="header-column-title" style="text-align:center;">'. _FPA_VER .': v'. _RES_VERSION .'-'. _RES_RELEASE .' ('. _RES_BRANCH .'&nbsp -'. _RES_LANG .')</div>';
-
+	echo '<div class="header-column-title" style="text-align:center;"> FPA last updated on: '. _last_updated . '</p>' ;
     echo '<br />';
 
     /** ENVIRONMENT SUPPORT NOTICE (snapshot) **************************************************
@@ -2311,12 +2319,76 @@
 
     /** SUPPORT SECTIONS *************************************************************/
 	/** added a 2.5 section - Phil 4-20-12 *******/
-	if ( @$instance['cmsRELEASE'] == '3.0' ) {
+	/** added a 3.1, 3.2 section - Phil 01-01-14 
+		Note: 
+		With the release of Joomla! 3.2, the CMS introduced a new feature called, Strong Passwords. 
+		The intent was to enhance the encryption of password hashing and storage through the use of BCrypt, 
+		thus increasing the security of Joomla! 3.2 user accounts. Bcrypt was not available in the early releases 
+		of php 5.3, and with the first releases, a bug in the algorithm surfaced. This prompted a change in the 
+		later php versions to fix it. The Joomla 3 series required a minimum php version of 5.3+ which unfortunately 
+		includes php versions without BCrypt and the buggy first release of BCrypt. The Strong Passwords feature 
+		has built in compatibility to determine if BCrypt was available based on a php version check of the Joomla 
+		installation's server. The version check is used to determine exactly what the Strong Passwords feature 
+		would enable, BCrypt or the next best available password hashing encryption available. Unfortunately, 
+		this can lead to access issues under certain circumstances. 
+		To reflect this issue with Joomla 3.2.0 and earlier versions of php 5.3, the FPA checks to see if 
+		the Joomla! version is 3.2.0 and then checks the php version on the server. If the version php version 
+		is less than 5.3.7 then the FPA will report that php does not support Joomla!
+		PHP version of 5.3.1+ is supported by Joomla 3.2.1 due to the fix put in place in Joomla 3.2.1
+		Mysql:
+		On Medialayer at least, mysql 5.0.87-community will work with current versions of Joomla and has inno db enabled
+		*******/
+		if ( @$instance['cmsRELEASE'] == '3.2' and @$instance['cmsDEVLEVEL'] >= 1) {
         $fpa['supportENV']['minPHP']        = '5.3.1';
-        $fpa['supportENV']['minSQL']        = '5.1.6';
+        $fpa['supportENV']['minSQL']        = '5.1.0';
         $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
         $fpa['supportENV']['maxSQL']        = '5.5.0';  // latest release?
-        $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
+        $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
+		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
+		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
+		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
+		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
+		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
+        $fpa['supportENV']['badZND'][0]     = _FPA_NA;	
+	} elseif ( @$instance['cmsRELEASE'] == '3.2' and @$instance['cmsDEVLEVEL'] == 0) {
+        $fpa['supportENV']['minPHP']        = '5.3.7';
+        $fpa['supportENV']['minSQL']        = '5.1.0';
+        $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
+        $fpa['supportENV']['maxSQL']        = '5.5.0';  // latest release?
+		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
+		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
+		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
+		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
+		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
+		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
+		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
+        $fpa['supportENV']['badZND'][0]     = _FPA_NA;	
+	} elseif ( @$instance['cmsRELEASE'] == '3.1' ) {
+        $fpa['supportENV']['minPHP']        = '5.3.1';
+        $fpa['supportENV']['minSQL']        = '5.1.0';
+        $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
+        $fpa['supportENV']['maxSQL']        = '5.5.0';  // latest release?
+		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
+		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
+		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
+		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
+		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
+		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
+		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
+        $fpa['supportENV']['badZND'][0]     = _FPA_NA;	
+	} elseif ( @$instance['cmsRELEASE'] == '3.0' ) {
+        $fpa['supportENV']['minPHP']        = '5.3.1';
+        $fpa['supportENV']['minSQL']        = '5.1.0';
+        $fpa['supportENV']['maxPHP']        = '5.3.6';  // latest release?
+        $fpa['supportENV']['maxSQL']        = '5.5.0';  // latest release?
+		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
+		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
+		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
+		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
+		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
+		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
+		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
         $fpa['supportENV']['badZND'][0]     = _FPA_NA;
     } elseif ( @$instance['cmsRELEASE'] == '2.5' ) {
         $fpa['supportENV']['minPHP']        = '5.2.4';
@@ -2383,7 +2455,7 @@
 
 
     // minimum and maximum PHP support requirements met?
-    echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">'. _FPA_SUPPHP .' J!'. @$instance['cmsRELEASE'] .'<br />';
+    echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">'. _FPA_SUPPHP .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] .'<br />';
 
         if ( $fpa['supportENV']['minPHP'] == _FPA_NA ) {
             echo '<div class="normal-note"><span class="warn-text">'. _FPA_U .'</span></div>';
@@ -2456,7 +2528,7 @@
     echo '<br style="clear:both;" /><br />';
 
     // minimum and maximum MySQL support requirements met?
-    echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">'. _FPA_SUPSQL .' J!'. @$instance['cmsRELEASE'] .'<br />';
+    echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">'. _FPA_SUPSQL .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] .'<br />';
 
         if ( $fpa['supportENV']['minSQL'] == _FPA_NA OR @$database['dbERROR'] != _FPA_N ) {
             echo '<div class="normal-note"><span class="warn-text">'. _FPA_U .'</span></div>';
@@ -2645,7 +2717,7 @@
 
 
     <!-- POST FORM -->
-    <div style="margin: 0px auto;text-align:left;text-shadow: 1px 1px 1px #FFF; width:740px; background-color:#FFF;border:1px solid #999966; color:#4D8000; font-size:10px; font-family:arial; padding:5px;-moz-box-shadow: 3px 3px 3px #C0C0C0;-webkit-box-shadow: 3px 3px 3px #C0C0C0;box-shadow: 3px 3px 3px #C0C0C0;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;">
+    <div style="margin: 0px auto;text-align:left;text-shadow: 1px 1px 1px #FFF; width:820px; background-color:#FFF;border:1px solid #999966; color:#4D8000; font-size:10px; font-family:arial; padding:5px;-moz-box-shadow: 3px 3px 3px #C0C0C0;-webkit-box-shadow: 3px 3px 3px #C0C0C0;box-shadow: 3px 3px 3px #C0C0C0;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;">
         <div id="headerDiv" class="">
 
             <?php

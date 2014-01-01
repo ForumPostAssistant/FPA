@@ -41,3 +41,29 @@ Due to the highly sensitive nature of the information displayed by the FPA scrip
 To remove the script from your website use the delete script link provided at the top of the scripts page. If using the removal link fails to remove the script, then use your ftp program to manually remove the script or otherwise change the name once the script has generated 
 the Site Data and the message has been prepared and posted to the forum. If the script is left on the site, it can be used to gather enough information to hack your site.
 Removing the script will prevent outsiders from using it to take a look at how your site is structured and possibly utilize any flaws that may be present.
+
+Warning about enabling strong passwords in J! 3.2.0
+Why turn off Strong Passwords that is available in 3.2.0?
+This is recommended if you are:
+    Developing a site on a server with a php version = or > 5.3.7 and you plan to move it to a production server with a lower php version.
+    Moving a website from a server with php version = or > 5.3.7 to a server with a lower php version.
+    Downgrading your server's php version below 5.3.7.
+
+	With the release of Joomla! 3.2, the CMS introduced a new feature called, Strong Passwords. The intent was to enhance the encryption of password 
+	hashing and storage through the use of BCrypt, thus increasing the security of Joomla! 3.2 user accounts. Bcrypt was not available in the early 
+	releases of php 5.3, and with the first releases a bug in the algorithm surfaced. This prompted a change in the later php versions to fix it.
+
+	The Joomla 3 series requires a minimum php version of 5.3+ which unfortunately includes php versions without BCrypt and the buggy first release 
+	of BCrypt. The Strong Passwords feature has built in compatibility to determine if BCrypt is available based on a php version check of the 
+	Joomla installation's server. The version check is used to determine exactly what the Strong Passwords feature would enable, BCrypt or the next 
+	best available password hashing encryption available. Unfortunately, this can lead to access issues under certain circumstances and is causing 
+	some users deploying new sites to get locked out of their site with no easy solutions to restore access.
+	
+	Because of the possible issues with some versions of PHP, the FPA script will flag versions of PHP 5.3 earlier than 5.3.7 as being Buggy versions.
+	If your site is using J! 3.2.0 version, then PHP Supports J! 3.2.0 field will contain NO if the version of PHP is less than 5.3.7.
+	
+	For more info on this issue see:
+	http://community.joomla.org/blogs/leadership/1790-update-on-321-and-security-enhancements.html
+	and
+	http://docs.joomla.org/How_to_disable_the_Strong_Passwords_feature
+	

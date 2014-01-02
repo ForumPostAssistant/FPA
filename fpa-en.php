@@ -2670,7 +2670,9 @@
 
     // known buggy zend releases (mainly for installation on 1.5)
     echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">'. _FPA_BADZND .'<br />';
-
+// reset variables to fix zend check bug
+	$badValue = "";
+	$badANS = "";
         foreach ( $fpa['supportENV']['badZND'] as $badKey => $badValue ) {
 
             if ( version_compare( $phpextensions['Zend Engine'], $badValue, '==' ) ) {
@@ -2702,11 +2704,11 @@
 
 
 
-    //TEST
+    //links for download that are found in the grey FPA box area. 
     echo '<div style="text-align:center;"><a style="color:#4D8000!important;" href="'. _RES_FPALINK .''. _RES_LANG .'" target="_github">'. _RES_FPALATEST .' '. _RES .'</a></div>';
     echo '<div style="clear:both;"></div>';
 	echo "<p></p>";
-	echo '<div style="text-align:center!important;"><a style="color:#4D8000!important;" href="'. _RES_FPALINK2 .''. _RES_LANG .'" target="_github">'. _RES_FPALATEST2 .' '. _RES .'</a></div>';
+	echo '<div style="text-align:center!important;"><a style="color:#4D8000!important;" href="'. _RES_FPALINK2 .''. _RES_LANG .'" target="_github">'. _RES_FPALATEST2 .' '. _RES .'</a><p></div>';
     echo '</div>';
     showDev ( $snapshot );
     ?>

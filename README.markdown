@@ -1,10 +1,10 @@
 ### Forum Post Assistant (FPA)
 ***
 11/02/2014
-Notice:
-**_We are not associated in anyway with tip4commit and will NOT accept any monetary amounts from the tip4commit FPA listing._** 
+**_Notice:_**
+We are not associated in anyway with tip4commit and will NOT accept any monetary amounts from the tip4commit. 
 
-**_We are also not associated with any similar projects current or future that may solicit monetary amounts in any manner, in any form on our behalf without our explicit control or explicit knowledge and approval._**
+We are also not associated with any similar projects current or future that may solicit monetary amounts in any manner, in any form on our behalf without our explicit control or explicit knowledge and approval.
 
 PhilD13, FPA Project Lead
 

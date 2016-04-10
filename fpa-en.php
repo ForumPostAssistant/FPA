@@ -58,9 +58,9 @@
 	define ( '_RES_LANG', '&nbsp Language en-GB' );               // Country/Language Code
 	// !TODO update this once the REPO is re-organised
 	define ( '_RES_FPALINK', 'https://github.com/ForumPostAssistant/FPA/tarball/en-GB/' ); // where to get the latest 'Final Releases'
-	define ( '_RES_FPALATEST', 'Get the latest zip release of the ' );
+	define ( '_RES_FPALATEST', 'Get the latest tar.gz release of the ' );
 	define ( '_RES_FPALINK2', 'https://github.com/ForumPostAssistant/FPA/zipball/en-GB/' ); // where to get the latest 'Final Releases'
-	define ( '_RES_FPALATEST2', 'Get the latest tar.gz release of the ' );
+		define ( '_RES_FPALATEST2', 'Get the latest zip release of the ' );
 
 
 

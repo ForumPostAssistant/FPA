@@ -7,7 +7,7 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.2.4
+ **  @version 1.2.5
  **  @last updated 01/01/2014
  **  @release Beta
  **  @date 24/06/2011
@@ -21,6 +21,7 @@
  **  Edits 09-23-12 by Phil
  **  Edits 12-09-12 by Phil
  **	added a 3.1, 3.2 section - Phil 01-01-14
+ **  added 3.5 support - Bernard 04-10-16
  **
  ** Remember to revision and last updated date below on about lines 47-48
  **/
@@ -44,8 +45,8 @@
 		define ( '_RES', 'Forum Post Assistant' );
 	}
 
-	define ( '_RES_VERSION', '1.2.4' );
-	define ( '_last_updated', '01/01/2014' );
+	define ( '_RES_VERSION', '1.2.5' );
+	define ( '_last_updated', '04/10/2016' );
 	define ( '_COPYRIGHT_STMT', ' Copyright (C) 2011, 2012 Russell Winter, Phil DeGruy &nbsp;' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. &nbsp; This is free software,
@@ -787,12 +788,22 @@
 			preg_match ( '#\$(CODENAME.*|CODE_NAME.*)=\s[\'|\"](.*)[\'|\"];#', $cmsVContent, $cmsCODENAME );
 			preg_match ( '#\$(RELDATE.*|RELEASE_DATE.*)=\s[\'|\"](.*)[\'|\"];#', $cmsVContent, $cmsRELDATE );
 
-				$instance['cmsPRODUCT'] = $cmsPRODUCT[1];
-				$instance['cmsRELEASE'] = $cmsRELEASE[1];
-				$instance['cmsDEVLEVEL'] = $cmsDEVLEVEL[2];
-				$instance['cmsDEVSTATUS'] = $cmsDEVSTATUS[2];
-				$instance['cmsCODENAME'] = $cmsCODENAME[2];
-				$instance['cmsRELDATE'] = $cmsRELDATE[2];
+                        if (empty($cmsPRODUCT))
+                        {
+                            preg_match ( '#const\s*PRODUCT\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsPRODUCT );
+                            preg_match ( '#const\s*RELEASE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELEASE );
+                            preg_match ( '#const\s*DEV_LEVEL\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVLEVEL );
+                            preg_match ( '#const\s*DEV_STATUS\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVSTATUS );
+                            preg_match ( '#const\s*CODENAME\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsCODENAME );
+                            preg_match ( '#const\s*RELDATE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELDATE );
+                        }
+                                                
+                        $instance['cmsPRODUCT'] = $cmsPRODUCT[1];
+                        $instance['cmsRELEASE'] = $cmsRELEASE[1];
+                        $instance['cmsDEVLEVEL'] = $cmsDEVLEVEL[1];
+                        $instance['cmsDEVSTATUS'] = $cmsDEVSTATUS[1];
+                        $instance['cmsCODENAME'] = $cmsCODENAME[1];
+                        $instance['cmsRELDATE'] = $cmsRELDATE[1];
 	}
 
 
@@ -808,9 +819,9 @@
 				preg_match ( '#VERSION.*=\s[\'|\"](.*)[\'|\"];#', $platformVContent, $platformRELEASE );
 				preg_match ( '#VERSION.*=\s[\'|\"].*-(.*)-.*[\'|\"];#', $platformVContent, $platformDEVSTATUS );
 
-					$instance['platformPRODUCT'] = 'Nooku';
-					$instance['platformRELEASE'] = $platformRELEASE[1];
-					$instance['platformDEVSTATUS'] = $platformDEVSTATUS[1];
+                                $instance['platformPRODUCT'] = 'Nooku';
+                                $instance['platformRELEASE'] = $platformRELEASE[1];
+                                $instance['platformDEVSTATUS'] = $platformDEVSTATUS[1];
 			} else {
 
 				// default to the Joomla! platform, as it is most common at the momemt
@@ -821,12 +832,22 @@
 				preg_match ( '#CODE_NAME.*=\s[\'|\"](.*)[\'|\"];#', $platformVContent, $platformCODENAME );
 				preg_match ( '#RELEASE_DATE.*=\s[\'|\"](.*)[\'|\"];#', $platformVContent, $platformRELDATE );
 
-					$instance['platformPRODUCT'] = $platformPRODUCT[1];
-					$instance['platformRELEASE'] = $platformRELEASE[1];
-					$instance['platformDEVLEVEL'] = $platformDEVLEVEL[1];
-					$instance['platformDEVSTATUS'] = $platformDEVSTATUS[1];
-					$instance['platformCODENAME'] = $platformCODENAME[1];
-					$instance['platformRELDATE'] = $platformRELDATE[1];
+                                if (empty($platformPRODUCT))
+                                {
+                                    preg_match ( '#const\s*PRODUCT\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsPRODUCT );
+                                    preg_match ( '#const\s*RELEASE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELEASE );
+                                    preg_match ( '#const\s*MAINTENANCE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVLEVEL );
+                                    preg_match ( '#const\s*STATUS\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVSTATUS );
+                                    preg_match ( '#const\s*CODE_NAME\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsCODENAME );
+                                    preg_match ( '#const\s*RELEASE_DATE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELDATE );
+                                }
+                                
+                                $instance['platformPRODUCT'] = $platformPRODUCT[1];
+                                $instance['platformRELEASE'] = $platformRELEASE[1];
+                                $instance['platformDEVLEVEL'] = $platformDEVLEVEL[1];
+                                $instance['platformDEVSTATUS'] = $platformDEVSTATUS[1];
+                                $instance['platformCODENAME'] = $platformCODENAME[1];
+                                $instance['platformRELDATE'] = $platformRELDATE[1];
 			}
 	}
 
@@ -3999,6 +4020,7 @@
 		echo '<div class="mini-content-box">';
 		echo '<div class="mini-content-title">CMS '. _FPA_F .'</div>';
 
+                # die(var_dump($instance));
 			if ( $instance['instanceFOUND'] == _FPA_Y ) {
 				echo @$instance['cmsPRODUCT'] .'<br />';
 				echo '<strong>'. @$instance['cmsRELEASE'] .'.'. @$instance['cmsDEVLEVEL'] .'</strong><br />';

@@ -296,7 +296,7 @@
 	define ( 'act', '');
         
         /* v1.2.7 */
-        define ( '_FPA_DIR_UNREADABLE', "A directory $path is <b>NOT READABLE</b> and cannot be checked!");
+    define ( '_FPA_DIR_UNREADABLE', 'A directory is <b>NOT READABLE</b> and cannot be checked!');
         
 	/** END LANGUAGE STRINGS *****************************************************************/
 
@@ -1514,7 +1514,7 @@
 			// open the directory to the handle $dh
 			if ( !$dh = @opendir( $path ) )
 			{ # Bernard: if a folder is NOT readable, without this check we get endless loop
-				echo '<div class="alert" style="padding:25px;"><span class="alert-text" style="font-size:x-large;">'._FPA_DIR_UNREADABLE.'</span></div>';
+				echo '<div class="alert" style="padding:25px;"><span class="alert-text" style="font-size:x-large;">'._FPA_DIR_UNREADABLE.': <b>'.$path.'</b></span></div>';
 				return FALSE;
 			}
 			

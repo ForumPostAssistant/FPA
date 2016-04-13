@@ -7,36 +7,40 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.2.6
- **  @last updated 04/11/2016
+ **  @version 1.2.7
+ **  @last updated 04/12/2016
  **  @release Beta
  **  @date 24/06/2011
  **  @author RussW
  **  @author PhilD
- **  Edits 4-8-12 by Phil
- **  Edite 4-17-12 by Phil
- **  Edits 4-20-12 by Phil
- **  Edits 08-07-12 by Phil
- **  Edits 09-20-12 by Phil
- **  Edits 09-23-12 by Phil
- **  Edits 12-09-12 by Phil
- **  added a 3.1, 3.2 section - Phil 01-01-14
- **  added 3.5 support - Bernard 04-10-16
- **  fixed a bug with older version devel number parsing - Bernard 04-11-16
  **
  ** Remember to revision and last updated date below on about lines 47-48
  **/
 
+/**
+ * Edits 4-8-12 by Phil
+ * Edite 4-17-12 by Phil
+ * Edits 4-20-12 by Phil
+ * Edits 08-07-12 by Phil
+ * Edits 09-20-12 by Phil
+ * Edits 09-23-12 by Phil
+ * Edits 12-09-12 by Phil
+ * Phil 01-01-14: added a 3.1, 3.2 section
+ * Bernard 04-10-16: added 3.5 support
+ * Bernard 04-11-16: fixed a bug with older version devel number parsing
+ * Bernard 04-12-16: fixed a bug with unreadable folder producing endless loop;
+ *                   disabled forgotten debug print_r()
+ */
+ 
 
-	/** SET THE FPA DEFAULTS *****************************************************************/
-	//define ( '_FPA_BRA', TRUE );      // bug-report-mode, else it's the standard Forum Post Assistant
-	//define ( '_FPA_DEV', TRUE );      // developer-mode, displays raw array data
-   // define ( '_FPA_DIAG', TRUE );     // diagnostic-mode, turns on PHP logging errors, display errors and logs error to a file.
+    /** SET THE FPA DEFAULTS *****************************************************************/
+    # define ( '_FPA_BRA', TRUE );      // bug-report-mode, else it's the standard Forum Post Assistant
+    # define ( '_FPA_DEV', TRUE );      // developer-mode, displays raw array data
+    # define ( '_FPA_DIAG', TRUE );     // diagnostic-mode, turns on PHP logging errors, display errors and logs error to a file.
 
 	/** SET THE JOOMLA! PARENT FLAG AND CONSTANTS ********************************************/
 	define ( '_VALID_MOS', 1 );         // for J!1.0
 	define ( '_JEXEC', 1 );             // for J!1.5, J!1.6, J!1.7, J!2.5, J!3.0
-
 
 
 	// Define some basic assistant information
@@ -46,9 +50,9 @@
 		define ( '_RES', 'Forum Post Assistant' );
 	}
 
-	define ( '_RES_VERSION', '1.2.6' );
-	define ( '_last_updated', '04/10/2016' );
-	define ( '_COPYRIGHT_STMT', ' Copyright (C) 2011, 2012 Russell Winter, Phil DeGruy &nbsp;' );
+	define ( '_RES_VERSION', '1.2.7' );
+	define ( '_last_updated', '04/12/2016' );
+	define ( '_COPYRIGHT_STMT', ' Copyright (C) 2011, 2012 Russell Winter, Phil DeGruy, Bernard Toplak &nbsp;' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. &nbsp; This is free software,
 	and covered under the GNU GPLv3 or later license. You are welcome to redistribute it under certain conditions.
@@ -290,6 +294,10 @@
 	define ( '_FPA_SHOW', 'Show' );
 	define ( '_FPA_HIDE', 'Hide' );
 	define ( 'act', '');
+        
+        /* v1.2.7 */
+        define ( '_FPA_DIR_UNREADABLE', "A directory $path is <b>NOT READABLE</b> and cannot be checked!");
+        
 	/** END LANGUAGE STRINGS *****************************************************************/
 
 // ** delete script when done - Phil 8-07-12
@@ -1397,7 +1405,11 @@
 	} else {  // for Apache cgi interface
 
 		// !TESTME Does this work in cgi or cgi-fcgi
-		print_r( get_extension_funcs( "cgi-fcgi" ) );
+		/**
+		* BERNARD: commented out
+		* @todo: find out if this is even used on the webpage
+		*/
+		#print_r( get_extension_funcs( "cgi-fcgi" ) );
 	}
 	// !TODO see if there are IIS specific functions/modules
 ?>
@@ -1494,13 +1506,19 @@
 		$dirCount = 0;
 
 		function getDirectory( $path = '.', $level = 0 ) {
-		GLOBAL $elevated, $dirCount;
+			global $elevated, $dirCount;
 
 			// directories to ignore when listing output. Many hosts
 			$ignore = array( '.', '..' );
 
 			// open the directory to the handle $dh
-			$dh = @opendir( $path );
+			if ( !$dh = @opendir( $path ) )
+			{ # Bernard: if a folder is NOT readable, without this check we get endless loop
+				echo '<div class="alert" style="padding:25px;"><span class="alert-text" style="font-size:x-large;">'._FPA_DIR_UNREADABLE.'</span></div>';
+				return FALSE;
+			}
+			
+			
 
 			// loop through the directory
 			while ( false !== ( $file = readdir( $dh ) ) ) {

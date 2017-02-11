@@ -7,8 +7,8 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.2.7
- **  @last updated 04/12/2016
+ **  @version 1.2.8
+ **  @last updated 11/02/2017
  **  @release Beta
  **  @date 24/06/2011
  **  @author RussW
@@ -50,8 +50,8 @@
 		define ( '_RES', 'Forum Post Assistant' );
 	}
 
-	define ( '_RES_VERSION', '1.2.7' );
-	define ( '_last_updated', '04/12/2016' );
+	define ( '_RES_VERSION', '1.2.8' );
+	define ( '_last_updated', '11/02/2017' );
 	define ( '_COPYRIGHT_STMT', ' Copyright (C) 2011, 2012 Russell Winter, Phil DeGruy, Bernard Toplak &nbsp;' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. &nbsp; This is free software,
@@ -763,6 +763,10 @@
 	} elseif ( file_exists( 'libraries/cms/version/version.php' ) AND file_exists( 'libraries/platform.php' ) ) {
 		$instance['cmsVFILE'] = 'libraries/cms/version/version.php';
 
+	// >= J3.6.3
+	} elseif ( file_exists( 'libraries/cms/version/version.php' ) AND !file_exists( 'libraries/platform.php' ) ) {
+		$instance['cmsVFILE'] = 'libraries/cms/version/version.php';    
+    
 	// fpa could find the required files to determine version(s)
 	} else {
 		$instance['cmsVFILE'] = _FPA_N;
@@ -945,6 +949,11 @@
 			if ( preg_match ( '#(\$mosConfig_)#', $cmsCContent ) ) {
 				$instance['configVALIDFOR'] = '1.0';
 				$instance['instanceCFGVERMATCH'] = _FPA_Y;
+  	// >= 3.6.3
+			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] == _FPA_N AND file_exists( 'libraries/cms/version/version.php' ) ) {
+				$instance['configVALIDFOR'] = $instance['cmsRELEASE'];
+				$instance['cmsVFILE'] = 'libraries/cms/version/version.php';
+				$instance['instanceCFGVERMATCH'] = _FPA_Y;
 		// for 1.5
 			} elseif ( preg_match ( '#(var)#', $cmsCContent ) ) {
 				$instance['configVALIDFOR'] = '1.5';
@@ -1112,7 +1121,7 @@
 			}
 
 			// check if all the DB credentials are complete
-			if ( @$instance['configDBTYPE'] AND $instance['configDBHOST'] AND $instance['configDBNAME'] AND $instance['configDBPREF'] AND $instance['configDBUSER'] AND $instance['configDBPASS'] ) {
+			if ( @$instance['configDBTYPE'] AND $instance['configDBHOST'] AND $instance['configDBNAME'] AND $instance['configDBPREF'] AND $instance['configDBUSER'] ) {
 				$instance['configDBCREDOK'] = _FPA_Y;
 
 			} else {
@@ -1874,7 +1883,7 @@
 								$content = file_get_contents( $cDir );
 
 								if ( preg_match( '#<(extension|install|mosinstall)#', $content, $isValidFile ) ) {
-									$arrname[$loc][$cDir] = '';
+									unset($arrname[$loc][$cDir]);
 
 									$arrname[$loc][$cDir]['author']         = '-';
 									$arrname[$loc][$cDir]['authorUrl']      = '-';
@@ -1902,6 +1911,8 @@
 									OR strtolower( $name[1] ) == 'bluestork'
 									OR strtolower( $name[1] ) == 'atomic'
 									OR strtolower( $name[1] ) == 'hathor'
+									OR strtolower( $name[1] ) == 'protostar'
+									OR strtolower( $name[1] ) == 'isis'
 									OR strtolower( $name[1] ) == 'beez5'
 									OR strtolower( $name[1] ) == 'beez_20'
 									OR strtolower( substr( $name[1], 0, 4 ) ) == 'beez' ) {
@@ -2352,7 +2363,7 @@
 	** BAD SQL  | -----  | -----  |        >5.0.0          |  -----  |
 	** BAD ZEND | -----  | -----  |         2.5.10         |  -----  |
 	*****************************************************************************************/
-	$fpa['supportENV'] = '';
+  unset($fpa['supportENV']);
 
 	echo '<div>';
 	echo '<div style="width:85%;margin:0 auto;margin-top:10px;">';
@@ -2378,7 +2389,35 @@
 		Mysql:
 		On Medialayer at least, mysql 5.0.87-community will work with current versions of Joomla and has inno db enabled
 		*******/
-		if ( @$instance['cmsRELEASE'] == '3.2' and @$instance['cmsDEVLEVEL'] >= 1) {
+    if ( @$instance['cmsRELEASE'] >= '3.5')  {
+		$fpa['supportENV']['minPHP']        = '5.3.10';
+		$fpa['supportENV']['minSQL']        = '5.1.0';
+		$fpa['supportENV']['maxPHP']        = '7.1.1';  
+		$fpa['supportENV']['maxSQL']        = '5.7.14'; 
+		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
+		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
+		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
+		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
+		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
+		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
+		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
+		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+	} elseif ( @$instance['cmsRELEASE']  == '3.3' or @$instance['cmsRELEASE']  == '3.4')  {
+		$fpa['supportENV']['minPHP']        = '5.3.10';
+		$fpa['supportENV']['minSQL']        = '5.1.0';
+		$fpa['supportENV']['maxPHP']        = '5.6.30';  
+		$fpa['supportENV']['maxSQL']        = '5.7.14'; 
+		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
+		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
+		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
+		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
+		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
+		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
+		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
+		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+	} elseif ( @$instance['cmsRELEASE'] == '3.2' and @$instance['cmsDEVLEVEL'] >= 1) {
 		$fpa['supportENV']['minPHP']        = '5.3.1';
 		$fpa['supportENV']['minSQL']        = '5.1.0';
 		$fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
@@ -2749,6 +2788,9 @@
 	echo '<div style="clear:both;"></div>';
 	echo "<p></p>";
 	echo '<div style="text-align:center!important;"><a style="color:#4D8000!important;" href="'. _RES_FPALINK2 .''. _RES_LANG .'" target="_github">'. _RES_FPALATEST2 .' '. _RES .'</a><p></div>';
+	echo _FPA_DELNOTE_LN1;
+	echo _FPA_DELNOTE_LN2;
+	echo _FPA_DELNOTE_LN3;
 	echo '</div>';
 	showDev ( $snapshot );
 	?>

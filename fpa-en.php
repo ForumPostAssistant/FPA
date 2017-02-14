@@ -150,6 +150,7 @@
 	define ( '_FPA_SHOWCOM', 'Show Components' );
 	define ( '_FPA_SHOWMOD', 'Show Modules' );
 	define ( '_FPA_SHOWPLG', 'Show Plugins' );
+	define ( '_FPA_SHOWCEX', 'Show Core Extentions' );
 	define ( '_FPA_INFOPRI', 'Information Privacy' );
 	define ( '_FPA_PRIVNON', 'None' );
 	define ( '_FPA_PRIVNONNOTE', 'No elements are masked' );
@@ -366,15 +367,15 @@
 
 	}
 
-	if ( @$_POST['showElevated'] == 1 ) {
-		$showElevated  = 1;
+	if ( @$_POST['showElevated'] == 0 AND  @$_POST['doIT'] == 1   ) {
+		$showElevated  = 0;
 
 	} else {
 		$showElevated = 1; // default 1(show) changed default to 1 Phil 4-20-12
 
 	}
 
-	if ( @$_POST['showTables'] == 1 ) {
+	if ( @$_POST['showTables'] == 1 AND  @$_POST['doIT'] == 1   ) {
 		$showTables  = 1;
 
 	} else {
@@ -382,28 +383,34 @@
 
 	}
 
-	if ( @$_POST['showComponents'] == 1 ) {
-		$showComponents  = 1;
+	if ( @$_POST['showComponents'] == 0 AND  @$_POST['doIT'] == 1   ) {
+		$showComponents  = 0;
 
 	} else {
 		$showComponents = 1; // default 0 (hide) changed default to 1 Phil 4-20-12
 
 	}
 
-	if ( @$_POST['showModules'] == 1 ) {
-		$showModules  = 1;
+	if ( @$_POST['showModules'] == 0 AND  @$_POST['doIT'] == 1   ) {
+		$showModules  = 0;
 
 	} else {
 		$showModules = 1; // default 0 (hide) changed default to 1 Phil 4-20-12
 
 	}
 
-	if ( @$_POST['showPlugins'] == 1 ) {
-		$showPlugins  = 1;
+	if ( @$_POST['showPlugins'] == 0 AND  @$_POST['doIT'] == 1  ) {
+		$showPlugins  = 0;
 
 	} else {
 		$showPlugins = 1; // default 0(hide) changed default to 1 Phil 4-20-12
 
+	}
+
+	if ( @$_POST['showCoreEx'] == 0 AND  @$_POST['doIT'] == 1 ) {
+		$showCoreEx  = 0;
+	} else {
+		$showCoreEx = 1; 
 	}
 
 	// setup the Post type (Forum=BBCode, GitHUB=markdown or JoomlaCode=plain-text)
@@ -2917,36 +2924,40 @@
 							<div style="float:left; width:170px;">
 
 							<?php
-								if ( @$_POST['showElevated'] ) {
-									$selectshowElevated = 'CHECKED';
+								if ( @$_POST['showElevated'] == 0 AND  @$_POST['doIT'] == 1  ) {
+									$selectshowElevated = '';
 								} else {
 									$selectshowElevated = 'CHECKED'; // changed to checked - Phil - 4-20-12
 								}
 
-								if ( @$_POST['showTables'] ) {
+								if ( @$_POST['showTables'] == 1 AND  @$_POST['doIT'] == 1  ) {
 									$selectshowTables = 'CHECKED';
 								} else {
 									$selectshowTables = '';
 								}
 
-								if ( @$_POST['showComponents'] ) {
-									$selectshowComponents = 'CHECKED';
+								if ( @$_POST['showComponents'] == 0 AND  @$_POST['doIT'] == 1  ) {
+									$selectshowComponents = '';
 								} else {
 									$selectshowComponents = 'CHECKED'; // changed to checked - Phil - 4-20-12
 								}
 
-								if ( @$_POST['showModules'] ) {
-									$selectshowModules = 'CHECKED';
+								if ( @$_POST['showModules'] == 0 AND  @$_POST['doIT'] == 1  ) {
+									$selectshowModules = '';
 								} else {
 									$selectshowModules = 'CHECKED'; // changed to checked - Phil - 4-20-12
 								}
 
-								if ( @$_POST['showPlugins'] ) {
-									$selectshowPlugins = 'CHECKED';
+								if ( @$_POST['showPlugins'] == 0 AND  @$_POST['doIT'] == 1  ) {
+									$selectshowPlugins = '';
 								} else {
 									$selectshowPlugins = 'CHECKED'; // changed to checked - Phil - 4-20-12
 								}
-
+								if ( @$_POST['showCoreEx'] == 0 AND  @$_POST['doIT'] == 1 ) {
+									$selectshowCoreEx = '';
+								} else {
+									$selectshowCoreEx = 'CHECKED';
+								}                
 								if ( $instance['instanceFOUND'] != _FPA_Y ) {
 									$dis = 'DISABLED';
 
@@ -2967,6 +2978,7 @@
 								<input <?php echo $dis; ?> style="font-size:9px;" type="checkbox" name="showComponents" value="1" <?php echo $selectshowComponents ?> /><span class="normal"><?php echo _FPA_SHOWCOM; ?></span><br />
 								<input <?php echo $dis; ?> style="font-size:9px;" type="checkbox" name="showModules" value="1" <?php echo $selectshowModules ?> /><span class="normal"><?php echo _FPA_SHOWMOD; ?></span><br />
 								<input <?php echo $dis; ?> style="font-size:9px;" type="checkbox" name="showPlugins" value="1" <?php echo $selectshowPlugins ?> /><span class="normal"><?php echo _FPA_SHOWPLG; ?></span><br />
+								<input <?php echo $dis; ?> style="font-size:9px;" type="checkbox" name="showCoreEx" value="1" <?php echo $selectshowCoreEx ?> /><span class="normal"><?php echo _FPA_SHOWCEX; ?></span><br />
 							</div>
 
 							<div style="float:right; width:150px;">
@@ -3222,10 +3234,10 @@
 
 									foreach ( $plugin['SITE'] as $key => $show ) {
 
-										if ( $show != @$plugin['ARRNAME'] ) {
+										if ( $show != @$plugin['ARRNAME'] ) 
+										{
 											echo $show['name'] .' ('. $show['version'] .') | ';
-										} // endif !arrname
-
+										} // endif !arrname  
 									}
 								} // end plugins
 
@@ -3950,19 +3962,34 @@
 								echo '[color=#000000][b]'. _FPA_EXTCOM_TITLE .' :: '. _FPA_SITE .' :: [/b][/color]';
 
 									foreach ( $component['SITE'] as $key => $show ) {
-										echo $show['name'] .' ('. $show['version'] .') | ';
+										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
+										{                      
+										if ( $show['type'] == _FPA_3PD)
+										{                     
+										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										} else {
+										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										}
 									}
-
+							}
 								echo "\r\n";
 
 								echo '[color=#000000][b]'. _FPA_EXTCOM_TITLE .' :: '. _FPA_ADMIN .' :: [/b][/color]';
 
 									foreach ( $component['ADMIN'] as $key => $show ) {
-										echo $show['name'] .' ('. $show['version'] .') | ';
+										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
+										{                      
+										if ( $show['type'] == _FPA_3PD)
+										{                     
+										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										} else {
+										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										}
 									}
 
-								echo "\r\n\r\n";
 							}
+							}
+								echo "\r\n\r\n";
 //                        }
 
 
@@ -3970,30 +3997,54 @@
 								echo '[color=#000000][b]'. _FPA_EXTMOD_TITLE .' :: '. _FPA_SITE .' :: [/b][/color]';
 
 									foreach ( $module['SITE'] as $key => $show ) {
-										echo $show['name'] .' ('. $show['version'] .') | ';
+										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
+										{                      
+										if ( $show['type'] == _FPA_3PD)
+										{                     
+										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										} else {
+										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										}
 									}
 
+							}
 								echo "\r\n";
 
 								echo '[color=#000000][b]'. _FPA_EXTMOD_TITLE .' :: '. _FPA_ADMIN .' :: [/b][/color]';
 
 									foreach ( $module['ADMIN'] as $key => $show ) {
-										echo $show['name'] .' ('. $show['version'] .') | ';
+										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
+										{                      
+										if ( $show['type'] == _FPA_3PD)
+										{                     
+										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										} else {
+										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										}
 									}
 
-							echo "\r\n\r\n";
 							}
+							}
+							echo "\r\n\r\n";
+
 
 
 							if ( @$_POST['showPlugins'] == '1' ) {
 								echo '[color=#000000][b]'. _FPA_EXTPLG_TITLE .' :: '. _FPA_SITE .' :: [/b][/color]';
 
 									foreach ( $plugin['SITE'] as $key => $show ) {
-										echo $show['name'] .' ('. $show['version'] .') | ';
+										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
+										{                      
+										if ( $show['type'] == _FPA_3PD)
+										{                     
+										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										} else {
+										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										}
 									}
 
 							}
-
+							}
 							echo '[/size][/quote]';
 
 						} // end if showComponents, Modules, Plugins, if cmsFOUND
@@ -4013,17 +4064,34 @@
 									echo '[color=#000000][b]'. _FPA_TMPL_TITLE .' :: '. _FPA_SITE .' :: [/b][/color]';
 
 										foreach ( $template['SITE'] as $key => $show ) {
-											echo $show['name'] .' ('. $show['version'] .') | ';
-										}
+                      if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
+                      {                      
+                      if ( $show['type'] == _FPA_3PD)
+                      {                     
+                      echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+                      } else {
+                      echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+                      }
+									}
+									}
 
 									echo "\r\n";
 
 									echo '[color=#000000][b]'. _FPA_TMPL_TITLE .' :: '. _FPA_ADMIN .' :: [/b][/color]';
 
 										foreach ( $template['ADMIN'] as $key => $show ) {
-											echo $show['name'] .' ('. $show['version'] .') | ';
-										}
+                      if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
+                      {                      
+                      if ( $show['type'] == _FPA_3PD)
+                      {                     
+                      echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+                      } else {
+                      echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+                      }
+									}
 
+							}
+							}
 									echo '[/size][/quote]';
 
 								} // end if InstanceFOUND
@@ -4048,7 +4116,6 @@
 				echo '<span class="ok">'. _FPA_INS_7 .'</span>'; // changed to _FPA_INS_7 from _FPA_INS_6  Phil - 4-21-12
 				echo '<div style="clear:both;"><br /></div>';
 				echo '</div>';
-			}
 		?>
 
 						</form>
@@ -5717,7 +5784,7 @@
 		// and make it easier to see what are 3rd party. The old code is marked out below.
 			foreach ( $component['SITE'] as $key => $show ) {
 
-				if ( $show['type'] == _FPA_3PD AND $showProtected <= 2) {
+				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
 					$typeColor = '404040';
 					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
 
@@ -5773,7 +5840,7 @@
 		// and make it easier to see what are 3rd party. The old code is marked out below.
 			foreach ( $component['ADMIN'] as $key => $show ) {
 
-				if ( $show['type'] == _FPA_3PD AND $showProtected <= 2) {
+				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
 					$typeColor = '404040';
 					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
 
@@ -5857,7 +5924,7 @@
 		// and make it easier to see what are 3rd party. The old code is marked out below.
 			foreach ( $module['SITE'] as $key => $show ) {
 
-				if ( $show['type'] == _FPA_3PD AND $showProtected <= 2) {
+				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
 					$typeColor = '404040';
 					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
 
@@ -5915,7 +5982,7 @@
 		// and make it easier to see what are 3rd party. The old code is marked out below.
 			foreach ( $module['ADMIN'] as $key => $show ) {
 
-				if ( $show['type'] == _FPA_3PD AND $showProtected <= 2) {
+				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
 					$typeColor = '404040';
 					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
 
@@ -6001,7 +6068,7 @@
 		// and make it easier to see what are 3rd party. The old code is marked out below.
 			foreach ( $plugin['SITE'] as $key => $show ) {
 
-				if ( $show['type'] == _FPA_3PD AND $showProtected <= 2) {
+				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
 					$typeColor = '404040';
 					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
 
@@ -6083,7 +6150,7 @@
 		// and make it easier to see what are 3rd party. The old code is marked out below.
 			foreach ( $template['SITE'] as $key => $show ) {
 
-				if ( $show['type'] == _FPA_3PD AND $showProtected <= 2) {
+				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
 					$typeColor = '404040';
 					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
 
@@ -6141,7 +6208,7 @@
 		// and make it easier to see what are 3rd party. The old code is marked out below.
 			foreach ( $template['ADMIN'] as $key => $show ) {
 
-				if ( $show['type'] == _FPA_3PD AND $showProtected <= 2) {
+				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
 					$typeColor = '404040';
 					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
 

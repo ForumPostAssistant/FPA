@@ -1650,6 +1650,15 @@
 			$dBconn = @mysql_connect( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'] );
 			$database['dbERROR'] = mysql_errno() .':'. mysql_error();
 
+    mysql_select_db( $instance['configDBNAME'], $dBconn );
+    $sql = "select name,type,enabled from ".$instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template'";
+    $result = mysql_query($sql);
+    if (mysql_num_rows($result) > 0) {
+      for ($exset = array ();
+      $row = mysql_fetch_array($result);
+      $exset[] = $row);
+     }
+
 			if ( $dBconn ) {
 				mysql_select_db( $instance['configDBNAME'], $dBconn );
 				$database['dbERROR'] = mysql_errno() .':'. mysql_error();
@@ -1736,6 +1745,14 @@
 	This will help maintain php 5 compatibility and possibly eliminate the user reported issue of "FPA never finishes" complaints
 	when running FPA on some systems. Phil 09-14-2012 **/
 
+
+    $sql = "select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template'";
+    $result = $dBconn->query($sql);
+    if ($result->num_rows > 0) {
+      for ($exset = array ();
+      $row = $result->fetch_assoc();
+      $exset[] = $row);
+     }
 			if ( $dBconn ) {
 				$database['dbHOSTSERV']     = @mysqli_get_server_info( $dBconn );       // SQL server version
 				$database['dbHOSTINFO']     = @mysqli_get_host_info( $dBconn );         // connection type to dB
@@ -1984,7 +2001,17 @@
 	} // end if instanceFOUND
 ?>
 
-
+<?php
+function recursive_array_search($needle,$haystack) {
+    foreach($haystack as $key=>$value) {
+        $current_key=$key;
+        if($needle===$value OR (is_array($value) && recursive_array_search($needle,$value) !== false)) {
+            return $current_key;
+        }
+    }
+    return false;
+}
+?>
 
 
 
@@ -3962,69 +3989,97 @@
 								echo '[color=#000000][b]'. _FPA_EXTCOM_TITLE .' :: '. _FPA_SITE .' :: [/b][/color]';
 
 									foreach ( $component['SITE'] as $key => $show ) {
+                    if (isset($exset[0]['name'])) { 
+                    $extarrkey = recursive_array_search($show['name'], $exset);
+                    $extenabled = $exset[$extarrkey]['enabled'];
+                     } else { $extenabled = '' ;}
+                     if ($extenabled <> 0 AND $extenabled <> 1 ){
+                     $extenabled = '';
+                   } else {
 										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										} else {
-										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										}
 									}
+  							}							
 							}
 								echo "\r\n";
 
 								echo '[color=#000000][b]'. _FPA_EXTCOM_TITLE .' :: '. _FPA_ADMIN .' :: [/b][/color]';
 
 									foreach ( $component['ADMIN'] as $key => $show ) {
+                    if (isset($exset[0]['name'])) {
+                    $extarrkey = recursive_array_search($show['name'], $exset);
+                    $extenabled = $exset[$extarrkey]['enabled'];
+                     } else { $extenabled = '' ;}
+                     if ($extenabled <> 0 AND $extenabled <> 1 ){
+                     $extenabled = '';
+                   } else {
 										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										} else {
-										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										}
 									}
-
-							}
-							}
+                } 
+  						}
+						}
 								echo "\r\n\r\n";
-//                        }
 
 
 							if ( @$_POST['showModules'] == '1' ) {
 								echo '[color=#000000][b]'. _FPA_EXTMOD_TITLE .' :: '. _FPA_SITE .' :: [/b][/color]';
 
 									foreach ( $module['SITE'] as $key => $show ) {
+                    if (isset($exset[0]['name'])) {
+                    $extarrkey = recursive_array_search($show['name'], $exset);
+                    $extenabled = $exset[$extarrkey]['enabled'];
+                     } else { $extenabled = '' ;}
+                     if ($extenabled <> 0 AND $extenabled <> 1 ){
+                     $extenabled = '';
+                   } else {
 										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										} else {
-										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										}
 									}
-
+  							}
 							}
 								echo "\r\n";
 
 								echo '[color=#000000][b]'. _FPA_EXTMOD_TITLE .' :: '. _FPA_ADMIN .' :: [/b][/color]';
 
 									foreach ( $module['ADMIN'] as $key => $show ) {
+                    if (isset($exset[0]['name'])) {
+                    $extarrkey = recursive_array_search($show['name'], $exset);
+                    $extenabled = $exset[$extarrkey]['enabled'];
+                     } else { $extenabled = '' ;}
+                     if ($extenabled <> 0 AND $extenabled <> 1 ){
+                     $extenabled = '';
+                   } else {
 										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										} else {
-										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										}
 									}
-
+  							}                
 							}
-							}
+						}
 							echo "\r\n\r\n";
 
 
@@ -4033,17 +4088,23 @@
 								echo '[color=#000000][b]'. _FPA_EXTPLG_TITLE .' :: '. _FPA_SITE .' :: [/b][/color]';
 
 									foreach ( $plugin['SITE'] as $key => $show ) {
+                    if (isset($exset[0]['name'])) { 
+                    $extarrkey = recursive_array_search($show['name'], $exset);
+                    $extenabled = $exset[$extarrkey]['enabled'];
+                     } else { $extenabled = '' ;}
+                     if ($extenabled <> 0 AND $extenabled <> 1 ){
+                     $extenabled = '';
+                   } else {
 										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										} else {
-										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
+										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										}
 									}
-
-							}
+			   				}
 							}
 							echo '[/size][/quote]';
 
@@ -4064,37 +4125,51 @@
 									echo '[color=#000000][b]'. _FPA_TMPL_TITLE .' :: '. _FPA_SITE .' :: [/b][/color]';
 
 										foreach ( $template['SITE'] as $key => $show ) {
-                      if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
-                      {                      
-                      if ( $show['type'] == _FPA_3PD)
-                      {                     
-                      echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
-                      } else {
-                      echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
-                      }
-									}
-									}
-
+                    if (isset($exset[0]['name'])) { 
+                    $extarrkey = recursive_array_search($show['name'], $exset);
+                    $extenabled = $exset[$extarrkey]['enabled'];
+                     } else { $extenabled = '' ;}
+                     if ($extenabled <> 0 AND $extenabled <> 1 ){
+                     $extenabled = '';
+                    } else {
+										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
+										{                      
+										if ( $show['type'] == _FPA_3PD)
+										{                     
+										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										} else {
+										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+                    }
+				  				}
+								}
+				 			}
 									echo "\r\n";
 
 									echo '[color=#000000][b]'. _FPA_TMPL_TITLE .' :: '. _FPA_ADMIN .' :: [/b][/color]';
 
 										foreach ( $template['ADMIN'] as $key => $show ) {
-                      if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
-                      {                      
-                      if ( $show['type'] == _FPA_3PD)
-                      {                     
-                      echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
-                      } else {
-                      echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] | [/b][/color]';
-                      }
+                    if (isset($exset[0]['name'])) {
+                    $extarrkey = recursive_array_search($show['name'], $exset);
+                    $extenabled = $exset[$extarrkey]['enabled'];
+                     } else { $extenabled = '' ;}
+                     if ($extenabled <> 0 AND $extenabled <> 1 ){
+                     $extenabled = '';
+                    } else {
+										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
+										{                      
+										if ( $show['type'] == _FPA_3PD)
+										{                     
+										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										} else {
+										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+                    }
 									}
-
+					   		}
 							}
-							}
+						}
 									echo '[/size][/quote]';
-
-								} // end if InstanceFOUND
+					}
+					} // end if InstanceFOUND
 
 						} // end showProtected != strict
 

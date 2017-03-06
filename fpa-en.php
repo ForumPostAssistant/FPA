@@ -150,7 +150,7 @@
 	define ( '_FPA_SHOWCOM', 'Show Components' );
 	define ( '_FPA_SHOWMOD', 'Show Modules' );
 	define ( '_FPA_SHOWPLG', 'Show Plugins' );
-	define ( '_FPA_SHOWCEX', 'Show Core Extentions' );
+	define ( '_FPA_SHOWCEX', 'Show Core Extensions' );
 	define ( '_FPA_INFOPRI', 'Information Privacy' );
 	define ( '_FPA_PRIVNON', 'None' );
 	define ( '_FPA_PRIVNONNOTE', 'No elements are masked' );

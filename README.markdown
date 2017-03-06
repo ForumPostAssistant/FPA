@@ -1,5 +1,11 @@
 ### Forum Post Assistant (FPA)
 ***
+
+*** 06/03/2017
+Merged code to allow php 7.1 recognition
+
+
+
 **_11/02/2014_**
 
 **_Notice:_**

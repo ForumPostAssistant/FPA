@@ -4000,7 +4000,7 @@ function recursive_array_search($needle,$haystack) {
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										} else {
 										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										}
@@ -4023,7 +4023,7 @@ function recursive_array_search($needle,$haystack) {
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										} else {
 										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										}
@@ -4049,7 +4049,7 @@ function recursive_array_search($needle,$haystack) {
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										} else {
 										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										}
@@ -4072,7 +4072,7 @@ function recursive_array_search($needle,$haystack) {
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										} else {
 										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										}
@@ -4099,7 +4099,7 @@ function recursive_array_search($needle,$haystack) {
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										} else {
 										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										}
@@ -4136,7 +4136,7 @@ function recursive_array_search($needle,$haystack) {
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										} else {
 										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										}
@@ -4159,7 +4159,7 @@ function recursive_array_search($needle,$haystack) {
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=#ffa500]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										} else {
 										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
 										}

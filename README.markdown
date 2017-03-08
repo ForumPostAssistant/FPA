@@ -4,9 +4,9 @@
 *** 06/03/2017
 Merged code to allow php 7.1 recognition as per https://github.com/ForumPostAssistant/FPA/pull/26
 
+1.2.8 version 
 
-
-**_11/02/2014_**
+/**_11/02/2014_**
 
 **_Notice:_**
 

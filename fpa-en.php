@@ -7,8 +7,8 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.2.9
- **  @last updated 07/03/2017
+ **  @version 1.3.0
+ **  @last updated 09/03/2017
  **  @release Beta
  **  @date 24/06/2011
  **  @author RussW
@@ -50,8 +50,8 @@
 		define ( '_RES', 'Forum Post Assistant' );
 	}
 
-	define ( '_RES_VERSION', '1.2.9' );
-	define ( '_last_updated', '07/03/2017' );
+	define ( '_RES_VERSION', '1.3.0' );
+	define ( '_last_updated', '09/03/2017' );
 	define ( '_COPYRIGHT_STMT', ' Copyright (C) 2011, 2012 Russell Winter, Phil DeGruy, Bernard Toplak &nbsp;' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. &nbsp; This is free software,
@@ -4000,9 +4000,9 @@ function recursive_array_search($needle,$haystack) {
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
 										} else {
-										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
 										}
 									}
   								}							
@@ -4023,9 +4023,9 @@ function recursive_array_search($needle,$haystack) {
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
 										} else {
-										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
 										}
 									}
 							         } 
@@ -4049,9 +4049,9 @@ function recursive_array_search($needle,$haystack) {
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
 										} else {
-										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
 										}
 									}
   								}
@@ -4072,9 +4072,9 @@ function recursive_array_search($needle,$haystack) {
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
 										} else {
-										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
 										}
 									}
   								}                
@@ -4099,17 +4099,17 @@ function recursive_array_search($needle,$haystack) {
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
 										} else {
-										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
 										}
 									}
 			   					}
 							}
-							echo '[/size][/quote]';
+
 
 						} // end if showComponents, Modules, Plugins, if cmsFOUND
-
+							echo '[/size][/quote]';
 					} // end showProtected != strict
 
 
@@ -4136,9 +4136,9 @@ function recursive_array_search($needle,$haystack) {
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
 										} else {
-										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
 										}
 				  					}
 								}
@@ -4159,9 +4159,9 @@ function recursive_array_search($needle,$haystack) {
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#993300]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
 										} else {
-										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color] [color=#000000][b] '.$extenabled.' | [/b][/color]';
+										echo '[color=#0000ff]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
 										}
 									}
 						   		}

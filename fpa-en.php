@@ -130,15 +130,22 @@
 	define ( '_FPA_INS_5', 'Click the <span class="normal-note">Click Here To Generate Post</span> button to build the post content' );
 	define ( '_FPA_INS_6', 'Copy the contents of the <span class="ok-hilite">&nbsp;Post Detail&nbsp;</span> box and paste it into a post following the instructions below the genersted text box' ); //changed wording Phil 4-20-12
 	define ( '_FPA_INS_7', ' <div align="center"><font size="2">To copy the contents of the Post Detail box:
-  </font></div>
-  <p align="left" />
-  <div align="left"><font size="2">1.) Place the computers cursor within the above box of generated text,</font></div>
-<p align="left" />
-  <div align="left"><font size="2">2.) Use CTRL-a to select all the text within the box</font></div>
-<p align="left" />
-  <div align="left"><font size="2">3.) Use CTRL-c to copy the generated text to the browser clipboard.</font></div>
-<p align="left" />
-  <div align="left"><font size="2">4.) Use CTRL-v to paste the copied text into your forum posting at the desired spot.</font></div>' ); //added instruction lines Phil 4-20-12
+            </font></div>
+            <p align="left" />
+            <div align="left"><font size="2">1.) Place the cursor in the above box of generated text.</font></div>
+            <p align="left" />
+            <div align="left"><font size="2">2.) Use CTRL-a to select all the text within the box.</font></div>
+            <p align="left" />
+            <div align="left"><font size="2">3.) Use CTRL-c to copy the generated text to the browser clipboard.</font></div>
+            <p align="left" />
+            <div align="left"><font size="2">4.) Use CTRL-v to paste the copied text into your forum posting at the desired spot.</font></div> 
+            <hr>
+            <div align="left"><font size="2">If your site has many extensions installed, the forum post output could excede the posting limit. </font></div>
+            <div align="left"><font size="2">If this happens, use more than one post, and utilize the optional settings to divide the output.  </font></div>
+            <div align="left"><font size="2">Try generating first without plugins, and next with plugins but without components and modules.   </font></div>
+            <p align="left" />
+            <div align="left"><font size="2">Maximum number of characters pr. post are 20.000    <button type="button" onclick="CountCharacters()">Count Characters</button></div>
+            <div align="center"><font size="3"> <output id ="chcount"></output></div>');
 	define ( '_FPA_POST_NOTE', 'Leave ALL fields blank/empty to simply post diagnostic information.' );
 	define ( '_FPA_PROB_DSC', 'Problem Description' );
 	define ( '_FPA_PROB_MSG', 'Log/Error Message' );
@@ -570,7 +577,7 @@
 	// !! This does not work properly. Fails badly (fatal) if we try changing memory
 	// ** Fixed this code by adding the missing M to the result ** //  - Phil 09-20-12
 	if ( @$_POST['increasePOPS'] == 1 ) {
-		ini_set ( 'memory_limit', ($fpa['ORIGphpMEMLIMIT']*2)."M" );
+		ini_set ( 'memory_limit', (rtrim($fpa['ORIGphpMEMLIMIT'],"M")*2)."M" ); //Fixed PHP7.1 Notice: A non well formed numeric value encountered...
 		ini_set ( 'max_execution_time', ($fpa['ORIGphpMAXEXECTIME']*2) );
 	}
 
@@ -2368,6 +2375,15 @@ function recursive_array_search($needle,$haystack) {
 			document.all["slowScreenSplash"].style.display = "none";
 		</script>
 
+    <!-- Count characters in post output -->
+    <script>
+    function CountCharacters() {
+      var x = document.getElementById("postOUTPUT").value; 
+      var sln = x.length + 140; 
+      document.getElementById("chcount").innerHTML = sln; 
+    }
+    </script>
+
 		</head>
 	<body>
 
@@ -3665,8 +3681,12 @@ function recursive_array_search($needle,$haystack) {
 
 						if ( substr( $instance['configMODE'],1 ,1 ) == '7' OR substr( $instance['configMODE'],2 ,1 ) >= '5' OR substr( $instance['configMODE'],3 ,1 ) >= '5' ) { echo '[color=#800000]'; } else { echo '[color=#008000]'; }
 						echo $instance['configMODE'] .'[/color]) | ';
-						echo '[b]'. _FPA_OWNER .':[/b] '. $instance['configOWNER']['name'] .' (uid: '. isset($instance['configOWNER']['uid']) .'/gid: '. isset($instance['configOWNER']['gid']) .') | [b]'. _FPA_GROUP .':[/b] '. $instance['configGROUP']['name'] .' (gid: '. isset($instance['configGROUP']['gid']) .') | [b]Valid For:[/b] '. $instance['configVALIDFOR'];
 
+            if ( $_POST['showProtected'] == '1' ) {
+  						echo '[b]'. _FPA_OWNER .':[/b] '. $instance['configOWNER']['name'] .' (uid: '. isset($instance['configOWNER']['uid']) .'/gid: '. isset($instance['configOWNER']['gid']) .') | [b]'. _FPA_GROUP .':[/b] '. $instance['configGROUP']['name'] .' (gid: '. isset($instance['configGROUP']['gid']) .') | [b]Valid For:[/b] '. $instance['configVALIDFOR'];
+              } else {
+  						echo '[b]'. _FPA_OWNER .':[/b]  [color=orange]--'. _FPA_HIDDEN .'--[/color] . (uid: '. isset($instance['configOWNER']['uid']) .'/gid: '. isset($instance['configOWNER']['gid']) .') | [b]'. _FPA_GROUP .':[/b]  [color=orange]--'. _FPA_HIDDEN .'--[/color]  (gid: '. isset($instance['configGROUP']['gid']) .') | [b]Valid For:[/b] '. $instance['configVALIDFOR'];
+              } 
 					echo "\r\n";
 
 					echo '[color=#000000][b]'. _FPA_CFG .' '. _FPA_OPTS .' :: [/b][/color] [b]Offline:[/b] '. $instance['configOFFLINE'] .' | [b]SEF:[/b] '. $instance['configSEF'] .' | [b]SEF Suffix:[/b] '. $instance['configSEFSUFFIX'] .' | [b]SEF ReWrite:[/b] '. $instance['configSEFRWRITE'] .' | ';

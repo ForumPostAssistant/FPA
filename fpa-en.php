@@ -288,7 +288,7 @@
 	define ( '_FPA_EN', 'Enabled' );
 	define ( '_FPA_DI', 'Disabled' );
 	define ( '_FPA_NO', 'No' );
-
+	define ( '_FPA_STATS', 'statistics');
 	define ( '_FPA_POTOI', 'Potential Ownership Issues' );
 	define ( '_FPA_POTME', 'Potential Missing Extensions' );
 	define ( '_FPA_POTMM', 'Potential Missing Modules' );

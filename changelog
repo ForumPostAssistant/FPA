@@ -1,0 +1,19 @@
+
+
+
+
+1.2.8.1
+.
+Fixed one more PHP7.1 error.
+Changed "Owner" and "Group" to protected information in the post output. Many users masked this anyway.
+Added a feature to count the number of characters in the post output.
+Fixed a bug that slightly messed up the BBCode when show plugins was deselected.
+Changed color for 3rdParty extensions for better readability.
+Removed some BBCode tags to reduce the post size.
+
+
+
+1.2.8.0
+Added 3.6.5 support.
+Added php7 support.
+Recolour to identify core and 3rd party extensions. 

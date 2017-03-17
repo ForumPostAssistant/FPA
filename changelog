@@ -15,5 +15,6 @@ Removed some BBCode tags to reduce the post size.
 
 1.2.8.0
 Added 3.6.5 support.
-Added php7 support.
+Added php7 support. as per https://github.com/ForumPostAssistant/FPA/pull/26
 Recolour to identify core and 3rd party extensions. 
+

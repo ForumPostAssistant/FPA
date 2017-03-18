@@ -8,7 +8,7 @@
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
  **  @version 1.3.0
- **  @last updated 18/03/2017
+ **  @last updated 18/07/2017
  **  @release Beta
  **  @date 24/06/2011
  **  @author RussW

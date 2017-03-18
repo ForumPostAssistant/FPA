@@ -8,13 +8,13 @@
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
  **  @version 1.3.0
- **  @last updated 09/03/2017
+ **  @last updated 18/03/2017
  **  @release Beta
  **  @date 24/06/2011
  **  @author RussW
  **  @author PhilD
  **
- ** Remember to revision and last updated date below on about lines 47-48
+ ** Remember to revision and last updated date below on about line 54
  **/
 
 /**
@@ -30,6 +30,7 @@
  * Bernard 04-11-16: fixed a bug with older version devel number parsing
  * Bernard 04-12-16: fixed a bug with unreadable folder producing endless loop;
  *                   disabled forgotten debug print_r()
+ * PhilD 03-17-17 Edits to add MariaDB check and add _FPA_MDB define for MariaDB
  */
  
 
@@ -205,6 +206,7 @@
 	define ( '_FPA_N', 'No' );
 	define ( '_FPA_FIRST', 'First' );
 	define ( '_FPA_M', 'Maybe' );
+	define ( '_FPA_MDB', 'Yes - MariaDB Used' );
 	define ( '_FPA_U', 'Unknown' );
 	define ( '_FPA_K', 'Known' );
 	define ( '_FPA_E', 'Exists' );
@@ -2027,7 +2029,7 @@ function recursive_array_search($needle,$haystack) {
 
 
 		<head>
-		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title><?php echo _RES .' : v'. _RES_VERSION .' ('. _RES_RELEASE .' / '. _RES_LANG .')';
 		echo '<p>FPA last updated on: '. _last_updated . '</p>' ;
 		?></title>
@@ -2385,7 +2387,7 @@ function recursive_array_search($needle,$haystack) {
     </script>
 
 		</head>
-	<body>
+<body>
 
 <?php
 	/** display the fpa heading ***************************************************************/
@@ -2439,6 +2441,17 @@ function recursive_array_search($needle,$haystack) {
 		Mysql:
 		On Medialayer at least, mysql 5.0.87-community will work with current versions of Joomla and has inno db enabled
 		*******/
+		
+		/** MariaDB check. Get the Database type and look for MariaDB. All current versions of MariaDB 
+			should be current with Joomla. The issue with using version numbers is mysql also uses numbers, 
+			so this check differentiates between mysql and MariaDB. If there is a better idea given the 
+			current FPA code feel free to submit it.  -- PhilD 03-17-17
+		****/
+		$input_line = @$database['dbHOSTSERV'];
+		preg_match("/\b(\w*mariadb\w*)\b/i", $input_line, $output_array);
+		//print $output_array[0];
+	
+		
     if ( @$instance['cmsRELEASE'] >= '3.5')  {
 		$fpa['supportENV']['minPHP']        = '5.3.10';
 		$fpa['supportENV']['minSQL']        = '5.1.0';
@@ -2567,7 +2580,8 @@ function recursive_array_search($needle,$haystack) {
 	} elseif ( @$instance['cmsRELEASE'] == '1.0' ) {
 		$fpa['supportENV']['minPHP']        = '3.0.1';
 		$fpa['supportENV']['minSQL']        = '3.0.0';
-		$fpa['supportENV']['maxPHP']        = '4.4.9';
+	//	$fpa['supportENV']['maxPHP']        = '4.4.9';
+		$fpa['supportENV']['maxPHP']        = '5.2.17';   // changed max supported php from 4.4.9 to 5.2.17 - 03/12/17 - PD
 		$fpa['supportENV']['maxSQL']        = '5.0.91';  // limited by ENGINE TYPE changes in 5.0 and install sql syntax
 		$fpa['supportENV']['badPHP'][0]     = _FPA_NA;
 		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
@@ -2682,7 +2696,13 @@ function recursive_array_search($needle,$haystack) {
 				echo '<div class="normal-note"><span class="warn-text">'. _FPA_M .' (<a href="http://forum.joomla.org/viewtopic.php?p=2297327" target="_new">'. _FPA_SPNOTE .'</a>)</span></div>';
 				$snapshot['sqlSUP4J'] = _FPA_M;
 
-			} else {
+			} 
+			//Added this elseif to give the ok for MariaDB -- PhilD 03-17-17
+			elseif ($output_array[0] == "MariaDB") {
+				echo '<div class="normal-note"><span class="ok">'. _FPA_MDB .'</span></div>';
+				$snapshot['sqlSUP4J'] = _FPA_MDB;
+			}
+			else {
 				echo '<div class="normal-note"><span class="alert-text">'. _FPA_N .'</span></div>';
 				$snapshot['sqlSUP4J'] = _FPA_N;
 			}
@@ -3093,7 +3113,7 @@ function recursive_array_search($needle,$haystack) {
 							?>
 							<!-- // !TODO make this more robust across multiple server configs -->
 							<div class="normal" style="margin-left:15px;border-top:1px dotted #CCC;margin-top:30px;margin-right:15px;">
-								<input style="font-size:9px;" type="checkbox" name="increasePOPS" value="1" <?php echo $selectPOPS; ?> />PHP "<span class="warn-text"><?php echo _FPA_OUTMEM; ?></span>" <?php echo _FPA_OR; ?> "<span class="warn-text"><?php echo _FPA_OUTTIM; ?></span>" <?php echo _FPA_ERRS; ?>?<br />
+								<input style="font-size:9px;" type="checkbox" name="increasePOPS" value="1" <?php echo $selectPOPS; ?> />PHP &quot;<span class="warn-text"><?php echo _FPA_OUTMEM; ?></span>&quot; <?php echo _FPA_OR; ?> &quot;<span class="warn-text"><?php echo _FPA_OUTTIM; ?></span>&quot; <?php echo _FPA_ERRS; ?>?<br />
 								<span style="margin-left:15px;font-size:8px;"><?php echo _FPA_INCPOPS; ?></span>
 							</div>
 
@@ -4218,8 +4238,8 @@ function recursive_array_search($needle,$haystack) {
 			</div>
 
 		<div style="clear:both;"><br /></div>
-		</div>
-	</div>
+	  </div>
+</div>
 <!-- POST FORM -->
 
 
@@ -6485,5 +6505,5 @@ function recursive_array_search($needle,$haystack) {
 ?>
 
 
-	</body>
+</body>
 </html>

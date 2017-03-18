@@ -140,6 +140,7 @@
             <div align="left"><font size="2">3.) Use CTRL-c to copy the generated text to the browser clipboard.</font></div>
             <p align="left" />
             <div align="left"><font size="2">4.) Use CTRL-v to paste the copied text into your forum posting at the desired spot.</font></div> 
+	                <div align="left"><font size="2">4.) Disable smilies to prevent charcters being converted by the forums software.</font></div> 
             <hr>
             <div align="left"><font size="2">If your site has many extensions installed, the forum post output could excede the posting limit. </font></div>
             <div align="left"><font size="2">If this happens, use more than one post, and utilize the optional settings to divide the output.  </font></div>

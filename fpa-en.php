@@ -1130,6 +1130,7 @@
 				preg_match ( '#cachetime.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHETIME );
 				preg_match ( '#cache_platformprefix.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHEPLFPFX );
 				preg_match ( '#frontediting.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configFRONTEDIT );
+ 				preg_match ( '#shared_session.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSHASESS );
         
 					$instance['configSEFRWRITE'] = $configSEFREWRITE[1];
 					$instance['configSEFSUFFIX'] = $configSEFSUFFIX[1];
@@ -1157,7 +1158,6 @@
 					} else {
 						$instance['configCACHEHANDLER'] = _FPA_NA;
 					}          
-
 					if ( $configCACHETIME ) {
 					$instance['configCACHETIME'] = $configCACHETIME[1];
 					} else {
@@ -1172,6 +1172,11 @@
 					$instance['configFRONTEDIT'] = $configFRONTEDIT[1];
 					} else {
 						$instance['configFRONTEDIT'] = _FPA_NA;
+					}          
+					if ( $configSHASESS ) {
+					$instance['configSHASESS'] = $configSHASESS[1];
+					} else {
+						$instance['configSHASESS'] = _FPA_NA;
 					}          
 					if ( $configSSL ) { // 1.7 hack, 1.7.0 seems not to have this option
 						$instance['configSSL'] = $configSSL[1];
@@ -3770,7 +3775,7 @@ function recursive_array_search($needle,$haystack) {
 						} elseif ( $instance['configSITEHTWC'] == _FPA_Y ) { echo '[color=#008000]'. $instance['configSITEHTWC'] .'[/color] | ';
 						} elseif ( $instance['configSITEHTWC'] == _FPA_N ) { echo '[color=orange]'. $instance['configSITEHTWC'] .'[/color] | '; }
 
-					echo '[b]GZip:[/b] '. $instance['configGZIP'] .' | [b]Cache:[/b] '. $instance['configCACHING'] .' | [b]CacheTime:[/b] '. $instance['configCACHETIME'] .' | [b]CacheHandler:[/b] '. $instance['configCACHEHANDLER'] .' | [b]CachePlatformPrefix:[/b] '. $instance['configCACHEPLFPFX'] .' | [b]FTP Layer:[/b] '. $instance['configFTP'] .' | [b]Proxy:[/b] '. $instance['configPROXY'] .' | [b]LiveSite:[/b] '. $instance['configLIVESITE'] .' | [b]Session lifetime:[/b] '. $instance['configLIFETIME'] .' | [b]Session handler:[/b] '. $instance['configSESSHAND'] .' | [b]SSL:[/b] '. $instance['configSSL'] .' | [b]FrontEdit:[/b] '. $instance['configFRONTEDIT'] .' | [b]Error Reporting:[/b] '. $instance['configERRORREP'] .' | [b]Site Debug:[/b] '. $instance['configSITEDEBUG'] .' | ';
+					echo '[b]GZip:[/b] '. $instance['configGZIP'] .' | [b]Cache:[/b] '. $instance['configCACHING'] .' | [b]CacheTime:[/b] '. $instance['configCACHETIME'] .' | [b]CacheHandler:[/b] '. $instance['configCACHEHANDLER'] .' | [b]CachePlatformPrefix:[/b] '. $instance['configCACHEPLFPFX'] .' | [b]FTP Layer:[/b] '. $instance['configFTP'] .' | [b]Proxy:[/b] '. $instance['configPROXY'] .' | [b]LiveSite:[/b] '. $instance['configLIVESITE'] .' | [b]Session lifetime:[/b] '. $instance['configLIFETIME'] .' | [b]Session handler:[/b] '. $instance['configSESSHAND'] .' | [b]Shared sessions:[/b] '. $instance['configSHASESS'] .' | [b]SSL:[/b] '. $instance['configSSL'] .' | [b]FrontEdit:[/b] '. $instance['configFRONTEDIT'] .' | [b]Error Reporting:[/b] '. $instance['configERRORREP'] .' | [b]Site Debug:[/b] '. $instance['configSITEDEBUG'] .' | ';
 
 						if ( version_compare( $instance['cmsRELEASE'], '1.5', '>=' ) ) {
 							echo '[b]Language Debug:[/b] '. $instance['configLANGDEBUG'] .' | ';

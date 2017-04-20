@@ -1111,6 +1111,7 @@
 					$instance['configCACHETIME'] = _FPA_NA;
 					$instance['configCACHEPLFPFX'] = _FPA_NA;
 					$instance['configFRONTEDIT'] = _FPA_NA;                   
+					$instance['configSHASESS'] = _FPA_NA;
 					// these forced settings will be over-written later by the variable supported release
 			}
 

@@ -162,6 +162,7 @@
 	define ( '_FPA_SHOWPLG', 'Show Plugins' );
 	define ( '_FPA_SHOWCEX', 'Show Core Extensions' );
 	define ( '_FPA_INFOPRI', 'Information Privacy' );
+	define ( '_FPA_STRICT', 'Strict' );
 	define ( '_FPA_PRIVNON', 'None' );
 	define ( '_FPA_PRIVNONNOTE', 'No elements are masked' );
 	define ( '_FPA_PRIVPAR', 'Partial' );
@@ -3793,6 +3794,10 @@ function recursive_array_search($needle,$haystack) {
 					} else { echo '[color=orange]'. _FPA_NF .'[/color]'; }
 
 					echo "\r\n\r\n";
+
+					if ( $showProtected <> 1 ) {
+						$system['sysDOCROOT'] = '[color=orange]--'. _FPA_HIDDEN .'--[/color]';
+					}
 
 					echo '[color=#000000][b]'. _FPA_HOST .' '. _FPA_CFG .' :: [/b][/color] [b]OS:[/b] '. $system['sysPLATOS'] .' |  [b]OS '._FPA_VER.':[/b] '. $system['sysPLATREL'] .' | [b]'. _FPA_TEC .':[/b] '. $system['sysPLATTECH'] .' | [b]'. _FPA_WSVR .':[/b] '. $system['sysSERVSIG'] .' | [b]Encoding:[/b] '. $system['sysENCODING'] .' | [b]'. _FPA_DROOT .':[/b] '. $system['sysDOCROOT'] .' | [b]'. _FPA_SYS .' TMP '. _FPA_WRITABLE .':[/b] ';
 						if ( $system['sysTMPDIRWRITABLE'] == _FPA_Y ) { echo '[color=#008000]'; } else { echo '[color=#800000]'; }

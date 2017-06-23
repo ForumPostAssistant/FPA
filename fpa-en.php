@@ -7,8 +7,8 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.3.0
- **  @last updated 18/07/2017
+ **  @version 1.3.1
+ **  @last updated 23/04/2017
  **  @release Beta
  **  @date 24/06/2011
  **  @author RussW
@@ -51,8 +51,8 @@
 		define ( '_RES', 'Forum Post Assistant' );
 	}
 
-	define ( '_RES_VERSION', '1.3.0' );
-	define ( '_last_updated', '09/03/2017' );
+	define ( '_RES_VERSION', '1.3.1' );
+	define ( '_last_updated', '23/04/2017' );
 	define ( '_COPYRIGHT_STMT', ' Copyright (C) 2011, 2012 Russell Winter, Phil DeGruy, Bernard Toplak &nbsp;' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. &nbsp; This is free software,
@@ -140,7 +140,8 @@
             <div align="left"><font size="2">3.) Use CTRL-c to copy the generated text to the browser clipboard.</font></div>
             <p align="left" />
             <div align="left"><font size="2">4.) Use CTRL-v to paste the copied text into your forum posting at the desired spot.</font></div> 
-	                <div align="left"><font size="2">4.) Disable smilies to prevent charcters being converted by the forums software.</font></div> 
+            <p align="left" />
+            <div align="left"><font size="2">5.) Disable smilies to prevent charcters being converted by the forums software.</font></div> 
             <hr>
             <div align="left"><font size="2">If your site has many extensions installed, the forum post output could excede the posting limit. </font></div>
             <div align="left"><font size="2">If this happens, use more than one post, and utilize the optional settings to divide the output.  </font></div>
@@ -161,6 +162,7 @@
 	define ( '_FPA_SHOWPLG', 'Show Plugins' );
 	define ( '_FPA_SHOWCEX', 'Show Core Extensions' );
 	define ( '_FPA_INFOPRI', 'Information Privacy' );
+	define ( '_FPA_STRICT', 'Strict' );
 	define ( '_FPA_PRIVNON', 'None' );
 	define ( '_FPA_PRIVNONNOTE', 'No elements are masked' );
 	define ( '_FPA_PRIVPAR', 'Partial' );
@@ -385,11 +387,11 @@
 
 	}
 
-	if ( @$_POST['showTables'] == 1 AND  @$_POST['doIT'] == 1   ) {
-		$showTables  = 1;
+	if ( @$_POST['showTables'] == 0 AND  @$_POST['doIT'] == 1   ) {
+		$showTables  = 0;
 
 	} else {
-		$showTables = 0; // default 0 (hide) changed default to 1 Phil 4-20-12
+		$showTables = 1; 
 
 	}
 
@@ -1099,9 +1101,18 @@
 					$instance['configSEFSUFFIX'] = _FPA_NA;
 					$instance['configSEFRWRITE'] = _FPA_NA;
 					$instance['configFTP'] = _FPA_NA;
+					$instance['configPROXY'] = _FPA_NA;
 					$instance['configSSL'] = _FPA_NA;
 					$instance['configACCESS'] = _FPA_NA;
 					$instance['configUNICODE'] = _FPA_NA;
+					$instance['configLIFETIME'] = _FPA_NA;
+					$instance['configSESSHAND'] = _FPA_NA;
+					$instance['configLIVESITE'] = _FPA_NA; 
+ 					$instance['configCACHEHANDLER'] = _FPA_NA;
+					$instance['configCACHETIME'] = _FPA_NA;
+					$instance['configCACHEPLFPFX'] = _FPA_NA;
+					$instance['configFRONTEDIT'] = _FPA_NA;                   
+					$instance['configSHASESS'] = _FPA_NA;
 					// these forced settings will be over-written later by the variable supported release
 			}
 
@@ -1112,16 +1123,65 @@
 				preg_match ( '#sef_suffix.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSEFSUFFIX );
 				preg_match ( '#debug_lang.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configLANGDEBUG );
 				preg_match ( '#ftp_enable.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configFTP );
+				preg_match ( '#proxy_enable.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configPROXY );
 				preg_match ( '#force_ssl.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSSL );
-
+				preg_match ( '#lifetime.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configLIFETIME );
+				preg_match ( '#session_handler.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSESSHAND );
+				preg_match ( '#live_site.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configLIVESITE );
+				preg_match ( '#cache_handler.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHEHANDLER );
+				preg_match ( '#cachetime.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHETIME );
+				preg_match ( '#cache_platformprefix.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHEPLFPFX );
+				preg_match ( '#frontediting.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configFRONTEDIT );
+ 				preg_match ( '#shared_session.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSHASESS );
+        
 					$instance['configSEFRWRITE'] = $configSEFREWRITE[1];
 					$instance['configSEFSUFFIX'] = $configSEFSUFFIX[1];
 					$instance['configLANGDEBUG'] = $configLANGDEBUG[1];
 					$instance['configFTP'] = $configFTP[1];
+					$instance['configSESSHAND'] = $configSESSHAND[1];
 
+					if ( $configPROXY ) {
+					$instance['configPROXY'] = $configPROXY[1];
+					} else {
+						$instance['configPROXY'] = _FPA_NA;
+					}          
+					if ( $configLIVESITE ) {
+					$instance['configLIVESITE'] = $configLIVESITE[1];
+					} else {
+						$instance['configLIVESITE'] = _FPA_NA;
+					}          
+					if ( $configLIFETIME ) {
+					$instance['configLIFETIME'] = $configLIFETIME[1];
+					} else {
+						$instance['configLIFETIME'] = _FPA_NA;
+					}          
+					if ( $configCACHEHANDLER ) {
+					$instance['configCACHEHANDLER'] = $configCACHEHANDLER[1];
+					} else {
+						$instance['configCACHEHANDLER'] = _FPA_NA;
+					}          
+					if ( $configCACHETIME ) {
+					$instance['configCACHETIME'] = $configCACHETIME[1];
+					} else {
+						$instance['configCACHETIME'] = _FPA_NA;
+					}          
+					if ( $configCACHEPLFPFX ) {
+					$instance['configCACHEPLFPFX'] = $configCACHEPLFPFX[1];
+					} else {
+						$instance['configCACHEPLFPFX'] = _FPA_NA;
+					}          
+					if ( $configFRONTEDIT ) {
+					$instance['configFRONTEDIT'] = $configFRONTEDIT[1];
+					} else {
+						$instance['configFRONTEDIT'] = _FPA_NA;
+					}          
+					if ( $configSHASESS ) {
+					$instance['configSHASESS'] = $configSHASESS[1];
+					} else {
+						$instance['configSHASESS'] = _FPA_NA;
+					}          
 					if ( $configSSL ) { // 1.7 hack, 1.7.0 seems not to have this option
 						$instance['configSSL'] = $configSSL[1];
-
 					} else {
 						$instance['configSSL'] = _FPA_NA;
 					}
@@ -2471,7 +2531,7 @@ function recursive_array_search($needle,$haystack) {
 		$fpa['supportENV']['minPHP']        = '5.3.10';
 		$fpa['supportENV']['minSQL']        = '5.1.0';
 		$fpa['supportENV']['maxPHP']        = '5.6.30';  
-		$fpa['supportENV']['maxSQL']        = '5.7.14'; 
+		$fpa['supportENV']['maxSQL']        = '5.8.0'; 
 		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
 		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
 		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
@@ -2485,7 +2545,7 @@ function recursive_array_search($needle,$haystack) {
 		$fpa['supportENV']['minPHP']        = '5.3.1';
 		$fpa['supportENV']['minSQL']        = '5.1.0';
 		$fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-		$fpa['supportENV']['maxSQL']        = '5.5.0';  // latest release?
+		$fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
 		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
 		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
 		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
@@ -2498,7 +2558,7 @@ function recursive_array_search($needle,$haystack) {
 		$fpa['supportENV']['minPHP']        = '5.3.7';
 		$fpa['supportENV']['minSQL']        = '5.1.0';
 		$fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-		$fpa['supportENV']['maxSQL']        = '5.5.0';  // latest release?
+		$fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
 		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
 		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
 		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
@@ -2511,7 +2571,7 @@ function recursive_array_search($needle,$haystack) {
 		$fpa['supportENV']['minPHP']        = '5.3.1';
 		$fpa['supportENV']['minSQL']        = '5.1.0';
 		$fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-		$fpa['supportENV']['maxSQL']        = '5.5.0';  // latest release?
+		$fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
 		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
 		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
 		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
@@ -2524,7 +2584,7 @@ function recursive_array_search($needle,$haystack) {
 		$fpa['supportENV']['minPHP']        = '5.3.1';
 		$fpa['supportENV']['minSQL']        = '5.1.0';
 		$fpa['supportENV']['maxPHP']        = '5.3.6';  // latest release?
-		$fpa['supportENV']['maxSQL']        = '5.5.0';  // latest release?
+		$fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
 		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
 		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
 		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
@@ -2537,7 +2597,7 @@ function recursive_array_search($needle,$haystack) {
 		$fpa['supportENV']['minPHP']        = '5.2.4';
 		$fpa['supportENV']['minSQL']        = '5.0.4';
 		$fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-		$fpa['supportENV']['maxSQL']        = '5.5.0';  // latest release?
+		$fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
 		$fpa['supportENV']['badPHP'][0]     = _FPA_NA;
 		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
 
@@ -2545,7 +2605,7 @@ function recursive_array_search($needle,$haystack) {
 		$fpa['supportENV']['minPHP']        = '5.2.4';
 		$fpa['supportENV']['minSQL']        = '5.0.4';
 		$fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-		$fpa['supportENV']['maxSQL']        = '5.5.0';  // latest release?
+		$fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
 		$fpa['supportENV']['badPHP'][0]     = _FPA_NA;
 		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
 
@@ -2553,7 +2613,7 @@ function recursive_array_search($needle,$haystack) {
 		$fpa['supportENV']['minPHP']        = '5.2.4';
 		$fpa['supportENV']['minSQL']        = '5.0.4';
 		$fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-		$fpa['supportENV']['maxSQL']        = '5.5.0';  // latest release?
+		$fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
 		$fpa['supportENV']['badPHP'][0]     = _FPA_NA;
 		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
 
@@ -2994,10 +3054,10 @@ function recursive_array_search($needle,$haystack) {
 									$selectshowElevated = 'CHECKED'; // changed to checked - Phil - 4-20-12
 								}
 
-								if ( @$_POST['showTables'] == 1 AND  @$_POST['doIT'] == 1  ) {
-									$selectshowTables = 'CHECKED';
-								} else {
+								if ( @$_POST['showTables'] == 0 AND  @$_POST['doIT'] == 1  ) {
 									$selectshowTables = '';
+								} else {
+									$selectshowTables = 'CHECKED';
 								}
 
 								if ( @$_POST['showComponents'] == 0 AND  @$_POST['doIT'] == 1  ) {
@@ -3717,7 +3777,7 @@ function recursive_array_search($needle,$haystack) {
 						} elseif ( $instance['configSITEHTWC'] == _FPA_Y ) { echo '[color=#008000]'. $instance['configSITEHTWC'] .'[/color] | ';
 						} elseif ( $instance['configSITEHTWC'] == _FPA_N ) { echo '[color=orange]'. $instance['configSITEHTWC'] .'[/color] | '; }
 
-					echo '[b]GZip:[/b] '. $instance['configGZIP'] .' | [b]Cache:[/b] '. $instance['configCACHING'] .' | [b]FTP Layer:[/b] '. $instance['configFTP'] .' | [b]SSL:[/b] '. $instance['configSSL'] .' | [b]Error Reporting:[/b] '. $instance['configERRORREP'] .' | [b]Site Debug:[/b] '. $instance['configSITEDEBUG'] .' | ';
+					echo '[b]GZip:[/b] '. $instance['configGZIP'] .' | [b]Cache:[/b] '. $instance['configCACHING'] .' | [b]CacheTime:[/b] '. $instance['configCACHETIME'] .' | [b]CacheHandler:[/b] '. $instance['configCACHEHANDLER'] .' | [b]CachePlatformPrefix:[/b] '. $instance['configCACHEPLFPFX'] .' | [b]FTP Layer:[/b] '. $instance['configFTP'] .' | [b]Proxy:[/b] '. $instance['configPROXY'] .' | [b]LiveSite:[/b] '. $instance['configLIVESITE'] .' | [b]Session lifetime:[/b] '. $instance['configLIFETIME'] .' | [b]Session handler:[/b] '. $instance['configSESSHAND'] .' | [b]Shared sessions:[/b] '. $instance['configSHASESS'] .' | [b]SSL:[/b] '. $instance['configSSL'] .' | [b]FrontEdit:[/b] '. $instance['configFRONTEDIT'] .' | [b]Error Reporting:[/b] '. $instance['configERRORREP'] .' | [b]Site Debug:[/b] '. $instance['configSITEDEBUG'] .' | ';
 
 						if ( version_compare( $instance['cmsRELEASE'], '1.5', '>=' ) ) {
 							echo '[b]Language Debug:[/b] '. $instance['configLANGDEBUG'] .' | ';
@@ -3734,6 +3794,10 @@ function recursive_array_search($needle,$haystack) {
 					} else { echo '[color=orange]'. _FPA_NF .'[/color]'; }
 
 					echo "\r\n\r\n";
+
+					if ( $showProtected <> 1 ) {
+						$system['sysDOCROOT'] = '[color=orange]--'. _FPA_HIDDEN .'--[/color]';
+					}
 
 					echo '[color=#000000][b]'. _FPA_HOST .' '. _FPA_CFG .' :: [/b][/color] [b]OS:[/b] '. $system['sysPLATOS'] .' |  [b]OS '._FPA_VER.':[/b] '. $system['sysPLATREL'] .' | [b]'. _FPA_TEC .':[/b] '. $system['sysPLATTECH'] .' | [b]'. _FPA_WSVR .':[/b] '. $system['sysSERVSIG'] .' | [b]Encoding:[/b] '. $system['sysENCODING'] .' | [b]'. _FPA_DROOT .':[/b] '. $system['sysDOCROOT'] .' | [b]'. _FPA_SYS .' TMP '. _FPA_WRITABLE .':[/b] ';
 						if ( $system['sysTMPDIRWRITABLE'] == _FPA_Y ) { echo '[color=#008000]'; } else { echo '[color=#800000]'; }

@@ -7,8 +7,7 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.3.1
- **  @last updated 23/04/2017
+ **  @version 1.3.2
  **  @release Beta
  **  @date 24/06/2011
  **  @author RussW
@@ -51,8 +50,7 @@
 		define ( '_RES', 'Forum Post Assistant' );
 	}
 
-	define ( '_RES_VERSION', '1.3.1' );
-	define ( '_last_updated', '23/04/2017' );
+	define ( '_RES_VERSION', '1.3.2' );
 	define ( '_COPYRIGHT_STMT', ' Copyright (C) 2011, 2012 Russell Winter, Phil DeGruy, Bernard Toplak &nbsp;' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. &nbsp; This is free software,
@@ -785,11 +783,13 @@
 	// >= J3.6.3
 	} elseif ( file_exists( 'libraries/cms/version/version.php' ) AND !file_exists( 'libraries/platform.php' ) ) {
 		$instance['cmsVFILE'] = 'libraries/cms/version/version.php';    
-    
+
+	} elseif ( file_exists( 'libraries/src/version.php' ) ) {
+		$instance['cmsVFILE'] = 'libraries/src/version.php';    
+
 	// fpa could find the required files to determine version(s)
 	} else {
 		$instance['cmsVFILE'] = _FPA_N;
-
 	}
 
 
@@ -802,6 +802,10 @@
 	// J1.5 Nooku Server libraries/koowa/koowa.php
 	} elseif ( file_exists( 'libraries/koowa/koowa.php' ) ) {
 		$instance['platformVFILE'] = 'libraries/koowa/koowa.php';
+
+	// J3.7
+	} elseif ( file_exists( 'libraries/joomla/platform.php' ) ) {
+		$instance['platformVFILE'] = 'libraries/joomla/platform.php';
 
 	} else {
 		$instance['platformVFILE'] = _FPA_N;
@@ -968,6 +972,12 @@
 			if ( preg_match ( '#(\$mosConfig_)#', $cmsCContent ) ) {
 				$instance['configVALIDFOR'] = '1.0';
 				$instance['instanceCFGVERMATCH'] = _FPA_Y;
+ 
+			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND file_exists( 'libraries/src/version.php' ) ) {
+				$instance['configVALIDFOR'] = $instance['cmsRELEASE'];
+				$instance['cmsVFILE'] = 'libraries/src/version.php';
+				$instance['instanceCFGVERMATCH'] = _FPA_Y; 
+ 
   	// >= 3.6.3
 			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] == _FPA_N AND file_exists( 'libraries/cms/version/version.php' ) ) {
 				$instance['configVALIDFOR'] = $instance['cmsRELEASE'];
@@ -2009,6 +2019,8 @@
 									OR strtolower( $name[1] ) == 'isis'
 									OR strtolower( $name[1] ) == 'beez5'
 									OR strtolower( $name[1] ) == 'beez_20'
+									OR strtolower( $name[1] ) == 'aurora'
+									OR strtolower( $name[1] ) == 'atum'
 									OR strtolower( substr( $name[1], 0, 4 ) ) == 'beez' ) {
 										$arrname[$loc][$cDir]['type'] = _FPA_JCORE;
 

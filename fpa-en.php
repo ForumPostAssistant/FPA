@@ -7,8 +7,8 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.3.3
- **  @last updated 25/09/2017
+ **  @version 1.3.4
+ **  @last updated 30/09/2017
  **  @release Beta
  **  @date 24/06/2011
  **  @author RussW
@@ -51,8 +51,8 @@
 		define ( '_RES', 'Forum Post Assistant' );
 	}
 
-	define ( '_RES_VERSION', '1.3.3' );
-	define ( '_last_updated', '25/09/2017' );
+	define ( '_RES_VERSION', '1.3.4' );
+	define ( '_last_updated', '30/09/2017' );
 	define ( '_COPYRIGHT_STMT', ' Copyright (C) 2011, 2012 Russell Winter, Phil DeGruy, Bernard Toplak &nbsp;' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. &nbsp; This is free software,
@@ -758,44 +758,61 @@
 
 
 	/** what version is the instance? ********************************************************/
-	// J1.0 includes/version.php & mambots folder
-	if ( file_exists( 'includes/version.php' ) AND file_exists( 'mambots/' ) ) {
+	// >= J3.8.0
+	if ( file_exists( 'libraries/src/Version.php' ) ) {
+		$instance['cmsVFILE'] = 'libraries/src/Version.php';    
+
+	// >= J3.6.3
+	} elseif ( file_exists( 'libraries/cms/version/version.php' ) AND !file_exists( 'libraries/platform.php' ) ) {
+		$instance['cmsVFILE'] = 'libraries/cms/version/version.php';    
+
+	// J2.5 & J3.0 libraries/joomla/platform.php files
+	} elseif ( file_exists( 'libraries/cms/version/version.php' ) AND file_exists( 'libraries/platform.php' ) ) {
+		$instance['cmsVFILE'] = 'libraries/cms/version/version.php';
+
+	// J1.7 includes/version.php & libraries/joomla/platform.php files
+	} elseif ( file_exists( 'includes/version.php' ) AND file_exists( 'libraries/platform.php' ) ) {
 		$instance['cmsVFILE'] = 'includes/version.php';
 
-	// J1.5 libraries/joomla/version.php & xmlrpc folder
-	} elseif ( file_exists( 'libraries/joomla/version.php' ) AND file_exists( 'xmlrpc/' ) ) {
+	// J1.6 libraries/joomla/version.php & joomla.xml files
+	} elseif ( file_exists( 'libraries/joomla/version.php' ) AND file_exists( 'joomla.xml' ) ) {
 		$instance['cmsVFILE'] = 'libraries/joomla/version.php';
 
 	// J1.5 & Nooku Server libraries/joomla/version.php & koowa folder
 	} elseif ( file_exists( 'libraries/joomla/version.php' ) AND file_exists( 'libraries/koowa/koowa.php' ) ) {
 		$instance['cmsVFILE'] = 'libraries/joomla/version.php';
 
-	// J1.6 libraries/joomla/version.php & joomla.xml files
-	} elseif ( file_exists( 'libraries/joomla/version.php' ) AND file_exists( 'joomla.xml' ) ) {
+	// J1.5 libraries/joomla/version.php & xmlrpc folder
+	} elseif ( file_exists( 'libraries/joomla/version.php' ) AND file_exists( 'xmlrpc/' ) ) {
 		$instance['cmsVFILE'] = 'libraries/joomla/version.php';
 
-	// J1.7 includes/version.php & libraries/joomla/platform.php files
-	} elseif ( file_exists( 'includes/version.php' ) AND file_exists( 'libraries/platform.php' ) ) {
+	// J1.0 includes/version.php & mambots folder
+	} elseif ( file_exists( 'includes/version.php' ) AND file_exists( 'mambots/' ) ) {
 		$instance['cmsVFILE'] = 'includes/version.php';
-
-	// J2.5 & J3.0 libraries/joomla/platform.php files
-	} elseif ( file_exists( 'libraries/cms/version/version.php' ) AND file_exists( 'libraries/platform.php' ) ) {
-		$instance['cmsVFILE'] = 'libraries/cms/version/version.php';
-
-	// >= J3.6.3
-	} elseif ( file_exists( 'libraries/cms/version/version.php' ) AND !file_exists( 'libraries/platform.php' ) ) {
-		$instance['cmsVFILE'] = 'libraries/cms/version/version.php';    
-
-	// >= J3.8.0    
-	} elseif ( file_exists( 'libraries/src/Version.php' ) ) {
-		$instance['cmsVFILE'] = 'libraries/src/Version.php';    
 
 	// fpa could find the required files to determine version(s)
 	} else {
 		$instance['cmsVFILE'] = _FPA_N;
 	}
 
-
+	/** Detect multiple instances of version file ***************************************/
+ 	if ( file_exists( 'libraries/src/Version.php' ) ) {
+		$vFile1 = 1;    
+	} else {
+		$vFile1 = 0;}
+  if ( file_exists( 'libraries/cms/version/version.php' ) ) {
+		$vFile2 = 1;    
+	} else {
+		$vFile2 = 0;}
+  if ( file_exists( 'includes/version.php' ) ) {
+		$vFile3 = 1;    
+	} else {
+		$vFile3 = 0;}
+  if ( file_exists( 'libraries/joomla/version.php' ) ) {
+		$vFile4 = 1;    
+	} else {
+		$vFile4 = 0;}
+   $vFileSum = $vFile1 + $vFile2 + $vFile3 + $vFile4;
 
 	/** what version is the framework? (J!1.7 & above) ***************************************/
 	// J1.7 libraries/joomla/platform.php
@@ -3762,6 +3779,11 @@ function recursive_array_search($needle,$haystack) {
 					echo '[color=#000000][b]'. _FPA_APP .' '. _FPA_INSTANCE.' :: [/b][/color]';
 					if ( $instance['instanceFOUND'] == _FPA_Y ) { echo '[color=#0000F0]'. $instance['cmsPRODUCT'] .' [b]'. $instance['cmsRELEASE'] .'.'. $instance['cmsDEVLEVEL'] .'[/b]-'. $instance['cmsDEVSTATUS'] .' ('. $instance['cmsCODENAME'] .') '. $instance['cmsRELDATE'] .'[/color]';
 					} else { echo '[color=orange]'. _FPA_NF .'[/color]'; }
+
+					// Multiple version file warning
+					if ($vFileSum > 1) { 
+					echo "\r\n";          
+					echo '[color=#FF0000][b] More than one instance of version.php found! [/b][/color]';}
 
 					// Joomla! platform details
 					if ( @$instance['platformPRODUCT'] ) {

@@ -1,11 +1,6 @@
 ### Forum Post Assistant (FPA)
 ***
 
-*** 06/03/2017
-1.2.8 version 
-
-
-
 /**_11/02/2014_**
 
 **_Notice:_**

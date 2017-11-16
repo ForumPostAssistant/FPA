@@ -7,8 +7,8 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.3.5
- **  @last updated 28/10/2017
+ **  @version 1.3.6
+ **  @last updated 16/11/2017
  **  @release Beta
  **  @date 24/06/2011
  **  @author RussW
@@ -46,8 +46,8 @@
 	// Define some basic assistant information
 
 	define ( '_RES', 'Forum Post Assistant' );
-	define ( '_RES_VERSION', '1.3.5' );
-	define ( '_last_updated', '28/10/2017' );
+	define ( '_RES_VERSION', '1.3.6' );
+	define ( '_last_updated', '16/11/2017' );
 	define ( '_COPYRIGHT_STMT', ' Copyright (C) 2011, 2012 Russell Winter, Phil DeGruy, Bernard Toplak &nbsp;' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. &nbsp; This is free software,
@@ -505,6 +505,7 @@
 	$folders[]                  = 'administrator/language/';
 	$folders[]                  = 'administrator/templates/';
 	$folders[]                  = 'sites/';                 // nooku only?
+	$folders[]                  = 'administrator/logs/';
 //    $folders[]                  = 'test/';
 	$elevated['ARRNAME']        = _FPA_ELEVPERM_TITLE;
 	$component['ARRNAME']       = _FPA_EXTCOM_TITLE;
@@ -1722,17 +1723,27 @@
 		// try and connect to the database server and table-space, using the database_host variable in the configuration.php
 		// for J!1.0, it's not in the config, so we have assumed mysql, as mysqli wasn't available during it's support life-time
 		if ( $instance['configDBTYPE'] == 'mysql' ) {
-
+			if (function_exists('mysql_connect')) {
 			$dBconn = @mysql_connect( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'] );
 			$database['dbERROR'] = mysql_errno() .':'. mysql_error();
 
     mysql_select_db( $instance['configDBNAME'], $dBconn );
     $sql = "select name,type,enabled from ".$instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template'";
     $result = mysql_query($sql);
+    if ($result <> false) {
     if (mysql_num_rows($result) > 0) {
       for ($exset = array ();
       $row = mysql_fetch_array($result);
       $exset[] = $row);
+     }
+
+    $sql = "select template,home from ".$instance['configDBPREF']."template_styles";
+    $result = mysql_query($sql);
+    if (mysql_num_rows($result) > 0) {
+      for ($tmpldef = array ();
+      $row = mysql_fetch_array($result);
+      $tmpldef[] = $row);
+     }
      }
 
 			if ( $dBconn ) {
@@ -1808,7 +1819,16 @@
 			} else {
 				$database['dbERROR'] = mysql_errno() .':'. mysql_error();
 			} // end mysql if $dBconn is good
-
+			} else {
+				$database['dbHOSTSERV']     = _FPA_U; // SQL server version
+				$database['dbHOSTINFO']     = _FPA_U; // connection type to dB
+				$database['dbHOSTPROTO']    = _FPA_U; // server protocol type
+				$database['dbHOSTCLIENT']   = _FPA_U; // client library version
+				$database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
+				$database['dbHOSTSTATS']    = _FPA_U; // latest statistics
+				$database['dbCOLLATION']    =  _FPA_U;
+				$database['dbCHARSET']      =  _FPA_U;
+		}
 
 		} elseif ( $instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_Y ) { // mysqli
 
@@ -1824,11 +1844,22 @@
 
     $sql = "select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template'";
     $result = $dBconn->query($sql);
+    if ($result <> false) {
     if ($result->num_rows > 0) {
       for ($exset = array ();
       $row = $result->fetch_assoc();
       $exset[] = $row);
      }
+     }
+    $sql = "select template,home from ".$instance['configDBPREF']."template_styles";
+    $result = $dBconn->query($sql);
+    if ($result <> false) {
+    if ($result->num_rows > 0) {
+      for ($tmpldef = array ();
+      $row = $result->fetch_assoc();
+      $tmpldef[] = $row);
+     }
+     }     
 			if ( $dBconn ) {
 				$database['dbHOSTSERV']     = @mysqli_get_server_info( $dBconn );       // SQL server version
 				$database['dbHOSTINFO']     = @mysqli_get_host_info( $dBconn );         // connection type to dB
@@ -3099,9 +3130,9 @@ function recursive_array_search($needle,$haystack) {
 							?>
 
 								<strong>Information Privacy :</strong><br />
-								<input style="font-size:9px;" type="radio" name="showProtected" value="1" <?php echo $selectshowProtected_1; ?> /><span class="ok"><?php echo _FPA_PRIVNON; ?></span><br /><span style="line-height:8px;padding:0px;margin:0px;margin-left:15px;font-size:8px;"><?php echo _FPA_PRIVNONNOTE; ?></span><br />
+								<input style="font-size:9px;" type="radio" name="showProtected" value="1" <?php echo $selectshowProtected_1; ?> /><span class="alert-text"><?php echo _FPA_PRIVNON; ?></span><br /><span style="line-height:8px;padding:0px;margin:0px;margin-left:15px;font-size:8px;"><?php echo _FPA_PRIVNONNOTE; ?></span><br />
 								<input style="font-size:9px;" type="radio" name="showProtected" value="2" <?php echo $selectshowProtected_2; ?> /><span class="warn-text"><?php echo _FPA_PRIVPAR .' ('. _FPA_DEF .')'; ?></span><br /><span style="line-height:8px;padding:0px;margin:0px;margin-left:15px;font-size:8px;"><?php echo _FPA_PRIVPARNOTE; ?></span><br />
-								<input style="font-size:9px;" type="radio" name="showProtected" value="3" <?php echo $selectshowProtected_3; ?> /><span class="alert-text"><?php echo _FPA_PRIVSTR; ?></span><br /><span style="line-height:8px;padding:0px;margin:0px;margin-left:15px;font-size:8px;"><?php echo _FPA_PRIVSTRNOTE; ?></span>
+								<input style="font-size:9px;" type="radio" name="showProtected" value="3" <?php echo $selectshowProtected_3; ?> /><span class="ok"><?php echo _FPA_PRIVSTR; ?></span><br /><span style="line-height:8px;padding:0px;margin:0px;margin-left:15px;font-size:8px;"><?php echo _FPA_PRIVSTRNOTE; ?></span>
 							</div>
 
 						<div style="clear:both;"></div>
@@ -3243,7 +3274,7 @@ function recursive_array_search($needle,$haystack) {
 						}
 
 						if ( version_compare( $instance['cmsRELEASE'], '1.6', '>=' ) ) {
-							echo '[b]Default Access:[/b] '. $instance['configACCESS'] .' | [b]Unicode Slugs:[/b] '. $instance['configUNICODE'] .' | ';
+							echo '[b]Default Access:[/b] '. $instance['configACCESS'] .' | [b]Unicode Slugs:[/b] '. $instance['configUNICODE'] .' | [b]dbConnection Type:[/b] '. $instance['configDBTYPE'] .' | ';
 						}
 
 						echo '[b]'. _FPA_DB .' '. _FPA_CREDPRES .':[/b] ';
@@ -3314,8 +3345,6 @@ function recursive_array_search($needle,$haystack) {
 					}
 
 		echo '[/size][/quote]';
-
-
 
 
 
@@ -3486,59 +3515,15 @@ function recursive_array_search($needle,$haystack) {
 
 
 					// do the Database Statistics and Table information
-					if ( $database['dbDOCHECKS'] == _FPA_Y AND @$database['dbERROR'] == _FPA_N AND @$_POST['showTables'] == '1' ) {
+					if ( $database['dbDOCHECKS'] == _FPA_Y AND @$database['dbERROR'] == _FPA_N AND @$_POST['showTables'] == '1' AND $database['dbHOSTINFO'] <> _FPA_U ) {
 						echo '[quote="Database Information ::"][size=85]';
-
-							echo '[b]'. _FPA_DB .' '. _FPA_STATS .' :: [/b]';
-
-								foreach ( $database['dbHOSTSTATS'] as $show ) {
-									$dbPieces = explode(": ", $show );
-									echo '[b]'. $dbPieces[0] .':[/b] '. $dbPieces[1] .' | ';
-
-								}
-
-							/** REMOVED FROM POST OUTPUT ***************************************************
-							** TABLE STATISTICS removed from post output to reduce the post content,
-							** it occassionally pops the forum post character limits
-							*******************************************************************************
-							echo "\r\n\r\n";
-
-							echo '[color=#000000][b]Table Statistics :: [/b][/color]';
-							echo "\r\n";
-
-								foreach ( $tables as $i => $show ) {
-
-									if ( $show != $tables['ARRNAME'] ) {
-
-										if ( $showProtected == '3' ) {
-											echo '[color=orange]--'. _FPA_HIDDEN .'--[/color] ';
-										echo "\r\n";
-
-										} else {
-											echo '[color=#000080]'. $show['TABLE'] .'[/color] ';
-											echo "\r\n";
-										}
-
-										echo '[b]Size:[/b] '. $show['SIZE'] .' | [b]Records:[/b] '. $show['RECORDS'] .' | [b]Avg. Length:[/b] '. $show['AVGLEN'] .' | [b]Fragment Size[/b] (Overhead)[b]:[/b] '. $show['FRAGSIZE'] .' | [b]Engine:[/b] '. $show['ENGINE'] .' | [b]Collation:[/b] '. $show['COLLATION'];
-										echo "\r\n";
-									}
-
-								}
-								***************************************************************************/
-
+						echo '[b]'. _FPA_DB .' '. _FPA_STATS .' :: [/b]';
+						foreach ( $database['dbHOSTSTATS'] as $show ) {
+						$dbPieces = explode(": ", $show );
+						echo '[b]'. $dbPieces[0] .':[/b] '. $dbPieces[1] .' | ';
+						}
 						echo '[/size][/quote]';
-
-					} elseif ( ( $database['dbDOCHECKS'] != _FPA_Y OR $database['dbERROR'] != _FPA_N ) AND @$_POST['showTables'] == '1' ) {
-
-													// only show the tables if we can connect to the database
-//                                if ( $database['dbERROR'] == _FPA_N ) {
-
-//                                }
-
 					}
-
-
-
 
 					// do the Extensions information
 					if ( $instance['instanceFOUND'] == _FPA_Y AND ( @$_POST['showComponents'] == '1' OR @$_POST['showModules'] == '1' OR @$_POST['showPlugins'] == '1' ) ) {
@@ -3682,21 +3667,36 @@ function recursive_array_search($needle,$haystack) {
 
 									echo '[b]'. _FPA_TMPL_TITLE .' :: '. _FPA_SITE .' :: [/b]';
 
-										foreach ( $template['SITE'] as $key => $show ) {
+										foreach ( $template['SITE'] as $key => $show ) {                    
+										if (substr($instance['cmsRELEASE'],0,1) <> 1 AND $database['dbHOSTINFO'] <> _FPA_U ) { 
 										if (isset($exset[0]['name'])) { 
-										$extarrkey = recursive_array_search($show['name'], $exset);
-										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '' ;}
+										  $extarrkey = recursive_array_search($show['name'], $exset);
+										  $extenabled = $exset[$extarrkey]['enabled'];
+										  } else { $extenabled = '' ;}
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										 $extenabled = '';
+										  $extenabled = '';
 										}
+										$extarrkey = recursive_array_search($show['name'], $tmpldef);
+										$deftempl = $tmpldef[$extarrkey]['home'];    
+										if ($deftempl == 1 ){                    
+										  $bldop = '[b][u]';
+										  $bldcl = '[/u][/b]';
+										} else {
+										  $bldop = '';
+										  $bldcl = '';                                        
+										}     
+										} else {
+										  $bldop = '';
+										  $bldcl = '';
+										  $extenabled = '';                                    
+										}     
 										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=Brown]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
+										echo '[color=Brown]'. $bldop . $show['name'] .' ('. $show['version'] .')' . $bldcl . '[/color]  '.$extenabled.' | ';
 										} else {
-										echo '[color=Blue]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
+										echo '[color=Blue]'. $bldop . $show['name'] .' ('. $show['version'] .')' . $bldcl . '[/color]  '.$extenabled.' | ';
 										}
 								}
 				 			}
@@ -3704,21 +3704,38 @@ function recursive_array_search($needle,$haystack) {
 
 									echo '[b]'. _FPA_TMPL_TITLE .' :: '. _FPA_ADMIN .' :: [/b]';
 
-										foreach ( $template['ADMIN'] as $key => $show ) {
-            								        if (isset($exset[0]['name'])) {
-										$extarrkey = recursive_array_search($show['name'], $exset);
-										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '' ;}
-										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '';
+										foreach ( $template['ADMIN'] as $key => $show ) {                    
+										if (substr($instance['cmsRELEASE'],0,1) <> 1 AND $database['dbHOSTINFO'] <> _FPA_U ) { 
+										  if (isset($exset[0]['name'])) { 
+										    $extarrkey = recursive_array_search($show['name'], $exset);
+										    $extenabled = $exset[$extarrkey]['enabled'];
+										  } else { 
+										    $extenabled = '' ;
 										}
+										if ($extenabled <> 0 AND $extenabled <> 1 ){
+										  $extenabled = '';
+										}
+										$extarrkey = recursive_array_search($show['name'], $tmpldef);
+										$deftempl = $tmpldef[$extarrkey]['home'];    
+										if ($deftempl == 1 ){                    
+										  $bldop = '[b][u]';
+										  $bldcl = '[/u][/b]';
+										} else {
+										  $bldop = '';
+										  $bldcl = '';                                        
+										}     
+										} else {
+										  $bldop = '';
+										  $bldcl = '';
+										  $extenabled = '';                                      
+										}     
 										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
 										{                      
 										if ( $show['type'] == _FPA_3PD)
 										{                     
-										echo '[color=Brown]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
+										echo '[color=Brown]'. $bldop . $show['name'] .' ('. $show['version'] .')' . $bldcl . '[/color]  '.$extenabled.' | ';
 										} else {
-										echo '[color=Blue]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
+										echo '[color=Blue]'. $bldop . $show['name'] .' ('. $show['version'] .')' . $bldcl . '[/color]  '.$extenabled.' | ';
 										}
 									}
 							}
@@ -5415,9 +5432,7 @@ function recursive_array_search($needle,$haystack) {
 			echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
 			echo '</div>';
 		} else
-		// Site components - 8-06-12 - Phil
-		// section was redone to only show 3rd party Site components with the idea to cut down on clutter in posts
-		// and make it easier to see what are 3rd party. The old code is marked out below.
+		// Site components 
 			foreach ( $component['SITE'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
@@ -5435,21 +5450,6 @@ function recursive_array_search($needle,$haystack) {
 					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
 				}
  		}       
-// - 8-06-12 - Phil
-  //   echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
-//show site components
-//blocked core display Origional is: if ( $showProtected <= 2 ) {
-			//    if ( $showProtected <= 2 AND $show['type'] == _FPA_3PD) {
-		//         echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-		//     } elseif ( $showProtected > 2 AND $show['type'] == _FPA_3PD) {
-		//         echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-		//      }
-
-		//    echo '</div>';
-		//    }
-
-	// } else {
-
 
 
 		echo '</div></div>';
@@ -5477,9 +5477,7 @@ function recursive_array_search($needle,$haystack) {
 			echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
 			echo '</div>';
 		} else
-		// Admin components - 8-06-12 - Phil
-		// section was redone to only show 3rd party Admin components with the idea to cut down on clutter in posts
-		// and make it easier to see what are 3rd party. The old code is marked out below.
+		// Admin components
 			foreach ( $component['ADMIN'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
@@ -5498,23 +5496,6 @@ function recursive_array_search($needle,$haystack) {
 
 				}
 			}
-//  - 8-06-12 - Phil
-		//       echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
-//Show admin components
-//blocked core display Origional is: if ( $showProtected <= 2 ) {
-	//           if ( $showProtected <= 2 and $show['type'] == _FPA_3PD) {
-	//               echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-	//          } else {
-	//               echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-	//           }
-
-	//           echo '</div>';
-	//        }
-
-
-   //     } else {
-
-
 
 
 		echo '</div></div>';
@@ -5568,9 +5549,7 @@ function recursive_array_search($needle,$haystack) {
 			echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
 			echo '</div>';
 		} else
-		// Site modules - 8-06-12 - Phil
-		// section was redone to only show 3rd party Site modules with the idea to cut down on clutter in posts
-		// and make it easier to see what are 3rd party. The old code is marked out below.
+		// Site modules 
 			foreach ( $module['SITE'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
@@ -5590,23 +5569,6 @@ function recursive_array_search($needle,$haystack) {
 				}
 			}
 
- //- 8-06-12 - Phil
- //        echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
-//blocked core display Origional is: if ( $showProtected <= 2 ) {
-	//          if ( $showProtected <= 2 and $show['type'] = '3rd Party') {
-	//              echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-	//          } else {
-	//              echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-	//          }
-
-	//         echo '</div>';
-	//      }
-
-	//    } else {
-   //         echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-   //         echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $module['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-	//        echo '</div>';
-   //     }
 
 		echo '</div></div>';
 
@@ -5633,9 +5595,7 @@ function recursive_array_search($needle,$haystack) {
 			echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
 			echo '</div>';
 		} else
-		// Admin modules - 8-06-12 - Phil
-		// section was redone to only show 3rd party Admin modules with the idea to cut down on clutter in posts
-		// and make it easier to see what are 3rd party. The old code is marked out below.
+		// Admin modules 
 			foreach ( $module['ADMIN'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
@@ -5655,23 +5615,6 @@ function recursive_array_search($needle,$haystack) {
 				}
 			}
 
-// - 8-06-12 - Phil
-		//       echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
-//blocked core display Origional is: if ( $showProtected <= 2 ) {
-		//        if ( $showProtected <= 2 and $show['type'] = '3rd Party') {
-		//            echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-		//        } else {
-		//            echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-		//        }
-
-	//         echo '</div>';
-	//     }
-
-	//    } else {
-	//        echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-	//        echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $module['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-	//        echo '</div>';
-	//    }
 
 		echo '</div></div>';
 
@@ -5726,9 +5669,7 @@ function recursive_array_search($needle,$haystack) {
 			echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
 			echo '</div>';
 		} else
-		// Site Plugins - 8-06-12 - Phil
-		// section was redone to only show 3rd party site plugins with the idea to cut down on clutter in posts
-		// and make it easier to see what are 3rd party. The old code is marked out below.
+		// Site Plugins 
 			foreach ( $plugin['SITE'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
@@ -5747,24 +5688,6 @@ function recursive_array_search($needle,$haystack) {
 
 				}
 			}
-
-// - 8-06-12 - Phil
-		//        echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
-//blocked core display Origional is: if ( $showProtected <= 2 ) {
-		//        if ( $showProtected <= 2 and $show['type'] = '3rd Party') {
-	//             echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-		//        } else {
-		//            echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-		//        }
-
-		//       echo '</div>';
-		//    }
-
-	//   } else {
-	//       echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-	//       echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $plugin['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-	//       echo '</div>';
-	//   }
 
 		echo '</div></div>';
 
@@ -5815,9 +5738,7 @@ function recursive_array_search($needle,$haystack) {
 			echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
 			echo '</div>';
 		} else
-		// Site templates - 8-06-12 - Phil
-		// section was redone to only show 3rd party Site templates with the idea to cut down on clutter in posts
-		// and make it easier to see what are 3rd party. The old code is marked out below.
+		// Site templates 
 			foreach ( $template['SITE'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
@@ -5836,24 +5757,6 @@ function recursive_array_search($needle,$haystack) {
 
 				}
 			}
-
-// - 8-06-12 - Phil
-		//       echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
-//blocked core display Origional is: if ( $showProtected <= 2 ) {
-		//       if ( $showProtected <= 2 AND $show['type'] = '3rd Party') {
-		//            echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-		//       } else {
-		//           echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-		//       }
-
-		//       echo '</div>';
-		//    }
-
-	//    } else {
-	//        echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-	//        echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $template['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-	//        echo '</div>';
-	//    }
 
 		echo '</div></div>';
 
@@ -5880,9 +5783,7 @@ function recursive_array_search($needle,$haystack) {
 			echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
 			echo '</div>';
 		} else
-		// Admin templates - 8-06-12 - Phil
-		// section was redone to only show 3rd party Admin templates with the idea to cut down on clutter in posts
-		// and make it easier to see what are 3rd party. The old code is marked out below.
+		// Admin templates 
 			foreach ( $template['ADMIN'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
@@ -5898,31 +5799,10 @@ function recursive_array_search($needle,$haystack) {
 				} elseif ( $showProtected > 2 ) {
 					$typeColor = '000080';
 					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
-
 				}
 			}
 
- //               echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;border-bottom:1px solid #ccebeb;padding:1px;padding-right:0px;padding-bottom:3px;">';
-//blocked core display Origional is: if ( $showProtected <= 2 ) {
- //               if ( $showProtected <= 2 and $show['type'] = '3rd Party') {
-//                   echo '<div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-//                } else {
-//                    echo '<div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br />';
-//                }
-
-//                echo '</div>';
-//            }
-
- //       } else {
-//            echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
- //           echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $template['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-//            echo '</div>';
-//       }
-
 		echo '</div></div>';
-
-
-
 		echo '<br style="clear:both;" />';
 		echo '</div></div>';
 		// end content left block

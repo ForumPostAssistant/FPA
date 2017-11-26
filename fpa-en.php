@@ -7,8 +7,8 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.3.6
- **  @last updated 16/11/2017
+ **  @version 1.3.7
+ **  @last updated 26/11/2017
  **  @release Beta
  **  @date 24/06/2011
  **  @author RussW
@@ -46,8 +46,8 @@
 	// Define some basic assistant information
 
 	define ( '_RES', 'Forum Post Assistant' );
-	define ( '_RES_VERSION', '1.3.6' );
-	define ( '_last_updated', '16/11/2017' );
+	define ( '_RES_VERSION', '1.3.7' );
+	define ( '_last_updated', '26/11/2017' );
 	define ( '_COPYRIGHT_STMT', ' Copyright (C) 2011, 2012 Russell Winter, Phil DeGruy, Bernard Toplak &nbsp;' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. &nbsp; This is free software,
@@ -57,13 +57,10 @@
 	define ( '_RES_RELEASE', 'Beta' );         // can be Alpha, Beta, RC, Final
 	define ( '_RES_BRANCH', 'Branch en-GB' );    // can be playGround (Alpha/Beta only), currentDevelopment (RC only), masterPublic (Final only)
 	define ( '_RES_LANG', '&nbsp Language en-GB' );               // Country/Language Code
-	// !TODO update this once the REPO is re-organised
 	define ( '_RES_FPALINK', 'https://github.com/ForumPostAssistant/FPA/tarball/en-GB/' ); // where to get the latest 'Final Releases'
 	define ( '_RES_FPALATEST', 'Get the latest tar.gz release of the ' );
 	define ( '_RES_FPALINK2', 'https://github.com/ForumPostAssistant/FPA/zipball/en-GB/' ); // where to get the latest 'Final Releases'
-		define ( '_RES_FPALATEST2', 'Get the latest zip release of the ' );
-
-
+	define ( '_RES_FPALATEST2', 'Get the latest zip release of the ' );
 
 	/** DEFINE LANGUAGE STRINGS **************************************************************/
 	define ( '_PHP_DISERR', 'Display PHP Errors Enabled' );
@@ -88,26 +85,19 @@
 	define ( '_FPA_EXTMOD_TITLE', 'Modules' );
 	define ( '_FPA_EXTPLG_TITLE', 'Plugins' );
 	define ( '_FPA_TMPL_TITLE', 'Templates' );
-
 	// snapshot definitions
-	// v1.2.0
 	define ( '_FPA_SUPPHP', 'PHP Supports');
 	define ( '_FPA_SUPSQL', 'MySQL Supports');
 	define ( '_FPA_BADPHP', 'Known Buggy PHP');
 	define ( '_FPA_BADZND', 'Known Buggy Zend');
 	// slow screen message
-	// v1.2.0
 	define ( '_FPA_SLOWGENPOST', 'Generating Post Output...' );
 	define ( '_FPA_SLOWRUNTEST', 'Hang on while we run some tests...' );
-
 	// remove script notice content - Phil 4-17-12
 	define ( '_FPA_DELNOTE_LN1', '<h3><p /><font color="Red" size="2">** SECURITY NOTICE **</font color></size></h3><p /><font size="1">Due to the highly sensitive nature of the information displayed by the FPA script,<p /> it should be removed from the server immediately after use.</font>' );
 	define ( '_FPA_DELNOTE_LN2', '<p /><font size="1">  If the script is left on the site, it can be used to gather enough information to hack your site.</font>' );
 	define ( '_FPA_DELNOTE_LN3', '<p /><font color="Red" size="3" ;">After use, <a href="fpa-en.php?act=delete">Click Here</a>  to delete this script.</font>' );
-
-
 	// dev/diag-mode content
-	// v1.2.0
 	define ( '_FPA_DEVMI', 'developer-mode-information' );
 	define ( '_FPA_ELAPSE', 'elapse-runtime' );
 	define ( '_FPA_DEVENA', 'DEVELOPER MODE is enabled' );
@@ -117,14 +107,13 @@
 	define ( '_FPA_DIAERR', 'Last DIGNOSTIC MODE Error' );
 	define ( '_FPA_SPNOTE', 'Special Note' );
 	// user post form content
-	// v1.2.0
 	define ( '_FPA_INSTRUCTIONS', 'Instructions' );
 	define ( '_FPA_INS_1', 'Enter your problem description <i>(optional)</i>' );
 	define ( '_FPA_INS_2', 'Enter any error messages you see <i>(optional)</i>' );
 	define ( '_FPA_INS_3', 'Enter any actions taken to resolve the issue <i>(optional)</i>' );
 	define ( '_FPA_INS_4', 'Select detail level options of output <i>(optional)</i>' );
 	define ( '_FPA_INS_5', 'Click the <span class="normal-note">Click Here To Generate Post</span> button to build the post content' );
-	define ( '_FPA_INS_6', 'Copy the contents of the <span class="ok-hilite">&nbsp;Post Detail&nbsp;</span> box and paste it into a post following the instructions below the genersted text box' ); //changed wording Phil 4-20-12
+	define ( '_FPA_INS_6', 'Copy the contents of the <span class="ok-hilite">&nbsp;Post Detail&nbsp;</span> box and paste it into a post following the instructions below the genersted text box' );
 	define ( '_FPA_INS_7', ' <div align="center"><font size="2">To copy the contents of the Post Detail box:
             </font></div>
             <p align="left" />
@@ -170,9 +159,7 @@
 	define ( '_FPA_INCPOPS', 'Temporarily increase PHP Memory and Execution Time' );
 	define ( '_FPA_POSTD', 'Post Detail' );
 
-
 	/** common screen and post output strings ************************************************/
-	// v1.2.0
 	define ( '_FPA_APP', 'Joomla!' );
 	define ( '_FPA_INSTANCE', 'Instance' );
 	define ( '_FPA_PLATFORM', 'Platform' );
@@ -235,7 +222,6 @@
 	define ( '_FPA_ERRS', 'errors' );
 	define ( '_FPA_YMATCH', 'Matches' );
 	define ( '_FPA_NMATCH', 'Mis-Match' );
-	/** swapped messages of the NACOMP and YACOMP as they were backwards - 4-8-12 - Phil ****/
 	define ( '_FPA_NACOMP', 'Appear Incomplete' );
 	define ( '_FPA_YACOMP', 'Appear Complete' );
 	define ( '_FPA_SEC', 'Security' );
@@ -263,7 +249,7 @@
 	define ( '_FPA_AUTH', 'Author' );
 	define ( '_FPA_ADDR', 'Address' );
 	define ( '_FPA_STATUS', 'Status' );
-	define ( '_FPA_TYPE', 'Type' );   // added this tag 4-8-12 - Phil
+	define ( '_FPA_TYPE', 'Type' );
 	define ( '_FPA_TREC', 'Rcds' );  // Number of table records
 	define ( '_FPA_TAVL', 'Avg. Length' );
 	define ( '_FPA_MODE', 'Mode' );
@@ -274,11 +260,11 @@
 	define ( '_FPA_OWNER', 'Owner' );
 	define ( '_FPA_GROUP', 'Group' );
 	define ( '_FPA_VER', 'Version' );
-	define ( '_FPA_CRE', 'Created' ); // added this missing variable define 4-8-12 - Phil
+	define ( '_FPA_CRE', 'Created' );
 	define ( '_FPA_LOCAL', 'Local' );
 	define ( '_FPA_REMOTE', 'Remote' );
 	define ( '_FPA_SECONDS', 'seconds' );
-	define ( '_FPA_TBL', 'Table' );   // added this missing variable define - Phil 09-23-12
+	define ( '_FPA_TBL', 'Table' );
 	define ( '_FPA_STAT', 'Statistics' );
 	define ( '_FPA_BASIC', 'Basic' );
 	define ( '_FPA_DETAILED', 'Detailed' );
@@ -304,10 +290,9 @@
 	define ( 'act', '');
 	define ( '_FPA_MVFW', 'More than one instance of version.php found!' );
 	define ( '_FPA_MVFWF', 'Multiple found' );
-        
-        /* v1.2.7 */
-    define ( '_FPA_DIR_UNREADABLE', 'A directory is <b>NOT READABLE</b> and cannot be checked!');
-        
+	define ( '_FPA_DIR_UNREADABLE', 'A directory is <b>NOT READABLE</b> and cannot be checked!');
+	define ( '_FPA_DI_PHP_FU', 'Disabled Functions' );        
+	define ( '_FPA_FDSKSP', 'Free Disk Space' );
 	/** END LANGUAGE STRINGS *****************************************************************/
 
 // ** delete script when done - Phil 8-07-12
@@ -323,10 +308,8 @@
 	// Delete the file.
 		unlink('fpa-en.php');
 
-	/* Message and link to home page of site. */
-
+	// Message and link to home page of site.
 		echo '<div id="slowScreenSplash" style="padding:20px;border: 2px solid #4D8000;background-color:#FFFAF0;border-radius: 10px;-moz-border-radius: 10px;-webkit-border-radius: 10px;margin: 0 auto; margin-top:50px;margin-bottom:20px;width:700px;position:relative;z-index:9999;top:10%;" align="center">';
-
 		$page= ("http://$host$uri/");
 		$filename = 'fpa-en.php';
 // Something went wrong and the script was not deleted so it must be removed manually so we tell the user to do so - Phil 8-07-12
@@ -472,7 +455,6 @@
 	$phpreq['mysqli']           = '';
 	$phpreq['mcrypt']           = '';
 	$phpreq['suhosin']          = '';
-//    $phpreq['test']             = '';
 	$apachemodules['ARRNAME']   = _FPA_APAMOD_TITLE;
 	$apachereq['ARRNAME']       = _FPA_APAREQ_TITLE;
 	$apachereq['mod_rewrite']   = '';
@@ -484,7 +466,6 @@
 	$apachereq['mod_ssl']       = '';
 	$apachereq['mod_qos']       = '';
 	$apachereq[' mod_userdir']  = '';
-//    $apachereq['test']          = '';
 	$database['ARRNAME']        = _FPA_DB_TITLE;
 	$tables['ARRNAME']          = _FPA_DBTBL_TITLE;
 	$modecheck['ARRNAME']       = _FPA_PERMCHK_TITLE;
@@ -506,7 +487,6 @@
 	$folders[]                  = 'administrator/templates/';
 	$folders[]                  = 'sites/';                 // nooku only?
 	$folders[]                  = 'administrator/logs/';
-//    $folders[]                  = 'test/';
 	$elevated['ARRNAME']        = _FPA_ELEVPERM_TITLE;
 	$component['ARRNAME']       = _FPA_EXTCOM_TITLE;
 	$module['ARRNAME']          = _FPA_EXTMOD_TITLE;
@@ -535,7 +515,6 @@
 
 			echo '</div>';
 		} // end if _FPA_DEV defined
-
 	} // end developer-mode function
 ?>
 
@@ -554,11 +533,8 @@
 
 
 	// if the user see's Out Of Memory or Execution Timer pops, double the current memory_limit and max_execution_time
-	// !FIXME doubling limits, seems a bit flaky on very secure hosts
-	// !! This does not work properly. Fails badly (fatal) if we try changing memory
-	// ** Fixed this code by adding the missing M to the result ** //  - Phil 09-20-12
 	if ( @$_POST['increasePOPS'] == 1 ) {
-		ini_set ( 'memory_limit', (rtrim($fpa['ORIGphpMEMLIMIT'],"M")*2)."M" ); //Fixed PHP7.1 Notice: A non well formed numeric value encountered...
+		ini_set ( 'memory_limit', (rtrim($fpa['ORIGphpMEMLIMIT'],"M")*2)."M" );
 		ini_set ( 'max_execution_time', ($fpa['ORIGphpMAXEXECTIME']*2) );
 	}
 
@@ -702,13 +678,6 @@
 	}
 
 
-	/******************************************************************************************************************/
-	/** This is a test variable to check that diagnostic mode works, uncomment to cause an Undefined Variable notice **/
-	/** this will display an error if Developer-mode/diagnostic-mode are enabled, otherwise you shouldn't see errors **/
-
-	// echo $ExpectedDiagDevModeErrorVariable;
-
-	/******************************************************************************************************************/
 ?>
 
 
@@ -828,8 +797,34 @@
                             preg_match ( '#const\s*DEV_STATUS\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVSTATUS );
                             preg_match ( '#const\s*CODENAME\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsCODENAME );
                             preg_match ( '#const\s*RELDATE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELDATE );
+                            preg_match ( '#const\s*MAJOR_VERSION\s*=\s*(.*);#', $cmsVContent, $cmsMAJOR_VERSION );
                         }
                                                 
+
+                        if (empty($cmsRELEASE))
+                        { # Joomla 4
+                            preg_match ( '#const\s*PRODUCT\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsPRODUCT );
+                            preg_match ( '#const\s*DEV_STATUS\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVSTATUS );
+                            preg_match ( '#const\s*CODENAME\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsCODENAME );
+                            preg_match ( '#const\s*RELDATE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELDATE );
+                            preg_match ( '#const\s*EXTRA_VERSION\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $EXTRA_VERSION );
+                            preg_match ( '#const\s*MAJOR_VERSION\s*=\s*(.*);#', $cmsVContent, $cmsMAJOR_VERSION );
+                            preg_match ( '#const\s*MINOR_VERSION\s*=\s*(.*);#', $cmsVContent, $cmsMINOR_VERSION );
+                            preg_match ( '#const\s*PATCH_VERSION\s*=\s*(.*);#', $cmsVContent, $cmsPATCH_VERSION );
+                            $cmsRELEASE[1] = $cmsMAJOR_VERSION[1] . '.' . $cmsMINOR_VERSION[1];
+                            if (strlen($EXTRA_VERSION[1]) > 0) {
+                              $cmsDEVLEVEL[1] = $cmsPATCH_VERSION[1]. '-' . $EXTRA_VERSION[1] ;                            
+                            } else {
+                              $cmsDEVLEVEL[1] = $cmsPATCH_VERSION[1] ; 
+                            }
+                        }
+
+                        if (empty($cmsMAJOR_VERSION))
+                        {
+                            $cmsMAJOR_VERSION[1] = '0' ;
+                        }
+
+                        $instance['cmsMAJORVERSION'] = $cmsMAJOR_VERSION[1];                                      
                         $instance['cmsPRODUCT'] = $cmsPRODUCT[1];
                         $instance['cmsRELEASE'] = $cmsRELEASE[1];
                         $instance['cmsDEVLEVEL'] = $cmsDEVLEVEL[1];
@@ -1067,18 +1062,27 @@
 				$instance['instanceCFGVERMATCH'] = _FPA_U;
 			}
 
+
 			// common configuration variables for J!1.5 and above only
 			if ( $instance['configVALIDFOR'] != _FPA_U ) {
 
 				// common configuration variable across all versions
-				preg_match ( '#\$(mosConfig_offline.*|offline.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configOFFLINE );
-				preg_match ( '#\$(mosConfig_sef.*|sef.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSEF );
-				preg_match ( '#\$(mosConfig_gzip.*|gzip.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configGZIP );
-				preg_match ( '#\$(mosConfig_caching.*|caching.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHING );
-				preg_match ( '#\$(mosConfig_error_reporting.*|error_reporting.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configERRORREP );
-				preg_match ( '#\$(mosConfig_debug.*|debug.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSITEDEBUG );
+				if ( $instance['cmsMAJORVERSION'] == '4' ) {
+    				preg_match ( '#\$(mosConfig_offline.*|offline.*)=\s(.*);#', $cmsCContent, $configOFFLINE );
+    				preg_match ( '#\$(mosConfig_sef.*|sef.*)=\s(.*);#', $cmsCContent, $configSEF );
+    				preg_match ( '#\$(mosConfig_gzip.*|gzip.*)=\s(.*);#', $cmsCContent, $configGZIP );
+    				preg_match ( '#\$(mosConfig_caching.*|caching.*)=\s(.*);#', $cmsCContent, $configCACHING );
+    				preg_match ( '#\$(mosConfig_debug.*|debug.*)=\s(.*);#', $cmsCContent, $configSITEDEBUG );
+				} else {
+    				preg_match ( '#\$(mosConfig_offline.*|offline.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configOFFLINE );
+    				preg_match ( '#\$(mosConfig_sef.*|sef.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSEF );
+    				preg_match ( '#\$(mosConfig_gzip.*|gzip.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configGZIP );
+    				preg_match ( '#\$(mosConfig_caching.*|caching.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHING );
+    				preg_match ( '#\$(mosConfig_debug.*|debug.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSITEDEBUG );
+        }
 				preg_match ( '#dbtype.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configDBTYPE );
-
+				preg_match ( '#\$(mosConfig_error_reporting.*|error_reporting.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configERRORREP );
+        
 				// J!1.0 assumed 'mysql' with no variable, so we'll just add it
 				if (!array_key_exists('1', $configDBTYPE)) {
 					$configDBTYPE[1] = 'mysql';
@@ -1126,21 +1130,36 @@
 			// common configuration variables for J!1.5 and above only
 			if ( $instance['configVALIDFOR'] != '1.0' AND $instance['configVALIDFOR'] != _FPA_U ) {
 
-				preg_match ( '#sef_rewrite.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSEFREWRITE );
-				preg_match ( '#sef_suffix.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSEFSUFFIX );
-				preg_match ( '#debug_lang.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configLANGDEBUG );
-				preg_match ( '#ftp_enable.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configFTP );
-				preg_match ( '#proxy_enable.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configPROXY );
-				preg_match ( '#force_ssl.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSSL );
-				preg_match ( '#lifetime.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configLIFETIME );
-				preg_match ( '#session_handler.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSESSHAND );
+  				if ( $instance['cmsMAJORVERSION'] == '4' ) {
+      				preg_match ( '#sef_rewrite.*=\s(.*);#', $cmsCContent, $configSEFREWRITE );
+      				preg_match ( '#sef_suffix.*=\s(.*);#', $cmsCContent, $configSEFSUFFIX );
+      				preg_match ( '#debug_lang.*=\s(.*);#', $cmsCContent, $configLANGDEBUG );
+      				preg_match ( '#ftp_enable.*=\s(.*);#', $cmsCContent, $configFTP );
+      				preg_match ( '#proxy_enable.*=\s(.*);#', $cmsCContent, $configPROXY );
+      				preg_match ( '#force_ssl.*=\s(.*);#', $cmsCContent, $configSSL );
+      				preg_match ( '#lifetime.*=\s(.*);#', $cmsCContent, $configLIFETIME );
+      				preg_match ( '#cachetime.*=\s(.*);#', $cmsCContent, $configCACHETIME );        
+      				preg_match ( '#cache_platformprefix.*=\s(.*);#', $cmsCContent, $configCACHEPLFPFX );        
+      				preg_match ( '#frontediting.*=\s(.*);#', $cmsCContent, $configFRONTEDIT );
+      				preg_match ( '#shared_session.*=\s(.*);#', $cmsCContent, $configSHASESS );
+				} else {
+      				preg_match ( '#sef_rewrite.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSEFREWRITE );
+      				preg_match ( '#sef_suffix.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSEFSUFFIX );
+      				preg_match ( '#debug_lang.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configLANGDEBUG );
+      				preg_match ( '#ftp_enable.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configFTP );
+      				preg_match ( '#proxy_enable.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configPROXY );
+      				preg_match ( '#force_ssl.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSSL );
+      				preg_match ( '#lifetime.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configLIFETIME );
+      				preg_match ( '#cachetime.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHETIME );
+      				preg_match ( '#cache_platformprefix.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHEPLFPFX );
+      				preg_match ( '#frontediting.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configFRONTEDIT );
+      				preg_match ( '#shared_session.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSHASESS );
+        }
 				preg_match ( '#live_site.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configLIVESITE );
+				preg_match ( '#session_handler.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSESSHAND );
 				preg_match ( '#cache_handler.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHEHANDLER );
-				preg_match ( '#cachetime.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHETIME );
-				preg_match ( '#cache_platformprefix.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHEPLFPFX );
-				preg_match ( '#frontediting.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configFRONTEDIT );
- 				preg_match ( '#shared_session.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSHASESS );
-        
+
+
 					$instance['configSEFRWRITE'] = $configSEFREWRITE[1];
 					$instance['configSEFSUFFIX'] = $configSEFSUFFIX[1];
 					$instance['configLANGDEBUG'] = $configLANGDEBUG[1];
@@ -1196,10 +1215,13 @@
 
 			// common configuration variables for J!1.6 and above only
 			if ( $instance['configVALIDFOR'] != '1.0' AND $instance['configVALIDFOR'] != '1.5' AND $instance['configVALIDFOR'] != _FPA_U ) {
-
-				preg_match ( '#access.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configACCESS );
-				preg_match ( '#unicodeslugs.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configUNICODE );
-
+  				if ( $instance['cmsMAJORVERSION'] == '4' ) {
+      				preg_match ( '#access.*=\s(.*);#', $cmsCContent, $configACCESS );
+      				preg_match ( '#unicodeslugs.*=\s(.*);#', $cmsCContent, $configUNICODE );
+					} else {
+      				preg_match ( '#access.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configACCESS );
+      				preg_match ( '#unicodeslugs.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configUNICODE );
+					}
 					$instance['configACCESS'] = $configACCESS[1];
 					$instance['configUNICODE'] = $configUNICODE[1];
 			}
@@ -1252,15 +1274,6 @@
 		$instance['configVALIDFOR'] = _FPA_U;
 	}
 ?>
-
-
-
-<?php
-// TESTING ONLY HUUUUUUGE DB  ( 2.1 GiB)
-//$instance['configDBNAME'] = 'njs_bandsite';
-?>
-
-
 
 <?php
 	/** DETERMINE SYSTEM ENVIRONMENT & SETTINGS ***********************************************
@@ -1395,7 +1408,7 @@
 	$phpenv['phpMAXINPUTTIME']      = ini_get( 'max_input_time' );
 	$phpenv['phpMAXEXECTIME']       = ini_get( 'max_execution_time' );
 	$phpenv['phpMEMLIMIT']          = ini_get( 'memory_limit' );
-	$phpenv['phpDISABLED']          = ini_get( 'disable_functions' );  // !TODO add this ti the display somewhere
+	$phpenv['phpDISABLED']          = ini_get( 'disable_functions' );
 
 	/** API and ownership related settings ***************************************************/
 	$phpenv['phpAPI']               = php_sapi_name();
@@ -1737,7 +1750,7 @@
       $exset[] = $row);
      }
 
-    $sql = "select template,home from ".$instance['configDBPREF']."template_styles";
+    $sql = "select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template";
     $result = mysql_query($sql);
     if (mysql_num_rows($result) > 0) {
       for ($tmpldef = array ();
@@ -1851,7 +1864,7 @@
       $exset[] = $row);
      }
      }
-    $sql = "select template,home from ".$instance['configDBPREF']."template_styles";
+    $sql = "select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template";
     $result = $dBconn->query($sql);
     if ($result <> false) {
     if ($result->num_rows > 0) {
@@ -2046,7 +2059,7 @@
 									OR strtolower( $name[1] ) == 'isis'
 									OR strtolower( $name[1] ) == 'beez5'
 									OR strtolower( $name[1] ) == 'beez_20'
-									OR strtolower( $name[1] ) == 'aurora'
+									OR strtolower( $name[1] ) == 'cassiopeia'
 									OR strtolower( $name[1] ) == 'atum'
 									OR strtolower( substr( $name[1], 0, 4 ) ) == 'beez' ) {
 										$arrname[$loc][$cDir]['type'] = _FPA_JCORE;
@@ -2317,8 +2330,7 @@ function recursive_array_search($needle,$haystack) {
 				/** CSS3 **/
 				text-shadow: 1px 1px 1px #FFF;
 			}
-			<?php // Adjusted Box Height to accomodate long Database version names
-				// under application instance - configuration area - 4-8-12 - Phil ?>
+
 			.mini-content-box {
 				font-size: 10px !important;
 				text-align:center;
@@ -2515,7 +2527,6 @@ function recursive_array_search($needle,$haystack) {
 	** BAD SQL  | -----  | -----  |        >5.0.0          |  -----  |
 	** BAD ZEND | -----  | -----  |         2.5.10         |  -----  |
 	*****************************************************************************************/
-  // $fpa['supportENV'] = '';
 
 	echo '<div>';
 	echo '<div style="width:85%;margin:0 auto;margin-top:10px;">';
@@ -2549,7 +2560,6 @@ function recursive_array_search($needle,$haystack) {
 		****/
 		$input_line = @$database['dbHOSTSERV'];
 		preg_match("/\b(\w*mariadb\w*)\b/i", $input_line, $output_array);
-		//print $output_array[0];
 	
 		
     if ( @$instance['cmsRELEASE'] >= '3.5')  {
@@ -3288,11 +3298,25 @@ function recursive_array_search($needle,$haystack) {
 					if ( $showProtected <> 1 ) {
 					echo '[b]'. _FPA_HOST .' '. _FPA_CFG .' :: OS:[/b] '. $system['sysPLATOS'] .' |  [b]OS '._FPA_VER.':[/b] '. $system['sysPLATREL'] .' | [b]'. _FPA_TEC .':[/b] '. $system['sysPLATTECH'] .' | [b]'. _FPA_WSVR .':[/b] '. $system['sysSERVSIG'] .' | [b]Encoding:[/b] '. $system['sysENCODING'] .' | [b]'. _FPA_DROOT .':[/b] '. '[color=orange]--'. _FPA_HIDDEN .'--[/color]' .' | [b]'. _FPA_SYS .' TMP '. _FPA_WRITABLE .':[/b] ';
 						if ( $system['sysTMPDIRWRITABLE'] == _FPA_Y ) { echo '[color=Green]'; } else { echo '[color=Red]'; }
-						echo $system['sysTMPDIRWRITABLE'] .'[/color]';
+						echo $system['sysTMPDIRWRITABLE'] .'[/color] | ';
 					}else{
 					echo '[b]'. _FPA_HOST .' '. _FPA_CFG .' :: OS:[/b] '. $system['sysPLATOS'] .' |  [b]OS '._FPA_VER.':[/b] '. $system['sysPLATREL'] .' | [b]'. _FPA_TEC .':[/b] '. $system['sysPLATTECH'] .' | [b]'. _FPA_WSVR .':[/b] '. $system['sysSERVSIG'] .' | [b]Encoding:[/b] '. $system['sysENCODING'] .' | [b]'. _FPA_DROOT .':[/b] '. $system['sysDOCROOT'] .' | [b]'. _FPA_SYS .' TMP '. _FPA_WRITABLE .':[/b] ';
 						if ( $system['sysTMPDIRWRITABLE'] == _FPA_Y ) { echo '[color=Green]'; } else { echo '[color=Red]'; }
-						echo $system['sysTMPDIRWRITABLE'] .'[/color]';
+						echo $system['sysTMPDIRWRITABLE'] .'[/color] | ';
+					}
+
+					if ( function_exists( 'disk_free_space' ) ) {
+						$total_space = sprintf( '%.2f', disk_total_space( './' ) /1073741824 );
+						$free_space = sprintf( '%.2f', disk_free_space( './' ) /1073741824 );
+						$percent_free = $free_space ? round($free_space / $total_space, 2) * 100 : 0;
+						$system['sysFREESPACE'] = $free_space .' GiB';
+						if ( $percent_free <= '5' ) {
+						  echo '[b]  '. _FPA_FDSKSP . ' :[/b] [color=Red]'. $system['sysFREESPACE'] .'[/color] |';
+						}
+						else
+						{
+						  echo '[b]  '. _FPA_FDSKSP . ' :[/b] [color=Green]'. $system['sysFREESPACE'] .'[/color] |';
+						}
 					}
 					echo "\r\n\r\n";
 
@@ -3331,7 +3355,6 @@ function recursive_array_search($needle,$haystack) {
 							if ( $_POST['showProtected'] == '3' ) {
 								echo '[color=orange][b]'. _FPA_PRIVSTR .'[/b] '. _FPA_INFOPRI .'[/color], '. _FPA_BUT .' [color=Red]'. _FPA_ER .'[/color].';
 							} else {
-//                                echo "\r\n";
 								echo '[color=Red]'. @$database['dbERROR'] .'[/color] : [color=orange]'. _FPA_DB .' '. _FPA_CREDPRES .'? '. _FPA_IN .' '. _FPA_CFG .'...[/color]';
 							}
 
@@ -3340,7 +3363,6 @@ function recursive_array_search($needle,$haystack) {
 
 							if ( $_POST['showProtected'] >= '1' ) { echo '[b]'. _FPA_HOST .':[/b]  [color=orange]--'. _FPA_HIDDEN .'--[/color] ([color=orange]--'. _FPA_HIDDEN .'--[/color]) | ';
 							} else { echo '[b]'. _FPA_HOST .':[/b] '. $instance['configDBHOST'] .' ('. $database['dbHOSTINFO'] .') | '; }
-// fixed minor syntax error - Phil 09-23-12
 							echo '[b]'. _FPA_TCOL .':[/b] '. $database['dbCOLLATION'] .' ([b]'. _FPA_CHARS .':[/b] '. $database['dbCHARSET'] .') | [b]'. _FPA_DB .' '. _FPA_TSIZ .':[/b] '. $database['dbSIZE'] .' | [b]#'. _FPA_OF .'&nbsp'. _FPA_TABLE .':&nbsp[/b] '. $database['dbTABLECOUNT'];
 					}
 
@@ -3380,6 +3402,17 @@ function recursive_array_search($needle,$haystack) {
 						foreach ( $phpreq as $missingkey => $missing ) {
 							echo '[color=orange]'. $missingkey .'[/color] | ';
 						}
+
+			// disabled PHP functions
+			if ( $phpenv['phpDISABLED'] ) {
+                echo "\r\n";
+                echo '[b]'. _FPA_DI_PHP_FU .' :: [/b]';
+                $disabledfunctions = explode(",",$phpenv['phpDISABLED']);
+                $arrlength = count($disabledfunctions);
+ 				for($x = 0; $x < $arrlength; $x++) {
+ 				   echo  $disabledfunctions[$x] .' | ';
+ 				}
+			}
 
 						echo "\r\n\r\n";
 						echo '[b]Switch User '. _FPA_ENVIRO .'[/b] [i](Experimental)[/i][b] :: PHP CGI:[/b] '. $phpenv['phpCGI'] .' | [b]Server SU:[/b] '. $phpenv['phpAPACHESUEXEC'] .' |  [b]PHP SU:[/b] '. $phpenv['phpPHPSUEXEC'] .' |   [b]Custom SU (LiteSpeed/Cloud/Grid):[/b] '. $phpenv['phpCUSTOMSU'];
@@ -3746,20 +3779,10 @@ function recursive_array_search($needle,$haystack) {
  				echo '[/quote]';
 						} // end showProtected != strict
 
-/**
-				echo '[quote="'. _RES .'"][size=85]';
-					if ( $_POST['probDSC'] ) { echo '[b][u][color=black]Problem Description:[/color][/u][/b] &nbsp;'. $_POST['probDSC']; echo "\n\n"; }
-					if ( $_POST['probMSG1'] ) { echo '[b][u][color=black]Error Message:[/color][/u][/b] &nbsp;'. $_POST['probMSG1']; echo "\n"; }
-					if ( $_POST['probMSG2'] ) { echo '[b][u][color=black]Last Known PHP Error:[/color][/u][/b] &nbsp;'. $_POST['probMSG2']; echo "\n"; }
-					if ( $_POST['probACT'] ) { echo "\n"; echo '[b][u][color=black]Actions Taken:[/color][/u][/b] &nbsp;'. $_POST['probACT']; }
-				echo '[/size][/quote]';
-**/
-
-
 
 				echo '</textarea>';
 				echo '<div style="clear:both;"><br /></div>';
-				echo '<span class="ok">'. _FPA_INS_7 .'</span>'; // changed to _FPA_INS_7 from _FPA_INS_6  Phil - 4-21-12
+				echo '<span class="ok">'. _FPA_INS_7 .'</span>';
 				echo '<div style="clear:both;"><br /></div>';
 				echo '</div>';
 
@@ -3811,7 +3834,6 @@ function recursive_array_search($needle,$haystack) {
 				}
 
 				echo '<div class="'. $statusClass .'" style="margin: 0px auto;margin-top:1px;">'. @$instance['cmsDEVSTATUS'] .'</div>';
-				//echo $instance['cmsCODENAME'];
 
 			} else {
 				echo '<div class="warn" style="margin: 0px auto;">'. @$instance['instanceFOUND'] .'</div>';
@@ -5073,8 +5095,29 @@ function recursive_array_search($needle,$haystack) {
 
 			}
 
+			// disabled PHP functions
+			if ( $phpenv['phpDISABLED'] ) {
+				echo '<br style="clear:both;" /><br />';
+				echo '<div class="mini-content-box-small" style="">';
+				echo '<div class="normal" style="line-height:10px;font-size:9px;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. _FPA_DI_PHP_FU .':<br /><div style="float:left;text-transform:none;">';
+				echo '<br style="clear:both;" />';
+				$status = 'normal';
+				$border = '42AEC2';
+				$background = 'FFF';
+				$weight = 'normal';
+                $disabledfunctions = explode(",",$phpenv['phpDISABLED']);
+                $arrlength = count($disabledfunctions);
+				for($x = 0; $x < $arrlength; $x++) {
+					echo '<div style="background-color: #'. $background .';border:1px solid #'. $border .';border-radius:3px;-moz-border-radius:3px;-webkit-border-radius:3px;text-align:center;margin:2px;padding:1px;min-height:10px;width:82px;float:left;font-size:8px;"><span class="'. $status .'" style="font-size:8px;font-weight:'. $weight .';text-shadow:1px 1px 1px #fff;">'. $disabledfunctions[$x] .'</span></div>';
+				}
+				echo '</div></div>';
+				echo '</div>';
+			}
+
+
 		echo '<br style="clear:both;" />';
 		echo '</div></div>';
+
 
 	showDev( $phpextensions );
 	$phpreq['ARRNAME'] = 'Potential Missing PHP Extensions';
@@ -5344,10 +5387,6 @@ function recursive_array_search($needle,$haystack) {
 						$writeClass = 'warn-text';
 					}
 
-					// hilite the "cancelled processing" message, after 25 elevated folders (limited to save resources on a really bad site
-//                    if ( substr( $key, 0, 4 ) == '*PRO' ) {
-//                        $alertClass = 'alert';
-//                    }
 
 					echo '<div style="border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;">';
 
@@ -5369,15 +5408,11 @@ function recursive_array_search($needle,$haystack) {
 								echo $key .'/ (';
 							}
 
-//                        }
-//                            echo $key;  // display the folder name
-
 						} else {
 							echo '<span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span>';
 						}
 
 					echo '</div>';
-
 					echo '<div style="clear:both;"></div>';
 					echo '</div>';
 

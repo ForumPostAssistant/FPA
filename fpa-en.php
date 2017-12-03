@@ -789,8 +789,9 @@
 			preg_match ( '#\$(?:CODENAME|CODE_NAME)\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsCODENAME );
 			preg_match ( '#\$(?:RELDATE|RELEASE_DATE)\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELDATE );
 
+                        // Joomla 3.5 - 3.9
                         if (empty($cmsPRODUCT))
-                        { # Joomla 3.5
+                        { 
                             preg_match ( '#const\s*PRODUCT\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsPRODUCT );
                             preg_match ( '#const\s*RELEASE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELEASE );
                             preg_match ( '#const\s*DEV_LEVEL\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVLEVEL );
@@ -800,9 +801,9 @@
                             preg_match ( '#const\s*MAJOR_VERSION\s*=\s*(.*);#', $cmsVContent, $cmsMAJOR_VERSION );
                         }
                                                 
-
+                        // Joomla 4
                         if (empty($cmsRELEASE))
-                        { # Joomla 4
+                        { 
                             preg_match ( '#const\s*PRODUCT\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsPRODUCT );
                             preg_match ( '#const\s*DEV_STATUS\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVSTATUS );
                             preg_match ( '#const\s*CODENAME\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsCODENAME );
@@ -859,8 +860,9 @@
 				preg_match ( '#CODE_NAME\s*=\s*[\'"](.*)[\'"]#', $platformVContent, $platformCODENAME );
 				preg_match ( '#RELEASE_DATE\s*=\s*[\'"](.*)[\'"]#', $platformVContent, $platformRELDATE );
 
+                                // Joomla 3.5 - 3.9
                                 if (empty($platformPRODUCT))
-                                { # Joomla 3.5
+                                { 
                                     preg_match ( '#const\s*PRODUCT\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsPRODUCT );
                                     preg_match ( '#const\s*RELEASE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELEASE );
                                     preg_match ( '#const\s*MAINTENANCE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVLEVEL );
@@ -2562,10 +2564,52 @@ function recursive_array_search($needle,$haystack) {
 		preg_match("/\b(\w*mariadb\w*)\b/i", $input_line, $output_array);
 	
 		
-    if ( @$instance['cmsRELEASE'] >= '3.5')  {
+	if  (@$instance['cmsRELEASE'] >= '4.0') {
+		$fpa['supportENV']['minPHP']        = '7.0.0';
+		$fpa['supportENV']['minSQL']        = '5.1.0';
+		$fpa['supportENV']['maxPHP']        = '7.5.0';  
+		$fpa['supportENV']['maxSQL']        = '5.8.0'; 
+		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
+		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
+		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
+		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
+		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
+		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
+		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
+		$fpa['supportENV']['badZND'][0]     = _FPA_NA;	
+
+	} elseif  (@$instance['cmsRELEASE'] == '3.9') {
 		$fpa['supportENV']['minPHP']        = '5.3.10';
 		$fpa['supportENV']['minSQL']        = '5.1.0';
 		$fpa['supportENV']['maxPHP']        = '7.5.0';  
+		$fpa['supportENV']['maxSQL']        = '5.8.0'; 
+		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
+		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
+		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
+		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
+		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
+		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
+		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
+		$fpa['supportENV']['badZND'][0]     = _FPA_NA;	
+
+	} elseif  (@$instance['cmsRELEASE'] > '3.7' and @$instance['cmsDEVLEVEL'] > '2') {
+		$fpa['supportENV']['minPHP']        = '5.3.10';
+		$fpa['supportENV']['minSQL']        = '5.1.0';
+		$fpa['supportENV']['maxPHP']        = '7.5.0';  
+		$fpa['supportENV']['maxSQL']        = '5.8.0'; 
+		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
+		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
+		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
+		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
+		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
+		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
+		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
+		$fpa['supportENV']['badZND'][0]     = _FPA_NA;	
+
+	} elseif ( @$instance['cmsRELEASE'] >= '3.5') {
+		$fpa['supportENV']['minPHP']        = '5.3.10';
+		$fpa['supportENV']['minSQL']        = '5.1.0';
+		$fpa['supportENV']['maxPHP']        = '7.1.99';  
 		$fpa['supportENV']['maxSQL']        = '5.8.0'; 
 		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
 		$fpa['supportENV']['badPHP'][1]     = '5.3.1';

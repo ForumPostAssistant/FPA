@@ -8,7 +8,7 @@
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
  **  @version 1.3.7
- **  @last updated 26/11/2017
+ **  @last updated 04/12/2017
  **  @release Beta
  **  @date 24/06/2011
  **  @author RussW
@@ -47,7 +47,7 @@
 
 	define ( '_RES', 'Forum Post Assistant' );
 	define ( '_RES_VERSION', '1.3.7' );
-	define ( '_last_updated', '26/11/2017' );
+	define ( '_last_updated', '04/12/2017' );
 	define ( '_COPYRIGHT_STMT', ' Copyright (C) 2011, 2012 Russell Winter, Phil DeGruy, Bernard Toplak &nbsp;' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. &nbsp; This is free software,

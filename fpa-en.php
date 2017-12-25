@@ -7,8 +7,8 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.3.7
- **  @last updated 04/12/2017
+ **  @version 1.3.8
+ **  @last updated 25/12/2017
  **  @release Beta
  **  @date 24/06/2011
  **  @author RussW
@@ -46,8 +46,8 @@
 	// Define some basic assistant information
 
 	define ( '_RES', 'Forum Post Assistant' );
-	define ( '_RES_VERSION', '1.3.7' );
-	define ( '_last_updated', '04/12/2017' );
+	define ( '_RES_VERSION', '1.3.8' );
+	define ( '_last_updated', '25/12/2017' );
 	define ( '_COPYRIGHT_STMT', ' Copyright (C) 2011, 2012 Russell Winter, Phil DeGruy, Bernard Toplak &nbsp;' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. &nbsp; This is free software,
@@ -1841,12 +1841,12 @@
 				$database['dbHOSTCLIENT']   = _FPA_U; // client library version
 				$database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
 				$database['dbHOSTSTATS']    = _FPA_U; // latest statistics
-				$database['dbCOLLATION']    =  _FPA_U;
-				$database['dbCHARSET']      =  _FPA_U;
+				$database['dbCOLLATION']    = _FPA_U;
+				$database['dbCHARSET']      = _FPA_U;
 		}
 
 		} elseif ( $instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_Y ) { // mysqli
-
+			if (function_exists('mysqli_connect')) {
 			$dBconn = @new mysqli( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'], $instance['configDBNAME'] );
 			$database['dbERROR'] = mysqli_connect_errno( $dBconn ) .':'. mysqli_connect_error( $dBconn );
 	// These database connection tests below are the cause of the white screen issues and non working on latest xampp stuff Phil
@@ -1949,10 +1949,20 @@
 				$database['dbHOSTCLIENT']   = _FPA_U; // client library version
 				$database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
 				$database['dbHOSTSTATS']    = _FPA_U; // latest statistics
-				$database['dbCOLLATION']    =  _FPA_U;
-				$database['dbCHARSET']      =  _FPA_U;
+				$database['dbCOLLATION']    = _FPA_U;
+				$database['dbCHARSET']      = _FPA_U;
 		} // end of dataBase connection routines
 
+		} else {
+				$database['dbHOSTSERV']     = _FPA_U; // SQL server version
+				$database['dbHOSTINFO']     = _FPA_U; // connection type to dB
+				$database['dbHOSTPROTO']    = _FPA_U; // server protocol type
+				$database['dbHOSTCLIENT']   = _FPA_U; // client library version
+				$database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
+				$database['dbHOSTSTATS']    = _FPA_U; // latest statistics
+				$database['dbCOLLATION']    = _FPA_U;
+				$database['dbCHARSET']      = _FPA_U;
+		} 
 
 
 		if ( isset( $dBconn ) AND $database['dbERROR'] == '0:' ) {

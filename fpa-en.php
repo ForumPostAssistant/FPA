@@ -3359,19 +3359,17 @@ function recursive_array_search($needle,$haystack) {
 						echo $system['sysTMPDIRWRITABLE'] .'[/color] | ';
 					}
 
-					if ( function_exists( 'disk_free_space' ) ) {
-						$total_space = sprintf( '%.2f', disk_total_space( './' ) /1073741824 );
+					if ( function_exists( 'disk_free_space' ) )
+						{
 						$free_space = sprintf( '%.2f', disk_free_space( './' ) /1073741824 );
-						$percent_free = $free_space ? round($free_space / $total_space, 2) * 100 : 0;
 						$system['sysFREESPACE'] = $free_space .' GiB';
-						if ( $percent_free <= '5' ) {
-						  echo '[b]  '. _FPA_FDSKSP . ' :[/b] [color=Red]'. $system['sysFREESPACE'] .'[/color] |';
+						  echo '[b]  ' . _FPA_FDSKSP . ' :[/b] ' . $system['sysFREESPACE'] . ' |';
 						}
 						else
 						{
-						  echo '[b]  '. _FPA_FDSKSP . ' :[/b] [color=Green]'. $system['sysFREESPACE'] .'[/color] |';
+						  echo '[b]  ' . _FPA_FDSKSP . ' :[/b] ' . _FPA_U . ' |';
 						}
-					}
+                        
 					echo "\r\n\r\n";
 
 					echo '[b]PHP '. _FPA_CFG .' :: '. _FPA_VER .':[/b] ';
@@ -4888,14 +4886,15 @@ function recursive_array_search($needle,$haystack) {
 
 		echo '<div class="mini-content-box-small" style="">';
 		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Total Disk Space:<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;border-bottom: 1px solid #ccebeb;">';
-			if ( function_exists( 'disk_free_space' ) ) {
-				$total_space = sprintf( '%.2f', disk_total_space( './' ) /1073741824 );
-				echo '<span class="normal">'. $total_space .' GiB&nbsp;</span>';
-
-			} else {
-				echo '<span class="normal">'. _FPA_U .'&nbsp;</span>';
-
-			}
+        if (function_exists('disk_total_space'))
+        {
+        	$total_space = sprintf('%.2f', disk_total_space('./') / 1073741824);
+        	echo '<span class="normal">' . $total_space . ' GiB&nbsp;</span>';
+        }
+        else
+        {
+        	echo '<span class="normal">' . _FPA_U . '&nbsp;</span>';
+        }
 
 		echo '</div></div>';
 		echo '</div>';
@@ -4903,25 +4902,32 @@ function recursive_array_search($needle,$haystack) {
 
 		echo '<div class="mini-content-box-small" style="">';
 		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Free Disk Space:<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;border-bottom: 1px solid #ccebeb;">';
-			if ( function_exists( 'disk_free_space' ) ) {
-
-				$free_space = sprintf( '%.2f', disk_free_space( './' ) /1073741824 );
-				$percent_free = $free_space ? round($free_space / $total_space, 2) * 100 : 0;
-
-				if ( $percent_free <= '5' ) {
-					$status = 'warn';
-
-				} else {
-					$status = 'normal';
-
-				}
-
-				echo '<span class="normal">(<span class="'. $status .'">'. $percent_free.'%</span>)  '. $free_space .' GiB&nbsp;</span>';
-				$system['sysFREESPACE'] = $free_space .' GiB';
-			} else {
-				echo '<span class="normal">'. _FPA_U .'&nbsp;</span>';
-
-			}
+        if (function_exists('disk_free_space'))
+        {	
+        	$free_space = sprintf('%.2f', disk_free_space('./') / 1073741824);
+        	if (function_exists('disk_total_space'))
+        	{
+            	$percent_free = $free_space ? round($free_space / $total_space, 2) * 100 : 0;	
+            	if ($percent_free <= '5')
+            	{
+            		$status = 'warn';
+            	}
+            	else
+            	{
+            		$status = 'normal';
+            	}	
+            	echo '<span class="normal">(<span class="' . $status . '">' . $percent_free . '%</span>)  ' . $free_space . ' GiB&nbsp;</span>';
+            	$system['sysFREESPACE'] = $free_space . ' GiB';
+            }
+            else
+            {
+                echo '<span class="normal"> ' . $free_space . ' GiB&nbsp;</span>';
+            }
+        }
+        else
+        {
+        	echo '<span class="normal">' . _FPA_U . '&nbsp;</span>';
+        }
 
 		echo '</div></div>';
 		echo '</div>';

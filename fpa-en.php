@@ -1845,7 +1845,7 @@
 				$database['dbCHARSET']      = _FPA_U;
 		}
 
-		} elseif ( $instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_Y ) { // mysqli
+		} elseif ( $instance['configDBTYPE'] == 'mysqli' or $instance['configDBTYPE'] == 'pdomysql' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_Y ) { // mysqli
 			if (function_exists('mysqli_connect')) {
 			$dBconn = @new mysqli( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'], $instance['configDBNAME'] );
 			$database['dbERROR'] = mysqli_connect_errno( $dBconn ) .':'. mysqli_connect_error( $dBconn );

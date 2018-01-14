@@ -19,7 +19,7 @@ This process also means that consistent information is gathered and presented in
 
 The idea is to make the information collection, and subsequent posting, as simple as possible for the end user, a simple one page script, automatically collects the information when run in a web-browser and presents the user with the option to include or exclude any site sensitive information before "generating" the post [BB]code that can then be copied and simply pasted in to a new or existing forum post with no other interaction by the user required after posting.
 
-#### Full Instructions https://forum.joomla.org/viewtopic.php?f=621&t=582860
+#### Full Instructions https://forum.joomla.org/viewtopic.php?f=714&t=793531&p=3000912
 ***
 
 

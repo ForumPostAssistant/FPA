@@ -1370,6 +1370,16 @@
 		$phpenv['phpSUPPORTSMYSQLI'] = _FPA_U;
 	}
 
+	if ( version_compare( PHP_VERSION, '7.0', '>=' ) ) {
+		$phpenv['phpSUPPORTSMYSQL'] = _FPA_N;
+
+	} elseif ( version_compare( PHP_VERSION, '5.9.9', '<=' ) ) {
+		$phpenv['phpSUPPORTSMYSQL'] = _FPA_Y;
+
+	} else {
+		$phpenv['phpSUPPORTSMYSQL'] = _FPA_U;
+	}
+
 	// find the current php.ini file
 	if ( version_compare( PHP_VERSION, '5.2.4', '>=' ) ) {
 		$phpenv['phpINIFILE']       = php_ini_loaded_file();
@@ -1687,6 +1697,7 @@
 	** here we try and find out more about MySQL and if we have an installed instance, see if
 	** talk to it and access the database.
 	*****************************************************************************************/
+	$postgresql = _FPA_N;
 	if ( $instance['instanceCONFIGURED'] == _FPA_Y AND $instance['configDBCREDOK'] == _FPA_Y ) {
 		$database['dbDOCHECKS'] = _FPA_Y;
 
@@ -1947,11 +1958,191 @@
 				$database['dbHOSTINFO']     = _FPA_U; // connection type to dB
 				$database['dbHOSTPROTO']    = _FPA_U; // server protocol type
 				$database['dbHOSTCLIENT']   = _FPA_U; // client library version
+				$database['dbHOSTDEFCHSET'] = _FPA_U; // hosts default character-set
+				$database['dbHOSTSTATS']    = _FPA_U; // latest statistics
+				$database['dbCOLLATION']    = _FPA_U; // database collation
+				$database['dbCHARSET']      = _FPA_U; // database character-set
+		} // end of dataBase connection routines
+
+
+		} elseif ( $instance['configDBTYPE'] == 'pdomysql')  {                                                                            
+		  try {
+		  $dBconn = new PDO("mysql:host=".$instance['configDBHOST'].";dbname=".$instance['configDBNAME'], $instance['configDBUSER'], $instance['configDBPASS']);
+
+		  // set the PDO error mode to exception
+		  $dBconn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		  }
+		  catch(PDOException $e)
+		  {
+		  $dBconn = FALSE;
+		  }
+
+		  if ($dBconn) {
+		  $database['dbERROR'] = '0:';
+
+		  $sql = $dBconn->prepare("select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template'");
+		  $sql->execute();
+		  $exset = $sql->setFetchMode(PDO::FETCH_ASSOC);
+		  $exset = $sql->fetchAll();
+
+		  $sql = $dBconn->prepare("select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template");
+		  $sql->execute();
+		  $tmpldef = $sql->setFetchMode(PDO::FETCH_ASSOC);
+		  $tmpldef = $sql->fetchAll();
+
+			if ( $dBconn ) {
+				$database['dbHOSTSERV']     = $dBconn->getAttribute(constant("PDO::ATTR_SERVER_VERSION" ));       // SQL server version
+				$database['dbHOSTINFO']     = $dBconn->getAttribute(constant("PDO::ATTR_CONNECTION_STATUS" ));         // connection type to dB
+				$database['dbHOSTCLIENT']   = $dBconn->getAttribute(constant("PDO::ATTR_CLIENT_VERSION" ));                // client library version
+				$database['dbHOSTDEFCHSET'] = $dBconn->query("SELECT CHARSET('')")->fetchColumn();      // this is the hosts default character-set
+				$database['dbHOSTSTATS']    = explode("  ", $dBconn->getAttribute(constant("PDO::ATTR_SERVER_INFO" )));  // latest statistics 
+			}
+                                        
+				// find the database collation
+				$coResult = $dBconn->query( "SHOW VARIABLES LIKE 'collation_database'" );
+
+				while ( $row =  $coResult->fetch( PDO::FETCH_BOTH ))  {
+					$database['dbCOLLATION'] =  $row[1];
+				}
+
+				// find the database character-set
+				$csResult = $dBconn->query( "SHOW VARIABLES LIKE 'character_set_database'" );
+
+				while ( $row = $csResult->fetch( PDO::FETCH_BOTH )) {
+					$database['dbCHARSET']  =  $row[1];
+				}
+
+				// find all the dB tables and calculate the size
+				$tblResult = $dBconn->query( "SHOW TABLE STATUS" );
+
+					$database['dbSIZE'] = 0;
+					$rowCount           = 0;                                                
+
+					while ( $row =  $tblResult->fetch( PDO::FETCH_BOTH )) {
+						$rowCount++;
+						$tables[$row['Name']]['TABLE']  = $row['Name'];
+						$table_size = ($row[ 'Data_length' ] + $row[ 'Index_length' ]) / 1024;
+						$tables[$row['Name']]['SIZE'] = sprintf( '%.2f', $table_size );
+						$database['dbSIZE'] += sprintf( '%.2f', $table_size );
+						$tables[$row['Name']]['SIZE'] = $tables[$row['Name']]['SIZE'] .' KiB';
+
+
+						if ( $showTables == '1' ) {
+							$tables[$row['Name']]['ENGINE']     = $row['Engine'];
+							$tables[$row['Name']]['VERSION']    = $row['Version'];
+							$tables[$row['Name']]['CREATED']    = $row['Create_time'];
+							$tables[$row['Name']]['UPDATED']    = $row['Update_time'];
+							$tables[$row['Name']]['CHECKED']    = $row['Check_time'];
+							$tables[$row['Name']]['COLLATION']  = $row['Collation'];
+							$tables[$row['Name']]['FRAGSIZE']   = sprintf( '%.2f', ( $row['Data_free'] /1024 ) ) .' KiB';
+							$tables[$row['Name']]['MAXGROW']    = sprintf( '%.1f', ( $row['Max_data_length'] /1073741824 ) ) .' GiB';
+							$tables[$row['Name']]['RECORDS']    = $row['Rows'];
+							$tables[$row['Name']]['AVGLEN']     = sprintf( '%.2f', ( $row['Avg_row_length'] /1024 ) ) .' KiB';
+						}
+					}
+
+				if ( $database['dbSIZE'] > '1024' ) {
+					$database['dbSIZE']     = sprintf( '%.2f', ( $database['dbSIZE'] /1024 ) ) .' MiB';
+
+				} else {
+					$database['dbSIZE']     = $database['dbSIZE'] .' KiB';
+				}
+				$database['dbTABLECOUNT']   = $rowCount;                                             
+
+		} else {
+				$database['dbHOSTSERV']     = _FPA_U; // SQL server version
+				$database['dbHOSTINFO']     = _FPA_U; // connection type to dB
+				$database['dbHOSTPROTO']    = _FPA_U; // server protocol type
+				$database['dbHOSTCLIENT']   = _FPA_U; // client library version
 				$database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
 				$database['dbHOSTSTATS']    = _FPA_U; // latest statistics
 				$database['dbCOLLATION']    = _FPA_U;
 				$database['dbCHARSET']      = _FPA_U;
-		} // end of dataBase connection routines
+				$database['dbERROR']        = _FPA_ECON;
+		} 
+             
+		} elseif ( $instance['configDBTYPE'] == 'postgresql')  {  
+         if (function_exists('pg_connect')) {
+         $dBconn = @pg_connect("host=".$instance['configDBHOST']." dbname=".$instance['configDBNAME']." user=". $instance['configDBUSER']." password=". $instance['configDBPASS']);
+         
+         if ($dBconn) {
+            $database['dbERROR'] = '0:';
+            $postgresql = _FPA_Y;
+
+            $sql = pg_query($dBconn, "select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template'");                            
+            $exset = pg_fetch_all($sql);  
+
+            $sql = pg_query($dBconn, "select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template");                            
+            $tmpldef = pg_fetch_all($sql);
+
+			if ( $dBconn ) {
+				$database['dbHOSTSERV']     = pg_parameter_status($dBconn, "server_version");       // SQL server version
+				$database['dbHOSTINFO']     = _FPA_U;                                               // connection type to dB
+				$database['dbHOSTCLIENT']   = PGSQL_LIBPQ_VERSION_STR;                              // client library version
+				$database['dbHOSTDEFCHSET'] = pg_parameter_status($dBconn, "server_encoding");      // this is the hosts default character-set
+				$database['dbHOSTSTATS']    = _FPA_U;                                               // latest statistics
+                $database['dbCHARSET']      =  pg_parameter_status($dBconn, "client_encoding"); 
+                $sql = pg_fetch_array(pg_query($dBconn, "select encoding from pg_database"));
+                $res = $sql[0];
+                $val = pg_fetch_array(pg_query($dBconn, "select collname FROM pg_catalog.pg_collation where collencoding = ". $res));
+                $database['dbCOLLATION'] =  $val[0];
+			}
+
+			$tblResult = pg_query($dBconn," SELECT relname as name, pg_total_relation_size(relid) As size, pg_total_relation_size(relid) - pg_relation_size(relid) as externalsize FROM pg_catalog.pg_statio_user_tables ORDER BY relname ASC");
+                                                                                                                        
+				// find all the dB tables
+					$database['dbSIZE'] = 0;
+					$rowCount           = 0;                                                
+
+					while ( $row =  pg_fetch_array( $tblResult )) {
+						$rowCount++;
+						$tables[$row['name']]['TABLE']  = $row['name'];
+						$cr = pg_fetch_array(pg_query($dBconn," select count(*) from  " . $tables[$row['name']]['TABLE'] ."" )) ;
+						$table_size = ($row[ 'size' ] ) / 1024;
+						$tables[$row['name']]['SIZE'] = sprintf( '%.2f', $table_size );
+						$tables[$row['name']]['SIZE'] = $tables[$row['name']]['SIZE'] .' KiB';
+
+						if ( $showTables == '1' ) {
+							$tables[$row['name']]['ENGINE']     = _FPA_U;
+							$tables[$row['name']]['VERSION']    = _FPA_U;
+							$tables[$row['name']]['CREATED']    = _FPA_U;
+							$tables[$row['name']]['UPDATED']    = _FPA_U;
+							$tables[$row['name']]['CHECKED']    = _FPA_U;                                           
+							$tables[$row['name']]['COLLATION']  = _FPA_U;
+							$tables[$row['name']]['FRAGSIZE']   = _FPA_U;
+							$tables[$row['name']]['MAXGROW']    = _FPA_U;
+							$tables[$row['name']]['RECORDS']    = $cr['count'];
+							$tables[$row['name']]['AVGLEN']     = _FPA_U;
+						}
+					}
+
+                   $dsize = pg_fetch_array(pg_query($dBconn, "SELECT pg_size_pretty( pg_database_size('".$instance['configDBNAME']."'))"));
+                   $database['dbSIZE'] = $dsize[0];
+                   $database['dbTABLECOUNT']   = $rowCount;                                            
+            
+		} else {
+				$database['dbHOSTSERV']     = _FPA_U; // SQL server version
+				$database['dbHOSTINFO']     = _FPA_U; // connection type to dB
+				$database['dbHOSTPROTO']    = _FPA_U; // server protocol type
+				$database['dbHOSTCLIENT']   = _FPA_U; // client library version
+				$database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
+				$database['dbHOSTSTATS']    = _FPA_U; // latest statistics
+				$database['dbCOLLATION']    = _FPA_U;
+				$database['dbCHARSET']      = _FPA_U;
+				$database['dbERROR']        = _FPA_ECON;
+		} 
+
+		} else {
+				$database['dbHOSTSERV']     = _FPA_U; // SQL server version
+				$database['dbHOSTINFO']     = _FPA_U; // connection type to dB
+				$database['dbHOSTPROTO']    = _FPA_U; // server protocol type
+				$database['dbHOSTCLIENT']   = _FPA_U; // client library version
+				$database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
+				$database['dbHOSTSTATS']    = _FPA_U; // latest statistics
+				$database['dbCOLLATION']    = _FPA_U;
+				$database['dbCHARSET']      = _FPA_U;
+				$database['dbERROR']        = _FPA_DI_PHP_FU;
+		} 
 
 		} else {
 				$database['dbHOSTSERV']     = _FPA_U; // SQL server version
@@ -1963,7 +2154,6 @@
 				$database['dbCOLLATION']    = _FPA_U;
 				$database['dbCHARSET']      = _FPA_U;
 		} 
-
 
 		if ( isset( $dBconn ) AND $database['dbERROR'] == '0:' ) {
 			$database['dbERROR'] = _FPA_N;
@@ -1983,10 +2173,6 @@
 
 
 <?php
-	/** DETERMINE THE MYSQL VERSION AND IF WE CAN CONNECT *************************************
-	** here we try and find out more about MySQL and if we have an installed instance, see if
-	** talk to it and access the database.
-	*****************************************************************************************/
 	/** FIND AND ESTABLISH INSTALLED EXTENSIONS ***********************************************
 	** this function recurively looks for installed Components, Modules, Plugins and Templates
 	** it only reads the .xml file to determine installation status and info, some extensions
@@ -2861,6 +3047,12 @@ function recursive_array_search($needle,$haystack) {
 				$snapshot['sqlSUP4J'] = _FPA_M;
 
 			} 
+			//Added this elseif to give the ok for postgreSQL
+			elseif ($instance['configDBTYPE'] == 'postgresql' AND $database['dbHOSTSERV'] >= 8.3 ) {
+				echo '<div class="normal-note"><span class="ok">'. _FPA_Y .'</span></div>';
+				$snapshot['sqlSUP4J'] = _FPA_MDB;
+			}
+             
 			//Added this elseif to give the ok for MariaDB -- PhilD 03-17-17
 			elseif ($output_array[0] == "MariaDB") {
 				echo '<div class="normal-note"><span class="ok">'. _FPA_MDB .'</span></div>';
@@ -3600,7 +3792,7 @@ function recursive_array_search($needle,$haystack) {
 
 
 					// do the Database Statistics and Table information
-					if ( $database['dbDOCHECKS'] == _FPA_Y AND @$database['dbERROR'] == _FPA_N AND @$_POST['showTables'] == '1' AND $database['dbHOSTINFO'] <> _FPA_U ) {
+					if ( $database['dbDOCHECKS'] == _FPA_Y AND @$database['dbERROR'] == _FPA_N AND @$_POST['showTables'] == '1' AND $database['dbHOSTINFO'] <> _FPA_U AND $instance['configDBTYPE'] <> 'postgresql') {
 						echo '[quote="Database Information ::"][size=85]';
 						echo '[b]'. _FPA_DB .' '. _FPA_STATS .' :: [/b]';
 						foreach ( $database['dbHOSTSTATS'] as $show ) {
@@ -3753,7 +3945,7 @@ function recursive_array_search($needle,$haystack) {
 									echo '[b]'. _FPA_TMPL_TITLE .' :: '. _FPA_SITE .' :: [/b]';
 
 										foreach ( $template['SITE'] as $key => $show ) {                    
-										if (substr($instance['cmsRELEASE'],0,1) <> 1 AND $database['dbHOSTINFO'] <> _FPA_U ) { 
+										if (substr($instance['cmsRELEASE'],0,1) <> 1 AND $database['dbHOSTINFO'] <> _FPA_U OR $postgresql = _FPA_Y) { 
 										if (isset($exset[0]['name'])) { 
 										  $extarrkey = recursive_array_search($show['name'], $exset);
 										  $extenabled = $exset[$extarrkey]['enabled'];
@@ -3761,8 +3953,10 @@ function recursive_array_search($needle,$haystack) {
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
 										  $extenabled = '';
 										}
+										if (isset($tmpldef[0]['template'])) { 
 										$extarrkey = recursive_array_search($show['name'], $tmpldef);
 										$deftempl = $tmpldef[$extarrkey]['home'];    
+										} else { $deftempl = '' ;}
 										if ($deftempl == 1 ){                    
 										  $bldop = '[b][u]';
 										  $bldcl = '[/u][/b]';
@@ -3790,7 +3984,7 @@ function recursive_array_search($needle,$haystack) {
 									echo '[b]'. _FPA_TMPL_TITLE .' :: '. _FPA_ADMIN .' :: [/b]';
 
 										foreach ( $template['ADMIN'] as $key => $show ) {                    
-										if (substr($instance['cmsRELEASE'],0,1) <> 1 AND $database['dbHOSTINFO'] <> _FPA_U ) { 
+										if (substr($instance['cmsRELEASE'],0,1) <> 1 AND $database['dbHOSTINFO'] <> _FPA_U OR $postgresql = _FPA_Y ) { 
 										  if (isset($exset[0]['name'])) { 
 										    $extarrkey = recursive_array_search($show['name'], $exset);
 										    $extenabled = $exset[$extarrkey]['enabled'];
@@ -3800,8 +3994,10 @@ function recursive_array_search($needle,$haystack) {
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
 										  $extenabled = '';
 										}
+										if (isset($tmpldef[0]['template'])) { 
 										$extarrkey = recursive_array_search($show['name'], $tmpldef);
 										$deftempl = $tmpldef[$extarrkey]['home'];    
+										} else { $deftempl = '' ;}
 										if ($deftempl == 1 ){                    
 										  $bldop = '[b][u]';
 										  $bldcl = '[/u][/b]';
@@ -4338,7 +4534,10 @@ function recursive_array_search($needle,$haystack) {
 			if ( @$instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_N ) {
 				echo '<span class="alert-text">'. $instance['configDBTYPE'] .' '. _FPA_IS .' '. _FPA_NSUP .' '. _FPA_BY .' PHP '. $phpenv['phpVERSION'] .'&nbsp;</span>';
 
-			} elseif ( ( @$instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_Y ) OR @$instance['configDBTYPE'] == 'mysql' ) {
+			} elseif (  @$instance['configDBTYPE'] == 'mysql' AND $phpenv['phpSUPPORTSMYSQL'] == _FPA_N ) {
+ 				echo '<span class="alert-text">'. $instance['configDBTYPE'] .' '. _FPA_IS .' '. _FPA_NSUP .' '. _FPA_BY .' PHP '. $phpenv['phpVERSION'] .'&nbsp;</span>';
+
+			} elseif ( ( @$instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_Y ) OR ( @$instance['configDBTYPE'] == 'mysql' AND $phpenv['phpSUPPORTSMYSQL'] == _FPA_Y ) OR @$instance['configDBTYPE'] == 'pdomysql') {
 				echo '<span class="ok">'. $instance['configDBTYPE'] .' '. _FPA_IS .' '. _FPA_YSUP .' '. _FPA_BY .' PHP '. $phpenv['phpVERSION'] .'&nbsp;</span>';
 
 			} else {
@@ -4465,7 +4664,7 @@ function recursive_array_search($needle,$haystack) {
 		echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
 
 			// only do mode/permissions checks if an instance was found in the intial checks
-			if ( $database['dbDOCHECKS'] == _FPA_Y AND @$database['dbERROR'] == _FPA_N ) {
+			if ( $database['dbDOCHECKS'] == _FPA_Y AND @$database['dbERROR'] == _FPA_N AND $instance['configDBTYPE'] <> 'postgresql') {
 
 				$pieces = explode(": ", $database['dbHOSTSTATS'][0] );
 

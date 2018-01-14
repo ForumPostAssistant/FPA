@@ -7,8 +7,8 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.3.8
- **  @last updated 25/12/2017
+ **  @version 1.3.9
+ **  @last updated 14/01/2018
  **  @release Beta
  **  @date 24/06/2011
  **  @author RussW
@@ -18,19 +18,7 @@
  **/
 
 /**
- * Edits 4-8-12 by Phil
- * Edite 4-17-12 by Phil
- * Edits 4-20-12 by Phil
- * Edits 08-07-12 by Phil
- * Edits 09-20-12 by Phil
- * Edits 09-23-12 by Phil
- * Edits 12-09-12 by Phil
- * Phil 01-01-14: added a 3.1, 3.2 section
- * Bernard 04-10-16: added 3.5 support
- * Bernard 04-11-16: fixed a bug with older version devel number parsing
- * Bernard 04-12-16: fixed a bug with unreadable folder producing endless loop;
- *                   disabled forgotten debug print_r()
- * PhilD 03-17-17 Edits to add MariaDB check and add _FPA_MDB define for MariaDB
+ * for edit changelog see https://github.com/ForumPostAssistant/FPA/pulls?q=is%3Apr+is%3Aclosed
  */
  
 
@@ -46,9 +34,9 @@
 	// Define some basic assistant information
 
 	define ( '_RES', 'Forum Post Assistant' );
-	define ( '_RES_VERSION', '1.3.8' );
-	define ( '_last_updated', '25/12/2017' );
-	define ( '_COPYRIGHT_STMT', ' Copyright (C) 2011, 2012 Russell Winter, Phil DeGruy, Bernard Toplak &nbsp;' );
+	define ( '_RES_VERSION', '1.3.9' );
+	define ( '_last_updated', '14/01/2018' );
+	define ( '_COPYRIGHT_STMT', ' Copyright (C) 2011, 2012,2013,2014,2015,2016,2017,2018 Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville,Sveinung Larsen &nbsp;' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. &nbsp; This is free software,
 	and covered under the GNU GPLv3 or later license. You are welcome to redistribute it under certain conditions.

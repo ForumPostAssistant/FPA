@@ -7,8 +7,8 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.3.9
- **  @last updated 14/01/2018
+ **  @version 1.4.0
+ **  @last updated 17/05/2018
  **  @release Beta
  **  @date 24/06/2011
  **  @author RussW
@@ -34,11 +34,11 @@
 	// Define some basic assistant information
 
 	define ( '_RES', 'Forum Post Assistant' );
-	define ( '_RES_VERSION', '1.3.9' );
-	define ( '_last_updated', '14/01/2018' );
-	define ( '_COPYRIGHT_STMT', ' Copyright (C) 2011, 2012,2013,2014,2015,2016,2017,2018 Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville,Sveinung Larsen &nbsp;' );
+	define ( '_RES_VERSION', '1.4.0' );
+	define ( '_last_updated', '17/05/2018' );
+	define ( '_COPYRIGHT_STMT', ' Copyright &copy 2011-'. date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
-	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. &nbsp; This is free software,
+	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. <br> This is free software,
 	and covered under the GNU GPLv3 or later license. You are welcome to redistribute it under certain conditions.
 	For details read the LICENSE.txt file included in the download package with this script.
 	A copy of the license may also be obtained at ' );
@@ -75,7 +75,7 @@
 	define ( '_FPA_TMPL_TITLE', 'Templates' );
 	// snapshot definitions
 	define ( '_FPA_SUPPHP', 'PHP Supports');
-	define ( '_FPA_SUPSQL', 'MySQL Supports');
+	define ( '_FPA_SUPSQL', 'Database Supports');
 	define ( '_FPA_BADPHP', 'Known Buggy PHP');
 	define ( '_FPA_BADZND', 'Known Buggy Zend');
 	// slow screen message
@@ -281,6 +281,9 @@
 	define ( '_FPA_DIR_UNREADABLE', 'A directory is <b>NOT READABLE</b> and cannot be checked!');
 	define ( '_FPA_DI_PHP_FU', 'Disabled Functions' );        
 	define ( '_FPA_FDSKSP', 'Free Disk Space' );
+	define ( '_FPA_NIMPLY', 'Not implemented for' );
+ 	define ( '_FPA_PGSQL', 'PostgreSQL' );
+ 	define ( '_FPA_PMISS', 'Password missing' );
 	/** END LANGUAGE STRINGS *****************************************************************/
 
 // ** delete script when done - Phil 8-07-12
@@ -441,6 +444,7 @@
 	$phpreq['mbstring']         = '';
 	$phpreq['mysql']            = '';
 	$phpreq['mysqli']           = '';
+	$phpreq['pdo_mysql']        = '';
 	$phpreq['mcrypt']           = '';
 	$phpreq['suhosin']          = '';
 	$apachemodules['ARRNAME']   = _FPA_APAMOD_TITLE;
@@ -537,7 +541,7 @@
 	/** is there an existing php error-log file? *********************************************/
 	if ( file_exists( $phpenv['phpERRLOGFILE'] ) ) {
 		// when was the file last modified?
-		$phpenv['phpLASTERRDATE'] = date ("dS F Y H:i:s.", filemtime( $phpenv['phpERRLOGFILE'] ));
+		$phpenv['phpLASTERRDATE'] = @date ("dS F Y H:i:s.", filemtime( $phpenv['phpERRLOGFILE'] ));
 
 		// determine the number of seconds for one day
 		$age = 86400;
@@ -550,7 +554,7 @@
 			/** if the file was modified less than one day ago, grab the last error entry
 			** Changed this section to get rid of the "Strict Standards: Only variables should be passed by reference"
 			** error  Phil - 9-20-12 */
-		if ( $file_time - $now_time < $age ) {
+		if ( $now_time - $file_time < $age ) {
 			/*  !FIXME memory allocation error on large php_error file - RussW
 			** replaced these two lines with code below - Phil 09-23-12
 			**  $lines = file( $phpenv['phpERRLOGFILE'] );
@@ -948,47 +952,51 @@
 		/** added code to fix the config version mis-match on 2.5 versions of Joomla - 4-8-12 - Phil *****/
 		/** reworked code block to better determine version in 1.7 - 3.0+ versions of Joomla - 8-06-12 - Phil *****/
 		$cmsCContent = file_get_contents( $instance['configPATH'] );
-
-		// start with 1.0
-			if ( preg_match ( '#(\$mosConfig_)#', $cmsCContent ) ) {
-				$instance['configVALIDFOR'] = '1.0';
-				$instance['instanceCFGVERMATCH'] = _FPA_Y;
  
-  	// >= 3.8.0
-			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND file_exists( 'libraries/src/Version.php' ) ) {
+			// >= 3.8.0
+			if ( preg_match ( '#(public)#', $cmsCContent ) AND file_exists( 'libraries/src/Version.php' ) ) {
 				$instance['configVALIDFOR'] = $instance['cmsRELEASE'];
 				$instance['cmsVFILE'] = 'libraries/src/Version.php';
 				$instance['instanceCFGVERMATCH'] = _FPA_Y; 
  
-  	// >= 3.6.3
+			// >= 3.6.3
 			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] == _FPA_N AND file_exists( 'libraries/cms/version/version.php' ) ) {
 				$instance['configVALIDFOR'] = $instance['cmsRELEASE'];
 				$instance['cmsVFILE'] = 'libraries/cms/version/version.php';
 				$instance['instanceCFGVERMATCH'] = _FPA_Y;
-		// for 1.5
-			} elseif ( preg_match ( '#(var)#', $cmsCContent ) ) {
-				$instance['configVALIDFOR'] = '1.5';
-				$instance['instanceCFGVERMATCH'] = _FPA_Y;
-		//for 1.6
-			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] == _FPA_N ) {
-				$instance['configVALIDFOR'] = '1.6';
-				$instance['instanceCFGVERMATCH'] = _FPA_Y;
-		//for 1.7
-			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] != _FPA_N  AND $instance['cmsVFILE'] != 'libraries/cms/version/version.php') {
-				$instance['cmsVFILE'] = 'includes/version.php';
-				$instance['configVALIDFOR'] = $instance['cmsRELEASE'];
-				$instance['instanceCFGVERMATCH'] = _FPA_Y;
-		//for 2.5
-			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND substr( $instance['platformRELEASE'],0,2 ) == '11' ) {
-				$instance['configVALIDFOR'] = $instance['cmsRELEASE'];
-				$instance['cmsVFILE'] = 'libraries/cms/version/version.php';
-				$instance['instanceCFGVERMATCH'] = _FPA_Y;
-		//for 3.0
+
+			//for 3.0
 			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] != _FPA_N ) {
 				$instance['configVALIDFOR'] = $instance['cmsRELEASE'];
 				$instance['cmsVFILE'] = 'libraries/cms/version/version.php';
 				$instance['instanceCFGVERMATCH'] = _FPA_Y;
 
+			//for 2.5
+			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND substr( $instance['platformRELEASE'],0,2 ) == '11' ) {
+				$instance['configVALIDFOR'] = $instance['cmsRELEASE'];
+				$instance['cmsVFILE'] = 'libraries/cms/version/version.php';
+				$instance['instanceCFGVERMATCH'] = _FPA_Y;
+
+			//for 1.7
+			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] != _FPA_N  AND $instance['cmsVFILE'] != 'libraries/cms/version/version.php') {
+				$instance['cmsVFILE'] = 'includes/version.php';
+				$instance['configVALIDFOR'] = $instance['cmsRELEASE'];
+				$instance['instanceCFGVERMATCH'] = _FPA_Y;
+
+			//for 1.6
+			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] == _FPA_N ) {
+				$instance['configVALIDFOR'] = '1.6';
+				$instance['instanceCFGVERMATCH'] = _FPA_Y;
+                
+			// for 1.5
+			} elseif ( preg_match ( '#(var)#', $cmsCContent ) ) {
+				$instance['configVALIDFOR'] = '1.5';
+				$instance['instanceCFGVERMATCH'] = _FPA_Y;                
+                
+			// for 1.0
+			} elseif ( preg_match ( '#(\$mosConfig_)#', $cmsCContent ) ) {
+				$instance['configVALIDFOR'] = '1.0';
+				$instance['instanceCFGVERMATCH'] = _FPA_Y;
 
 			} else {
 				$instance['configVALIDFOR'] = _FPA_U;
@@ -1005,16 +1013,6 @@
 
 			// check if the configuration.php version matches the discovered version
 			if ( $instance['configVALIDFOR'] != _FPA_U AND $instance['cmsVFILE'] != _FPA_N ) {
-
-			/** begin remove code block -- 8-06-12 - Phil
-			Removed following code block as it is moved up to the config file valid test area
-			if ( version_compare( $instance['cmsRELEASE'], substr( $instance['configVALIDFOR'],0,3 ), '==' ) ) {
-					$instance['instanceCFGVERMATCH'] = _FPA_Y;
-
-				} else {
-					$instance['instanceCFGVERMATCH'] = _FPA_N;
-				}
-				--end of remove block ***/
 
 
 			// set defaults for the configuration's validity and a sanity score of zero
@@ -1058,31 +1056,31 @@
 
 				// common configuration variable across all versions
 				if ( $instance['cmsMAJORVERSION'] == '4' ) {
-    				preg_match ( '#\$(mosConfig_offline.*|offline.*)=\s(.*);#', $cmsCContent, $configOFFLINE );
-    				preg_match ( '#\$(mosConfig_sef.*|sef.*)=\s(.*);#', $cmsCContent, $configSEF );
-    				preg_match ( '#\$(mosConfig_gzip.*|gzip.*)=\s(.*);#', $cmsCContent, $configGZIP );
-    				preg_match ( '#\$(mosConfig_caching.*|caching.*)=\s(.*);#', $cmsCContent, $configCACHING );
-    				preg_match ( '#\$(mosConfig_debug.*|debug.*)=\s(.*);#', $cmsCContent, $configSITEDEBUG );
+    				preg_match ( '#[^//]+(mosConfig_offline.*|offline .*)=\s(.*);#', $cmsCContent, $configOFFLINE );
+    				preg_match ( '#[^//]+(mosConfig_sef.*|sef .*)=\s(.*);#', $cmsCContent, $configSEF );
+    				preg_match ( '#[^//]+(mosConfig_gzip.*|gzip.*)=\s(.*);#', $cmsCContent, $configGZIP );
+    				preg_match ( '#[^//]+(mosConfig_caching.*|caching.*)=\s(.*);#', $cmsCContent, $configCACHING );
+    				preg_match ( '#[^//]+(mosConfig_debug.*|debug.*)=\s(.*);#', $cmsCContent, $configSITEDEBUG );
 				} else {
-    				preg_match ( '#\$(mosConfig_offline.*|offline.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configOFFLINE );
-    				preg_match ( '#\$(mosConfig_sef.*|sef.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSEF );
-    				preg_match ( '#\$(mosConfig_gzip.*|gzip.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configGZIP );
-    				preg_match ( '#\$(mosConfig_caching.*|caching.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHING );
-    				preg_match ( '#\$(mosConfig_debug.*|debug.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSITEDEBUG );
-        }
-				preg_match ( '#dbtype.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configDBTYPE );
-				preg_match ( '#\$(mosConfig_error_reporting.*|error_reporting.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configERRORREP );
-        
+    				preg_match ( '#[^//]+(mosConfig_offline.*|offline .*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configOFFLINE );
+    				preg_match ( '#[^//]+(mosConfig_sef.*|sef .*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSEF );
+    				preg_match ( '#[^//]+(mosConfig_gzip.*|gzip.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configGZIP );
+    				preg_match ( '#[^//]+(mosConfig_caching.*|caching.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHING );
+    				preg_match ( '#[^//]+(mosConfig_debug.*|debug.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSITEDEBUG );
+				}
+				preg_match ( '#[^//]+dbtype.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configDBTYPE );
+				preg_match ( '#[^//]+(mosConfig_error_reporting.*|error_reporting.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configERRORREP );
+
 				// J!1.0 assumed 'mysql' with no variable, so we'll just add it
-				if (!array_key_exists('1', $configDBTYPE)) {
+				if (!array_key_exists('1', $configDBTYPE) and $instance['configVALIDFOR'] == '1.0') {
 					$configDBTYPE[1] = 'mysql';
 				}
 
-				preg_match ( '#\$(mosConfig_host.*|host.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configDBHOST );
-				preg_match ( '#\$(mosConfig_db.*|db\s.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configDBNAME );
-				preg_match ( '#\$(mosConfig_dbprefix.*|dbprefix.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configDBPREF );
-				preg_match ( '#\$(mosConfig_user.*|user.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configDBUSER );
-				preg_match ( '#\$(mosConfig_password.*|password.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configDBPASS );
+				preg_match ( '#[^//]+(mosConfig_host.*|host.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configDBHOST );
+				preg_match ( '#[^//]+(mosConfig_db.*|db\s.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configDBNAME );
+				preg_match ( '#[^//]+(mosConfig_dbprefix.*|dbprefix.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configDBPREF );
+				preg_match ( '#[^//]+(mosConfig_user.*|user.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configDBUSER );
+				preg_match ( '#[^//]+(mosConfig_password.*|password.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configDBPASS );
 
 					$instance['configOFFLINE'] = $configOFFLINE[2];
 					$instance['configSEF'] = $configSEF[2];
@@ -1117,37 +1115,41 @@
 					// these forced settings will be over-written later by the variable supported release
 			}
 
+			if ($instance['configDBTYPE'] == 'mysql' and $instance['cmsMAJORVERSION'] == '4') {
+                $instance['configDBTYPE'] = 'pdomysql';
+            }
+
 			// common configuration variables for J!1.5 and above only
 			if ( $instance['configVALIDFOR'] != '1.0' AND $instance['configVALIDFOR'] != _FPA_U ) {
 
   				if ( $instance['cmsMAJORVERSION'] == '4' ) {
-      				preg_match ( '#sef_rewrite.*=\s(.*);#', $cmsCContent, $configSEFREWRITE );
-      				preg_match ( '#sef_suffix.*=\s(.*);#', $cmsCContent, $configSEFSUFFIX );
-      				preg_match ( '#debug_lang.*=\s(.*);#', $cmsCContent, $configLANGDEBUG );
-      				preg_match ( '#ftp_enable.*=\s(.*);#', $cmsCContent, $configFTP );
-      				preg_match ( '#proxy_enable.*=\s(.*);#', $cmsCContent, $configPROXY );
-      				preg_match ( '#force_ssl.*=\s(.*);#', $cmsCContent, $configSSL );
-      				preg_match ( '#lifetime.*=\s(.*);#', $cmsCContent, $configLIFETIME );
-      				preg_match ( '#cachetime.*=\s(.*);#', $cmsCContent, $configCACHETIME );        
-      				preg_match ( '#cache_platformprefix.*=\s(.*);#', $cmsCContent, $configCACHEPLFPFX );        
-      				preg_match ( '#frontediting.*=\s(.*);#', $cmsCContent, $configFRONTEDIT );
-      				preg_match ( '#shared_session.*=\s(.*);#', $cmsCContent, $configSHASESS );
+      				preg_match ( '#[^//]+sef_rewrite.*=\s(.*);#', $cmsCContent, $configSEFREWRITE );
+      				preg_match ( '#[^//]+sef_suffix.*=\s(.*);#', $cmsCContent, $configSEFSUFFIX );
+      				preg_match ( '#[^//]+debug_lang.*=\s(.*);#', $cmsCContent, $configLANGDEBUG );
+      				preg_match ( '#[^//]+ftp_enable.*=\s(.*);#', $cmsCContent, $configFTP );
+      				preg_match ( '#[^//]+proxy_enable.*=\s(.*);#', $cmsCContent, $configPROXY );
+      				preg_match ( '#[^//]+force_ssl.*=\s(.*);#', $cmsCContent, $configSSL );
+      				preg_match ( '#[^//]+lifetime.*=\s(.*);#', $cmsCContent, $configLIFETIME );
+      				preg_match ( '#[^//]+cachetime.*=\s(.*);#', $cmsCContent, $configCACHETIME );        
+      				preg_match ( '#[^//]+cache_platformprefix.*=\s(.*);#', $cmsCContent, $configCACHEPLFPFX );        
+      				preg_match ( '#[^//]+frontediting.*=\s(.*);#', $cmsCContent, $configFRONTEDIT );
+      				preg_match ( '#[^//]+shared_session.*=\s(.*);#', $cmsCContent, $configSHASESS );
 				} else {
-      				preg_match ( '#sef_rewrite.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSEFREWRITE );
-      				preg_match ( '#sef_suffix.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSEFSUFFIX );
-      				preg_match ( '#debug_lang.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configLANGDEBUG );
-      				preg_match ( '#ftp_enable.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configFTP );
-      				preg_match ( '#proxy_enable.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configPROXY );
-      				preg_match ( '#force_ssl.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSSL );
-      				preg_match ( '#lifetime.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configLIFETIME );
-      				preg_match ( '#cachetime.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHETIME );
-      				preg_match ( '#cache_platformprefix.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHEPLFPFX );
-      				preg_match ( '#frontediting.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configFRONTEDIT );
-      				preg_match ( '#shared_session.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSHASESS );
-        }
+      				preg_match ( '#[^//]+sef_rewrite.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSEFREWRITE );
+      				preg_match ( '#[^//]+sef_suffix.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSEFSUFFIX );
+      				preg_match ( '#[^//]+debug_lang.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configLANGDEBUG );
+      				preg_match ( '#[^//]+ftp_enable.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configFTP );
+      				preg_match ( '#[^//]+proxy_enable.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configPROXY );
+      				preg_match ( '#[^//]+force_ssl.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSSL );
+      				preg_match ( '#[^//]+lifetime.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configLIFETIME );
+      				preg_match ( '#[^//]+cachetime.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHETIME );
+      				preg_match ( '#[^//]+cache_platformprefix.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHEPLFPFX );
+      				preg_match ( '#[^//]+frontediting.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configFRONTEDIT );
+      				preg_match ( '#[^//]+shared_session.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSHASESS );
+				}
 				preg_match ( '#live_site.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configLIVESITE );
-				preg_match ( '#session_handler.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSESSHAND );
-				preg_match ( '#cache_handler.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHEHANDLER );
+				preg_match ( '#[^//]+session_handler.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSESSHAND );
+				preg_match ( '#[^//]+cache_handler.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHEHANDLER );
 
 
 					$instance['configSEFRWRITE'] = $configSEFREWRITE[1];
@@ -1206,20 +1208,29 @@
 			// common configuration variables for J!1.6 and above only
 			if ( $instance['configVALIDFOR'] != '1.0' AND $instance['configVALIDFOR'] != '1.5' AND $instance['configVALIDFOR'] != _FPA_U ) {
   				if ( $instance['cmsMAJORVERSION'] == '4' ) {
-      				preg_match ( '#access.*=\s(.*);#', $cmsCContent, $configACCESS );
-      				preg_match ( '#unicodeslugs.*=\s(.*);#', $cmsCContent, $configUNICODE );
+      				preg_match ( '#[^//]+access.*=\s(.*);#', $cmsCContent, $configACCESS );
+      				preg_match ( '#[^//]+unicodeslugs.*=\s(.*);#', $cmsCContent, $configUNICODE );
 					} else {
-      				preg_match ( '#access.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configACCESS );
-      				preg_match ( '#unicodeslugs.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configUNICODE );
+      				preg_match ( '#[^//]+access.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configACCESS );
+      				preg_match ( '#[^//]+unicodeslugs.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configUNICODE );
 					}
 					$instance['configACCESS'] = $configACCESS[1];
 					$instance['configUNICODE'] = $configUNICODE[1];
 			}
 
-			// check if all the DB credentials are complete
-			if ( @$instance['configDBTYPE'] AND $instance['configDBHOST'] AND $instance['configDBNAME'] AND $instance['configDBPREF'] AND $instance['configDBUSER'] ) {
-				$instance['configDBCREDOK'] = _FPA_Y;
+			// look to see if we are using a remote or local MySQL server
+			if ( strpos($instance['configDBHOST'] , 'localhost' ) === 0  OR strpos($instance['configDBHOST'] , '127.0.0.1' ) === 0 ) {
+  				$database['dbLOCAL'] = _FPA_Y;
 
+			} else {
+  				$database['dbLOCAL'] = _FPA_N;
+			}
+
+			// check if all the DB credentials are complete
+			if ( @$instance['configDBTYPE'] AND $instance['configDBHOST'] AND $instance['configDBNAME'] AND $instance['configDBPREF'] AND $instance['configDBUSER'] AND $instance['configDBPASS'] ) {
+				$instance['configDBCREDOK'] = _FPA_Y;
+ 			} else if ( @$instance['configDBTYPE'] AND $instance['configDBHOST'] AND $instance['configDBNAME'] AND $instance['configDBPREF'] AND $instance['configDBUSER'] AND $database['dbLOCAL'] = _FPA_Y ){
+				$instance['configDBCREDOK'] = _FPA_PMISS;
 			} else {
 				$instance['configDBCREDOK'] = _FPA_N;
 			}
@@ -1686,16 +1697,9 @@
 	** talk to it and access the database.
 	*****************************************************************************************/
 	$postgresql = _FPA_N;
-	if ( $instance['instanceCONFIGURED'] == _FPA_Y AND $instance['configDBCREDOK'] == _FPA_Y ) {
+	if ( $instance['instanceCONFIGURED'] == _FPA_Y AND ($instance['configDBCREDOK'] == _FPA_Y OR $instance['configDBCREDOK'] == _FPA_PMISS)) {
 		$database['dbDOCHECKS'] = _FPA_Y;
 
-		// look to see if we are using a remote or local MySQL server
-		if ( $instance['configDBHOST'] == 'localhost' OR $instance['configDBHOST'] == '127.0.0.1' ) {
-			$database['dbLOCAL'] = _FPA_Y;
-
-		} else {
-			$database['dbLOCAL'] = _FPA_N;
-		}
 
 		// !TODO DB PING
 		/**
@@ -1741,9 +1745,9 @@
 			$dBconn = @mysql_connect( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'] );
 			$database['dbERROR'] = mysql_errno() .':'. mysql_error();
 
-    mysql_select_db( $instance['configDBNAME'], $dBconn );
+    @mysql_select_db( $instance['configDBNAME'], $dBconn );
     $sql = "select name,type,enabled from ".$instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template'";
-    $result = mysql_query($sql);
+    $result = @mysql_query($sql);
     if ($result <> false) {
     if (mysql_num_rows($result) > 0) {
       for ($exset = array ();
@@ -1752,7 +1756,7 @@
      }
 
     $sql = "select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template";
-    $result = mysql_query($sql);
+    $result = @mysql_query($sql);
     if (mysql_num_rows($result) > 0) {
       for ($tmpldef = array ();
       $row = mysql_fetch_array($result);
@@ -1848,32 +1852,24 @@
 			if (function_exists('mysqli_connect')) {
 			$dBconn = @new mysqli( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'], $instance['configDBNAME'] );
 			$database['dbERROR'] = mysqli_connect_errno( $dBconn ) .':'. mysqli_connect_error( $dBconn );
-	// These database connection tests below are the cause of the white screen issues and non working on latest xampp stuff Phil
-	/**  Replaced alias in line 1626 with actual function
-		Changed line 1626 replacing the Alias function "mysqli_client_encoding" which has been DEPRECATED as of PHP 5.3.0 and REMOVED
-	as of PHP 5.4.0 and replacing it with the actual function "mysqli_character_set_name".
-	This will help maintain php 5 compatibility and possibly eliminate the user reported issue of "FPA never finishes" complaints
-	when running FPA on some systems. Phil 09-14-2012 **/
-
-
-    $sql = "select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template'";
-    $result = $dBconn->query($sql);
-    if ($result <> false) {
-    if ($result->num_rows > 0) {
-      for ($exset = array ();
-      $row = $result->fetch_assoc();
-      $exset[] = $row);
-     }
-     }
-    $sql = "select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template";
-    $result = $dBconn->query($sql);
-    if ($result <> false) {
-    if ($result->num_rows > 0) {
-      for ($tmpldef = array ();
-      $row = $result->fetch_assoc();
-      $tmpldef[] = $row);
-     }
-     }     
+			$sql = "select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template'";
+			$result = @$dBconn->query($sql);
+			if ($result <> false) {
+    			if ($result->num_rows > 0) {
+        			for ($exset = array ();
+        			$row = $result->fetch_assoc();
+        			$exset[] = $row);
+    			}
+			}
+			$sql = "select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template";
+			$result = @$dBconn->query($sql);
+			if ($result <> false) {
+    			if ($result->num_rows > 0) {
+        			for ($tmpldef = array ();
+        			$row = $result->fetch_assoc();
+        			$tmpldef[] = $row);
+    			}
+			}     
 			if ( $dBconn ) {
 				$database['dbHOSTSERV']     = @mysqli_get_server_info( $dBconn );       // SQL server version
 				$database['dbHOSTINFO']     = @mysqli_get_host_info( $dBconn );         // connection type to dB
@@ -1968,6 +1964,7 @@
 		  if ($dBconn) {
 		  $database['dbERROR'] = '0:';
 
+		  try {
 		  $sql = $dBconn->prepare("select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template'");
 		  $sql->execute();
 		  $exset = $sql->setFetchMode(PDO::FETCH_ASSOC);
@@ -1977,6 +1974,10 @@
 		  $sql->execute();
 		  $tmpldef = $sql->setFetchMode(PDO::FETCH_ASSOC);
 		  $tmpldef = $sql->fetchAll();
+		  }
+		  catch(PDOException $e)
+		  {
+		  }
 
 			if ( $dBconn ) {
 				$database['dbHOSTSERV']     = $dBconn->getAttribute(constant("PDO::ATTR_SERVER_VERSION" ));       // SQL server version
@@ -2057,11 +2058,11 @@
             $database['dbERROR'] = '0:';
             $postgresql = _FPA_Y;
 
-            $sql = pg_query($dBconn, "select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template'");                            
-            $exset = pg_fetch_all($sql);  
+            $sql = @pg_query($dBconn, "select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template'");                            
+            $exset = @pg_fetch_all($sql);  
 
-            $sql = pg_query($dBconn, "select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template");                            
-            $tmpldef = pg_fetch_all($sql);
+            $sql = @pg_query($dBconn, "select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template");                            
+            $tmpldef = @pg_fetch_all($sql);
 
 			if ( $dBconn ) {
 				$database['dbHOSTSERV']     = pg_parameter_status($dBconn, "server_version");       // SQL server version
@@ -2076,8 +2077,8 @@
                 $database['dbCOLLATION'] =  $val[0];
 			}
 
-			$tblResult = pg_query($dBconn," SELECT relname as name, pg_total_relation_size(relid) As size, pg_total_relation_size(relid) - pg_relation_size(relid) as externalsize FROM pg_catalog.pg_statio_user_tables ORDER BY relname ASC");
-                                                                                                                        
+			$tblResult = pg_query($dBconn," SELECT relname as name, pg_total_relation_size(relid) As size, pg_total_relation_size(relid) - pg_relation_size(relid) as externalsize FROM pg_catalog.pg_statio_user_tables WHERE relname LIKE '" . $instance['configDBPREF'] . "%' ORDER BY relname ASC");
+
 				// find all the dB tables
 					$database['dbSIZE'] = 0;
 					$rowCount           = 0;                                                
@@ -2089,6 +2090,7 @@
 						$table_size = ($row[ 'size' ] ) / 1024;
 						$tables[$row['name']]['SIZE'] = sprintf( '%.2f', $table_size );
 						$tables[$row['name']]['SIZE'] = $tables[$row['name']]['SIZE'] .' KiB';
+						$database['dbSIZE'] += sprintf( '%.2f', $table_size );
 
 						if ( $showTables == '1' ) {
 							$tables[$row['name']]['ENGINE']     = _FPA_U;
@@ -2096,7 +2098,7 @@
 							$tables[$row['name']]['CREATED']    = _FPA_U;
 							$tables[$row['name']]['UPDATED']    = _FPA_U;
 							$tables[$row['name']]['CHECKED']    = _FPA_U;                                           
-							$tables[$row['name']]['COLLATION']  = _FPA_U;
+							$tables[$row['name']]['COLLATION']  = $database['dbCHARSET'];
 							$tables[$row['name']]['FRAGSIZE']   = _FPA_U;
 							$tables[$row['name']]['MAXGROW']    = _FPA_U;
 							$tables[$row['name']]['RECORDS']    = $cr['count'];
@@ -2104,8 +2106,12 @@
 						}
 					}
 
-                   $dsize = pg_fetch_array(pg_query($dBconn, "SELECT pg_size_pretty( pg_database_size('".$instance['configDBNAME']."'))"));
-                   $database['dbSIZE'] = $dsize[0];
+				if ( $database['dbSIZE'] > '1024' ) {
+					$database['dbSIZE']     = sprintf( '%.2f', ( $database['dbSIZE'] /1024 ) ) .' MiB';
+
+				} else {
+					$database['dbSIZE']     = $database['dbSIZE'] .' KiB';
+				}
                    $database['dbTABLECOUNT']   = $rowCount;                                            
             
 		} else {
@@ -2132,6 +2138,103 @@
 				$database['dbERROR']        = _FPA_DI_PHP_FU;
 		} 
 
+		} elseif ( $instance['configDBTYPE'] == 'pgsql')  {                                                                            
+		  try {
+		  $dBconn = new PDO("pgsql:host=".$instance['configDBHOST'].";dbname=".$instance['configDBNAME'], $instance['configDBUSER'], $instance['configDBPASS']);
+
+		  // set the PDO error mode to exception
+		  $dBconn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		  }
+		  catch(PDOException $e)
+		  {
+		  $dBconn = FALSE;
+		  }
+
+		  if ($dBconn) {
+		  $database['dbERROR'] = '0:';
+		  $postgresql = _FPA_Y;
+		  try {
+		  $sql = $dBconn->prepare("select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template'");
+		  $sql->execute();
+		  $exset = $sql->setFetchMode(PDO::FETCH_ASSOC);
+		  $exset = $sql->fetchAll();
+
+		  $sql = $dBconn->prepare("select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template");
+		  $sql->execute();
+		  $tmpldef = $sql->setFetchMode(PDO::FETCH_ASSOC);
+		  $tmpldef = $sql->fetchAll();
+		  }
+		  catch(PDOException $e)
+		  {
+		  }
+
+			if ( $dBconn ) {
+				$database['dbHOSTSERV']     = $dBconn->getAttribute(constant("PDO::ATTR_SERVER_VERSION" ));       // SQL server version
+				$database['dbHOSTINFO']     = $dBconn->getAttribute(constant("PDO::ATTR_CONNECTION_STATUS" ));         // connection type to dB
+				$database['dbHOSTCLIENT']   = $dBconn->getAttribute(constant("PDO::ATTR_CLIENT_VERSION" ));                // client library version
+				$database['dbHOSTSTATS']    = _FPA_U;
+			}
+                              
+				// find the database collation
+				$coResult = $dBconn->query( "SELECT * FROM information_schema.character_sets");
+
+				while ( $row =  $coResult->fetch( PDO::FETCH_BOTH ))  {
+					$database['dbCOLLATION'] =  $row['character_set_name'];
+					$database['dbCHARSET']  =  $row['character_set_name'];
+					$database['dbHOSTDEFCHSET'] =  $row['character_set_name']; 
+				}
+
+				// find all the dB tables and calculate the size
+				$tblResult = $dBconn->query( " SELECT relname as name, pg_total_relation_size(relid) As size, pg_total_relation_size(relid) - pg_relation_size(relid) as externalsize FROM pg_catalog.pg_statio_user_tables WHERE relname LIKE '". $instance['configDBPREF'] . "%' ORDER BY relname ASC");
+                                                                                                                        
+					$database['dbSIZE'] = 0;
+					$rowCount           = 0;                                                
+
+					while ( $row =  $tblResult->fetch( PDO::FETCH_BOTH )) {
+						$rowCount++;
+						$tables[$row['name']]['TABLE']  = $row['name'];
+                        $crsql = $dBconn->query( " select count(*) from  " . $tables[$row['name']]['TABLE'] ."" );
+						$cr = $crsql->fetch( PDO::FETCH_BOTH );
+						$table_size = ($row[ 'size' ] ) / 1024;
+						$tables[$row['name']]['SIZE'] = sprintf( '%.2f', $table_size );
+						$tables[$row['name']]['SIZE'] = $tables[$row['name']]['SIZE'] .' KiB';
+						$database['dbSIZE'] += sprintf( '%.2f', $table_size );
+
+						if ( $showTables == '1' ) {
+							$tables[$row['name']]['ENGINE']     = _FPA_U;
+							$tables[$row['name']]['VERSION']    = _FPA_U;
+							$tables[$row['name']]['CREATED']    = _FPA_U;
+							$tables[$row['name']]['UPDATED']    = _FPA_U;
+							$tables[$row['name']]['CHECKED']    = _FPA_U;                                           
+							$tables[$row['name']]['COLLATION']  = $database['dbCOLLATION'];
+							$tables[$row['name']]['FRAGSIZE']   = _FPA_U;
+							$tables[$row['name']]['MAXGROW']    = _FPA_U;
+							$tables[$row['name']]['RECORDS']    = $cr['count'];
+							$tables[$row['name']]['AVGLEN']     = _FPA_U;
+						}
+					}
+
+				if ( $database['dbSIZE'] > '1024' ) {
+					$database['dbSIZE']     = sprintf( '%.2f', ( $database['dbSIZE'] /1024 ) ) .' MiB';
+
+				} else {
+					$database['dbSIZE']     = $database['dbSIZE'] .' KiB';
+				}
+				$database['dbTABLECOUNT']   = $rowCount;                                             
+
+		} else {
+				$database['dbHOSTSERV']     = _FPA_U; // SQL server version
+				$database['dbHOSTINFO']     = _FPA_U; // connection type to dB
+				$database['dbHOSTPROTO']    = _FPA_U; // server protocol type
+				$database['dbHOSTCLIENT']   = _FPA_U; // client library version
+				$database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
+				$database['dbHOSTSTATS']    = _FPA_U; // latest statistics
+				$database['dbCOLLATION']    = _FPA_U;
+				$database['dbCHARSET']      = _FPA_U;
+				$database['dbERROR']        = _FPA_ECON;
+		} 
+         
+
 		} else {
 				$database['dbHOSTSERV']     = _FPA_U; // SQL server version
 				$database['dbHOSTINFO']     = _FPA_U; // connection type to dB
@@ -2156,6 +2259,11 @@
 		$database['dbDOCHECKS']     = _FPA_N;
 		$database['dbLOCAL']        = _FPA_U;
 	}
+    if (!@$dBconn AND $instance['configDBCREDOK'] == _FPA_PMISS ) {
+		$instance['configDBCREDOK'] = _FPA_N;
+		$database['dbDOCHECKS']     = _FPA_N;
+	}
+
 ?>
 
 
@@ -2333,7 +2441,7 @@ function recursive_array_search($needle,$haystack) {
 		echo '<p>FPA last updated on: '. _last_updated . '</p>' ;
 		?></title>
 		<?php //!TODO different icons ?>
-		<link rel="shortcut icon" href="./templates/rhuk_milkyway/favicon.ico" />
+		<link rel="shortcut icon" href="./templates/protostar/favicon.ico" />
 
 		<style type="text/css" media="screen">
 			html, body, div, p, span {
@@ -3040,7 +3148,13 @@ function recursive_array_search($needle,$haystack) {
 				echo '<div class="normal-note"><span class="ok">'. _FPA_Y .'</span></div>';
 				$snapshot['sqlSUP4J'] = _FPA_MDB;
 			}
-             
+
+			//Added this elseif to give the ok for PDO postgreSQL
+			elseif ($instance['configDBTYPE'] == 'pgsql' AND $database['dbHOSTSERV'] >= 8.3 ) {
+				echo '<div class="normal-note"><span class="ok">'. _FPA_Y .'</span></div>';
+				$snapshot['sqlSUP4J'] = _FPA_MDB;
+			}
+                         
 			//Added this elseif to give the ok for MariaDB -- PhilD 03-17-17
 			elseif ($output_array[0] == "MariaDB") {
 				echo '<div class="normal-note"><span class="ok">'. _FPA_MDB .'</span></div>';
@@ -3078,7 +3192,7 @@ function recursive_array_search($needle,$haystack) {
 
 
 	// J! connection to MySQL
-	echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">MySQL Connection Type<br />';
+	echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">Database Connection Type<br />';
 
 		if ( @$instance['configDBTYPE'] ) {
 
@@ -3097,7 +3211,7 @@ function recursive_array_search($needle,$haystack) {
 
 
 	// MySQL default collation
-	echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">MySQL '. _FPA_DEF .' '. _FPA_TCOL .'<br />';
+	echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">Database '. _FPA_DEF .' '. _FPA_TCOL .'<br />';
 
 		if ( @$database['dbHOSTDEFCHSET'] ) {
 			echo '<div class="normal-note"><span class="ok">'. @$database['dbHOSTDEFCHSET'] .'</span></div>';
@@ -3150,7 +3264,7 @@ function recursive_array_search($needle,$haystack) {
 
 
 	// MySQL Version
-	echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">MySQL '. _FPA_VER .'<br />';
+	echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">Database '. _FPA_VER .'<br />';
 	echo '<div class="normal-note">';
 		if ( @$database['dbHOSTSERV'] ) {
 			echo @$database['dbHOSTSERV'];
@@ -3507,23 +3621,24 @@ function recursive_array_search($needle,$haystack) {
 					echo '[b]'. _FPA_CFG .' '. _FPA_OPTS .' :: Offline:[/b] '. $instance['configOFFLINE'] .' | [b]SEF:[/b] '. $instance['configSEF'] .' | [b]SEF Suffix:[/b] '. $instance['configSEFSUFFIX'] .' | [b]SEF ReWrite:[/b] '. $instance['configSEFRWRITE'] .' | ';
 					echo '[b].htaccess/web.config:[/b] ';
 
-						if ( $instance['configSITEHTWC'] == _FPA_N AND $instance['configSEFRWRITE'] == '1' ) { echo '[color=orange]'. $instance['configSITEHTWC'] .' (ReWrite Enabled but no .htaccess?)[/color] | ';
+						if ( ($instance['configSITEHTWC'] == _FPA_N AND $instance['configSEFRWRITE'] == '1') OR ($instance['configSITEHTWC'] == _FPA_N AND $instance['configSEFRWRITE'] == 'true' )) { echo '[color=orange]'. $instance['configSITEHTWC'] .' (ReWrite Enabled but no .htaccess?)[/color] | ';
 						} elseif ( $instance['configSITEHTWC'] == _FPA_Y ) { echo '[color=Green]'. $instance['configSITEHTWC'] .'[/color] | ';
 						} elseif ( $instance['configSITEHTWC'] == _FPA_N ) { echo '[color=orange]'. $instance['configSITEHTWC'] .'[/color] | '; }
 
-					echo '[b]GZip:[/b] '. $instance['configGZIP'] .' | [b]Cache:[/b] '. $instance['configCACHING'] .' | [b]CacheTime:[/b] '. $instance['configCACHETIME'] .' | [b]CacheHandler:[/b] '. $instance['configCACHEHANDLER'] .' | [b]CachePlatformPrefix:[/b] '. $instance['configCACHEPLFPFX'] .' | [b]FTP Layer:[/b] '. $instance['configFTP'] .' | [b]Proxy:[/b] '. $instance['configPROXY'] .' | [b]LiveSite:[/b] '. $instance['configLIVESITE'] .' | [b]Session lifetime:[/b] '. $instance['configLIFETIME'] .' | [b]Session handler:[/b] '. $instance['configSESSHAND'] .' | [b]Shared sessions:[/b] '. $instance['configSHASESS'] .' | [b]SSL:[/b] '. $instance['configSSL'] .' | [b]FrontEdit:[/b] '. $instance['configFRONTEDIT'] .' | [b]Error Reporting:[/b] '. $instance['configERRORREP'] .' | [b]Site Debug:[/b] '. $instance['configSITEDEBUG'] .' | ';
+					echo '[b]GZip:[/b] '. $instance['configGZIP'] .' | [b]Cache:[/b] '. $instance['configCACHING'] .' | [b]CacheTime:[/b] '. $instance['configCACHETIME'] .' | [b]CacheHandler:[/b] '. $instance['configCACHEHANDLER'] .' | [b]CachePlatformPrefix:[/b] '. $instance['configCACHEPLFPFX'] .' | [b]FTP Layer:[/b] '. $instance['configFTP'] .' | [b]Proxy:[/b] '. $instance['configPROXY'] .' | [b]LiveSite:[/b] '. $instance['configLIVESITE'] .' | [b]Session lifetime:[/b] '. $instance['configLIFETIME'] .' | [b]Session handler:[/b] '. $instance['configSESSHAND'] .' | [b]Shared sessions:[/b] '. $instance['configSHASESS'] .' | [b]SSL:[/b] '. $instance['configSSL'] .' | [b]Error Reporting:[/b] '. $instance['configERRORREP'] .' | [b]Site Debug:[/b] '. $instance['configSITEDEBUG'] .' | ';
 
 						if ( version_compare( $instance['cmsRELEASE'], '1.5', '>=' ) ) {
 							echo '[b]Language Debug:[/b] '. $instance['configLANGDEBUG'] .' | ';
-						}
-
-						if ( version_compare( $instance['cmsRELEASE'], '1.6', '>=' ) ) {
 							echo '[b]Default Access:[/b] '. $instance['configACCESS'] .' | [b]Unicode Slugs:[/b] '. $instance['configUNICODE'] .' | [b]dbConnection Type:[/b] '. $instance['configDBTYPE'] .' | ';
 						}
 
+						echo '[b]' . _FPA_SUPPHP .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] . ': [/b]' ;
+							if ( $snapshot['phpSUP4J'] == _FPA_Y ) { echo '[color=Green]'; } else { echo '[color=Red]'; }
+							echo $snapshot['phpSUP4J'] .'[/color] | ';
+
 						echo '[b]'. _FPA_DB .' '. _FPA_CREDPRES .':[/b] ';
 							if ( $instance['configDBCREDOK'] == _FPA_Y ) { echo '[color=Green]'; } else { echo '[color=Red]'; }
-							echo $instance['configDBCREDOK'] .'[/color]';
+							echo $instance['configDBCREDOK'] .'[/color] | ';
 
 					} else { echo '[color=orange]'. _FPA_NF .'[/color]'; }
 
@@ -3565,7 +3680,7 @@ function recursive_array_search($needle,$haystack) {
 
 					echo "\r\n\r\n";
 
-					echo '[b]MySQL '. _FPA_CFG .' :: [/b] ';
+					echo '[b]Database '. _FPA_CFG .' :: [/b] ';
 					if ( $database['dbDOCHECKS'] == _FPA_N ) {
 						echo '[color=orange]'. _FPA_DB .' '. _FPA_DBCREDINC .'[/color] '. _FPA_NODISPLAY;
 					echo "\r\n";
@@ -3574,6 +3689,7 @@ function recursive_array_search($needle,$haystack) {
 								echo '[color=Red][b]'. _FPA_MISSINGCRED .': [/b][/color] ';
 
 								if ( @$instance['configDBTYPE'] == '' ) { echo '[color=orange][b]Connection Type[/b] missing[/color] | '; }
+								if ( @$instance['configDBNAME'] == '' ) { echo '[color=orange][b]Database Name[/b] missing[/color] |'; }
 								if ( @$instance['configDBHOST'] == '' ) { echo '[color=orange][b]MySQL Host[/b] missing[/color] | '; }
 								if ( @$instance['configDBPREF'] == '' ) { echo '[color=orange][b]Table Prefix[/b] missing[/color] | '; }
 								if ( @$instance['configDBUSER'] == '' ) { echo '[color=orange][b]Database Username[/b] missing[/color] | '; }
@@ -3593,9 +3709,9 @@ function recursive_array_search($needle,$haystack) {
 					} else {
 						echo '[b]'. _FPA_VER .':[/b] [b]'. $database['dbHOSTSERV'] .'[/b] (Client:'. $database['dbHOSTCLIENT'] .') | ';
 
-							if ( $_POST['showProtected'] >= '1' ) { echo '[b]'. _FPA_HOST .':[/b]  [color=orange]--'. _FPA_HIDDEN .'--[/color] ([color=orange]--'. _FPA_HIDDEN .'--[/color]) | ';
+							if ( $_POST['showProtected'] > '1' ) { echo '[b]'. _FPA_HOST .':[/b]  [color=orange]--'. _FPA_HIDDEN .'--[/color] ([color=orange]--'. _FPA_HIDDEN .'--[/color]) | ';
 							} else { echo '[b]'. _FPA_HOST .':[/b] '. $instance['configDBHOST'] .' ('. $database['dbHOSTINFO'] .') | '; }
-							echo '[b]'. _FPA_TCOL .':[/b] '. $database['dbCOLLATION'] .' ([b]'. _FPA_CHARS .':[/b] '. $database['dbCHARSET'] .') | [b]'. _FPA_DB .' '. _FPA_TSIZ .':[/b] '. $database['dbSIZE'] .' | [b]#'. _FPA_OF .'&nbsp'. _FPA_TABLE .':&nbsp[/b] '. $database['dbTABLECOUNT'];
+							echo '[b] Localhost:[/b] '. $database['dbLOCAL'] . ' | [b]'. _FPA_TCOL .':[/b] '. $database['dbCOLLATION'] .' ([b]'. _FPA_CHARS .':[/b] '. $database['dbCHARSET'] .') | [b]'. _FPA_DB .' '. _FPA_TSIZ .':[/b] '. $database['dbSIZE'] .' | [b]#'. _FPA_OF .'&nbsp'. _FPA_TABLE .':&nbsp[/b] '. $database['dbTABLECOUNT'];
 					}
 
 		echo '[/size][/quote]';
@@ -3613,7 +3729,7 @@ function recursive_array_search($needle,$haystack) {
 							if ( $show != $phpextensions['ARRNAME'] ) {
 
 								// find the requirements and mark them as present or missing
-								if ( $key == 'libxml' OR $key == 'xml' OR $key == 'zip' OR $key == 'openssl' OR $key == 'zlib' OR $key == 'curl' OR $key == 'iconv' OR $key == 'mbstring' OR $key == 'mysql' OR $key == 'mysqli' OR $key == 'mcrypt' OR $key == 'suhosin' OR $key == 'cgi' OR $key == 'cgi-fcgi' ) {
+								if ( $key == 'libxml' OR $key == 'xml' OR $key == 'zip' OR $key == 'openssl' OR $key == 'zlib' OR $key == 'curl' OR $key == 'iconv' OR $key == 'mbstring' OR $key == 'mysql' OR $key == 'mysqli' OR $key == 'pdo_mysql' OR $key == 'mcrypt' OR $key == 'suhosin' OR $key == 'cgi' OR $key == 'cgi-fcgi' ) {
 									echo '[color=Green][b]'. $key .'[/b][/color] ('. $show .') | ';
 								} elseif ( $key == 'apache2handler' ) {
 									echo '[color=orange]'. $key .'[/color] ('. $show .') | ';
@@ -3780,7 +3896,7 @@ function recursive_array_search($needle,$haystack) {
 
 
 					// do the Database Statistics and Table information
-					if ( $database['dbDOCHECKS'] == _FPA_Y AND @$database['dbERROR'] == _FPA_N AND @$_POST['showTables'] == '1' AND $database['dbHOSTINFO'] <> _FPA_U AND $instance['configDBTYPE'] <> 'postgresql') {
+					if ( $database['dbDOCHECKS'] == _FPA_Y AND @$database['dbERROR'] == _FPA_N AND @$_POST['showTables'] == '1' AND $database['dbHOSTINFO'] <> _FPA_U AND $instance['configDBTYPE'] <> 'postgresql' AND $instance['configDBTYPE'] <> 'pgsql' ) {
 						echo '[quote="Database Information ::"][size=85]';
 						echo '[b]'. _FPA_DB .' '. _FPA_STATS .' :: [/b]';
 						foreach ( $database['dbHOSTSTATS'] as $show ) {
@@ -3933,7 +4049,7 @@ function recursive_array_search($needle,$haystack) {
 									echo '[b]'. _FPA_TMPL_TITLE .' :: '. _FPA_SITE .' :: [/b]';
 
 										foreach ( $template['SITE'] as $key => $show ) {                    
-										if (substr($instance['cmsRELEASE'],0,1) <> 1 AND $database['dbHOSTINFO'] <> _FPA_U OR $postgresql = _FPA_Y) { 
+										if (substr($instance['cmsRELEASE'],0,1) <> 1 AND @$database['dbHOSTINFO'] <> _FPA_U OR $postgresql = _FPA_Y) { 
 										if (isset($exset[0]['name'])) { 
 										  $extarrkey = recursive_array_search($show['name'], $exset);
 										  $extenabled = $exset[$extarrkey]['enabled'];
@@ -3972,7 +4088,7 @@ function recursive_array_search($needle,$haystack) {
 									echo '[b]'. _FPA_TMPL_TITLE .' :: '. _FPA_ADMIN .' :: [/b]';
 
 										foreach ( $template['ADMIN'] as $key => $show ) {                    
-										if (substr($instance['cmsRELEASE'],0,1) <> 1 AND $database['dbHOSTINFO'] <> _FPA_U OR $postgresql = _FPA_Y ) { 
+										if (substr($instance['cmsRELEASE'],0,1) <> 1 AND @$database['dbHOSTINFO'] <> _FPA_U OR $postgresql = _FPA_Y ) { 
 										  if (isset($exset[0]['name'])) { 
 										    $extarrkey = recursive_array_search($show['name'], $exset);
 										    $extenabled = $exset[$extarrkey]['enabled'];
@@ -4310,7 +4426,7 @@ function recursive_array_search($needle,$haystack) {
 				echo '<div style="font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">'. _FPA_EN .':<div style="float:right;font-size:9px;">'. $instance['configSEF'] .'</div></div>';
 				echo '<div style="font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">Suffix:<div style="float:right;font-size:9px;">'. $instance['configSEFSUFFIX'] .'</div></div>';
 
-					if ( $system['sysSHORTWEB'] != 'MIC' AND $instance['configSEFRWRITE'] == '1' AND $instance['configSITEHTWC'] != _FPA_Y ) {
+					if ( $system['sysSHORTWEB'] != 'MIC' AND ($instance['configSEFRWRITE'] == '1' OR $instance['configSEFRWRITE'] == 'true' ) AND $instance['configSITEHTWC'] != _FPA_Y ) {
 						$sefColor = 'ff0000';
 
 					} else {
@@ -4340,8 +4456,8 @@ function recursive_array_search($needle,$haystack) {
 				echo '<div class="mini-content-title" style="margin-bottom:0px!important;">Debugging</div>';
 				echo '<div class="mini-content-box-small">';
 				echo '<div style="font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">ErrorRep:<div style="float:right;font-size:9px;">'. $instance['configERRORREP'] .'</div></div>';
-				echo '<div style="font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">Site Debug:<div style="float:right;font-size:9px;">'. $instance['configSITEDEBUG'] .'</div></div>';
-				echo '<div style="font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">Lang Debug:<div style="float:right;font-size:9px;">'. $instance['configLANGDEBUG'] .'</div></div>';
+				echo '<div style="float:right;font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">Site Debug:<div style="float:right;font-size:9px;">'. $instance['configSITEDEBUG'] .'</div></div>';
+				echo '<div style="float:right;font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">Lang Debug:<div style="float:right;font-size:9px;">'. $instance['configLANGDEBUG'] .'</div></div>';
 				echo '</div>';
 				echo '</div>';
 				echo '</div>';
@@ -4492,7 +4608,7 @@ function recursive_array_search($needle,$haystack) {
 		echo '<span class="normal">';
 
 			if ( $database['dbLOCAL'] == _FPA_Y ) {
-				echo '('. _FPA_LOCAL .') '. $database['dbHOSTINFO'] .'&nbsp';
+				echo '('. _FPA_LOCAL .') '. @$database['dbHOSTINFO'] .'&nbsp';
 
 			} elseif ( $database['dbLOCAL'] == _FPA_N AND @$database['dbHOSTINFO'] ) {
 
@@ -4525,7 +4641,7 @@ function recursive_array_search($needle,$haystack) {
 			} elseif (  @$instance['configDBTYPE'] == 'mysql' AND $phpenv['phpSUPPORTSMYSQL'] == _FPA_N ) {
  				echo '<span class="alert-text">'. $instance['configDBTYPE'] .' '. _FPA_IS .' '. _FPA_NSUP .' '. _FPA_BY .' PHP '. $phpenv['phpVERSION'] .'&nbsp;</span>';
 
-			} elseif ( ( @$instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_Y ) OR ( @$instance['configDBTYPE'] == 'mysql' AND $phpenv['phpSUPPORTSMYSQL'] == _FPA_Y ) OR @$instance['configDBTYPE'] == 'pdomysql') {
+			} elseif ( ( @$instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_Y ) OR ( @$instance['configDBTYPE'] == 'mysql' AND $phpenv['phpSUPPORTSMYSQL'] == _FPA_Y ) OR @$instance['configDBTYPE'] == 'pdomysql' OR @$instance['configDBTYPE'] == 'postgresql'OR @$instance['configDBTYPE'] == 'pgsql') {
 				echo '<span class="ok">'. $instance['configDBTYPE'] .' '. _FPA_IS .' '. _FPA_YSUP .' '. _FPA_BY .' PHP '. $phpenv['phpVERSION'] .'&nbsp;</span>';
 
 			} else {
@@ -4632,6 +4748,7 @@ function recursive_array_search($needle,$haystack) {
 
 			if ( @$instance['configDBTYPE'] == '' ) { echo '<span class="warn-text" style="font-size:9px;font-weight:normal;text-transform:none;">&nbsp;<b>'. _FPA_CONT .'</b> '. _FPA_NF .'</span>'; }
 			if ( @$instance['configDBHOST'] == '' ) { echo '<span class="warn-text" style="font-size:9px;font-weight:normal;text-transform:none;">&nbsp;MySQL <b>'. _FPA_HNAME .'</b> '. _FPA_NF .'</span>'; }
+			if ( @$instance['configDBNAME'] == '' ) { echo '<span class="warn-text" style="font-size:9px;font-weight:normal;text-transform:none;">&nbsp;'. _FPA_DB .' <b>'. _FPA_TNAM .'</b> '. _FPA_NF .'</span>'; }
 			if ( @$instance['configDBPREF'] == '' ) { echo '<span class="warn-text" style="font-size:9px;font-weight:normal;text-transform:none;">&nbsp;<b>'. _FPA_TBL .' Prefix</b> '. _FPA_NF .'</span>'; }
 			if ( @$instance['configDBUSER'] == '' ) { echo '<span class="warn-text" style="font-size:9px;font-weight:normal;text-transform:none;">&nbsp;'. _FPA_DB .' <b>'. _FPA_USER .'</b> '. _FPA_NF .'</span>'; }
 			if ( @$instance['configDBPASS'] == '' ) { echo '<span class="warn-text" style="font-size:9px;font-weight:normal;text-transform:none;">&nbsp;'. _FPA_DB .' <b>'. _FPA_PASS .'</b> '. _FPA_NF .'</span>'; }
@@ -4652,7 +4769,7 @@ function recursive_array_search($needle,$haystack) {
 		echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
 
 			// only do mode/permissions checks if an instance was found in the intial checks
-			if ( $database['dbDOCHECKS'] == _FPA_Y AND @$database['dbERROR'] == _FPA_N AND $instance['configDBTYPE'] <> 'postgresql') {
+			if ( $database['dbDOCHECKS'] == _FPA_Y AND @$database['dbERROR'] == _FPA_N AND $instance['configDBTYPE'] <> 'postgresql' AND $instance['configDBTYPE'] <> 'pgsql' ) {
 
 				$pieces = explode(": ", $database['dbHOSTSTATS'][0] );
 
@@ -4734,13 +4851,16 @@ function recursive_array_search($needle,$haystack) {
 				echo '</div>';
 
 
-			} else { // an instance wasn't found in the initial checks, so no folders to check
-
+			} else { // an instance wasn't found in the initial checks
 				echo '<div class="row-content-container nothing-to-display" style="">';
+				if ($instance['configDBTYPE'] == 'postgresql' or $instance['configDBTYPE'] == 'pgsql'){
+				    echo '<div class="normal" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_NIMPLY . ' ' . _FPA_PGSQL . '<br /></div>';
+				    echo '</div>';
+				} else {
 				echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_NCON .'<br />'. _FPA_NO .' '. $database['ARRNAME'] .' '. _FPA_PERF .' '. _FPA_TESTP .'</div>';
 				echo '</div>';
 			}
-
+			}
 
 		echo '</div>';
 		echo '</div>';
@@ -5288,7 +5408,7 @@ function recursive_array_search($needle,$haystack) {
 
 
 					// find the requirements and mark them as present or missing
-					if ( $key == 'libxml' OR $key == 'xml' OR $key == 'zip' OR $key == 'openssl' OR $key == 'zlib' OR $key == 'curl' OR $key == 'iconv' OR $key == 'mbstring' OR $key == 'mysql' OR $key == 'mysqli' OR $key == 'mcrypt' OR $key == 'suhosin' OR $key == 'cgi' OR $key == 'cgi-fcgi' ) {
+					if ( $key == 'libxml' OR $key == 'xml' OR $key == 'zip' OR $key == 'openssl' OR $key == 'zlib' OR $key == 'curl' OR $key == 'iconv' OR $key == 'mbstring' OR $key == 'mysql' OR $key == 'mysqli' OR $key == 'pdo_mysql' OR $key == 'mcrypt' OR $key == 'suhosin' OR $key == 'cgi' OR $key == 'cgi-fcgi' ) {
 						$status = 'ok';
 						$border = '4D8000';
 						$background = 'CAFFD8';

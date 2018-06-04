@@ -2437,6 +2437,10 @@ function recursive_array_search($needle,$haystack) {
 
 		<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+                <!-- NOTE (@RussW): attempt to reduce the chance of indexing, archiving or caching through robots meta, if left on server -->
+                <meta name="robots" content="noindex, nofollow, noodp, nocache, noarchive" />			
+			
 		<title><?php echo _RES .' : v'. _RES_VERSION .' ('. _RES_RELEASE .' / '. _RES_LANG .')';
 		echo '<p>FPA last updated on: '. _last_updated . '</p>' ;
 		?></title>

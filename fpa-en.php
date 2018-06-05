@@ -3750,11 +3750,11 @@ function recursive_array_search($needle,$haystack) {
 
 						if ( version_compare( $instance['cmsRELEASE'], '3.8.0', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
 						  unset($phpreq['mcrypt']);   
-                        }
+						}
 
 						if (version_compare( $phpenv['phpVERSION'], '7.0.0', '>=' ))   {
 						  unset($phpreq['mysql']);   
-                        }
+						}
 
 						echo "\r\n";
 						echo '[b]'. _FPA_POTME .' :: [/b]';

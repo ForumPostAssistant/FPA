@@ -446,7 +446,6 @@
 	$phpreq['mysqli']           = '';
 	$phpreq['pdo_mysql']        = '';
 	$phpreq['mcrypt']           = '';
-	$phpreq['suhosin']          = '';
 	$apachemodules['ARRNAME']   = _FPA_APAMOD_TITLE;
 	$apachereq['ARRNAME']       = _FPA_APAREQ_TITLE;
 	$apachereq['mod_rewrite']   = '';
@@ -3749,6 +3748,14 @@ function recursive_array_search($needle,$haystack) {
 
 						}
 
+						if ( version_compare( $instance['cmsRELEASE'], '3.8.0', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
+						  unset($phpreq['mcrypt']);   
+                        }
+
+						if (version_compare( $phpenv['phpVERSION'], '7.0.0', '>=' ))   {
+						  unset($phpreq['mysql']);   
+                        }
+
 						echo "\r\n";
 						echo '[b]'. _FPA_POTME .' :: [/b]';
 						foreach ( $phpreq as $missingkey => $missing ) {
@@ -5442,6 +5449,13 @@ function recursive_array_search($needle,$haystack) {
 
 			} // end foreach
 
+			if ( version_compare( $instance['cmsRELEASE'], '3.8.0', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
+			 unset($phpreq['mcrypt']);   
+			}
+
+			if (version_compare( $phpenv['phpVERSION'], '7.0.0', '>=' ))   {
+			 unset($phpreq['mysql']);   
+			}
 
 			if ( $phpreq ) {
 				echo '<br style="clear:both;" /><br />';

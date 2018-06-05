@@ -7,14 +7,14 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.4.0
+ **  @version 1.4.1
  **  @last updated 17/05/2018
  **  @release Beta
  **  @date 24/06/2011
  **  @author RussW
  **  @author PhilD
  **
- ** Remember to revision and last updated date below on about line 54
+ ** Remember to revision and last updated date below on about line 36
  **/
 
 /**
@@ -34,8 +34,8 @@
 	// Define some basic assistant information
 
 	define ( '_RES', 'Forum Post Assistant' );
-	define ( '_RES_VERSION', '1.4.0' );
-	define ( '_last_updated', '17/05/2018' );
+	define ( '_RES_VERSION', '1.4.1 (Lippy)' );
+	define ( '_last_updated', '05/05/2018' );
 	define ( '_COPYRIGHT_STMT', ' Copyright &copy 2011-'. date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. <br> This is free software,

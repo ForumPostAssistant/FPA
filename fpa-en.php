@@ -7,7 +7,7 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.4.1
+ **  @version 1.4.2
  **  @last updated 05/06/2018
  **  @release Beta
  **  @date 24/06/2011
@@ -34,8 +34,8 @@
 	// Define some basic assistant information
 
 	define ( '_RES', 'Forum Post Assistant' );
-	define ( '_RES_VERSION', '1.4.1 (Lippy)' );
-	define ( '_last_updated', '05-June-2018' );
+	define ( '_RES_VERSION', '1.4.2 (Lippy)' );
+	define ( '_last_updated', '13-Jun-2018' );
 	define ( '_COPYRIGHT_STMT', ' Copyright &copy 2011-'. date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. <br> This is free software,
@@ -3926,9 +3926,28 @@ function recursive_array_search($needle,$haystack) {
 							echo '[/size][/quote]';
 						} else {
 
-
 							if ( @$_POST['showComponents'] == '1' ) {
 								echo '[b]'. _FPA_EXTCOM_TITLE .' :: '. _FPA_SITE .' :: [/b]';
+							if ( $showCoreEx == 1) {
+								echo "\r\n";
+								echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
+									foreach ( $component['SITE'] as $key => $show ) {
+										if (isset($exset[0]['name'])) { 
+										$extarrkey = recursive_array_search($show['name'], $exset);
+										$extenabled = $exset[$extarrkey]['enabled'];
+										} else { $extenabled = '' ;}
+										if ($extenabled <> 0 AND $extenabled <> 1 ){
+										$extenabled = '';
+										}
+										if ( $show['type'] == _FPA_JCORE)
+										{                      
+										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
+										}
+									}
+                               echo '[/color]';
+							}
+								echo "\r\n";
+								echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
 
 									foreach ( $component['SITE'] as $key => $show ) {
 										if (isset($exset[0]['name'])) { 
@@ -3938,93 +3957,136 @@ function recursive_array_search($needle,$haystack) {
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
 										$extenabled = '';
 										}
-										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
-										{                      
 										if ( $show['type'] == _FPA_3PD)
-										{                     
-										echo '[color=Brown]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
-										} else {
-										echo '[color=Blue]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
+										{                      
+										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
 										}
-									}
-  							}							
+										}
+                                          echo '[/color]';
 								echo "\r\n";
 
 								echo '[b]'. _FPA_EXTCOM_TITLE .' :: '. _FPA_ADMIN .' :: [/b]';
-
+							if ( $showCoreEx == 1) {
+								echo "\r\n";
+								echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
 									foreach ( $component['ADMIN'] as $key => $show ) {
-										if (isset($exset[0]['name'])) {
+										if (isset($exset[0]['name'])) { 
 										$extarrkey = recursive_array_search($show['name'], $exset);
 										$extenabled = $exset[$extarrkey]['enabled'];
 										} else { $extenabled = '' ;}
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
 										$extenabled = '';
 										}
-										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
+										if ( $show['type'] == _FPA_JCORE)
 										{                      
-										if ( $show['type'] == _FPA_3PD)
-										{                     
-										echo '[color=Brown]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
-										} else {
-										echo '[color=Blue]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
+										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
 										}
 									}
-				        } 
+                               echo '[/color]';
+							}
+								echo "\r\n";
+								echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
+
+									foreach ( $component['ADMIN'] as $key => $show ) {
+										if (isset($exset[0]['name'])) { 
+										$extarrkey = recursive_array_search($show['name'], $exset);
+										$extenabled = $exset[$extarrkey]['enabled'];
+										} else { $extenabled = '' ;}
+										if ($extenabled <> 0 AND $extenabled <> 1 ){
+										$extenabled = '';
+										}
+										if ( $show['type'] == _FPA_3PD)
+										{                      
+										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
+										}
+										}
+                                          echo '[/color]';
 			  			}
 								echo "\r\n\r\n";
 
-
 							if ( @$_POST['showModules'] == '1' ) {
 								echo '[b]'. _FPA_EXTMOD_TITLE .' :: '. _FPA_SITE .' :: [/b]';
-
+							if ( $showCoreEx == 1) {
+								echo "\r\n";
+								echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
 									foreach ( $module['SITE'] as $key => $show ) {
-										if (isset($exset[0]['name'])) {
+										if (isset($exset[0]['name'])) { 
 										$extarrkey = recursive_array_search($show['name'], $exset);
 										$extenabled = $exset[$extarrkey]['enabled'];
 										} else { $extenabled = '' ;}
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
 										$extenabled = '';
 										}
-										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
+										if ( $show['type'] == _FPA_JCORE)
 										{                      
-										if ( $show['type'] == _FPA_3PD)
-										{                     
-										echo '[color=Brown]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
-										} else {
-										echo '[color=Blue]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
+										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
 										}
 									}
- 								}
+                               echo '[/color]';
+							}
 								echo "\r\n";
+								echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
 
-								echo '[b]'. _FPA_EXTMOD_TITLE .' :: '. _FPA_ADMIN .' :: [/b]';
-
-									foreach ( $module['ADMIN'] as $key => $show ) {
-										if (isset($exset[0]['name'])) {
+									foreach ( $module['SITE'] as $key => $show ) {
+										if (isset($exset[0]['name'])) { 
 										$extarrkey = recursive_array_search($show['name'], $exset);
 										$extenabled = $exset[$extarrkey]['enabled'];
 										} else { $extenabled = '' ;}
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
 										$extenabled = '';
 										}
-										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
-										{                      
 										if ( $show['type'] == _FPA_3PD)
-										{                     
-										echo '[color=Brown]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
-										} else {
-										echo '[color=Blue]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
+										{                      
+										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
 										}
-									}                
+										}
+                                          echo '[/color]';
+								echo "\r\n\r\n";
+
+								echo '[b]'. _FPA_EXTMOD_TITLE .' :: '. _FPA_ADMIN .' :: [/b]';
+							if ( $showCoreEx == 1) {
+								echo "\r\n";
+								echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
+									foreach ( $module['ADMIN'] as $key => $show ) {
+										if (isset($exset[0]['name'])) { 
+										$extarrkey = recursive_array_search($show['name'], $exset);
+										$extenabled = $exset[$extarrkey]['enabled'];
+										} else { $extenabled = '' ;}
+										if ($extenabled <> 0 AND $extenabled <> 1 ){
+										$extenabled = '';
+										}
+										if ( $show['type'] == _FPA_JCORE)
+										{                      
+										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
+										}
+									}
+                               echo '[/color]';
 							}
-						}
-							echo "\r\n\r\n";
+								echo "\r\n";
+								echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
 
-
+									foreach ( $module['ADMIN'] as $key => $show ) {
+										if (isset($exset[0]['name'])) { 
+										$extarrkey = recursive_array_search($show['name'], $exset);
+										$extenabled = $exset[$extarrkey]['enabled'];
+										} else { $extenabled = '' ;}
+										if ($extenabled <> 0 AND $extenabled <> 1 ){
+										$extenabled = '';
+										}
+										if ( $show['type'] == _FPA_3PD)
+										{                      
+										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
+										}
+										}
+                                          echo '[/color]';
+			  			}
+								echo "\r\n\r\n";                              
 
 							if ( @$_POST['showPlugins'] == '1' ) {
 								echo '[b]'. _FPA_EXTPLG_TITLE .' :: '. _FPA_SITE .' :: [/b]';
-
+							if ( $showCoreEx == 1) {
+								echo "\r\n";
+								echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
 									foreach ( $plugin['SITE'] as $key => $show ) {
 										if (isset($exset[0]['name'])) { 
 										$extarrkey = recursive_array_search($show['name'], $exset);
@@ -4033,16 +4095,29 @@ function recursive_array_search($needle,$haystack) {
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
 										$extenabled = '';
 										}
-										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
+										if ( $show['type'] == _FPA_JCORE)
 										{                      
-										if ( $show['type'] == _FPA_3PD)
-										{                     
-										echo '[color=Brown]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
-										} else {
-										echo '[color=Blue]'. $show['name'] .' ('. $show['version'] .') [/color]  '.$extenabled.' | ';
+										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
 										}
 									}
+                               echo '[/color]';
 							}
+								echo "\r\n";
+								echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
+									foreach ( $plugin['SITE'] as $key => $show ) {
+										if (isset($exset[0]['name'])) { 
+										$extarrkey = recursive_array_search($show['name'], $exset);
+										$extenabled = $exset[$extarrkey]['enabled'];
+										} else { $extenabled = '' ;}
+										if ($extenabled <> 0 AND $extenabled <> 1 ){
+										$extenabled = '';
+										}
+										if ( $show['type'] == _FPA_3PD)
+										{                      
+										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
+										}
+										}
+                                          echo '[/color]';
 						} // end if showComponents, Modules, Plugins, if cmsFOUND
 							echo '[/size][/quote]';
 					} // end showProtected != strict

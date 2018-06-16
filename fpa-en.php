@@ -3963,7 +3963,7 @@ function recursive_array_search($needle,$haystack) {
 										}
 										}
                                           echo '[/color]';
-								echo "\r\n";
+								echo "\r\n\r\n";
 
 								echo '[b]'. _FPA_EXTCOM_TITLE .' :: '. _FPA_ADMIN .' :: [/b]';
 							if ( $showCoreEx == 1) {

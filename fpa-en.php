@@ -3467,33 +3467,24 @@ function recursive_array_search($needle,$haystack) {
 
 							<div style="float:right; width:150px;">
 							<?php
-								if ( $showProtected >= 3 OR  @$_POST['showProtected'] >= 3 ) {
-									$selectshowProtected_1 = '';
-									$selectshowProtected_2 = '';
-									$selectshowProtected_3 = 'CHECKED';
-								} elseif ( $showProtected == 2 OR @$_POST['showProtected'] == 2 ) {
+								if ( $showProtected == 2 OR @$_POST['showProtected'] == 2 ) {
 									$selectshowProtected_1 = '';
 									$selectshowProtected_2 = 'CHECKED';
-									$selectshowProtected_3 = '';
 								} elseif ( $showProtected == 1 OR @$_POST['showProtected'] == 1 ) {
 									$selectshowProtected_1 = 'CHECKED';
 									$selectshowProtected_2 = '';
-									$selectshowProtected_3 = '';
 								} elseif ( $showProtected == 2 ) {
 									$selectshowProtected_1 = '';
 									$selectshowProtected_2 = 'CHECKED';
-									$selectshowProtected_3 = '';
 								} else {
 									$selectshowProtected_1 = '';
 									$selectshowProtected_2 = 'CHECKED';
-									$selectshowProtected_3 = '';
 								}
 							?>
 
 								<strong>Information Privacy :</strong><br />
 								<input style="font-size:9px;" type="radio" name="showProtected" value="1" <?php echo $selectshowProtected_1; ?> /><span class="alert-text"><?php echo _FPA_PRIVNON; ?></span><br /><span style="line-height:8px;padding:0px;margin:0px;margin-left:15px;font-size:8px;"><?php echo _FPA_PRIVNONNOTE; ?></span><br />
-								<input style="font-size:9px;" type="radio" name="showProtected" value="2" <?php echo $selectshowProtected_2; ?> /><span class="warn-text"><?php echo _FPA_PRIVPAR .' ('. _FPA_DEF .')'; ?></span><br /><span style="line-height:8px;padding:0px;margin:0px;margin-left:15px;font-size:8px;"><?php echo _FPA_PRIVPARNOTE; ?></span><br />
-								<input style="font-size:9px;" type="radio" name="showProtected" value="3" <?php echo $selectshowProtected_3; ?> /><span class="ok"><?php echo _FPA_PRIVSTR; ?></span><br /><span style="line-height:8px;padding:0px;margin:0px;margin-left:15px;font-size:8px;"><?php echo _FPA_PRIVSTRNOTE; ?></span>
+								<input style="font-size:9px;" type="radio" name="showProtected" value="2" <?php echo $selectshowProtected_2; ?> /><span class="ok"><?php echo _FPA_PRIVPAR .' ('. _FPA_DEF .')'; ?></span><br /><span style="line-height:8px;padding:0px;margin:0px;margin-left:15px;font-size:8px;"><?php echo _FPA_PRIVPARNOTE; ?></span><br />
 							</div>
 
 						<div style="clear:both;"></div>

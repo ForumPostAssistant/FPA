@@ -7,7 +7,7 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.4.2
+ **  @version 1.4.3
  **  @last updated 05/06/2018
  **  @release Beta
  **  @date 24/06/2011
@@ -34,7 +34,7 @@
 	// Define some basic assistant information
 
 	define ( '_RES', 'Forum Post Assistant' );
-	define ( '_RES_VERSION', '1.4.2 (Lippy)' );
+	define ( '_RES_VERSION', '1.4.3 (Frosty)' );
 	define ( '_last_updated', '13-Jun-2018' );
 	define ( '_COPYRIGHT_STMT', ' Copyright &copy 2011-'. date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license

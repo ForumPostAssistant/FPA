@@ -7,8 +7,8 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.4.3
- **  @last updated 05/06/2018
+ **  @version 1.4.4
+ **  @last updated 02/07/2018
  **  @release Beta
  **  @date 24/06/2011
  **  @author RussW
@@ -34,8 +34,8 @@
 	// Define some basic assistant information
 
 	define ( '_RES', 'Forum Post Assistant' );
-	define ( '_RES_VERSION', '1.4.3 (Frosty)' );
-	define ( '_last_updated', '13-Jun-2018' );
+	define ( '_RES_VERSION', '1.4.4 (Frosty)' );
+	define ( '_last_updated', '02-Jul-2018' );
 	define ( '_COPYRIGHT_STMT', ' Copyright &copy 2011-'. date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. <br> This is free software,
@@ -1050,172 +1050,300 @@
 			}
 
 
-			// common configuration variables for J!1.5 and above only
-			if ( $instance['configVALIDFOR'] != _FPA_U ) {
+			// include configuration.php
+			if ( $instance['configVALIDFOR'] != _FPA_U ) 
+            {
+                $includeconfig = require_once('configuration.php');
+                $config = new JConfig();
 
-				// common configuration variable across all versions
-				if ( $instance['cmsMAJORVERSION'] == '4' ) {
-    				preg_match ( '#[^//]+(mosConfig_offline.*|offline .*)=\s(.*);#', $cmsCContent, $configOFFLINE );
-    				preg_match ( '#[^//]+(mosConfig_sef.*|sef .*)=\s(.*);#', $cmsCContent, $configSEF );
-    				preg_match ( '#[^//]+(mosConfig_gzip.*|gzip.*)=\s(.*);#', $cmsCContent, $configGZIP );
-    				preg_match ( '#[^//]+(mosConfig_caching.*|caching.*)=\s(.*);#', $cmsCContent, $configCACHING );
-    				preg_match ( '#[^//]+(mosConfig_debug.*|debug.*)=\s(.*);#', $cmsCContent, $configSITEDEBUG );
-				} else {
-    				preg_match ( '#[^//]+(mosConfig_offline.*|offline .*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configOFFLINE );
-    				preg_match ( '#[^//]+(mosConfig_sef.*|sef .*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSEF );
-    				preg_match ( '#[^//]+(mosConfig_gzip.*|gzip.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configGZIP );
-    				preg_match ( '#[^//]+(mosConfig_caching.*|caching.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHING );
-    				preg_match ( '#[^//]+(mosConfig_debug.*|debug.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSITEDEBUG );
-				}
-				preg_match ( '#[^//]+dbtype.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configDBTYPE );
-				preg_match ( '#[^//]+(mosConfig_error_reporting.*|error_reporting.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configERRORREP );
+					$instance['configERRORREP'] = $config->error_reporting;
+					$instance['configDBTYPE'] = $config->dbtype;
+					$instance['configDBHOST'] = $config->host;
+					$instance['configDBNAME'] = $config->db;
+					$instance['configDBPREF'] = $config->dbprefix;
+					$instance['configDBUSER'] = $config->user;
+					$instance['configDBPASS'] = $config->password;
 
-				// J!1.0 assumed 'mysql' with no variable, so we'll just add it
-				if (!array_key_exists('1', $configDBTYPE) and $instance['configVALIDFOR'] == '1.0') {
-					$configDBTYPE[1] = 'mysql';
-				}
+					switch ($config->offline) {
+					    case true:
+        					$instance['configOFFLINE'] = 'true';
+					        break;
+					    case false:
+        					$instance['configOFFLINE'] = 'false';
+					        break;
+					    default:
+        					$instance['configOFFLINE'] = $config->offline;
+					}
 
-				preg_match ( '#\$(mosConfig_host.*|host.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configDBHOST );
-				preg_match ( '#\$(mosConfig_db.*|db\s.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configDBNAME );
-				preg_match ( '#\$(mosConfig_dbprefix.*|dbprefix.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configDBPREF );
-				preg_match ( '#\$(mosConfig_user.*|user.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configDBUSER );
-				preg_match ( '#\$(mosConfig_password.*|password.*)=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configDBPASS );
+					switch ($config->sef) {
+					    case true:
+        					$instance['configSEF'] = 'true';
+					        break;
+					    case false:
+        					$instance['configSEF'] = 'false';
+					        break;
+					    default:
+        					$instance['configSEF'] = $config->sef;
+					}
 
-					$instance['configOFFLINE'] = $configOFFLINE[2];
-					$instance['configSEF'] = $configSEF[2];
-					$instance['configGZIP'] = $configGZIP[2];
-					$instance['configCACHING'] = $configCACHING[2];
-					$instance['configERRORREP'] = $configERRORREP[2];
-					$instance['configSITEDEBUG'] = $configSITEDEBUG[2];
-					$instance['configDBTYPE'] = $configDBTYPE[1];
-					$instance['configDBHOST'] = $configDBHOST[2];
-					$instance['configDBNAME'] = $configDBNAME[2];
-					$instance['configDBPREF'] = $configDBPREF[2];
-					$instance['configDBUSER'] = $configDBUSER[2];
-					$instance['configDBPASS'] = $configDBPASS[2];
+					switch ($config->gzip) {
+					    case true:
+        					$instance['configGZIP'] = 'true';
+					        break;
+					    case false:
+        					$instance['configGZIP'] = 'false';
+					        break;
+					    default:
+        					$instance['configGZIP'] = $config->gzip;
+					}
 
-					// force all the configuration settings that are either depreciated or unused by the lowest support release (ie: J!1.0)
-					$instance['configLANGDEBUG'] = _FPA_NA;
-					$instance['configSEFSUFFIX'] = _FPA_NA;
-					$instance['configSEFRWRITE'] = _FPA_NA;
-					$instance['configFTP'] = _FPA_NA;
-					$instance['configPROXY'] = _FPA_NA;
-					$instance['configSSL'] = _FPA_NA;
-					$instance['configACCESS'] = _FPA_NA;
-					$instance['configUNICODE'] = _FPA_NA;
-					$instance['configLIFETIME'] = _FPA_NA;
-					$instance['configSESSHAND'] = _FPA_NA;
-					$instance['configLIVESITE'] = _FPA_NA; 
- 					$instance['configCACHEHANDLER'] = _FPA_NA;
-					$instance['configCACHETIME'] = _FPA_NA;
-					$instance['configCACHEPLFPFX'] = _FPA_NA;
-					$instance['configFRONTEDIT'] = _FPA_NA;                   
-					$instance['configSHASESS'] = _FPA_NA;
-					// these forced settings will be over-written later by the variable supported release
-			}
+					switch ($config->caching) {
+					    case true:
+        					$instance['configCACHING'] = 'true';
+					        break;
+					    case false:
+        					$instance['configCACHING'] = 'false';
+					        break;
+					    default:
+        					$instance['configCACHING'] = $config->caching;
+					}
+
+					switch ($config->debug) {
+					    case true:
+        					$instance['configSITEDEBUG'] = 'true';
+					        break;
+					    case false:
+        					$instance['configSITEDEBUG'] = 'false';
+					        break;
+					    default:
+        					$instance['configSITEDEBUG'] = $config->debug;
+					}
+
+ 					if ( isset($config->shared_session )) 
+                    {
+					   switch ($config->shared_session) 
+                       {
+					       case true:
+					           $instance['configSHASESS'] = 'true';
+					           break;
+					       case false:
+					           $instance['configSHASESS'] = 'false';
+					           break;
+					       default:
+					           $instance['configSHASESS'] = $config->shared_session;
+					   }
+                    } 
+                    else 
+                    {
+					   $instance['configSHASESS'] = _FPA_NA;
+					}          
+
+ 					if ( isset($config->cache_platformprefix )) 
+                    {
+					   switch ($config->cache_platformprefix) 
+                       {
+					       case true:
+					           $instance['configCACHEPLFPFX'] = 'true';
+					           break;
+					       case false:
+					           $instance['configCACHEPLFPFX'] = 'false';
+					           break;
+					       default:
+					           $instance['configCACHEPLFPFX'] = $config->cache_platformprefix;
+					   }
+                    } 
+                    else 
+                    {
+					   $instance['configCACHEPLFPFX'] = _FPA_NA;
+					}          
+
+ 					if ( isset($config->ftp_enable )) 
+                    {
+					   switch ($config->ftp_enable) 
+                       {
+					       case true:
+					           $instance['configFTP'] = 'true';
+					           break;
+					       case false:
+					           $instance['configFTP'] = 'false';
+					           break;
+					       default:
+					           $instance['configFTP'] = $config->ftp_enable;
+					   }
+                    } 
+                    else 
+                    {
+					   $instance['configFTP'] = _FPA_NA;
+					}          
+
+ 					if ( isset($config->debug_lang )) 
+                    {
+					   switch ($config->debug_lang) 
+                       {
+					       case true:
+					           $instance['configLANGDEBUG'] = 'true';
+					           break;
+					       case false:
+					           $instance['configLANGDEBUG'] = 'false';
+					           break;
+					       default:
+					           $instance['configLANGDEBUG'] = $config->debug_lang;
+					   }
+                    } 
+                    else 
+                    {
+					   $instance['configLANGDEBUG'] = _FPA_NA;
+					}          
+
+ 					if ( isset($config->sef_suffix )) 
+                    {
+					   switch ($config->sef_suffix) 
+                       {
+					       case true:
+					           $instance['configSEFSUFFIX'] = 'true';
+					           break;
+					       case false:
+					           $instance['configSEFSUFFIX'] = 'false';
+					           break;
+					       default:
+					           $instance['configSEFSUFFIX'] = $config->sef_suffix;
+					   }
+                    } 
+                    else 
+                    {
+					   $instance['configSEFSUFFIX'] = _FPA_NA;
+					}          
+
+ 					if ( isset($config->sef_rewrite )) 
+                    {
+					   switch ($config->sef_rewrite) 
+                       {
+					       case true:
+					           $instance['configSEFRWRITE'] = 'true';
+					           break;
+					       case false:
+					           $instance['configSEFRWRITE'] = 'false';
+					           break;
+					       default:
+					           $instance['configSEFRWRITE'] = $config->sef_rewrite;
+					   }
+                    } 
+                    else 
+                    {
+					   $instance['configSEFRWRITE'] = _FPA_NA;
+					}          
+
+					if ( isset($config->proxy_enable )) 
+                    {
+					   switch ($config->proxy_enable) 
+                       {
+					       case true:
+					           $instance['configPROXY'] = 'true';
+					           break;
+					       case false:
+					           $instance['configPROXY'] = 'false';
+					           break;
+					       default:
+					           $instance['configPROXY'] = $config->proxy_enable;
+					   }
+                    } 
+                    else 
+                    {
+					   $instance['configPROXY'] = _FPA_NA;
+					}          
+
+					if ( isset($config->unicodeslugs )) 
+                    {
+					   switch ($config->unicodeslugs) 
+                       {
+					       case true:
+					           $instance['configUNICODE'] = 'true';
+					           break;
+					       case false:
+					           $instance['configUNICODE'] = 'false';
+					           break;
+					       default:
+					           $instance['configUNICODE'] = $config->unicodeslugs;
+					   }
+                    } 
+                    else 
+                    {
+					   $instance['configUNICODE'] = _FPA_NA;
+                    }          
+
+					if ( isset($config->force_ssl )) 
+                    {
+					   $instance['configSSL'] = $config->force_ssl;
+                    } 
+                    else 
+                    {
+					   $instance['configSSL'] = _FPA_NA;
+                    }
+
+					if ( isset($config->session_handler )) 
+                    {
+					   $instance['configSESSHAND'] = $config->session_handler;
+                    } 
+                    else 
+                    {
+					   $instance['configSESSHAND'] = _FPA_NA;
+                    }
+
+					if ( isset($config->lifetime )) 
+                    {
+					   $instance['configLIFETIME'] = $config->lifetime;
+                    } 
+                    else 
+                    {
+					   $instance['configLIFETIME'] = _FPA_NA;
+                    }
+
+					if ( isset($config->cachetime )) 
+                    {
+					   $instance['configCACHETIME'] = $config->cachetime;
+                    } 
+                    else 
+                    {
+					   $instance['configCACHETIME'] = _FPA_NA;
+                    }
+
+					if ( isset($config->live_site )) 
+                    {
+					   $instance['configLIVESITE'] = $config->live_site;
+                    } 
+                    else 
+                    {
+					   $instance['configLIVESITE'] = _FPA_NA;
+                    }
+
+					if ( isset($config->cache_handler )) 
+                    {
+					   $instance['configCACHEHANDLER'] = $config->cache_handler;
+                    } 
+                    else 
+                    {
+					   $instance['configCACHEHANDLER'] = _FPA_NA;
+                    }
+
+					if ( isset($config->access )) 
+                    {
+					   $instance['configACCESS'] = $config->access;
+                    } 
+                    else 
+                    {
+					   $instance['configACCESS'] = _FPA_NA;
+                    }
+            }
 
 			if ($instance['configDBTYPE'] == 'mysql' and $instance['cmsMAJORVERSION'] == '4') {
                 $instance['configDBTYPE'] = 'pdomysql';
             }
 
-			// common configuration variables for J!1.5 and above only
-			if ( $instance['configVALIDFOR'] != '1.0' AND $instance['configVALIDFOR'] != _FPA_U ) {
-
-  				if ( $instance['cmsMAJORVERSION'] == '4' ) {
-      				preg_match ( '#[^//]+sef_rewrite.*=\s(.*);#', $cmsCContent, $configSEFREWRITE );
-      				preg_match ( '#[^//]+sef_suffix.*=\s(.*);#', $cmsCContent, $configSEFSUFFIX );
-      				preg_match ( '#[^//]+debug_lang.*=\s(.*);#', $cmsCContent, $configLANGDEBUG );
-      				preg_match ( '#[^//]+ftp_enable.*=\s(.*);#', $cmsCContent, $configFTP );
-      				preg_match ( '#[^//]+proxy_enable.*=\s(.*);#', $cmsCContent, $configPROXY );
-      				preg_match ( '#[^//]+force_ssl.*=\s(.*);#', $cmsCContent, $configSSL );
-      				preg_match ( '#[^//]+lifetime.*=\s(.*);#', $cmsCContent, $configLIFETIME );
-      				preg_match ( '#[^//]+cachetime.*=\s(.*);#', $cmsCContent, $configCACHETIME );        
-      				preg_match ( '#[^//]+cache_platformprefix.*=\s(.*);#', $cmsCContent, $configCACHEPLFPFX );        
-      				preg_match ( '#[^//]+frontediting.*=\s(.*);#', $cmsCContent, $configFRONTEDIT );
-      				preg_match ( '#[^//]+shared_session.*=\s(.*);#', $cmsCContent, $configSHASESS );
-				} else {
-      				preg_match ( '#[^//]+sef_rewrite.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSEFREWRITE );
-      				preg_match ( '#[^//]+sef_suffix.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSEFSUFFIX );
-      				preg_match ( '#[^//]+debug_lang.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configLANGDEBUG );
-      				preg_match ( '#[^//]+ftp_enable.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configFTP );
-      				preg_match ( '#[^//]+proxy_enable.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configPROXY );
-      				preg_match ( '#[^//]+force_ssl.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSSL );
-      				preg_match ( '#[^//]+lifetime.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configLIFETIME );
-      				preg_match ( '#[^//]+cachetime.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHETIME );
-      				preg_match ( '#[^//]+cache_platformprefix.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHEPLFPFX );
-      				preg_match ( '#[^//]+frontediting.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configFRONTEDIT );
-      				preg_match ( '#[^//]+shared_session.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSHASESS );
-				}
-				preg_match ( '#live_site.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configLIVESITE );
-				preg_match ( '#[^//]+session_handler.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configSESSHAND );
-				preg_match ( '#[^//]+cache_handler.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configCACHEHANDLER );
-
-
-					$instance['configSEFRWRITE'] = $configSEFREWRITE[1];
-					$instance['configSEFSUFFIX'] = $configSEFSUFFIX[1];
-					$instance['configLANGDEBUG'] = $configLANGDEBUG[1];
-					$instance['configFTP'] = $configFTP[1];
-					$instance['configSESSHAND'] = $configSESSHAND[1];
-
-					if ( $configPROXY ) {
-					$instance['configPROXY'] = $configPROXY[1];
-					} else {
-						$instance['configPROXY'] = _FPA_NA;
-					}          
-					if ( $configLIVESITE ) {
-					$instance['configLIVESITE'] = $configLIVESITE[1];
-					} else {
-						$instance['configLIVESITE'] = _FPA_NA;
-					}          
-					if ( $configLIFETIME ) {
-					$instance['configLIFETIME'] = $configLIFETIME[1];
-					} else {
-						$instance['configLIFETIME'] = _FPA_NA;
-					}          
-					if ( $configCACHEHANDLER ) {
-					$instance['configCACHEHANDLER'] = $configCACHEHANDLER[1];
-					} else {
-						$instance['configCACHEHANDLER'] = _FPA_NA;
-					}          
-					if ( $configCACHETIME ) {
-					$instance['configCACHETIME'] = $configCACHETIME[1];
-					} else {
-						$instance['configCACHETIME'] = _FPA_NA;
-					}          
-					if ( $configCACHEPLFPFX ) {
-					$instance['configCACHEPLFPFX'] = $configCACHEPLFPFX[1];
-					} else {
-						$instance['configCACHEPLFPFX'] = _FPA_NA;
-					}          
-					if ( $configFRONTEDIT ) {
-					$instance['configFRONTEDIT'] = $configFRONTEDIT[1];
-					} else {
-						$instance['configFRONTEDIT'] = _FPA_NA;
-					}          
-					if ( $configSHASESS ) {
-					$instance['configSHASESS'] = $configSHASESS[1];
-					} else {
-						$instance['configSHASESS'] = _FPA_NA;
-					}          
-					if ( $configSSL ) { // 1.7 hack, 1.7.0 seems not to have this option
-						$instance['configSSL'] = $configSSL[1];
-					} else {
-						$instance['configSSL'] = _FPA_NA;
-					}
+			// J!1.0 assumed 'mysql' with no variable, so we'll just add it
+			if ($instance['configDBTYPE'] == _FPA_N and $instance['configVALIDFOR'] == '1.0') {
+			 $instance['configDBTYPE'] = 'mysql';
 			}
 
-			// common configuration variables for J!1.6 and above only
-			if ( $instance['configVALIDFOR'] != '1.0' AND $instance['configVALIDFOR'] != '1.5' AND $instance['configVALIDFOR'] != _FPA_U ) {
-  				if ( $instance['cmsMAJORVERSION'] == '4' ) {
-      				preg_match ( '#[^//]+access.*=\s(.*);#', $cmsCContent, $configACCESS );
-      				preg_match ( '#[^//]+unicodeslugs.*=\s(.*);#', $cmsCContent, $configUNICODE );
-					} else {
-      				preg_match ( '#[^//]+access.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configACCESS );
-      				preg_match ( '#[^//]+unicodeslugs.*=\s[\'|\"](.*)[\'|\"];#', $cmsCContent, $configUNICODE );
-					}
-					$instance['configACCESS'] = $configACCESS[1];
-					$instance['configUNICODE'] = $configUNICODE[1];
-			}
 
 			// look to see if we are using a remote or local MySQL server
 			if ( strpos($instance['configDBHOST'] , 'localhost' ) === 0  OR strpos($instance['configDBHOST'] , '127.0.0.1' ) === 0 ) {
@@ -1233,7 +1361,6 @@
 			} else {
 				$instance['configDBCREDOK'] = _FPA_N;
 			}
-
 
 
 		// looking for htaccess (Apache and some others) or web.config (IIS)

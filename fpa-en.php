@@ -2460,7 +2460,7 @@
 									$arrname[$loc][$cDir]['name']   = strip_tags( substr( $name[1], 0, 30 ) );
 
 								} else {
-									$arrname[$loc][$cDir]['name']   = _FPA_U;
+									$arrname[$loc][$cDir]['name']   = _FPA_U .' ('. $cDir . ') ';
 								}
 
 

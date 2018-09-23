@@ -1053,8 +1053,16 @@
 			// include configuration.php
 			if ( $instance['configVALIDFOR'] != _FPA_U ) 
             {
+    			ini_set( 'display_errors', 1 );
                 $includeconfig = require_once('configuration.php');
                 $config = new JConfig();
+                if ( defined( '_FPA_DIAG' ) ) {
+                    ini_set( 'display_errors', 1 );
+                    }
+                    else
+                    {
+                    ini_set( 'display_errors', 0 );
+                    }
 
 					$instance['configERRORREP'] = $config->error_reporting;
 					$instance['configDBTYPE'] = $config->dbtype;

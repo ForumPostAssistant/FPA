@@ -35,7 +35,7 @@
 
 	define ( '_RES', 'Forum Post Assistant' );
 	define ( '_RES_VERSION', '1.4.5 (Ganymede)' );
-	define ( '_last_updated', '29-Sep-2018' );
+	define ( '_last_updated', '23-Sep-2018' );
 	define ( '_COPYRIGHT_STMT', ' Copyright &copy 2011-'. date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. <br> This is free software,

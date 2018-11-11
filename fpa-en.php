@@ -36,13 +36,13 @@
 	define ( '_RES', 'Forum Post Assistant' );
 	define ( '_RES_VERSION', '1.4.5 (Ganymede)' );
 	define ( '_last_updated', '23-Sep-2018' );
-	define ( '_COPYRIGHT_STMT', ' Copyright &copy 2011-'. date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
+	define ( '_COPYRIGHT_STMT', ' Copyright &copy 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. <br> This is free software,
 	and covered under the GNU GPLv3 or later license. You are welcome to redistribute it under certain conditions.
 	For details read the LICENSE.txt file included in the download package with this script.
 	A copy of the license may also be obtained at ' );
-	define ( '_RES_RELEASE', 'Beta' );         // can be Alpha, Beta, RC, Final
+	define ( '_RES_RELEASE', '' );         // can be Alpha, Beta, RC, Final
 	define ( '_RES_BRANCH', 'Branch en-GB' );    // can be playGround (Alpha/Beta only), currentDevelopment (RC only), masterPublic (Final only)
 	define ( '_RES_LANG', '&nbsp Language en-GB' );               // Country/Language Code
 	define ( '_RES_FPALINK', 'https://github.com/ForumPostAssistant/FPA/tarball/en-GB/' ); // where to get the latest 'Final Releases'
@@ -284,6 +284,8 @@
 	define ( '_FPA_NIMPLY', 'Not implemented for' );
  	define ( '_FPA_PGSQL', 'PostgreSQL' );
  	define ( '_FPA_PMISS', 'Password missing' );
+ 	define ( '_FPA_DEFI', 'Defines' );    
+ 	define ( '_FPA_DEFIPA', 'Site and Admin config paths not equal' );
 	/** END LANGUAGE STRINGS *****************************************************************/
 
 // ** delete script when done - Phil 8-07-12
@@ -871,56 +873,61 @@
 			}
 	}
 
-
-
 	/** is Joomla! installed/configured? *****************************************************/
 	// determine exactly where the REAL configuration file is, it might not be the one in the "/" folder
 	if ( @$instance['cmsRELEASE'] == '1.0' ) {
-
-		// !TODO add finding configuration outside of "/"
-		if ( file_exists( 'configuration.php' ) ) {
-//          $configContent = file_get_contents( 'configuration.php' );
-
-//              if ( preg_match( '#require.*[\"|\'](.*)[\"|\']#', $configContent ) ) {
-//                  preg_match ( '#require.*[\"|\'](.*)[\"|\']#', $configContent, $findConfig );
-
-//                 $instance['configPATH'] =  dirname( __FILE__ ) . $findConfig[1];
-//              } else {
-//                  $instance['configPATH'] =  dirname( __FILE__ ) .'/'. $findConfig[1];
-//              }
-
-//                  $instance['configMOVED'] = _FPA_Y;
-//              } else {
-//                  $instance['configMOVED'] = _FPA_N;
-					$instance['configPATH'] = 'configuration.php';
-//              }
-
-			}
-
+	   if ( file_exists( 'configuration.php' ) ) {
+	       $instance['configPATH'] = 'configuration.php';
+	   }
 	} elseif ( @$instance['cmsRELEASE'] == '1.5' ) {
-		$instance['configPATH'] = 'configuration.php';
-
+	   $instance['configPATH'] = 'configuration.php';
 	} elseif ( @$instance['cmsRELEASE'] >= '1.6' ) {
-
-		// look for a 'defines' override file in the "/" folder.
-		if ( file_exists( 'defines.php' ) ) {
-			$instance['configPATH'] = 'configuration.php';
-
-		} elseif ( file_exists( 'includes/defines.php' ) ) {
-			$instance['configPATH'] = 'configuration.php';
-
-		} else {
-			$instance['configDEFINE'] = _FPA_NF;
-			$instance['configPATH'] = 'configuration.php';
-		}
-
+	   if ( file_exists( 'defines.php' ) OR file_exists( 'administrator\defines.php' )) {
+	       $instance['definesEXIST'] = _FPA_Y;
+	       // look for a 'defines' override file in the "/" folder.
+	       if ( file_exists( 'defines.php' ) ) {
+	           $cmsOverride = file_get_contents( 'defines.php' );
+	           preg_match ( '#JPATH_CONFIGURATION\s*\S*\s*[\'"](.*)[\'"]#', $cmsOverride, $cmsOVERRIDEPATH );
+	           if ( file_exists( @$cmsOVERRIDEPATH[1] . '\configuration.php' ) ) {
+    	           $instance['configPATH'] = $cmsOVERRIDEPATH[1] . '\configuration.php';
+    	           $instance['configSiteDEFINE'] = _FPA_Y;
+	           } else {
+	               $instance['configPATH'] = 'configuration.php';
+    	           $instance['configSiteDEFINE'] = _FPA_Y;                  
+	           }
+	       } else {
+	           $instance['configPATH'] = 'configuration.php';
+	           $instance['configSiteDEFINE'] = _FPA_N ;
+	       }
+	       if ( file_exists( 'administrator\defines.php' ) ) {
+	           $cmsAdminOverride = file_get_contents( 'administrator\defines.php' );
+	           preg_match ( '#JPATH_CONFIGURATION\s*\S*\s*[\'"](.*)[\'"]#', $cmsAdminOverride, $cmsADMINOVERRIDEPATH );
+	           if ( file_exists( @$cmsOVERRIDEPATH[1] . '\configuration.php' ) ) {
+	               $instance['configADMINPATH'] = $cmsADMINOVERRIDEPATH[1] . '\configuration.php';
+	               $instance['configAdminDEFINE'] = _FPA_Y;
+	           } else {
+	               $instance['configADMINPATH'] = 'configuration.php';
+	               $instance['configAdminDEFINE'] = _FPA_Y;
+	           }               
+	       } else {               
+	           $instance['configAdminDEFINE'] = _FPA_N;
+	           $instance['configADMINPATH'] = 'configuration.php';
+	       }
+	       if (( $instance['configPATH'] <> $instance['configADMINPATH'] ) OR ($instance['configSiteDEFINE'] <> $instance['configAdminDEFINE'] )) {
+	           $instance['equalPATH'] = _FPA_N;
+	       } else {
+	           $instance['equalPATH'] = _FPA_Y;
+	       }
+	   } else {
+	       $instance['configPATH'] = 'configuration.php';
+	       $instance['definesEXIST'] = _FPA_N;
+	       $instance['equalPATH'] = _FPA_Y;
+	   }
 	} else {
-			$instance['configPATH'] = 'configuration.php';
-			$instance['configMOVED'] = _FPA_N;
+	   $instance['configPATH'] = 'configuration.php';
 	}
 
-
-	// find the configuration file (all versions)
+	// check the configuration file (all versions)
 	if ( file_exists( $instance['configPATH'] ) ) {
 		$instance['instanceCONFIGURED'] = _FPA_Y;
 
@@ -1004,7 +1011,7 @@
 			// fpa found a configuration.php but couldn't determine the version, is it valid?
 			if ( $instance['configVALIDFOR'] == _FPA_U ) {
 
-				if ( filesize( 'configuration.php' ) < 512 ) {
+				if ( filesize( $instance['configPATH'] ) < 512 ) {
 						$instance['configSIZEVALID'] = _FPA_N;
 				}
 			}
@@ -1021,7 +1028,7 @@
 
 				// !TODO add white-space etc checks
 				// do some configuration.php sanity/validity checks
-				if ( filesize( 'configuration.php' ) > 512 ) {
+				if ( filesize( $instance['configPATH'] ) > 512 ) {
 					$instance['cfgSANITY']['configSIZEVALID'] = _FPA_Y;
 				}
 
@@ -1054,7 +1061,7 @@
 			if ( $instance['configVALIDFOR'] != _FPA_U ) 
             {
     			ini_set( 'display_errors', 1 );
-                $includeconfig = require_once('configuration.php');
+                $includeconfig = require_once($instance['configPATH']);
                 $config = new JConfig();
                 if ( defined( '_FPA_DIAG' ) ) {
                     ini_set( 'display_errors', 1 );
@@ -1623,7 +1630,7 @@
 		/*****************************************************************************************/
 
 
-	// get all the Apache loaded extensions and versions
+	// get all the PHP loaded extensions and versions
 	foreach ( get_loaded_extensions() as $i => $ext ) {
 		$phpextensions[$ext]    = phpversion($ext);
 	}
@@ -2393,7 +2400,7 @@
 		$database['dbDOCHECKS']     = _FPA_N;
 		$database['dbLOCAL']        = _FPA_U;
 	}
-    if (!@$dBconn AND $instance['configDBCREDOK'] == _FPA_PMISS ) {
+    if (!@$dBconn AND @$instance['configDBCREDOK'] == _FPA_PMISS ) {
 		$instance['configDBCREDOK'] = _FPA_N;
 		$database['dbDOCHECKS']     = _FPA_N;
 	}
@@ -3008,6 +3015,20 @@ function recursive_array_search($needle,$haystack) {
 		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
 		$fpa['supportENV']['badZND'][0]     = _FPA_NA;	
 
+	} elseif  (@$instance['cmsRELEASE'] == '3.10') {
+		$fpa['supportENV']['minPHP']        = '5.3.10';
+		$fpa['supportENV']['minSQL']        = '5.1.0';
+		$fpa['supportENV']['maxPHP']        = '7.5.0';  
+		$fpa['supportENV']['maxSQL']        = '5.8.0'; 
+		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
+		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
+		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
+		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
+		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
+		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
+		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
+		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
 	} elseif  (@$instance['cmsRELEASE'] == '3.9') {
 		$fpa['supportENV']['minPHP']        = '5.3.10';
 		$fpa['supportENV']['minSQL']        = '5.1.0';
@@ -3284,19 +3305,19 @@ function recursive_array_search($needle,$haystack) {
 			//Added this elseif to give the ok for postgreSQL
 			elseif ($instance['configDBTYPE'] == 'postgresql' AND $database['dbHOSTSERV'] >= 8.3 ) {
 				echo '<div class="normal-note"><span class="ok">'. _FPA_Y .'</span></div>';
-				$snapshot['sqlSUP4J'] = _FPA_MDB;
+				$snapshot['sqlSUP4J'] = _FPA_Y;
 			}
 
 			//Added this elseif to give the ok for PDO postgreSQL
 			elseif ($instance['configDBTYPE'] == 'pgsql' AND $database['dbHOSTSERV'] >= 8.3 ) {
 				echo '<div class="normal-note"><span class="ok">'. _FPA_Y .'</span></div>';
-				$snapshot['sqlSUP4J'] = _FPA_MDB;
+				$snapshot['sqlSUP4J'] = _FPA_Y;
 			}
                          
 			//Added this elseif to give the ok for MariaDB -- PhilD 03-17-17
-			elseif ($output_array[0] == "MariaDB") {
+			elseif (@$output_array[0] == "MariaDB") {
 				echo '<div class="normal-note"><span class="ok">'. _FPA_MDB .'</span></div>';
-				$snapshot['sqlSUP4J'] = _FPA_MDB;
+				$snapshot['sqlSUP4J'] = _FPA_Y;
 			}
 			else {
 				echo '<div class="normal-note"><span class="alert-text">'. _FPA_N .'</span></div>';
@@ -3698,18 +3719,16 @@ function recursive_array_search($needle,$haystack) {
 
 				/** BBCode for the Joomla! Forum
 				*****************************************************************************************/
-
-					if ( $_POST['probDSC'] ) { echo '[quote="'. _FPA_PROB_DSC .' :: '. _RES .' (v'. _RES_VERSION .') : '. @date( 'jS F Y' ) .'"][size=85]'. $_POST['probDSC'] .' [/size][/quote]'; }
-
-					if ( $_POST['probMSG1'] ) { echo '[quote="'. _FPA_PROB_MSG .' :: '. _RES .' (v'. _RES_VERSION .') : '. @date( 'jS F Y' ) .'"][size=85]'. $_POST['probMSG1'] .'[/size][/quote]'; }
-
-					if ( $phpenv['phpLASTERR'] AND $_POST['probMSG2'] ) { echo '[quote="'. _FPA_LAST .' PHP '. _FPA_ER .' :: '. _RES .' (v'. _RES_VERSION .') : '. @date( 'jS F Y' ) .'"][size=85][color=#800000]'. $_POST['probMSG2'] .'[/color][/size][/quote]';
-					} elseif ( !@$phpenv['phpLASTERROR'] AND $_POST['probMSG2'] ) { echo '[quote="'. _FPA_PROB_MSG .' :: '. _RES .' (v'. _RES_VERSION .') : '. @date( 'jS F Y' ) .'"][size=85]'. $_POST['probMSG2'] .'[/size][/quote]'; }
-
-					if ( $_POST['probACT'] ) { echo '[quote="'. _FPA_PROB_ACT .' '. _FPA_BY .' '. _RES .' (v'. _RES_VERSION .') '. @date( 'jS F Y' ) .'"][size=85]'. $_POST['probACT'] .'[/size][/quote]'; }
-
 					echo '[quote="'. _RES .' (v'. _RES_VERSION .') : '. @date( 'jS F Y' ) .'"]';
 
+					if ( $_POST['probDSC'] ) { echo '[quote="'. _FPA_PROB_DSC .' :: "][size=85]'. $_POST['probDSC'] .' [/size][/quote]'; }
+
+					if ( $_POST['probMSG1'] ) { echo '[quote="'. _FPA_PROB_MSG .' :: "][size=85]'. $_POST['probMSG1'] .'[/size][/quote]'; }
+
+					if ( $phpenv['phpLASTERR'] AND $_POST['probMSG2'] ) { echo '[quote="'. _FPA_LAST .' PHP '. _FPA_ER .' :: "][size=85][color=#800000]'. $_POST['probMSG2'] .'[/color][/size][/quote]';
+					} elseif ( !@$phpenv['phpLASTERROR'] AND $_POST['probMSG2'] ) { echo '[quote="'. _FPA_PROB_MSG .' :: "][size=85]'. $_POST['probMSG2'] .'[/size][/quote]'; }
+
+					if ( $_POST['probACT'] ) { echo '[quote="'. _FPA_PROB_ACT .' "][size=85]'. $_POST['probACT'] .'[/size][/quote]'; }
 
 					// do the basic information
 					echo '[quote="'. _FPA_BASIC .' '. _FPA_ENVIRO .' ::"][size=85]';
@@ -3732,13 +3751,21 @@ function recursive_array_search($needle,$haystack) {
 					echo "\r\n";
 
 					echo '[b]'. _FPA_APP .' '. _FPA_YC .' :: [/b]';
+
 					if ( $instance['instanceCONFIGURED'] == _FPA_Y ) {
-					echo '[color=Green]'. _FPA_Y .'[/color] | ';
+					   echo '[color=Green]'. _FPA_Y .'[/color] | ';
 
-						if ( $instance['configWRITABLE'] == _FPA_Y ) { echo '[color=Green]'. _FPA_WRITABLE .'[/color] ('; } else { echo _FPA_RO .' ('; }
+					if ( $instance['configWRITABLE'] == _FPA_Y ) { echo '[color=Green]'. _FPA_WRITABLE .'[/color] ('; } else { echo _FPA_RO .' ('; }
 
-						if ( substr( $instance['configMODE'],1 ,1 ) == '7' OR substr( $instance['configMODE'],2 ,1 ) >= '5' OR substr( $instance['configMODE'],3 ,1 ) >= '5' ) { echo '[color=Red]'; } else { echo '[color=Green]'; }
-						echo $instance['configMODE'] .'[/color]) | ';
+					if ( substr( $instance['configMODE'],1 ,1 ) == '7' OR substr( $instance['configMODE'],2 ,1 ) >= '5' OR substr( $instance['configMODE'],3 ,1 ) >= '5' ) { echo '[color=Red]'; } else { echo '[color=Green]'; }
+					   echo $instance['configMODE'] .'[/color]) | ';
+
+					if ( @$instance['definesEXIST'] == _FPA_Y ) {
+                       echo   _FPA_DEFI . ' ' . _FPA_E . ' | ';
+					   if ( @$instance['equalPATH'] == _FPA_N ) {
+					       echo '[color=Red]'. _FPA_DEFIPA .'[/color]  | ';
+					   }
+					}
 
             if ( $_POST['showProtected'] == '1' ) {
   						echo '[b]'. _FPA_OWNER .':[/b] '. $instance['configOWNER']['name'] .' (uid: '. isset($instance['configOWNER']['uid']) .'/gid: '. isset($instance['configOWNER']['gid']) .') | [b]'. _FPA_GROUP .':[/b] '. $instance['configGROUP']['name'] .' (gid: '. isset($instance['configGROUP']['gid']) .') | [b]Valid For:[/b] '. $instance['configVALIDFOR'];
@@ -3763,14 +3790,26 @@ function recursive_array_search($needle,$haystack) {
 
 						echo '[b]' . _FPA_SUPPHP .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] . ': [/b]' ;
 							if ( $snapshot['phpSUP4J'] == _FPA_Y ) { echo '[color=Green]'; } else { echo '[color=Red]'; }
-							echo $snapshot['phpSUP4J'] .'[/color] | ';
+							 echo $snapshot['phpSUP4J'] .'[/color] | ';
+
+						echo '[b]' . _FPA_SUPSQL .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] . ': [/b]' ;
+							if ( $snapshot['sqlSUP4J'] == _FPA_Y ) { echo '[color=Green]'; } else { echo '[color=Red]'; }
+							 echo $snapshot['sqlSUP4J'] .'[/color] | ';
 
 						echo '[b]'. _FPA_DB .' '. _FPA_CREDPRES .':[/b] ';
 							if ( $instance['configDBCREDOK'] == _FPA_Y ) { echo '[color=Green]'; } else { echo '[color=Red]'; }
 							echo $instance['configDBCREDOK'] .'[/color] | ';
 
-					} else { echo '[color=orange]'. _FPA_NF .'[/color]'; }
-
+					} else { 
+					   if ( @$instance['definesEXIST'] == _FPA_Y ) {
+					       echo '[color=orange]'. _FPA_NF .' (' . _FPA_DEFI . ' ' . _FPA_E . ')[/color]';
+					       if ( @$instance['equalPATH'] == _FPA_N ) {
+					           echo '[color=Red]'. _FPA_DEFIPA .'[/color] ';
+					       }
+					   } else {
+					       echo '[color=orange]'. _FPA_NF .'[/color]';
+					   }                    
+					}
 					echo "\r\n\r\n";
 
 					if ( $showProtected <> 1 ) {
@@ -3840,7 +3879,7 @@ function recursive_array_search($needle,$haystack) {
 
 							if ( $_POST['showProtected'] > '1' ) { echo '[b]'. _FPA_HOST .':[/b]  [color=orange]--'. _FPA_HIDDEN .'--[/color] ([color=orange]--'. _FPA_HIDDEN .'--[/color]) | ';
 							} else { echo '[b]'. _FPA_HOST .':[/b] '. $instance['configDBHOST'] .' ('. $database['dbHOSTINFO'] .') | '; }
-							echo '[b] Localhost:[/b] '. $database['dbLOCAL'] . ' | [b]'. _FPA_TCOL .':[/b] '. $database['dbCOLLATION'] .' ([b]'. _FPA_CHARS .':[/b] '. $database['dbCHARSET'] .') | [b]'. _FPA_DB .' '. _FPA_TSIZ .':[/b] '. $database['dbSIZE'] .' | [b]#'. _FPA_OF .'&nbsp'. _FPA_TABLE .':&nbsp[/b] '. $database['dbTABLECOUNT'];
+							echo '[b]'. _FPA_DEF .' '. _FPA_TCOL .':[/b] '. $database['dbCOLLATION'] .' ([b]'. _FPA_DEF .' '. _FPA_CHARS .':[/b] '. $database['dbCHARSET'] .') | [b]'. _FPA_DB .' '. _FPA_TSIZ .':[/b] '. $database['dbSIZE'] .' | [b]#'. _FPA_OF .'&nbsp'. _FPA_TABLE .':&nbsp[/b] '. $database['dbTABLECOUNT'];
 					}
 
 		echo '[/size][/quote]';
@@ -3874,7 +3913,7 @@ function recursive_array_search($needle,$haystack) {
 
 						}
 
-						if ( version_compare( $instance['cmsRELEASE'], '3.8.0', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
+						if ( version_compare( $instance['cmsRELEASE'], '3.8', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
 						  unset($phpreq['mcrypt']);   
 						}
 
@@ -5650,7 +5689,7 @@ function recursive_array_search($needle,$haystack) {
 
 			} // end foreach
 
-			if ( version_compare( $instance['cmsRELEASE'], '3.8.0', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
+			if ( version_compare( $instance['cmsRELEASE'], '3.8', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
 			 unset($phpreq['mcrypt']);   
 			}
 

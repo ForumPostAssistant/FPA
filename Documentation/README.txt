@@ -6,17 +6,14 @@ The idea is to make the information collection, and subsequent posting, as simpl
 USE AT YOUR OWN RISK Accuracy and completeness of this script and documentation is not assured and no responsibility will be accepted for any damage, issues or confusion caused by using versions contained within these branches. 
 
 Compatibility:
-	PHP 4.1,PHP4, 5, 6DEV, 7	  MySQL 3.2 - 5.5 	MySQLi from 4.1 ( @ >=PHP 4.4.9)
+	PHP 4 - PHP 7	|  MySQL 3.2 - 5.5 	MySQLi from 4.1 ( @ >=PHP 4.4.9)
  	
 Joomla! Version Support:
-	  | J!3.x | J!2.5.xx | J!1.7.xx | J!1.6.xx | J1.5.xx |  J!1.0.xx  | 
+	 | J!4.x | J!3.x | J!2.5.xx | J!1.7.xx | J!1.6.xx | J1.5.xx |  J!1.0.xx  | 
 	
 Language Support:
 English (USA/UK/AU)
 Community language translations may be available.  As translations become available, each localized version will be released into it's own "branch" (EG: fr_FR, de_DE) and will be available for download from the "Download" button (in .tar.gz or .zip format) within the localized branch.  All files that are needed have been automatically added to the download package.
-
-Known Issues:
-FPA is not currently compatible with Joomla websites that have had their configuration.php file moved outside of the public_html directory.
 
 Installation:
 1. Download the desired archive 

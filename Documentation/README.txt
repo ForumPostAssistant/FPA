@@ -6,7 +6,7 @@ The idea is to make the information collection, and subsequent posting, as simpl
 USE AT YOUR OWN RISK Accuracy and completeness of this script and documentation is not assured and no responsibility will be accepted for any damage, issues or confusion caused by using versions contained within these branches. 
 
 Compatibility:
-	PHP 4 - PHP 7	|  MySQL 3.2 - 5.5 	MySQLi from 4.1 ( @ >=PHP 4.4.9)
+	PHP 4 - PHP 7	|  MySQL |  MariaDB  |  PostgreSQL
  	
 Joomla! Version Support:
 	 | J!4.x | J!3.x | J!2.5.xx | J!1.7.xx | J!1.6.xx | J1.5.xx |  J!1.0.xx  | 

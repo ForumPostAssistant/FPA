@@ -73,6 +73,7 @@
 	define ( '_FPA_EXTMOD_TITLE', 'Modules' );
 	define ( '_FPA_EXTPLG_TITLE', 'Plugins' );
 	define ( '_FPA_TMPL_TITLE', 'Templates' );
+	define ( '_FPA_EXTLIB_TITLE', 'Libraries' );
 	// snapshot definitions
 	define ( '_FPA_SUPPHP', 'PHP Supports');
 	define ( '_FPA_SUPSQL', 'Database Supports');
@@ -131,6 +132,7 @@
 	define ( '_FPA_SHOWDBT', 'Show database table statistics' );
 	define ( '_FPA_SHOWCOM', 'Show Components' );
 	define ( '_FPA_SHOWMOD', 'Show Modules' );
+	define ( '_FPA_SHOWLIB', 'Show Libraries' );    
 	define ( '_FPA_SHOWPLG', 'Show Plugins' );
 	define ( '_FPA_SHOWCEX', 'Show Core Extensions' );
 	define ( '_FPA_INFOPRI', 'Information Privacy' );
@@ -384,6 +386,16 @@
 
 	}
 
+
+	if ( @$_POST['showLibraries'] == 0 AND  @$_POST['doIT'] == 1  ) {
+		$showLibraries  = 0;
+
+	} else {
+		$showLibraries = 1; 
+
+	}
+
+
 	if ( @$_POST['showPlugins'] == 0 AND  @$_POST['doIT'] == 1  ) {
 		$showPlugins  = 0;
 
@@ -484,7 +496,8 @@
 	$component['ARRNAME']       = _FPA_EXTCOM_TITLE;
 	$module['ARRNAME']          = _FPA_EXTMOD_TITLE;
 	$plugin['ARRNAME']          = _FPA_EXTPLG_TITLE;
-	$template['ARRNAME']        = _FPA_TMPL_TITLE;
+	$template['ARRNAME']        = _FPA_TMPL_TITLE;                 
+	$library['ARRNAME']         = _FPA_EXTLIB_TITLE;
 ?>
 
 
@@ -1887,7 +1900,7 @@
 			$database['dbERROR'] = mysql_errno() .':'. mysql_error();
 
     @mysql_select_db( $instance['configDBNAME'], $dBconn );
-    $sql = "select name,type,enabled from ".$instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template'";
+    $sql = "select name,type,enabled from ".$instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template' or type='library'";
     $result = @mysql_query($sql);
     if ($result <> false) {
     if (mysql_num_rows($result) > 0) {
@@ -1993,7 +2006,7 @@
 			if (function_exists('mysqli_connect')) {
 			$dBconn = @new mysqli( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'], $instance['configDBNAME'] );
 			$database['dbERROR'] = mysqli_connect_errno( $dBconn ) .':'. mysqli_connect_error( $dBconn );
-			$sql = "select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template'";
+			$sql = "select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template' or type='library'";
 			$result = @$dBconn->query($sql);
 			if ($result <> false) {
     			if ($result->num_rows > 0) {
@@ -2106,7 +2119,7 @@
 		  $database['dbERROR'] = '0:';
 
 		  try {
-		  $sql = $dBconn->prepare("select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template'");
+		  $sql = $dBconn->prepare("select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template' or type='library'");
 		  $sql->execute();
 		  $exset = $sql->setFetchMode(PDO::FETCH_ASSOC);
 		  $exset = $sql->fetchAll();
@@ -2199,7 +2212,7 @@
             $database['dbERROR'] = '0:';
             $postgresql = _FPA_Y;
 
-            $sql = @pg_query($dBconn, "select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template'");                            
+            $sql = @pg_query($dBconn, "select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template' or type='library'");                            
             $exset = @pg_fetch_all($sql);  
 
             $sql = @pg_query($dBconn, "select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template");                            
@@ -2295,7 +2308,7 @@
 		  $database['dbERROR'] = '0:';
 		  $postgresql = _FPA_Y;
 		  try {
-		  $sql = $dBconn->prepare("select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template'");
+		  $sql = $dBconn->prepare("select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template' or type='library'");
 		  $sql->execute();
 		  $exset = $sql->setFetchMode(PDO::FETCH_ASSOC);
 		  $exset = $sql->fetchAll();
@@ -2425,7 +2438,7 @@
 		// is to simply re-assign the $arrname back to itself inside the function, so it is
 		//no-longer a reference
 		function getDetails( $path, &$arrname, $loc, $level = 0 ) {
-			global $component, $module, $plugin, $template;
+			global $component, $module, $plugin, $template, $library;
 
 			// fix for PHP5.3 pass-variable-by-reference depreciation
 			$arrname = $arrname;
@@ -2472,7 +2485,7 @@
 
 
 								if ( preg_match( '#<name>(.*)</name>#', $content, $name ) ) {
-									$arrname[$loc][$cDir]['name']   = strip_tags( substr( $name[1], 0, 30 ) );
+									$arrname[$loc][$cDir]['name']   = strip_tags( substr( $name[1], 0, 35 ) );
 
 								} else {
 									$arrname[$loc][$cDir]['name']   = _FPA_U .' ('. $cDir . ') ';
@@ -2553,7 +2566,7 @@
 
 		@getDetails( 'templates', $template, 'SITE' );
 		@getDetails( 'administrator/templates', $template, 'ADMIN' );
-
+		@getDetails( 'libraries', $library, 'SITE' );
 
 	} // end if instanceFOUND
 ?>
@@ -3005,7 +3018,7 @@ function recursive_array_search($needle,$haystack) {
 		$fpa['supportENV']['minPHP']        = '7.0.0';
 		$fpa['supportENV']['minSQL']        = '5.1.0';
 		$fpa['supportENV']['maxPHP']        = '7.5.0';  
-		$fpa['supportENV']['maxSQL']        = '5.8.0'; 
+		$fpa['supportENV']['maxSQL']        = '8.5.0'; 
 		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
 		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
 		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
@@ -3019,7 +3032,7 @@ function recursive_array_search($needle,$haystack) {
 		$fpa['supportENV']['minPHP']        = '5.3.10';
 		$fpa['supportENV']['minSQL']        = '5.1.0';
 		$fpa['supportENV']['maxPHP']        = '7.5.0';  
-		$fpa['supportENV']['maxSQL']        = '5.8.0'; 
+		$fpa['supportENV']['maxSQL']        = '8.5.0'; 
 		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
 		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
 		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
@@ -3033,7 +3046,7 @@ function recursive_array_search($needle,$haystack) {
 		$fpa['supportENV']['minPHP']        = '5.3.10';
 		$fpa['supportENV']['minSQL']        = '5.1.0';
 		$fpa['supportENV']['maxPHP']        = '7.5.0';  
-		$fpa['supportENV']['maxSQL']        = '5.8.0'; 
+		$fpa['supportENV']['maxSQL']        = '8.5.0'; 
 		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
 		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
 		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
@@ -3074,7 +3087,7 @@ function recursive_array_search($needle,$haystack) {
 	} elseif ( @$instance['cmsRELEASE']  == '3.3' or @$instance['cmsRELEASE']  == '3.4')  {
 		$fpa['supportENV']['minPHP']        = '5.3.10';
 		$fpa['supportENV']['minSQL']        = '5.1.0';
-		$fpa['supportENV']['maxPHP']        = '5.6.30';  
+		$fpa['supportENV']['maxPHP']        = '6.0.0';  
 		$fpa['supportENV']['maxSQL']        = '5.8.0'; 
 		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
 		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
@@ -3127,7 +3140,7 @@ function recursive_array_search($needle,$haystack) {
 	} elseif ( @$instance['cmsRELEASE'] == '3.0' ) {
 		$fpa['supportENV']['minPHP']        = '5.3.1';
 		$fpa['supportENV']['minSQL']        = '5.1.0';
-		$fpa['supportENV']['maxPHP']        = '5.3.6';  // latest release?
+		$fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
 		$fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
 		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
 		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
@@ -3594,6 +3607,12 @@ function recursive_array_search($needle,$haystack) {
 									$selectshowModules = 'CHECKED'; // changed to checked - Phil - 4-20-12
 								}
 
+								if ( @$_POST['showLibraries'] == 0 AND  @$_POST['doIT'] == 1  ) {
+									$selectshowLibraries = '';
+								} else {
+									$selectshowLibraries = 'CHECKED'; 
+								}
+
 								if ( @$_POST['showPlugins'] == 0 AND  @$_POST['doIT'] == 1  ) {
 									$selectshowPlugins = '';
 								} else {
@@ -3617,7 +3636,8 @@ function recursive_array_search($needle,$haystack) {
 								<input <?php echo $dis; ?> style="font-size:9px;" type="checkbox" name="showTables" value="1" <?php echo $selectshowTables ?> /><span class="normal"><?php echo _FPA_SHOWDBT; ?></span><br />
 								<input <?php echo $dis; ?> style="font-size:9px;" type="checkbox" name="showComponents" value="1" <?php echo $selectshowComponents ?> /><span class="normal"><?php echo _FPA_SHOWCOM; ?></span><br />
 								<input <?php echo $dis; ?> style="font-size:9px;" type="checkbox" name="showModules" value="1" <?php echo $selectshowModules ?> /><span class="normal"><?php echo _FPA_SHOWMOD; ?></span><br />
-								<input <?php echo $dis; ?> style="font-size:9px;" type="checkbox" name="showPlugins" value="1" <?php echo $selectshowPlugins ?> /><span class="normal"><?php echo _FPA_SHOWPLG; ?></span><br />
+								<input <?php echo $dis; ?> style="font-size:9px;" type="checkbox" name="showLibraries" value="1" <?php echo $selectshowLibraries ?> /><span class="normal"><?php echo _FPA_SHOWLIB; ?></span><br />			
+            					<input <?php echo $dis; ?> style="font-size:9px;" type="checkbox" name="showPlugins" value="1" <?php echo $selectshowPlugins ?> /><span class="normal"><?php echo _FPA_SHOWPLG; ?></span><br />
 								<input <?php echo $dis; ?> style="font-size:9px;" type="checkbox" name="showCoreEx" value="1" <?php echo $selectshowCoreEx ?> /><span class="normal"><?php echo _FPA_SHOWCEX; ?></span><br />
 							</div>
 
@@ -4096,37 +4116,44 @@ function recursive_array_search($needle,$haystack) {
 							if ( $showCoreEx == 1) {
 								echo "\r\n";
 								echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
+                                if ( isset ($component['SITE'])) {
 									foreach ( $component['SITE'] as $key => $show ) {
 										if (isset($exset[0]['name'])) { 
 										$extarrkey = recursive_array_search($show['name'], $exset);
+                                        if ($extarrkey  !== False) {
 										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '' ;}
+										} else { $extenabled = '?' ;}
+										} else { $extenabled = '?' ;}
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '';
+										$extenabled = '?';
 										}
 										if ( $show['type'] == _FPA_JCORE)
 										{                      
 										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
 										}
 									}
+								}
                                echo '[/color]';
 							}
 								echo "\r\n";
 								echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
-
+                                if ( isset ($component['SITE'])) {
 									foreach ( $component['SITE'] as $key => $show ) {
 										if (isset($exset[0]['name'])) { 
 										$extarrkey = recursive_array_search($show['name'], $exset);
+                                        if ($extarrkey  !== False) {
 										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '' ;}
+										} else { $extenabled = '?' ;}
+										} else { $extenabled = '?' ;}
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '';
+										$extenabled = '?';
 										}
 										if ( $show['type'] == _FPA_3PD)
 										{                      
 										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
 										}
-										}
+									}
+								}
                                           echo '[/color]';
 								echo "\r\n\r\n";
 
@@ -4134,37 +4161,44 @@ function recursive_array_search($needle,$haystack) {
 							if ( $showCoreEx == 1) {
 								echo "\r\n";
 								echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
+                                if ( isset ($component['ADMIN'])) {
 									foreach ( $component['ADMIN'] as $key => $show ) {
 										if (isset($exset[0]['name'])) { 
 										$extarrkey = recursive_array_search($show['name'], $exset);
+                                        if ($extarrkey  !== False) {
 										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '' ;}
+										} else { $extenabled = '?' ;}
+										} else { $extenabled = '?' ;}
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '';
+										$extenabled = '?';
 										}
 										if ( $show['type'] == _FPA_JCORE)
 										{                      
 										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
 										}
 									}
+								}
                                echo '[/color]';
 							}
 								echo "\r\n";
 								echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
-
+                                if ( isset ($component['ADMIN'])) {
 									foreach ( $component['ADMIN'] as $key => $show ) {
 										if (isset($exset[0]['name'])) { 
 										$extarrkey = recursive_array_search($show['name'], $exset);
+                                        if ($extarrkey  !== False) {
 										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '' ;}
+										} else { $extenabled = '?' ;}
+										} else { $extenabled = '?' ;}
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '';
+										$extenabled = '?';
 										}
 										if ( $show['type'] == _FPA_3PD)
 										{                      
 										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
 										}
-										}
+									}
+								}
                                           echo '[/color]';
 			  			}
 								echo "\r\n\r\n";
@@ -4174,37 +4208,44 @@ function recursive_array_search($needle,$haystack) {
 							if ( $showCoreEx == 1) {
 								echo "\r\n";
 								echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
+                                if ( isset ($module['SITE'])) {
 									foreach ( $module['SITE'] as $key => $show ) {
 										if (isset($exset[0]['name'])) { 
 										$extarrkey = recursive_array_search($show['name'], $exset);
+                                        if ($extarrkey  !== False) {
 										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '' ;}
+										} else { $extenabled = '?' ;}
+										} else { $extenabled = '?' ;}
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '';
+										$extenabled = '?';
 										}
 										if ( $show['type'] == _FPA_JCORE)
 										{                      
 										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
 										}
 									}
+								}
                                echo '[/color]';
 							}
 								echo "\r\n";
 								echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
-
+                                if ( isset ($module['SITE'])) {
 									foreach ( $module['SITE'] as $key => $show ) {
 										if (isset($exset[0]['name'])) { 
 										$extarrkey = recursive_array_search($show['name'], $exset);
+                                        if ($extarrkey  !== False) {
 										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '' ;}
+										} else { $extenabled = '?' ;}
+										} else { $extenabled = '?' ;}
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '';
+										$extenabled = '?';
 										}
 										if ( $show['type'] == _FPA_3PD)
 										{                      
 										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
 										}
-										}
+									}
+								}
                                           echo '[/color]';
 								echo "\r\n\r\n";
 
@@ -4212,77 +4253,140 @@ function recursive_array_search($needle,$haystack) {
 							if ( $showCoreEx == 1) {
 								echo "\r\n";
 								echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
+                                if ( isset ($module['ADMIN'])) {
 									foreach ( $module['ADMIN'] as $key => $show ) {
 										if (isset($exset[0]['name'])) { 
 										$extarrkey = recursive_array_search($show['name'], $exset);
+                                        if ($extarrkey  !== False) {
 										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '' ;}
+										} else { $extenabled = '?' ;}
+										} else { $extenabled = '?' ;}
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '';
+										$extenabled = '?';
 										}
 										if ( $show['type'] == _FPA_JCORE)
 										{                      
 										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
 										}
 									}
+								}
                                echo '[/color]';
 							}
 								echo "\r\n";
 								echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
-
+                                if ( isset ($module['ADMIN'])) {
 									foreach ( $module['ADMIN'] as $key => $show ) {
 										if (isset($exset[0]['name'])) { 
 										$extarrkey = recursive_array_search($show['name'], $exset);
+                                        if ($extarrkey  !== False) {
 										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '' ;}
+										} else { $extenabled = '?' ;}
+										} else { $extenabled = '?' ;}
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '';
+										$extenabled = '?';
 										}
 										if ( $show['type'] == _FPA_3PD)
 										{                      
 										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
 										}
-										}
-                                          echo '[/color]';
+									}
+								}
+                                echo '[/color]';
 			  			}
 								echo "\r\n\r\n";                              
+
+
+							if ( @$_POST['showLibraries'] == '1' ) {
+								echo '[b]'. _FPA_EXTLIB_TITLE .' :: '. _FPA_SITE .' :: [/b]';
+							if ( @$_POST[showCoreEx] == '1') {
+								echo "\r\n";
+								echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
+                                if ( isset ($library['SITE'])) {
+									foreach ( $library['SITE'] as $key => $show ) {
+										if (isset($exset[0]['name'])) { 
+										$extarrkey = recursive_array_search($show['name'], $exset);
+                                        if ($extarrkey  !== False) {
+										$extenabled = $exset[$extarrkey]['enabled'];
+										} else { $extenabled = '?' ;}
+										} else { $extenabled = '?' ;}
+										if ($extenabled <> 0 AND $extenabled <> 1 ){
+										$extenabled = '?';
+										}
+										if ( $show['type'] == _FPA_JCORE)
+										{                      
+										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
+										}
+									}
+								}
+                               echo '[/color]';
+							}
+								echo "\r\n";
+								echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
+                                if ( isset ($library['SITE'])) {
+									foreach ( $library['SITE'] as $key => $show ) {
+										if (isset($exset[0]['name'])) { 
+										$extarrkey = recursive_array_search($show['name'], $exset);
+                                        if ($extarrkey  !== False) {
+										$extenabled = $exset[$extarrkey]['enabled'];
+										} else { $extenabled = '?' ;}
+										} else { $extenabled = '?' ;}
+										if ($extenabled <> 0 AND $extenabled <> 1 ){
+										$extenabled = '?';
+										}
+										if ( $show['type'] == _FPA_3PD)
+										{                      
+										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
+										}
+									}
+								}
+                                    echo '[/color]';
+			  			    }
+								echo "\r\n\r\n";
 
 							if ( @$_POST['showPlugins'] == '1' ) {
 								echo '[b]'. _FPA_EXTPLG_TITLE .' :: '. _FPA_SITE .' :: [/b]';
 							if ( $showCoreEx == 1) {
 								echo "\r\n";
 								echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
+                                if ( isset ($plugin['SITE'])) {
 									foreach ( $plugin['SITE'] as $key => $show ) {
 										if (isset($exset[0]['name'])) { 
 										$extarrkey = recursive_array_search($show['name'], $exset);
+                                        if ($extarrkey  !== False) {
 										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '' ;}
+										} else { $extenabled = '?' ;}
+										} else { $extenabled = '?' ;}
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '';
+										$extenabled = '?';
 										}
 										if ( $show['type'] == _FPA_JCORE)
 										{                      
 										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
 										}
 									}
+								}
                                echo '[/color]';
 							}
 								echo "\r\n";
 								echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
+                                if ( isset ($plugin['SITE'])) {
 									foreach ( $plugin['SITE'] as $key => $show ) {
 										if (isset($exset[0]['name'])) { 
 										$extarrkey = recursive_array_search($show['name'], $exset);
+                                        if ($extarrkey  !== False) {
 										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '' ;}
+										} else { $extenabled = '?' ;}
+										} else { $extenabled = '?' ;}
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '';
+										$extenabled = '?';
 										}
 										if ( $show['type'] == _FPA_3PD)
 										{                      
 										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
 										}
-										}
-                                          echo '[/color]';
+									}
+								}
+                                echo '[/color]';
 						} // end if showComponents, Modules, Plugins, if cmsFOUND
 							echo '[/size][/quote]';
 					} // end showProtected != strict
@@ -4298,19 +4402,23 @@ function recursive_array_search($needle,$haystack) {
 								} else {
 
 									echo '[b]'. _FPA_TMPL_TITLE .' :: '. _FPA_SITE .' :: [/b]';
-
+                                    if ( isset ($template['SITE'])) {
 										foreach ( $template['SITE'] as $key => $show ) {                    
 										if (substr($instance['cmsRELEASE'],0,1) <> 1 AND @$database['dbHOSTINFO'] <> _FPA_U OR $postgresql = _FPA_Y) { 
 										if (isset($exset[0]['name'])) { 
 										  $extarrkey = recursive_array_search($show['name'], $exset);
+                                          if ($extarrkey  !== False) {
 										  $extenabled = $exset[$extarrkey]['enabled'];
-										  } else { $extenabled = '' ;}
+										  } else { $extenabled = '?' ;}
+										  } else { $extenabled = '?' ;}
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										  $extenabled = '';
+										  $extenabled = '?';
 										}
 										if (isset($tmpldef[0]['template'])) { 
 										$extarrkey = recursive_array_search($show['name'], $tmpldef);
+                                        if ($extarrkey  !== False) {
 										$deftempl = $tmpldef[$extarrkey]['home'];    
+                                        } else { $deftempl = '' ;}
 										} else { $deftempl = '' ;}
 										if ($deftempl == 1 ){                    
 										  $bldop = '[b][u]';
@@ -4332,26 +4440,29 @@ function recursive_array_search($needle,$haystack) {
 										} else {
 										echo '[color=Blue]'. $bldop . $show['name'] .' ('. $show['version'] .')' . $bldcl . '[/color]  '.$extenabled.' | ';
 										}
+									}
 								}
 				 			}
 									echo "\r\n";
 
 									echo '[b]'. _FPA_TMPL_TITLE .' :: '. _FPA_ADMIN .' :: [/b]';
-
+                                    if ( isset ($template['ADMIN'])) {
 										foreach ( $template['ADMIN'] as $key => $show ) {                    
 										if (substr($instance['cmsRELEASE'],0,1) <> 1 AND @$database['dbHOSTINFO'] <> _FPA_U OR $postgresql = _FPA_Y ) { 
 										  if (isset($exset[0]['name'])) { 
 										    $extarrkey = recursive_array_search($show['name'], $exset);
+                                            if ($extarrkey  !== False) {
 										    $extenabled = $exset[$extarrkey]['enabled'];
-										  } else { 
-										    $extenabled = '' ;
-										}
+										  } else { $extenabled = '?' ;}
+										  } else { $extenabled = '?' ;}
 										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										  $extenabled = '';
+										  $extenabled = '?';
 										}
 										if (isset($tmpldef[0]['template'])) { 
 										$extarrkey = recursive_array_search($show['name'], $tmpldef);
+                                        if ($extarrkey  !== False) {
 										$deftempl = $tmpldef[$extarrkey]['home'];    
+                                        } else { $deftempl = '' ;}
 										} else { $deftempl = '' ;}
 										if ($deftempl == 1 ){                    
 										  $bldop = '[b][u]';
@@ -4373,6 +4484,7 @@ function recursive_array_search($needle,$haystack) {
 										} else {
 										echo '[color=Blue]'. $bldop . $show['name'] .' ('. $show['version'] .')' . $bldcl . '[/color]  '.$extenabled.' | ';
 										}
+									}
 									}
 							}
 						}
@@ -6096,10 +6208,12 @@ function recursive_array_search($needle,$haystack) {
 			foreach ( $component['SITE'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
+                    if ($extarrkey  !== False) {
 					$extenabled = $exset[$extarrkey]['enabled'];
-				} else { $extenabled = '' ;}
+				} else { $extenabled = '?' ;}
+				} else { $extenabled = '?' ;}
 				if ($extenabled <> 0 AND $extenabled <> 1 ){
-					$extenabled = '';
+					$extenabled = '?';
 				}
 				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
 					$typeColor = '404040';
@@ -6141,10 +6255,12 @@ function recursive_array_search($needle,$haystack) {
 			foreach ( $component['ADMIN'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
+                    if ($extarrkey  !== False) {
 					$extenabled = $exset[$extarrkey]['enabled'];
-				} else { $extenabled = '' ;}
+				} else { $extenabled = '?' ;}
+				} else { $extenabled = '?' ;}
 				if ($extenabled <> 0 AND $extenabled <> 1 ){
-					$extenabled = '';
+					$extenabled = '?';
 				}
 				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
 					$typeColor = '404040';
@@ -6213,10 +6329,12 @@ function recursive_array_search($needle,$haystack) {
 			foreach ( $module['SITE'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
+                    if ($extarrkey  !== False) {
 					$extenabled = $exset[$extarrkey]['enabled'];
-				} else { $extenabled = '' ;}
+				} else { $extenabled = '?' ;}
+				} else { $extenabled = '?' ;}
 				if ($extenabled <> 0 AND $extenabled <> 1 ){
-					$extenabled = '';
+					$extenabled = '?';
 				}
 				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
 					$typeColor = '404040';
@@ -6259,10 +6377,12 @@ function recursive_array_search($needle,$haystack) {
 			foreach ( $module['ADMIN'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
+                    if ($extarrkey  !== False) {
 					$extenabled = $exset[$extarrkey]['enabled'];
-				} else { $extenabled = '' ;}
+				} else { $extenabled = '?' ;}
+				} else { $extenabled = '?' ;}
 				if ($extenabled <> 0 AND $extenabled <> 1 ){
-					$extenabled = '';
+					$extenabled = '?';
 				}
 				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
 					$typeColor = '404040';
@@ -6300,6 +6420,79 @@ function recursive_array_search($needle,$haystack) {
 
 
 <?php
+	//Libraries
+	if ( $showLibraries == '1' ) {
+
+		echo '<div class="section-information">';
+
+		echo '<div class="section-title" style="text-align:center;">'. $library['ARRNAME'] .' :: '. _FPA_SITE .'</div>';
+
+		echo '<div class="column-title-container" style="width:99%;margin: 0px auto;clear:both;display:block;">';
+		echo '<div class="column-title" style="width:22%;float:left;text-align:left;">'. _FPA_TNAM .'</div>';
+		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_VER .'</div>';
+		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_CRE .'</div>';
+		echo '<div class="column-title" style="width:18%;float:left;text-align:center;">'. _FPA_AUTH .'</div>';
+		echo '<div class="column-title" style="width:18%;float:left;text-align:center;">'. _FPA_ADDR .'</div>';
+		echo '<div class="column-title" style="width:5%;float:left;text-align:center;">'. _FPA_EN .'</div>';
+		echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_TYPE .'</div>';
+		echo '<div style="clear:both;"></div>';
+		echo '</div>';
+
+
+		echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
+
+
+		echo '<div class="mini-content-box-small" style="">';
+		if ( $instance['instanceFOUND'] == _FPA_N ) { // an instance wasn't found in the initial checks, so no folders to check
+			echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
+			echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
+			echo '</div>';
+		} else
+		// Site libraries 
+			foreach ( $library['SITE'] as $key => $show ) {
+				if (isset($exset[0]['name'])) { 
+					$extarrkey = recursive_array_search($show['name'], $exset);
+                    if ($extarrkey  !== False) {
+					$extenabled = $exset[$extarrkey]['enabled'];
+				} else { $extenabled = '?' ;}
+				} else { $extenabled = '?' ;}
+				if ($extenabled <> 0 AND $extenabled <> 1 ){
+					$extenabled = '?';
+				}
+				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
+					$typeColor = '404040';
+					echo '<div><div style="float:left;width:22%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:10%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:12%;text-align:center;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;text-align:center;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:18%;text-align:center;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:left;width:5%;text-align:center;color:#'. $typeColor .';">'. $extenabled .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
+
+				} elseif ( $showProtected > 2 ) {
+					$typeColor = '000080';
+					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
+
+				}
+			}
+
+
+		echo '</div></div>';
+
+
+		echo '<br style="clear:both;" />';
+		echo '</div></div>';
+		// end content left block
+
+
+	echo '<div style="clear:both;"></div>';
+
+	showDev( $library );
+	unset ( $key, $show );
+	echo '</div>'; // end half-section container
+
+	echo '<div style="clear:both;"></div>';
+
+	} // end showLibraries
+?>
+
+
+
+<?php
 	//Plugins
 	if ( $showPlugins == '1' ) {
 
@@ -6333,10 +6526,12 @@ function recursive_array_search($needle,$haystack) {
 			foreach ( $plugin['SITE'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
+                    if ($extarrkey  !== False) {
 					$extenabled = $exset[$extarrkey]['enabled'];
-				} else { $extenabled = '' ;}
+				} else { $extenabled = '?' ;}
+				} else { $extenabled = '?' ;}
 				if ($extenabled <> 0 AND $extenabled <> 1 ){
-					$extenabled = '';
+					$extenabled = '?';
 				}
 				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
 					$typeColor = '404040';
@@ -6402,10 +6597,12 @@ function recursive_array_search($needle,$haystack) {
 			foreach ( $template['SITE'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
+                    if ($extarrkey  !== False) {
 					$extenabled = $exset[$extarrkey]['enabled'];
-				} else { $extenabled = '' ;}
+				} else { $extenabled = '?' ;}
+				} else { $extenabled = '?' ;}
 				if ($extenabled <> 0 AND $extenabled <> 1 ){
-					$extenabled = '';
+					$extenabled = '?';
 				}
 				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
 					$typeColor = '404040';
@@ -6447,10 +6644,12 @@ function recursive_array_search($needle,$haystack) {
 			foreach ( $template['ADMIN'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
+                    if ($extarrkey  !== False) {
 					$extenabled = $exset[$extarrkey]['enabled'];
-				} else { $extenabled = '' ;}
+				} else { $extenabled = '?' ;}
+				} else { $extenabled = '?' ;}
 				if ($extenabled <> 0 AND $extenabled <> 1 ){
-					$extenabled = '';
+					$extenabled = '?';
 				}
 				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
 					$typeColor = '404040';

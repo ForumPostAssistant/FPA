@@ -6205,6 +6205,7 @@ function recursive_array_search($needle,$haystack) {
 			echo '</div>';
 		} else
 		// Site components 
+		if ( isset ( $component['SITE'])) {
 			foreach ( $component['SITE'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
@@ -6223,8 +6224,8 @@ function recursive_array_search($needle,$haystack) {
 					$typeColor = '000080';
 					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
 				}
- 		}       
-
+			}       
+		}
 
 		echo '</div></div>';
 
@@ -6252,6 +6253,7 @@ function recursive_array_search($needle,$haystack) {
 			echo '</div>';
 		} else
 		// Admin components
+		if ( isset ( $component['ADMIN'])) {
 			foreach ( $component['ADMIN'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
@@ -6272,7 +6274,7 @@ function recursive_array_search($needle,$haystack) {
 
 				}
 			}
-
+		}
 
 		echo '</div></div>';
 
@@ -6326,6 +6328,7 @@ function recursive_array_search($needle,$haystack) {
 			echo '</div>';
 		} else
 		// Site modules 
+		if ( isset ( $module['SITE'])) {
 			foreach ( $module['SITE'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
@@ -6346,7 +6349,7 @@ function recursive_array_search($needle,$haystack) {
 
 				}
 			}
-
+		}
 
 		echo '</div></div>';
 
@@ -6374,6 +6377,7 @@ function recursive_array_search($needle,$haystack) {
 			echo '</div>';
 		} else
 		// Admin modules 
+		if ( isset ( $module['ADMIN'])) {
 			foreach ( $module['ADMIN'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
@@ -6394,7 +6398,7 @@ function recursive_array_search($needle,$haystack) {
 
 				}
 			}
-
+		}
 
 		echo '</div></div>';
 
@@ -6449,6 +6453,7 @@ function recursive_array_search($needle,$haystack) {
 			echo '</div>';
 		} else
 		// Site libraries 
+		if ( isset ( $library['SITE'])) {
 			foreach ( $library['SITE'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
@@ -6469,7 +6474,7 @@ function recursive_array_search($needle,$haystack) {
 
 				}
 			}
-
+		}
 
 		echo '</div></div>';
 
@@ -6523,6 +6528,7 @@ function recursive_array_search($needle,$haystack) {
 			echo '</div>';
 		} else
 		// Site Plugins 
+		if ( isset ( $plugin['SITE'])) {
 			foreach ( $plugin['SITE'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
@@ -6543,7 +6549,7 @@ function recursive_array_search($needle,$haystack) {
 
 				}
 			}
-
+		}
 		echo '</div></div>';
 
 
@@ -6594,6 +6600,7 @@ function recursive_array_search($needle,$haystack) {
 			echo '</div>';
 		} else
 		// Site templates 
+		if ( isset ( $template['SITE'])) {
 			foreach ( $template['SITE'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
@@ -6614,7 +6621,7 @@ function recursive_array_search($needle,$haystack) {
 
 				}
 			}
-
+		}
 		echo '</div></div>';
 
 
@@ -6641,6 +6648,7 @@ function recursive_array_search($needle,$haystack) {
 			echo '</div>';
 		} else
 		// Admin templates 
+		if ( isset ( $template['ADMIN'])) {
 			foreach ( $template['ADMIN'] as $key => $show ) {
 				if (isset($exset[0]['name'])) { 
 					$extarrkey = recursive_array_search($show['name'], $exset);
@@ -6660,7 +6668,7 @@ function recursive_array_search($needle,$haystack) {
 					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
 				}
 			}
-
+		}
 		echo '</div></div>';
 		echo '<br style="clear:both;" />';
 		echo '</div></div>';

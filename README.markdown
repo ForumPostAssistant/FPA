@@ -1,20 +1,7 @@
 ### Forum Post Assistant (FPA)
 ***
-
-/**_11/02/2014_**
-
-**_Notice:_**
-
-We are not associated in anyway with tip4commit and will NOT accept any monetary amounts from the tip4commit. 
-
-We are also not associated with any similar projects current or future that may solicit monetary amounts in any manner, in any form on our behalf without our explicit control or explicit knowledge and approval.
-
-PhilD13, FPA Project Lead
-
-***
 The **_Forum Post Assistant_** has been designed to assist newcomers to the forum to be able to post relevant system, instance, php and troubleshooting information directly in to a pre-formatted forum post. This should save a few hours of too'ing and fro-ing asking for, and explaining, how to acquire useful information in order to help troubleshoot a problem.
 ***
-
 This process also means that consistent information is gathered and presented in every case, enabling helpers to quickly target information relevant to the specific problem observed by the user.
 
 The idea is to make the information collection, and subsequent posting, as simple as possible for the end user, a simple one page script, automatically collects the information when run in a web-browser and presents the user with the option to include or exclude any site sensitive information before "generating" the post [BB]code that can then be copied and simply pasted in to a new or existing forum post with no other interaction by the user required after posting.

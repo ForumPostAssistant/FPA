@@ -1574,7 +1574,8 @@
 	$phpenv['phpMAXEXECTIME']       = ini_get( 'max_execution_time' );
 	$phpenv['phpMEMLIMIT']          = ini_get( 'memory_limit' );
 	$phpenv['phpDISABLED']          = ini_get( 'disable_functions' );
-
+    $phpenv['phpURLFOPEN']          = ini_get( 'allow_url_fopen' );
+    
 	/** API and ownership related settings ***************************************************/
 	$phpenv['phpAPI']               = php_sapi_name();
 
@@ -3864,7 +3865,7 @@ function recursive_array_search($needle,$haystack) {
 					echo '[b]Session Path '. _FPA_WRITABLE .':[/b] ';
 						if ( $phpenv['phpSESSIONPATHWRITABLE'] == _FPA_Y ) { echo '[color=Green]'. $phpenv['phpSESSIONPATHWRITABLE'] .'[/color] | '; } elseif ( $phpenv['phpSESSIONPATHWRITABLE'] == _FPA_N ) { echo '[color=Red]'. $phpenv['phpSESSIONPATHWRITABLE'] .'[/color] | '; } else { echo '[color=orange]'. $phpenv['phpSESSIONPATHWRITABLE'] .'[/color] | '; }
 
-					echo '[b]Display Errors:[/b] '. $phpenv['phpERRORDISPLAY'] .' | [b]Error Reporting:[/b] '. $phpenv['phpERRORREPORT'] .' | [b]Log Errors To:[/b] '. $phpenv['phpERRLOGFILE'] .' | [b]Last Known Error:[/b] '. @$phpenv['phpLASTERRDATE'] .' | [b]Register Globals:[/b] '. $phpenv['phpREGGLOBAL'] .' | [b]Magic Quotes:[/b] '. $phpenv['phpMAGICQUOTES'] .' | [b]Safe Mode:[/b] '. $phpenv['phpSAFEMODE'] .' | [b]Open Base:[/b] '. $phpenv['phpOPENBASE'] .' | [b]Uploads:[/b] '. $phpenv['phpUPLOADS'] .' | [b]Max. Upload Size:[/b] '. $phpenv['phpMAXUPSIZE'] .' | [b]Max. POST Size:[/b] '. $phpenv['phpMAXPOSTSIZE'] .' | [b]Max. Input Time:[/b] '. $phpenv['phpMAXINPUTTIME'] .' | [b]Max. Execution Time:[/b] '. $phpenv['phpMAXEXECTIME'] .' | [b]Memory Limit:[/b] '. $phpenv['phpMEMLIMIT'];
+					echo '[b]Display Errors:[/b] '. $phpenv['phpERRORDISPLAY'] .' | [b]Error Reporting:[/b] '. $phpenv['phpERRORREPORT'] .' | [b]Log Errors To:[/b] '. $phpenv['phpERRLOGFILE'] .' | [b]Last Known Error:[/b] '. @$phpenv['phpLASTERRDATE'] .' | [b]Register Globals:[/b] '. $phpenv['phpREGGLOBAL'] .' | [b]Magic Quotes:[/b] '. $phpenv['phpMAGICQUOTES'] .' | [b]Safe Mode:[/b] '. $phpenv['phpSAFEMODE'] .' | [b]Allow url fopen:[/b] '. $phpenv['phpURLFOPEN'] .' | [b]Open Base:[/b] '. $phpenv['phpOPENBASE'] .' | [b]Uploads:[/b] '. $phpenv['phpUPLOADS'] .' | [b]Max. Upload Size:[/b] '. $phpenv['phpMAXUPSIZE'] .' | [b]Max. POST Size:[/b] '. $phpenv['phpMAXPOSTSIZE'] .' | [b]Max. Input Time:[/b] '. $phpenv['phpMAXINPUTTIME'] .' | [b]Max. Execution Time:[/b] '. $phpenv['phpMAXEXECTIME'] .' | [b]Memory Limit:[/b] '. $phpenv['phpMEMLIMIT'];
 
 					echo "\r\n\r\n";
 
@@ -4344,7 +4345,7 @@ function recursive_array_search($needle,$haystack) {
 								echo "\r\n\r\n";
 
 							if ( @$_POST['showPlugins'] == '1' ) {
-								echo '[b]'. _FPA_EXTPLG_TITLE .' :: '. _FPA_SITE .' :: [/b]';
+								echo '[b]'. _FPA_EXTPLG_TITLE .' :: [/b]';
 							if ( $showCoreEx == 1) {
 								echo "\r\n";
 								echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
@@ -5450,8 +5451,15 @@ function recursive_array_search($needle,$haystack) {
 
 
 		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;font-weight:bold;padding:1px;padding-right:0px;padding-top:0px;padding-bottom:3px;text-transform:uppercase;">Register Globals:<div style="line-height:9px;text-transform:none!important;float:right;font-size:11px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-bottom-right-radius: 5px;-moz-border-bottom-right-radius: 5px;-webkit-border-bottom-right-radius: 5px;  border-bottom-left-radius: 5px;-moz-border-bottom-left-radius: 5px;-webkit-border-bottom-left-radius: 5px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;border-bottom: 1px solid #42AEC2;">';
+		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Register Globals:<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
 		echo '<span class="normal">'. $phpenv['phpREGGLOBAL'] .'&nbsp;</span>';
+		echo '</div></div>';
+		echo '</div>';
+
+
+		echo '<div class="mini-content-box-small" style="">';
+		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;font-weight:bold;padding:1px;padding-right:0px;padding-top:0px;padding-bottom:3px;text-transform:uppercase;">Allow url fopen:<div style="line-height:9px;text-transform:none!important;float:right;font-size:11px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-bottom-right-radius: 5px;-moz-border-bottom-right-radius: 5px;-webkit-border-bottom-right-radius: 5px;  border-bottom-left-radius: 5px;-moz-border-bottom-left-radius: 5px;-webkit-border-bottom-left-radius: 5px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;border-bottom: 1px solid #42AEC2;">';
+		echo '<span class="normal">'. $phpenv['phpURLFOPEN'] .'&nbsp;</span>';
 		echo '</div></div>';
 		echo '</div>';
 
@@ -6503,7 +6511,7 @@ function recursive_array_search($needle,$haystack) {
 
 		echo '<div class="section-information">';
 
-		echo '<div class="section-title" style="text-align:center;">'. $plugin['ARRNAME'] .' :: '. _FPA_SITE .'</div>';
+		echo '<div class="section-title" style="text-align:center;">'. $plugin['ARRNAME'] .'</div>';
 
 		echo '<div class="column-title-container" style="width:99%;margin: 0px auto;clear:both;display:block;">';
 		echo '<div class="column-title" style="width:22%;float:left;text-align:left;">'. _FPA_TNAM .'</div>';

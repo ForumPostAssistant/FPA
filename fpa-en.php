@@ -4298,7 +4298,7 @@ function recursive_array_search($needle,$haystack) {
 
 
 							if ( @$_POST['showLibraries'] == '1' ) {
-								echo '[b]'. _FPA_EXTLIB_TITLE .' :: '. _FPA_SITE .' :: [/b]';
+								echo '[b]'. _FPA_EXTLIB_TITLE .' :: [/b]';
 							if ( @$_POST[showCoreEx] == '1') {
 								echo "\r\n";
 								echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
@@ -6437,7 +6437,7 @@ function recursive_array_search($needle,$haystack) {
 
 		echo '<div class="section-information">';
 
-		echo '<div class="section-title" style="text-align:center;">'. $library['ARRNAME'] .' :: '. _FPA_SITE .'</div>';
+		echo '<div class="section-title" style="text-align:center;">'. $library['ARRNAME'] .' :: </div>';
 
 		echo '<div class="column-title-container" style="width:99%;margin: 0px auto;clear:both;display:block;">';
 		echo '<div class="column-title" style="width:22%;float:left;text-align:left;">'. _FPA_TNAM .'</div>';

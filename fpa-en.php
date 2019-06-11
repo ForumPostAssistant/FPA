@@ -1574,7 +1574,7 @@
 	$phpenv['phpMAXEXECTIME']       = ini_get( 'max_execution_time' );
 	$phpenv['phpMEMLIMIT']          = ini_get( 'memory_limit' );
 	$phpenv['phpDISABLED']          = ini_get( 'disable_functions' );
-    $phpenv['phpURLFOPEN']          = ini_get( 'allow_url_fopen' );
+	$phpenv['phpURLFOPEN']          = ini_get( 'allow_url_fopen' );
     
 	/** API and ownership related settings ***************************************************/
 	$phpenv['phpAPI']               = php_sapi_name();
@@ -6511,7 +6511,7 @@ function recursive_array_search($needle,$haystack) {
 
 		echo '<div class="section-information">';
 
-		echo '<div class="section-title" style="text-align:center;">'. $plugin['ARRNAME'] .'</div>';
+		echo '<div class="section-title" style="text-align:center;">'. $plugin['ARRNAME'] .' :: </div>';
 
 		echo '<div class="column-title-container" style="width:99%;margin: 0px auto;clear:both;display:block;">';
 		echo '<div class="column-title" style="width:22%;float:left;text-align:left;">'. _FPA_TNAM .'</div>';

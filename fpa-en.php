@@ -7,7 +7,7 @@
 
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
- **  @version 1.4.9 
+ **  @version 1.4.9 Lambrusca
  **  @last updated 13/june/2019
  **  @release Beta
  **  @date 24/06/2011
@@ -34,7 +34,7 @@
 	// Define some basic assistant information
 
 	define ( '_RES', 'Forum Post Assistant' );
-	define ( '_RES_VERSION', '1.4.9 (lambrusco)' );
+	define ( '_RES_VERSION', '1.4.9 (lambrusca' );
 	define ( '_last_updated', '13-June-2019' );
 	define ( '_COPYRIGHT_STMT', ' Copyright &copy 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license

@@ -4,7 +4,6 @@
 
 <?php
 
-
 /**
  **  @package Forum Post Assistant / Bug Report Assistant
  **  @version 1.4.9 Lambrusca

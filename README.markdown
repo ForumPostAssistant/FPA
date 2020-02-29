@@ -24,7 +24,6 @@ Advantages:
 
 This is a "**work in progress**" so let us know if you have questions or wish to help in some way.
 
-<a target="_blank" style="text-decoration:none; color:black; font-size:66%" href="https://www.transifex.net/projects/p/fpa/resource/template/" 
-title="See more information on Transifex.net">Head over to Transifex to help translating</a><br/>
-<img border="0" src="https://www.transifex.net/projects/p/fpa/resource/template/chart/image_png"/><br/>
-<a target="_blank" href="https://www.transifex.net/"><img border="0" src="https://sw.transifex.net/9/static/charts/images/tx-logo-micro.png"/></a>
+<a target="_blank" style="text-decoration:none; color:black; font-size:66%" href="https://crowdin.com/profile/Joomla" 
+title="See more information on Transifex.net">Head over to Crowedin to help translating</a><br/>
+</a>

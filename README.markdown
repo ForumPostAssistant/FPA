@@ -24,6 +24,6 @@ Advantages:
 
 This is a "**work in progress**" so let us know if you have questions or wish to help in some way.
 
-<a target="_blank" style="text-decoration:none; color:black; font-size:66%" href="https://crowdin.com/profile/Joomla" 
-title="See more information on Transifex.net">Head over to Crowedin to help translating</a><br/>
+<a target="_blank" style="text-decoration:none; color:black; font-size:66%" href="https://crowdin.com/project/miscelleanous" 
+title="See more information ">Head over to Crowdin to help translating</a><br/>
 </a>

@@ -33,8 +33,8 @@
 	// Define some basic assistant information
 
 	define ( '_RES', 'Forum Post Assistant' );
-	define ( '_RES_VERSION', '1.5.0 Midden' );
-	define ( '_last_updated', '13-June-2019' );
+	define ( '_RES_VERSION', '1.5.0 (midden)' );
+	define ( '_last_updated', '07-April-2020' );
 	define ( '_COPYRIGHT_STMT', ' Copyright &copy 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. <br> This is free software,
@@ -287,6 +287,10 @@
  	define ( '_FPA_PMISS', 'Password missing' );
  	define ( '_FPA_DEFI', 'Defines' );    
  	define ( '_FPA_DEFIPA', 'Site and Admin config paths not equal' );
+ 	define ( '_FPA_CONF_PREF_TABLE', '#of Tables with config prefix' );
+ 	define ( '_FPA_OTHER_TABLE', '#of other Tables' );
+ 	define ( '_FPA_MSSQL_SUPP', 'Microsoft SQL Server is not supported by the FPA' );
+ 	define ( '_FPA_MYSQLI_CONN', 'PHP function mysqli_connect not found.' );    
 	/** END LANGUAGE STRINGS *****************************************************************/
 
 // ** delete script when done - Phil 8-07-12
@@ -469,7 +473,7 @@
 	$apachereq['mod_dosevasive'] = '';
 	$apachereq['mod_ssl']       = '';
 	$apachereq['mod_qos']       = '';
-	$apachereq[' mod_userdir']  = '';
+	$apachereq['mod_userdir']  = '';
 	$database['ARRNAME']        = _FPA_DB_TITLE;
 	$tables['ARRNAME']          = _FPA_DBTBL_TITLE;
 	$modecheck['ARRNAME']       = _FPA_PERMCHK_TITLE;
@@ -1846,51 +1850,15 @@
 
 
 <?php
-	/** DETERMINE THE MYSQL VERSION AND IF WE CAN CONNECT *************************************
-	** here we try and find out more about MySQL and if we have an installed instance, see if
-	** talk to it and access the database.
+	/** DETERMINE THE DATABASE TYPE AND IF WE CAN CONNECT *************************************
 	*****************************************************************************************/
+	$dbPrefExist = _FPA_N;
+	$dbPrefLen = @strlen($instance['configDBPREF']);
 	$postgresql = _FPA_N;
+	$confPrefTables = 0;
+	$notconfPrefTables = 0;    
 	if ( $instance['instanceCONFIGURED'] == _FPA_Y AND ($instance['configDBCREDOK'] == _FPA_Y OR $instance['configDBCREDOK'] == _FPA_PMISS)) {
 		$database['dbDOCHECKS'] = _FPA_Y;
-
-
-		// !TODO DB PING
-		/**
-			// See if the PHP Functions are available to test for connectivity
-			if ( @$opSystem != 'WIN') {
-
-			if ( function_exists('exec') ) {
-				$hostPing = 1;
-				exec("ping -c 2 ". $cfgARRAY['dbhost'][1] ." 2>&1", $output, $retval);
-			} else if ( function_exists('passthru') ) {
-				$hostPing = 1;
-				passthru("ping -c 2 ". $cfgARRAY['dbhost'][1] ." >/dev/null 2>$0", $retval);
-			} else if ( function_exists('system') ) {
-				$hostPing = 1;
-				system("ping -c 2 ". $cfgARRAY['dbhost'][1] ." >/dev/null 2>$0", $retval);
-			} else {
-				$hostPing = 0;
-				echo '<br /><span class="isOk">ping not attempted, PHP restriciton</span>';
-			}
-
-			} else { // Windows Machines IIS Users, by default have no access to the shell, so the above errors
-			@$hostPing = 0;
-			echo '<br /><span class="isOk">ping not attempted, host restriciton</span>';
-			}
-
-			if ( @$hostPing != 0 ) {
-
-			if ( @$retval != 0 ) {
-				echo '<br />- '. PINGHOST .' <span class="isNo">'. FAIL .'</span>';
-			} else {
-				echo '<br />- '. PINGHOST .' <span class="isYes">'. SUCCESS.'</span>';
-			}
-
-			}
-		**/
-		// try and establish if we can talk to the dBase server with a ping, then try and connect and ping with mysql_ping
-
 
 		// try and connect to the database server and table-space, using the database_host variable in the configuration.php
 		// for J!1.0, it's not in the config, so we have assumed mysql, as mysqli wasn't available during it's support life-time
@@ -1955,6 +1923,12 @@
 						$rowCount++;
 
 						$tables[$row['Name']]['TABLE'] = $row['Name'];
+                        // count tables with/without same prefix as in config
+                        if(substr($row['Name'] , 0 , $dbPrefLen  ) === $instance['configDBPREF'] ) {
+                            $confPrefTables = $confPrefTables + 1 ;
+                        } else {
+                            $notconfPrefTables = $notconfPrefTables + 1 ;    
+                        }
 
 						$table_size = ( $row[ 'Data_length' ] + $row[ 'Index_length' ] ) / 1024;
 						$tables[$row['Name']]['SIZE'] = sprintf( '%.2f', $table_size );
@@ -2057,6 +2031,12 @@
 
 						$tables[$row['Name']]['TABLE']  = $row['Name'];
 
+                        // count tables with/without same prefix as in config
+                        if(substr($row['Name'] , 0 , $dbPrefLen  ) === $instance['configDBPREF'] ) {
+                            $confPrefTables = $confPrefTables + 1 ;
+                        } else {
+                            $notconfPrefTables = $notconfPrefTables + 1 ;    
+                        }
 						$table_size = ($row[ 'Data_length' ] + $row[ 'Index_length' ]) / 1024;
 						$tables[$row['Name']]['SIZE'] = sprintf( '%.2f', $table_size );
 						$database['dbSIZE'] += sprintf( '%.2f', $table_size );
@@ -2100,6 +2080,7 @@
 				$database['dbHOSTSTATS']    = _FPA_U; // latest statistics
 				$database['dbCOLLATION']    = _FPA_U; // database collation
 				$database['dbCHARSET']      = _FPA_U; // database character-set
+				$database['dbERROR']        = _FPA_MYSQLI_CONN;                
 		} // end of dataBase connection routines
 
 
@@ -2164,6 +2145,13 @@
 					while ( $row =  $tblResult->fetch( PDO::FETCH_BOTH )) {
 						$rowCount++;
 						$tables[$row['Name']]['TABLE']  = $row['Name'];
+
+                        // count tables with/without same prefix as in config
+                        if(substr($row['Name'] , 0 , $dbPrefLen  ) === $instance['configDBPREF'] ) {
+                            $confPrefTables = $confPrefTables + 1 ;
+                        } else {
+                            $notconfPrefTables = $notconfPrefTables + 1 ;    
+                        }
 						$table_size = ($row[ 'Data_length' ] + $row[ 'Index_length' ]) / 1024;
 						$tables[$row['Name']]['SIZE'] = sprintf( '%.2f', $table_size );
 						$database['dbSIZE'] += sprintf( '%.2f', $table_size );
@@ -2240,6 +2228,13 @@
 					while ( $row =  pg_fetch_array( $tblResult )) {
 						$rowCount++;
 						$tables[$row['name']]['TABLE']  = $row['name'];
+
+                         // count tables with/without same prefix as in config
+                        if(substr($row['name'] , 0 , $dbPrefLen  ) === $instance['configDBPREF'] ) {
+                            $confPrefTables = $confPrefTables + 1 ;
+                        } else {
+                            $notconfPrefTables = $notconfPrefTables + 1 ;    
+                        }
 						$cr = pg_fetch_array(pg_query($dBconn," select count(*) from  " . $tables[$row['name']]['TABLE'] ."" )) ;
 						$table_size = ($row[ 'size' ] ) / 1024;
 						$tables[$row['name']]['SIZE'] = sprintf( '%.2f', $table_size );
@@ -2347,6 +2342,13 @@
 					while ( $row =  $tblResult->fetch( PDO::FETCH_BOTH )) {
 						$rowCount++;
 						$tables[$row['name']]['TABLE']  = $row['name'];
+
+                        // count tables with/without same prefix as in config
+                        if(substr($row['name'] , 0 , $dbPrefLen  ) === $instance['configDBPREF'] ) {
+                            $confPrefTables = $confPrefTables + 1 ;
+                        } else {
+                            $notconfPrefTables = $notconfPrefTables + 1 ;    
+                        }
                         $crsql = $dBconn->query( " select count(*) from  " . $tables[$row['name']]['TABLE'] ."" );
 						$cr = $crsql->fetch( PDO::FETCH_BOTH );
 						$table_size = ($row[ 'size' ] ) / 1024;
@@ -2389,6 +2391,15 @@
 		} 
          
 
+		} elseif ( $instance['configDBTYPE'] == 'sqlsrv')  {
+				$database['dbHOSTSERV']     = _FPA_U; // SQL server version
+				$database['dbHOSTINFO']     = _FPA_U; // connection type to dB
+				$database['dbHOSTPROTO']    = _FPA_U; // server protocol type
+				$database['dbHOSTCLIENT']   = _FPA_U; // client library version
+				$database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
+				$database['dbHOSTSTATS']    = _FPA_U; // latest statistics
+				$database['dbCOLLATION']    = _FPA_U;
+				$database['dbCHARSET']      = _FPA_U;
 		} else {
 				$database['dbHOSTSERV']     = _FPA_U; // SQL server version
 				$database['dbHOSTINFO']     = _FPA_U; // connection type to dB
@@ -3015,10 +3026,10 @@ function recursive_array_search($needle,$haystack) {
 	
 		
 	if  (@$instance['cmsRELEASE'] >= '4.0') {
-		$fpa['supportENV']['minPHP']        = '7.0.0';
-		$fpa['supportENV']['minSQL']        = '5.1.0';
-		$fpa['supportENV']['maxPHP']        = '7.5.0';  
-		$fpa['supportENV']['maxSQL']        = '8.5.0'; 
+		$fpa['supportENV']['minPHP']        = '7.2.5';
+		$fpa['supportENV']['minSQL']        = '5.6.0';
+		$fpa['supportENV']['maxPHP']        = '8.0.0';  
+		$fpa['supportENV']['maxSQL']        = '9.0.0'; 
 		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
 		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
 		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
@@ -3031,8 +3042,8 @@ function recursive_array_search($needle,$haystack) {
 	} elseif  (@$instance['cmsRELEASE'] == '3.10') {
 		$fpa['supportENV']['minPHP']        = '5.3.10';
 		$fpa['supportENV']['minSQL']        = '5.1.0';
-		$fpa['supportENV']['maxPHP']        = '7.5.0';  
-		$fpa['supportENV']['maxSQL']        = '8.5.0'; 
+		$fpa['supportENV']['maxPHP']        = '8.0.0';  
+		$fpa['supportENV']['maxSQL']        = '9.0.0'; 
 		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
 		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
 		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
@@ -3328,7 +3339,7 @@ function recursive_array_search($needle,$haystack) {
 			}
                          
 			//Added this elseif to give the ok for MariaDB -- PhilD 03-17-17
-			elseif (@$output_array[0] == "MariaDB") {
+			elseif (strtoupper(@$output_array[0]) == "MARIADB") {
 				echo '<div class="normal-note"><span class="ok">'. _FPA_MDB .'</span></div>';
 				$snapshot['sqlSUP4J'] = _FPA_Y;
 			}
@@ -3786,12 +3797,7 @@ function recursive_array_search($needle,$haystack) {
 					       echo '[color=Red]'. _FPA_DEFIPA .'[/color]  | ';
 					   }
 					}
-
-            if ( $_POST['showProtected'] == '1' ) {
-  						echo '[b]'. _FPA_OWNER .':[/b] '. $instance['configOWNER']['name'] .' (uid: '. isset($instance['configOWNER']['uid']) .'/gid: '. isset($instance['configOWNER']['gid']) .') | [b]'. _FPA_GROUP .':[/b] '. $instance['configGROUP']['name'] .' (gid: '. isset($instance['configGROUP']['gid']) .') | [b]Valid For:[/b] '. $instance['configVALIDFOR'];
-              } else {
-  						echo '[b]'. _FPA_OWNER .':[/b]  [color=orange]--'. _FPA_HIDDEN .'--[/color] . (uid: '. isset($instance['configOWNER']['uid']) .'/gid: '. isset($instance['configOWNER']['gid']) .') | [b]'. _FPA_GROUP .':[/b]  [color=orange]--'. _FPA_HIDDEN .'--[/color]  (gid: '. isset($instance['configGROUP']['gid']) .') | [b]Valid For:[/b] '. $instance['configVALIDFOR'];
-              } 
+               
 					echo "\r\n";
 
 					echo '[b]'. _FPA_CFG .' '. _FPA_OPTS .' :: Offline:[/b] '. $instance['configOFFLINE'] .' | [b]SEF:[/b] '. $instance['configSEF'] .' | [b]SEF Suffix:[/b] '. $instance['configSEFSUFFIX'] .' | [b]SEF ReWrite:[/b] '. $instance['configSEFRWRITE'] .' | ';
@@ -3832,15 +3838,10 @@ function recursive_array_search($needle,$haystack) {
 					}
 					echo "\r\n\r\n";
 
-					if ( $showProtected <> 1 ) {
-					echo '[b]'. _FPA_HOST .' '. _FPA_CFG .' :: OS:[/b] '. $system['sysPLATOS'] .' |  [b]OS '._FPA_VER.':[/b] '. $system['sysPLATREL'] .' | [b]'. _FPA_TEC .':[/b] '. $system['sysPLATTECH'] .' | [b]'. _FPA_WSVR .':[/b] '. $system['sysSERVSIG'] .' | [b]Encoding:[/b] '. $system['sysENCODING'] .' | [b]'. _FPA_DROOT .':[/b] '. '[color=orange]--'. _FPA_HIDDEN .'--[/color]' .' | [b]'. _FPA_SYS .' TMP '. _FPA_WRITABLE .':[/b] ';
+				
+					echo '[b]'. _FPA_HOST .' '. _FPA_CFG .' :: OS:[/b] '. $system['sysPLATOS'] .' |  [b]OS '._FPA_VER.':[/b] '. $system['sysPLATREL'] .' | [b]'. _FPA_TEC .':[/b] '. $system['sysPLATTECH'] .' | [b]'. _FPA_WSVR .':[/b] '. $system['sysSERVSIG'] .' | [b]Encoding:[/b] '. $system['sysENCODING'] .' |  [b]'. _FPA_SYS .' TMP '. _FPA_WRITABLE .':[/b] ';
 						if ( $system['sysTMPDIRWRITABLE'] == _FPA_Y ) { echo '[color=Green]'; } else { echo '[color=Red]'; }
 						echo $system['sysTMPDIRWRITABLE'] .'[/color] | ';
-					}else{
-					echo '[b]'. _FPA_HOST .' '. _FPA_CFG .' :: OS:[/b] '. $system['sysPLATOS'] .' |  [b]OS '._FPA_VER.':[/b] '. $system['sysPLATREL'] .' | [b]'. _FPA_TEC .':[/b] '. $system['sysPLATTECH'] .' | [b]'. _FPA_WSVR .':[/b] '. $system['sysSERVSIG'] .' | [b]Encoding:[/b] '. $system['sysENCODING'] .' | [b]'. _FPA_DROOT .':[/b] '. $system['sysDOCROOT'] .' | [b]'. _FPA_SYS .' TMP '. _FPA_WRITABLE .':[/b] ';
-						if ( $system['sysTMPDIRWRITABLE'] == _FPA_Y ) { echo '[color=Green]'; } else { echo '[color=Red]'; }
-						echo $system['sysTMPDIRWRITABLE'] .'[/color] | ';
-					}
 
 					if ( function_exists( 'disk_free_space' ) )
 						{
@@ -3868,14 +3869,15 @@ function recursive_array_search($needle,$haystack) {
 
 					echo "\r\n\r\n";
 
-					echo '[b]Database '. _FPA_CFG .' :: [/b] ';
-					if ( $database['dbDOCHECKS'] == _FPA_N ) {
-						echo '[color=orange]'. _FPA_DB .' '. _FPA_DBCREDINC .'[/color] '. _FPA_NODISPLAY;
+									echo '[b]Database '. _FPA_CFG .' :: [/b] ';
+					if ( @$instance['configDBTYPE'] == 'sqlsrv' ) { echo '[color=brown][b]' . _FPA_MSSQL_SUPP . '[/b][/color]  '; }
+
+					if ( $database['dbDOCHECKS'] == _FPA_N AND @$instance['configDBTYPE'] != 'sqlsrv') {
+					echo '[color=orange]'. _FPA_DB .' '. _FPA_DBCREDINC .'[/color] '. _FPA_NODISPLAY;
 					echo "\r\n";
 
 							if ( @$instance['configDBCREDOK'] != _FPA_Y AND $instance['instanceFOUND'] == _FPA_Y ) {
 								echo '[color=Red][b]'. _FPA_MISSINGCRED .': [/b][/color] ';
-
 								if ( @$instance['configDBTYPE'] == '' ) { echo '[color=orange][b]Connection Type[/b] missing[/color] | '; }
 								if ( @$instance['configDBNAME'] == '' ) { echo '[color=orange][b]Database Name[/b] missing[/color] |'; }
 								if ( @$instance['configDBHOST'] == '' ) { echo '[color=orange][b]MySQL Host[/b] missing[/color] | '; }
@@ -3886,20 +3888,11 @@ function recursive_array_search($needle,$haystack) {
 							}
 
 
-					} elseif ( @$database['dbERROR'] != _FPA_N ) { echo '[b]'. _FPA_ECON .':[/b] ';
-
-							if ( $_POST['showProtected'] == '3' ) {
-								echo '[color=orange][b]'. _FPA_PRIVSTR .'[/b] '. _FPA_INFOPRI .'[/color], '. _FPA_BUT .' [color=Red]'. _FPA_ER .'[/color].';
-							} else {
-								echo '[color=Red]'. @$database['dbERROR'] .'[/color] : [color=orange]'. _FPA_DB .' '. _FPA_CREDPRES .'? '. _FPA_IN .' '. _FPA_CFG .'...[/color]';
-							}
-
-					} else {
+					} elseif ( @$database['dbERROR'] != _FPA_N AND @$instance['configDBTYPE'] != 'sqlsrv') { echo '[color=Red][b]'. _FPA_ECON .':[/b] ';
+						echo  @$database['dbERROR'] .'[/color]' ;
+					} elseif (@$instance['configDBTYPE'] != 'sqlsrv') {
 						echo '[b]'. _FPA_VER .':[/b] [b]'. $database['dbHOSTSERV'] .'[/b] (Client:'. $database['dbHOSTCLIENT'] .') | ';
-
-							if ( $_POST['showProtected'] > '1' ) { echo '[b]'. _FPA_HOST .':[/b]  [color=orange]--'. _FPA_HIDDEN .'--[/color] ([color=orange]--'. _FPA_HIDDEN .'--[/color]) | ';
-							} else { echo '[b]'. _FPA_HOST .':[/b] '. $instance['configDBHOST'] .' ('. $database['dbHOSTINFO'] .') | '; }
-							echo '[b]'. _FPA_DEF .' '. _FPA_TCOL .':[/b] '. $database['dbCOLLATION'] .' ([b]'. _FPA_DEF .' '. _FPA_CHARS .':[/b] '. $database['dbCHARSET'] .') | [b]'. _FPA_DB .' '. _FPA_TSIZ .':[/b] '. $database['dbSIZE'] .' | [b]#'. _FPA_OF .'&nbsp'. _FPA_TABLE .':&nbsp[/b] '. $database['dbTABLECOUNT'];
+						echo '[b]'. _FPA_DB .' '. _FPA_TSIZ .':[/b] '. $database['dbSIZE'] .' | [b]'. _FPA_CONF_PREF_TABLE . ':&nbsp[/b] '. $confPrefTables . ' | [b]'. _FPA_OTHER_TABLE . ':&nbsp[/b] '. $notconfPrefTables ;
 					}
 
 		echo '[/size][/quote]';
@@ -5216,9 +5209,11 @@ function recursive_array_search($needle,$haystack) {
 
 			} else { // an instance wasn't found in the initial checks
 				echo '<div class="row-content-container nothing-to-display" style="">';
-				if ($instance['configDBTYPE'] == 'postgresql' or $instance['configDBTYPE'] == 'pgsql'){
+				if (@$instance['configDBTYPE'] == 'postgresql' or @$instance['configDBTYPE'] == 'pgsql'){
 				    echo '<div class="normal" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_NIMPLY . ' ' . _FPA_PGSQL . '<br /></div>';
 				    echo '</div>';
+				} elseif ( @$instance['configDBTYPE'] == 'sqlsrv' ) { 
+                    echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'.  _FPA_MSSQL_SUPP . '<br /></div>';
 				} else {
 				echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_NCON .'<br />'. _FPA_NO .' '. $database['ARRNAME'] .' '. _FPA_PERF .' '. _FPA_TESTP .'</div>';
 				echo '</div>';

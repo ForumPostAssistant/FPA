@@ -33,15 +33,15 @@
 	// Define some basic assistant information
 
 	define ( '_RES', 'Forum Post Assistant' );
-	define ( '_RES_VERSION', '1.4.9 (lambrusca' );
-	define ( '_last_updated', '13-June-2019' );
+	define ( '_RES_VERSION', '1.5.0 (weird release name)' );
+	define ( '_last_updated', '07-April-2020' );
 	define ( '_COPYRIGHT_STMT', ' Copyright &copy 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
 	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. <br> This is free software,
 	and covered under the GNU GPLv3 or later license. You are welcome to redistribute it under certain conditions.
 	For details read the LICENSE.txt file included in the download package with this script.
 	A copy of the license may also be obtained at ' );
-	define ( '_RES_RELEASE', '' );         // can be Alpha, Beta, RC, Final
+	define ( '_RES_RELEASE', 'Beta' );         // can be Alpha, Beta, RC, Final
 	define ( '_RES_BRANCH', 'Branch en-GB' );    // can be playGround (Alpha/Beta only), currentDevelopment (RC only), masterPublic (Final only)
 	define ( '_RES_LANG', '&nbsp Language en-GB' );               // Country/Language Code
 	define ( '_RES_FPALINK', 'https://github.com/ForumPostAssistant/FPA/tarball/en-GB/' ); // where to get the latest 'Final Releases'

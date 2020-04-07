@@ -41,7 +41,7 @@
 	and covered under the GNU GPLv3 or later license. You are welcome to redistribute it under certain conditions.
 	For details read the LICENSE.txt file included in the download package with this script.
 	A copy of the license may also be obtained at ' );
-	define ( '_RES_RELEASE', 'Beta' );         // can be Alpha, Beta, RC, Final
+	define ( '_RES_RELEASE', '' );         // can be Alpha, Beta, RC, Final
 	define ( '_RES_BRANCH', 'Branch en-GB' );    // can be playGround (Alpha/Beta only), currentDevelopment (RC only), masterPublic (Final only)
 	define ( '_RES_LANG', '&nbsp Language en-GB' );               // Country/Language Code
 	define ( '_RES_FPALINK', 'https://github.com/ForumPostAssistant/FPA/tarball/en-GB/' ); // where to get the latest 'Final Releases'

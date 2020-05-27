@@ -5920,8 +5920,7 @@
                                                         }
                                                         echo '<div class="col d-flex align-self-stretch">';
                                                         echo '<div class="bg-light border border-'.$border.' text-center small mb-2 w-100">';
-                                                        echo '<div class="text-'.$status.' font-weight-'.$weight.' px-1 py-2">'. $key .'</div>';
-                                                        //echo '<div class="bg-white text-truncate px-1 py-2">'.$show.'</div>';
+                                                        echo '<div class="text-'.$status.' font-weight-'.$weight.' px-1 py-2">'. $show .'</div>';
                                                         echo '</div>';
                                                         echo '</div>';
 

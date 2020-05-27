@@ -6991,8 +6991,8 @@
                                             <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_CRE; ?></th>
                                             <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_AUTH; ?></th>
                                             <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_ADDR; ?></th>
-                                            <th class="py-2 text-center"><?php echo _FPA_EN; ?></th>
                                             <th class="py-2 text-center"><?php echo _FPA_TYPE; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_EN; ?></th>
                                         </tr>
                                     </thead>
                                     <tbody>

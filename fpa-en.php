@@ -1,26 +1,39 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb" >
 <?php
     /**
-     **  @package Forum Post Assistant / Bug Report Assistant
-    **  @version 1.5.0 Midden
-    **  @last updated 13/june/2019
-    **  @release Beta
-    **  @date 24/06/2011
-    **  @author RussW
-    **  @author PhilD
-    **
-    ** Remember to revision and last updated date below on about line 36
-    **/
+     *  @package Forum Post Assistant
+     *  @version 1.5.5 facelift
+     *  @last updated 27 May 2020
+     *  @release Beta
+     *  @date 24/06/2011
+     *  @author RussW
+     *  @author PhilD
+     *
+     * UI/UX overhauled
+     * @RussW 05/20202
+     *
+     * Remember to revision and last updated date below on about line 36
+     *
+     */
 
     /**
      * for edit changelog see https://github.com/ForumPostAssistant/FPA/pulls?q=is%3Apr+is%3Aclosed
+     *
      */
 
+    /**
+     * attempt to GZip the page output for performance
+     * added @RussW 27/05/2020
+     *
+     */
+    if ( substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') ) {
+        ob_start('ob_gzhandler');
+    } else {
+        ob_start();
+    }
 
     /** SET THE FPA DEFAULTS *****************************************************************/
-    # define ( '_FPA_DEV', TRUE );      // developer-mode, displays raw array data
-    # define ( '_FPA_DIAG', TRUE );     // diagnostic-mode, turns on PHP logging errors, display errors and logs error to a file.
+     # define ( '_FPA_DEV', TRUE );      // developer-mode, displays raw array data
+     # define ( '_FPA_DIAG', TRUE );     // diagnostic-mode, turns on PHP logging errors, display errors and logs error to a file.
 
 	/** SET THE JOOMLA! PARENT FLAG AND CONSTANTS ********************************************/
 	define ( '_VALID_MOS', 1 );         // for J!1.0
@@ -30,21 +43,23 @@
 	// Define some basic assistant information
 
 	define ( '_RES', 'Forum Post Assistant' );
-	define ( '_RES_VERSION', '1.5.0 (midden)' );
-	define ( '_last_updated', '07-April-2020' );
-	define ( '_COPYRIGHT_STMT', ' Copyright &copy 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
-	define ( '_LICENSE_LINK', '<a href="http://www.gnu.org/licenses/" target="_blank">http://www.gnu.org/licenses/</a>' ); // link to GPL license
+	define ( '_RES_VERSION', '1.5.5 (facelift)' );
+	define ( '_last_updated', '27-May-2020' );
+	define ( '_COPYRIGHT_STMT', ' Copyright &copy; 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
+	define ( '_LICENSE_LINK', '<a href="https://www.gnu.org/licenses/" target="_blank" rel="noopener noreferrer">https://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. <br> This is free software,
 	and covered under the GNU GPLv3 or later license. You are welcome to redistribute it under certain conditions.
 	For details read the LICENSE.txt file included in the download package with this script.
-	A copy of the license may also be obtained at ' );
+    A copy of the license may also be obtained at ' );
 	define ( '_RES_RELEASE', '' );         // can be Alpha, Beta, RC, Final
 	define ( '_RES_BRANCH', 'Branch en-GB' );    // can be playGround (Alpha/Beta only), currentDevelopment (RC only), masterPublic (Final only)
-	define ( '_RES_LANG', '&nbsp Language en-GB' );               // Country/Language Code
+	define ( '_RES_LANG', ' Language en-GB' );               // Country/Language Code
 	define ( '_RES_FPALINK', 'https://github.com/ForumPostAssistant/FPA/tarball/en-GB/' ); // where to get the latest 'Final Releases'
-	define ( '_RES_FPALATEST', 'Get the latest tar.gz release of the ' );
+    // @RussW updated 23/05/2020
+    define ( '_RES_FPALATEST', 'Download the latest FPA release (tar.gz)' );
 	define ( '_RES_FPALINK2', 'https://github.com/ForumPostAssistant/FPA/zipball/en-GB/' ); // where to get the latest 'Final Releases'
-	define ( '_RES_FPALATEST2', 'Get the latest zip release of the ' );
+    // @RussW updated 23/05/2020
+    define ( '_RES_FPALATEST2', 'Download the latest FPA release (zip)' );
 
 	/** DEFINE LANGUAGE STRINGS **************************************************************/
 	define ( '_PHP_DISERR', 'Display PHP Errors Enabled' );
@@ -76,20 +91,28 @@
 	define ( '_FPA_BADPHP', 'Known Buggy PHP');
 	define ( '_FPA_BADZND', 'Known Buggy Zend');
 	// slow screen message
-	define ( '_FPA_SLOWGENPOST', 'Generating Post Output...' );
-	define ( '_FPA_SLOWRUNTEST', 'Hang on while we run some tests...' );
-	// remove script notice content - Phil 4-17-12
-	define ( '_FPA_DELNOTE_LN1', '<h3><p /><font color="Red" size="2">** SECURITY NOTICE **</font color></size></h3><p /><font size="1">Due to the highly sensitive nature of the information displayed by the FPA script,<p /> it should be removed from the server immediately after use.</font>' );
-	define ( '_FPA_DELNOTE_LN2', '<p /><font size="1">  If the script is left on the site, it can be used to gather enough information to hack your site.</font>' );
-	define ( '_FPA_DELNOTE_LN3', '<p /><font color="Red" size="3" ;">After use, <a href="fpa-en.php?act=delete">Click Here</a>  to delete this script.</font>' );
-	// dev/diag-mode content
+    // @RussW _FPA_SLOWGENPOST to be removed 23/05/2020
+    define ( '_FPA_SLOWGENPOST', 'Generating Post Output...' );
+    // @RussW _FPA_SLOWRUNTEST to be removed 23/05/2020
+    define ( '_FPA_SLOWRUNTEST', 'Hang on while we run some tests...' );
+    // remove script notice content - Phil 4-17-12
+    // @RussW _FPA_DELNOTE_LN1 to be removed 23/05/2020
+	define ( '_FPA_DELNOTE_LN1', '<h5 class="text-danger">** SECURITY NOTICE **</h5>' );
+    // @RussW updated 23/05/2020
+    define ( '_FPA_DELNOTE_LN2', '<p class="small">Due to the highly sensitive nature of the information displayed by the FPA script, it should be removed from the server immediately after use. If the script is left on the site, it can be used to gather enough information to hack your site.</p>' );
+    // @RussW updated 23/05/2020
+    define ( '_FPA_DELNOTE_LN3', '<p>After use, <a class="text-danger" href="fpa-en.php?act=delete">Click Here</a>  to delete this script.</p>' );
+    // dev/diag-mode content
 	define ( '_FPA_DEVMI', 'developer-mode-information' );
-	define ( '_FPA_ELAPSE', 'elapse-runtime' );
-	define ( '_FPA_DEVENA', 'DEVELOPER MODE is enabled' );
+    define ( '_FPA_ELAPSE', 'elapse-runtime' );
+    // @RussW removed uppercase 27/05/2020
+	define ( '_FPA_DEVENA', 'Developer Mode Enabled' );
 	define ( '_FPA_DEVDSC', 'This means that a variety of additional information will be displayed on-screen to assist with troubleshooting this script.' );
-	define ( '_FPA_DIAENA', 'DIGNOSTIC MODE is enabled' );
+    // @RussW typo fixed & removed uppercase 27/05/2020
+    define ( '_FPA_DIAENA', 'Diagnostic Mode Enabled' );
 	define ( '_FPA_DIADSC', 'This means that all php and script errors will be displayed on-screen and logged out to a file named' );
-	define ( '_FPA_DIAERR', 'Last DIGNOSTIC MODE Error' );
+    // @RussW _FPA_DIAERR to be removed 27/05/2020
+    define ( '_FPA_DIAERR', 'Last DIGNOSTIC MODE Error' );
 	define ( '_FPA_SPNOTE', 'Special Note' );
 	// user post form content
 	define ( '_FPA_INSTRUCTIONS', 'Instructions' );
@@ -97,27 +120,21 @@
 	define ( '_FPA_INS_2', 'Enter any error messages you see <i>(optional)</i>' );
 	define ( '_FPA_INS_3', 'Enter any actions taken to resolve the issue <i>(optional)</i>' );
 	define ( '_FPA_INS_4', 'Select detail level options of output <i>(optional)</i>' );
-	define ( '_FPA_INS_5', 'Click the <span class="normal-note">Click Here To Generate Post</span> button to build the post content' );
-	define ( '_FPA_INS_6', 'Copy the contents of the <span class="ok-hilite">&nbsp;Post Detail&nbsp;</span> box and paste it into a post following the instructions below the generated text box' );
-	define ( '_FPA_INS_7', ' <div align="center"><font size="2">To copy the contents of the Post Detail box:
-            </font></div>
-            <p align="left" />
-            <div align="left"><font size="2">1.) Place the cursor in the above box of generated text.</font></div>
-            <p align="left" />
-            <div align="left"><font size="2">2.) Use CTRL-a to select all the text within the box.</font></div>
-            <p align="left" />
-            <div align="left"><font size="2">3.) Use CTRL-c to copy the generated text to the browser clipboard.</font></div>
-            <p align="left" />
-            <div align="left"><font size="2">4.) Use CTRL-v to paste the copied text into your forum posting at the desired spot.</font></div>
-            <p align="left" />
-            <div align="left"><font size="2">5.) Disable smilies to prevent charcters being converted by the forums software.</font></div>
-            <hr>
-            <div align="left"><font size="2">If your site has many extensions installed, the forum post output could excede the posting limit. </font></div>
-            <div align="left"><font size="2">If this happens, use more than one post, and utilize the optional settings to divide the output.  </font></div>
-            <div align="left"><font size="2">Try generating first without plugins, and next with plugins but without components and modules.   </font></div>
-            <p align="left" />
-            <div align="left"><font size="2">Maximum number of characters pr. post are 20.000    <button type="button" onclick="CountCharacters()">Count Characters</button></div>
-            <div align="center"><font size="3"> <output id ="chcount"></output></div>');
+    // @RussW updated 23/05/2020
+    define ( '_FPA_INS_5', 'Click the <span class="text-success">Click Here To Generate Post</span> button to build the post content' );
+    // @RussW updated 23/05/2020
+    define ( '_FPA_INS_6', 'Copy the contents of the <span class="text-dark">Post Content</span> box and paste it into a post following the instructions provided' );
+    // @RussW updated 23/05/2020
+    define ( '_FPA_INS_7', '<p class="text-muted">To copy the contents of the Post Detail box:</p>
+            <ol>
+            <li class="pb-1">Click the <span class="badge badge-warning">Copy Post Content To Clipboard</span> button</li>
+            <li class="text-muted p-1">Login to the Joomla! Forum and start a new post or reply</li>
+            <li class="pb-1">Use <strong>CTRL-v</strong> to paste the copied text into your forum post/reply</li>
+            <li class="pb-1"><em>Disable smilies to prevent charcters being converted by the forums software</em></li>
+            </ol>
+            <p class="xsmall py-1 my-1"><i class="fas fa-info-circle text-info"></i> In the event that the "Copy Post Content To Clipboard" button does not work, <strong>click inside the Post Content textarea</strong>, then <strong>press CTRL-a (or Command-a)</strong> to select all the content, then <strong>press CTRL-c (Command-c)</strong> to copy the content and use <strong>CRTL-v (Command-v)</strong> to paste the copied content in to your forum post</p>');
+    // @RussW added 23/05/2020
+    define ( '_FPA_INS_8', '<p class="text-center">Your site has many extensions installed, the post output exceededs the forum post limit. <strong>Please run the FPA twice</strong> and make two seperate posts/replies.</p><ol><li>First run without the plugins selected</li><li>Run again with only the plugins selected</li></ol>');
 	define ( '_FPA_POST_NOTE', 'Leave ALL fields blank/empty to simply post diagnostic information.' );
 	define ( '_FPA_PROB_DSC', 'Problem Description' );
 	define ( '_FPA_PROB_MSG', 'Log/Error Message' );
@@ -143,7 +160,7 @@
 	define ( '_FPA_OUTMEM', 'Out of Memory');
 	define ( '_FPA_OUTTIM', 'Execution Time-Outs' );
 	define ( '_FPA_INCPOPS', 'Temporarily increase PHP Memory and Execution Time' );
-	define ( '_FPA_POSTD', 'Post Detail' );
+	define ( '_FPA_POSTD', 'Your Forum Post Content' );
 
 	/** common screen and post output strings ************************************************/
 	define ( '_FPA_APP', 'Joomla!' );
@@ -159,8 +176,8 @@
 	define ( '_FPA_GOOD', 'OK/GOOD' );
 	define ( '_FPA_WARNINGS', 'WARNINGS' );
 	define ( '_FPA_ALERTS', 'ALERTS' );
-	define ( '_FPA_SITE', 'SITE' );
-	define ( '_FPA_ADMIN', 'ADMIN' );
+	define ( '_FPA_SITE', 'Site' );
+	define ( '_FPA_ADMIN', 'Admin' );
 	define ( '_FPA_BY', 'by' );
 	define ( '_FPA_OR', 'or' );
 	define ( '_FPA_OF', 'of' );
@@ -222,7 +239,8 @@
 	define ( '_FPA_HIDDEN', 'protected' );
 	define ( '_FPA_PASS', 'Password' );
 	define ( '_FPA_USER', 'Username' );
-	define ( '_FPA_USR', 'User' );
+    define ( '_FPA_USR', 'User' );
+    // @RussW updated 23/05/2020
 	define ( '_FPA_TNAM', 'Name' );
 	define ( '_FPA_TSIZ', 'Size' );
 	define ( '_FPA_TENG', 'Engine' );
@@ -287,64 +305,67 @@
  	define ( '_FPA_CONF_PREF_TABLE', '#of Tables with config prefix' );
  	define ( '_FPA_OTHER_TABLE', '#of other Tables' );
  	define ( '_FPA_MSSQL_SUPP', 'Microsoft SQL Server is not supported by the FPA' );
- 	define ( '_FPA_MYSQLI_CONN', 'PHP function mysqli_connect not found.' );
+    define ( '_FPA_MYSQLI_CONN', 'PHP function mysqli_connect not found.' );
+    // @RussW new 05/2020
+    define ( '_FPA_DASHBOARD', 'Dashboard' );
+    define ( '_FPA_DASHBOARD_CONFIDENCE_TITLE', 'Confidence' );
+    define ( '_FPA_DASHBOARD_CONFIDENCE_NOTE', 'An initial <em>basic confidence audit</em> has been performed to determine if the minimum requirements and best practices have been met to ensure the successful operation of the latest version of Joomla! and it\'s standard functions.');
+    define ( '_FPA_DISCOVERY_REPORT', 'Discovery Report' );
+    define ( '_FPA_PERMOWN', 'Permissions & Ownership' );
+    define ( '_FPA_JDISCLAIMER', 'Forum Post Assistant (FPA) is not affiliated with or endorsed by The Joomla! Project<sup>&trade;</sup>. Use of the Joomla!<sup>&reg;</sup> name, symbol, logo, and related trademarks is licensed by Open Source Matters, Inc.' );
 	/** END LANGUAGE STRINGS *****************************************************************/
-
-// ** delete script when done - Phil 8-07-12
-// attempts to delete file from site. If it fails then message to manually delete the file is presented.
-// fixed undefined index when server uses E_STRICT - Phil 9-20-12
- if (isset($_GET['act']) && $_GET['act']  == 'delete') {
-		$host  = $_SERVER['HTTP_HOST'];
-		$uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-		$extra = ''; // add index (or other) page if desired
-
-	// try to set script to 777 to make sure we have permission to delete
-		chmod("fpa-en.php", 0777);  // octal; correct value of mode
-	// Delete the file.
-		unlink('fpa-en.php');
-
-	// Message and link to home page of site.
-		echo '<div id="slowScreenSplash" style="padding:20px;border: 2px solid #4D8000;background-color:#FFFAF0;border-radius: 10px;-moz-border-radius: 10px;-webkit-border-radius: 10px;margin: 0 auto; margin-top:50px;margin-bottom:20px;width:700px;position:relative;z-index:9999;top:10%;" align="center">';
-		$page= ("http://$host$uri/");
-		$filename = 'fpa-en.php';
-// Something went wrong and the script was not deleted so it must be removed manually so we tell the user to do so - Phil 8-07-12
-	if (file_exists($filename)) {
-		chmod("fpa-en.php", 0644);  // octal; correct value of mode
-		echo "<p><font color='Red' size='4'>Oops!</size></font color>";
-		echo "<p><font color='Red' size='3'>Something went wrong with the delete process and the file </font color><font color='#000000'size='3'>$filename</font color></size><font color='Red'> still exists. </font color></p>";
-		echo "<p><font color='Red' size='3'>For site security, please remove the file </font color><font color='#000000'size='3'>$filename</font color></size><font color='Red'> manually using your ftp program.</font color></p>";
-
-	} else {
-		echo "<p><font color='#000000' size='3'>Thank You for using the FPA. </font color></p>";
-	}
-		echo "<a href='$page'>Go to your Home Page.</a>";
-
-		exit;
-	}
-// end delete script
-
-	/** DISPLAY A "PROCESSING" MESSAGE, if the the routines take too long ********************/
-	// !TODO slowScreenSplash seems to be a little flaky
-	// this is the top pink box
-	echo '<div id="slowScreenSplash" style="padding:20px;border: 2px solid #4D8000;background-color:#FFFAF0;border-radius: 10px;-moz-border-radius: 10px;-webkit-border-radius: 10px;margin: 0 auto; margin-top:50px;margin-bottom:20px;width:810px;position:relative;z-index:9999;top:10%;" align="center">';
-	echo '<h1>'. _RES .'</h1>';
-	echo  _RES_VERSION .'-'. _RES_RELEASE .' ('. _RES_BRANCH . _RES_LANG.')';
-	echo '<p>FPA last updated on: '. _last_updated . '</p>' ;
-
-	if ( @$_POST['doIT'] == 1 ) {
-		echo '<h3 style="color:#4D8000;">'. _FPA_SLOWGENPOST .'</h3>';
-	} else {
-		echo '<h3 style="color:#4D8000;">'. _FPA_SLOWRUNTEST .'</h3>';
-
-	}
+?>
 
 
-	echo _FPA_DELNOTE_LN1;
-	echo _FPA_DELNOTE_LN2;
-	echo _FPA_DELNOTE_LN3;
-	echo '</div>';
+<?php
+    /**
+     * delete script
+     *
+     * attempts to delete file from site. If it fails then message to manually delete the file is presented.
+     * fixed undefined index when server uses E_STRICT - PhilD 9-20-12
+     * @PhilD 8/07/12
+     * @RussW updated 21/05/2020
+     *
+     */
+
+    if (isset($_GET['act']) && $_GET['act']  == 'delete') {
+        $host  = $_SERVER['HTTP_HOST'];
+        $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+        $extra = ''; // add index (or other) page if desired
+
+        // try to set script to 777 to make sure we have permission to delete
+        chmod('fpa-en.php', 0777);  // octal; correct value of mode
+
+        // Delete the file.
+        unlink('fpa-en.php');
+
+        // Message and link to home page of site.
+        $page= ('"http://$host$uri/');
+        $filename = 'fpa-en.php';
+
+        // Something went wrong and the script was not deleted so it must be removed manually so we tell the user to do so - PhilD 8-07-12
+        if (file_exists($filename)) {
+            chmod('fpa-en.php', 0644);  // octal; correct value of mode
+
+            echo '<div id="deleteMessage" style="padding:20px;border:1px solid #e99002;background-color:#fff8ee;margin:0 auto;margin-top:50px;margin-bottom:20px;max-width:70%;position:relative;z-index:9999;top:10%;font-family:sans-serif, arial;" align="center">';
+            echo '<h1 style="color:#e99002;font-size:44px;">SOMETHING WENT WRONG!</h1>';
+            echo '<p style="color:#e99002;font-size:30px;">We could not delete the FPA file ('. $filename .').</p>';
+            echo '<p style="color:#e99002;font-size:20px;margin:0 auto;max-width:80%;">For your website security, please remove the file <em style="color:#f04124;">'. $filename .'</em> manually using FTP or through your hosting File Manager.</p>';
+
+        } else {
+            echo '<div id="deleteMessage" style="padding:20px;border:1px solid #43ac6a;background-color:#effff5;margin:0 auto;margin-top:50px;margin-bottom:20px;max-width:70%;position:relative;z-index:9999;top:10%;font-family:sans-serif, arial;" align="center">';
+            echo '<h1 style="color:#43ac6a;">Thank You For Using The FPA.</h1>';
+        }
+
+        echo '<p><a href="'. $page .'">Go to your Home Page.</a></p>';
+        echo '</div>';
+        exit;
+
+    } // end delete script
+?>
 
 
+<?php
 	// setup the default runtime parameters and collect the POST data changes, if any
 	if ( @$_POST['showProtected'] ) {
 		$showProtected  = @$_POST['showProtected'];
@@ -505,21 +526,22 @@
 <?php
 	// build the developer-mode function to display the raw arrays
 	function showDev( &$section ) {
-
-		// this can only have inline styling because it is outputed before the html styling
 		if ( defined( '_FPA_DEV' ) ) {
-			echo '<div style="width:750px;margin: 0px auto;margin-bottom:10px;font-family:arial;font-size:10px;color:#808080;">';
-			echo '<div style="text-shadow: 1px 1px 1px #F5F5F5;font-weight:bold;color:#4D8000;text-transform:uppercase;padding-bottom:2px;">';
-			echo '<span style="color: #808080;font-weight:normal;text-transform:lowercase;">['. _FPA_DEVMI .']</span><br />';
-			echo $section['ARRNAME'] .' Array :';
+            echo '<div class="row"><div class="col-12">';
+			echo '<div class="card border border-warning mb-3 w-100">';
+			echo '<div class="card-header bg-warning text-white">';
+			echo '<span class="text-dark">['. _FPA_DEVMI .']</span><br />';
+			echo @$section['ARRNAME'] .' Array :';
 			echo '</div>';
 
-			echo '<div style="-moz-box-shadow: inset -3px -3px 3px #CAE897;-webkit-box-shadow: inset -3px -3px 3px #CAE897;box-shadow: inset -3px -3px 3px #CAE897;padding:5px;background-color:#E2F4C4; border:1px solid #4D8000;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;">';
-				print_r ( $section );
-			echo '<p><em>'. _FPA_ELAPSE .': <strong>'. mt_end() .'</strong> '. _FPA_SECONDS .'</em></p>';
+            echo '<div class="card-body small p-2">';
+            echo '<pre class="xsmall m-0">';
+                print_r ( $section );
+            echo '<pre>';
+			echo '<p class="m-0"><em>'. _FPA_ELAPSE .': <strong>'. mt_end() .'</strong> '. _FPA_SECONDS .'</em></p>';
 			echo '</div>';
-
-			echo '</div>';
+            echo '</div>';
+			echo '</div></div>';
 		} // end if _FPA_DEV defined
 	} // end developer-mode function
 ?>
@@ -623,25 +645,16 @@
 	** error_reporting, sets the level of errors to report, "-1" is all errors
 	** log_errors, enables errors to be logged to a file, fpa_error.log in the "/" folder
 	*****************************************************************************************/
-
+/*
 	if ( defined( '_FPA_DEV' ) OR defined( '_FPA_DIAG' ) ) {
 		// these can only have inline styling because it is outputed before the html styling
-		echo '<div style="text-align:center; margin:0px auto; margin-bottom: 5px; width:750px;">';
-
-		if ( defined( '_FPA_DEV' ) AND defined( '_FPA_DIAG' ) ) {
-			$divwidth = '350px';
-		} else {
-			$divwidth = '740px';
-		}
+		echo '<div class="alert alert-warning text-white text-center p-0 m-0">';
 
 		// display developer-mode notice
 		if ( defined( '_FPA_DEV' ) ) {
 			ini_set( 'display_errors', 'Off' ); // default-display
 
-			echo '<div style="text-shadow: 1px 1px 1px #FFF;float:right; text-align:center; width:'. $divwidth .'; background-color:#CAFFD8; border:1px solid #4D8000; color:#404040; font-size:10px; font-family:arial; padding:5px;-moz-box-shadow: 3px 3px 3px #C0C0c0;-webkit-box-shadow: 3px 3px 3px #C0C0c0;box-shadow: 3px 3px 3px #C0C0c0;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;">';
-			echo '<strong style="color:#4D8000;">'. _FPA_DEVENA .'</strong><br />';
-			echo _FPA_DEVDSC;
-			echo '</div>';
+			echo '<h2 class="text-white m-0 p-0">'. _FPA_DEVENA .'</h2>';
 		} // end developer-mode display
 
 		// display diagnostic-mode notice
@@ -674,16 +687,12 @@
 
 		} // end diagnostic-mode display
 
-		echo '<br style="clear:both;" />';
 		echo '</div>';
-
 
 	} else { // end developer- or diag -mode display
 		ini_set( 'display_errors', 0 ); // default-display
-
-	}
-
-
+    }
+*/
 ?>
 
 
@@ -1847,8 +1856,9 @@
 
 
 <?php
-	/** DETERMINE THE DATABASE TYPE AND IF WE CAN CONNECT *************************************
-	*****************************************************************************************/
+	/**
+     * DETERMINE THE DATABASE TYPE AND IF WE CAN CONNECT
+	 */
 	$dbPrefExist = _FPA_N;
 	$dbPrefLen = @strlen($instance['configDBPREF']);
 	$postgresql = _FPA_N;
@@ -1860,7 +1870,7 @@
 		// try and connect to the database server and table-space, using the database_host variable in the configuration.php
 		// for J!1.0, it's not in the config, so we have assumed mysql, as mysqli wasn't available during it's support life-time
 		if ( $instance['configDBTYPE'] == 'mysql' ) {
-			if (function_exists('mysql_connect')) {
+			if (@function_exists('mysql_connect')) {
 			$dBconn = @mysql_connect( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'] );
 			$database['dbERROR'] = mysql_errno() .':'. mysql_error();
 
@@ -1884,8 +1894,8 @@
      }
 
 			if ( $dBconn ) {
-				mysql_select_db( $instance['configDBNAME'], $dBconn );
-				$database['dbERROR'] = mysql_errno() .':'. mysql_error();
+				@mysql_select_db( $instance['configDBNAME'], $dBconn );
+				$database['dbERROR'] = @mysql_errno() .':'. @mysql_error();
 
 				// if we can connect, try and collect some details
 				$database['dbHOSTSERV']     = mysql_get_server_info( $dBconn );      // SQL server version
@@ -2579,4903 +2589,5120 @@
 	} // end if instanceFOUND
 ?>
 
-<?php
-function recursive_array_search($needle,$haystack) {
-    foreach($haystack as $key=>$value) {
-        $current_key=$key;
-        if($needle===$value OR (is_array($value) && recursive_array_search($needle,$value) !== false)) {
-            return $current_key;
-        }
-    }
-    return false;
-}
-?>
+        <?php
+            function recursive_array_search($needle,$haystack) {
+                foreach($haystack as $key=>$value) {
+                    $current_key=$key;
+                    if($needle===$value OR (is_array($value) && recursive_array_search($needle,$value) !== false)) {
+                        return $current_key;
+                    }
+                }
+                return false;
+            }
+        ?>
 
 
-
-
-
-
-
+<!DOCTYPE html>
+<html lang="en-gb" dir="ltr" vocab="http://schema.org/">
     <head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
-        <!-- NOTE (@RussW): attempt to reduce the chance of indexing, archiving or caching through robots meta, if left on server -->
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8" />
         <meta name="robots" content="noindex, nofollow, noodp, nocache, noarchive" />
 
-		<title>
-            <?php
-                echo _RES .' : v'. _RES_VERSION .' ('. _RES_RELEASE .' / '. _RES_LANG .')';
-        		echo '<p>FPA last updated on: '. _last_updated . '</p>' ;
-            ?>
-        </title>
-		<?php //!TODO different icons ?>
+		<title><?php echo _RES .' : v'. _RES_VERSION .' - '. _RES_LANG; ?></title>
+
 		<link rel="shortcut icon" href="./templates/protostar/favicon.ico" />
-
-        <style type="text/css" media="screen">
-        /*
-			html, body, div, p, span {
-				font-size: 10px;
-				font-family: tahoma, arial;
-				color: #404040;
-			}
-
-			.dev-mode-information {
-				margin: 0 auto;
-				margin-top:10px;
-				margin-bottom:10px;
-				padding: 5px;
-				width:830px;
-				background-color:#CAFFD8;
-				border:1px solid #4D8000;
-
-				box-shadow: 3px 3px 3px #C0C0C0;
-				-moz-box-shadow: 3px 3px 3px #C0C0C0;
-				-webkit-box-shadow: 3px 3px 3px #C0C0C0;
-				border-radius: 5px;
-				-moz-border-radius: 5px;
-				-webkit-border-radius: 5px;
-			}
-
-			.dev-mode-title {
-				color: #4D8000;
-				font-weight: bold;
-
-				text-shadow: 1px 1px 1px #FFF;
-			}
-
-			.snapshot-information {
-				margin: 0 auto;
-				margin-top:10px;
-				margin-bottom:10px;
-				padding: 5px;
-				width:840px;
-				background-color:#F3EFE0;
-				border:1px solid #999966;
-
-				box-shadow: 3px 3px 3px #C0C0C0;
-				-moz-box-shadow: 3px 3px 3px #C0C0C0;
-				-webkit-box-shadow: 3px 3px 3px #C0C0C0;
-				border-radius: 5px;
-				-moz-border-radius: 5px;
-				-webkit-border-radius: 5px;
-			}
-*/
-			.header-information {
-				margin: 0px auto;
-				margin-top:10px;
-				margin-bottom:10px;
-				padding: 5px;
-				width:840px;
-				background-color:#E0FFFF;
-				border:1px solid #42AEC2;
-				/** CSS3 **/
-				box-shadow: 3px 3px 3px #C0C0C0;
-				-moz-box-shadow: 3px 3px 3px #C0C0C0;
-				-webkit-box-shadow: 3px 3px 3px #C0C0C0;
-				border-radius: 5px;
-				-moz-border-radius: 5px;
-				-webkit-border-radius: 5px;
-			}
-
-			.header-title {
-				color: #404040;
-				text-align:center;
-				font-size: 14px;
-				font-weight: bold;
-				padding: 1px;
-				text-transform: uppercase;
-				margin-left: 1px;
-				margin-right: 1px;
-				margin-top: 2px;
-				margin-bottom: 2px;
-				/** CSS3 **/
-				text-shadow: 1px 1px 1px #FFF;
-			}
-
-			.header-column-title {
-				color: #404040;
-				font-weight: normal;
-				padding: 1px;
-				/** CSS3 **/
-				text-shadow: 1px 1px 1px #FFF;
-			}
-
-			.section-information {
-				margin: 0px auto;
-				margin-top:10px;
-				margin-bottom:10px;
-				padding: 5px;
-				width:830px;
-				background-color:#E0FFFF;
-				border:1px solid #42AEC2;
-				min-height: 188px;
-				/** CSS3 **/
-				box-shadow: 3px 3px 3px #C0C0C0;
-				-moz-box-shadow: 3px 3px 3px #C0C0C0;
-				-webkit-box-shadow: 3px 3px 3px #C0C0C0;
-				border-radius: 5px;
-				-moz-border-radius: 5px;
-				-webkit-border-radius: 5px;
-			}
-
-			.half-section-container {
-				margin: 0px auto;
-				padding: 5px;
-				width:840px;
-			}
-
-			.half-section-information-left {
-				float:left;
-				min-height: 188px;
-				margin-top:10px;
-				margin-bottom:10px;
-				padding: 5px;
-				width:48%;
-				background-color:#E0FFFF;
-				border:1px solid #42AEC2;
-				/** CSS3 **/
-				box-shadow: 3px 3px 3px #C0C0C0;
-				-moz-box-shadow: 3px 3px 3px #C0C0C0;
-				-webkit-box-shadow: 3px 3px 3px #C0C0C0;
-				border-radius: 5px;
-				-moz-border-radius: 5px;
-				-webkit-border-radius: 5px;
-			}
-
-			.half-section-information-right {
-				float:right;
-				min-height: 188px;
-				margin-top:10px;
-				margin-bottom:10px;
-				padding: 5px;
-				width:48%;
-				background-color:#E0FFFF;
-				border:1px solid #42AEC2;
-				/** CSS3 **/
-				box-shadow: 3px 3px 3px #C0C0C0;
-				-moz-box-shadow: 3px 3px 3px #C0C0C0;
-				-webkit-box-shadow: 3px 3px 3px #C0C0C0;
-				border-radius: 5px;
-				-moz-border-radius: 5px;
-				-webkit-border-radius: 5px;
-			}
-
-			.section-title {
-				color: #404040;
-				font-size: 12px;
-				font-weight: bold;
-				padding: 1px;
-				text-transform: uppercase;
-				margin-left: 1px;
-				margin-right: 1px;
-				margin-top: 2px;
-				margin-bottom: 2px;
-				/** CSS3 **/
-				text-shadow: 1px 1px 1px #F5F5F5;
-			}
-
-			.mini-content-container {
-				font-size: 9px !important;
-				float:left;
-				width: 23.7%;
-				height: 50%;
-				margin: 2px;
-			}
-
-			.mini-content-title {
-				font-size: 8px;
-				font-weight: bold;
-				text-align:center;
-				margin: 0px auto;
-				margin-bottom: 4px !important;
-				border-bottom: 1px solid #C0C0C0;
-				text-transform: uppercase;
-				/** CSS3 **/
-				text-shadow: 1px 1px 1px #FFF;
-			}
-
-			.mini-content-box {
-				font-size: 10px !important;
-				text-align:center;
-				margin: 0px auto;
-				padding: 4px;
-				border: 1px solid #42AEC2;
-				height: 70px;
-				background-color: #FFFFFF;
-				/** CSS3 **/
-				border-radius: 5px;
-				-moz-border-radius: 5px;
-				-webkit-border-radius: 5px;
-			}
-
-			.mini-content-box-small {
-				font-size: 9px !important;
-				text-align:center;
-				margin: 0px auto;
-				padding-left: 2px;
-				text-align: left;
-			}
-
-			.column-title-container {
-				background-color: #42AEC2;
-				/** CSS3 **/
-				border-top-left-radius: 5px;
-				-moz-border-radius-topleft: 5px;
-				-webkit-border-top-left: 5px;
-				border-top-right-radius: 5px;
-				-moz-border-radius-topright: 5px;
-				-webkit-border-top-right: 5px;
-			}
-
-			.column-title {
-				color: #E0FFFF;
-				font-weight: bold;
-				padding: 1px;
-				text-transform: uppercase;
-				margin-left: 1px;
-				margin-right: 1px;
-				margin-top: 2px;
-				margin-bottom: 2px;
-				/** CSS3 **/
-				text-shadow: 1px 1px 1px #808080;
-			}
-
-			.row-content-container {
-				border-bottom: 1px dotted #C0C0C0;
-				width: 99%;
-				margin: 0px auto;
-				clear:both;
-			}
-
-			.nothing-to-display {
-				text-align: center;
-				font-size: 11px;
-			}
-
-			.column-content {
-				margin-left: 1px;
-				margin-right: 1px;
-			}
-
-			.normal {
-				color: #404040;
-			}
-
-			.normal-note {
-				color:#4D8000;
-				background-color: #FFF;
-				padding:2px;
-				margin-left: 5px;
-				margin-right: 5px;
-				font-weight:normal;
-				border:1px solid #4D8000;
-				/** CSS3 **/
-				box-shadow: 2px 2px 2px #C0C0C0;
-				-moz-box-shadow: 2px 2px 2px #C0C0C0;
-				-webkit-box-shadow: 2px 2px 2px #C0C0C0;
-				border-radius: 3px;
-				-moz-border-radius: 3px;
-				-webkit-border-radius: 3px;
-				text-shadow: 1px 1px 1px #F5F5F5;
-			}
-
-			.ok {
-				color: #008000;
-			}
-
-			.ok-hilite {
-				background-color: #CAFFD8;
-				color: #008000;
-				border: 1px solid #4D8000;
-				/** CSS3 **/
-				border-radius: 5px;
-				-moz-border-radius: 5px;
-				-webkit-border-radius: 5px;
-			}
-
-			.warn {
-				background-color: #FFE4B5;
-				color: #800000;
-				border: 1px solid #FFA500;
-				/** CSS3 **/
-				border-radius: 5px;
-				-moz-border-radius: 5px;
-				-webkit-border-radius: 5px;
-			}
-
-			.warn-text {
-				color: #FFA500;
-			}
-
-			.alert {
-				background-color: #FFFF00;
-				color: #800000;
-				border: 1px solid #800000;
-				/** CSS3 **/
-				border-radius: 5px;
-				-moz-border-radius: 5px;
-				-webkit-border-radius: 5px;
-			}
-
-			.alert-text {
-				color: #800000;
-			}
-
-			.protected {
-				color: #f60;
-				background-color: #FFFFCC;
-				line-height:9px;
-				font-size:9px;
-				font-weight:normal;
-				text-transform:none;
-			}
-		</style>
-
-
-		<!-- Show/Hide Post Form -->
-		<script type="text/javascript">
-		function toggle2(showHideDiv, switchTextDiv) {
-			var ele = document.getElementById(showHideDiv);
-			var text = document.getElementById(switchTextDiv);
-
-			if ( ele.style.display == "block" ) {
-				ele.style.display = "none";
-				text.innerHTML = "<span style=\"font-size:12px;color:#4D8000;\"><span style=\"font-size:18px;color:#008000;\">&Theta;</span> Show the <strong><?php echo _RES; ?></strong></span>";
-			} else {
-				ele.style.display = "block";
-				text.innerHTML = "<span style=\"font-size:12px;color:#800000;\"><span style=\"font-size:20px;color:#800000;\">&otimes;</span> Hide the <strong><?php echo _RES; ?></strong></span>";
-			}
-		}
-		</script>
-
-		<script>
-			document.all["slowScreenSplash"].style.display = "none";
-		</script>
-
-    <!-- Count characters in post output -->
-    <script>
-    function CountCharacters() {
-      var x = document.getElementById("postOUTPUT").value;
-      var sln = x.length + 140;
-      document.getElementById("chcount").innerHTML = sln;
-    }
-    </script>
-
 
         <!-- bootswatch yeti theme - bootstrap core css -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.0/yeti/bootstrap.min.css" integrity="sha256-99KgWr1SjvkqT7dcWV+Cj9yfsKF2j4wrVRgHJYAiEtU=" crossorigin="anonymous" />
+
         <!-- fontawesome icon css -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
-        <!-- chart JS -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" integrity="sha256-R4pqcOYV8lt7snxMQO/HSbVCFRPMdrhAFMH+vr9giYI=" crossorigin="anonymous"></script>
 
         <!-- custom styling -->
-        <style type="text/csst" media="screen" >
+        <style media="screen" >
+            /**
+             * Facelift custom styling
+             * @RussW 23/05/2020
+             *
+             */
             html { position: relative; min-height: 100%; }
-            body { font-size: 0.98rem; color: #868ba1 !important; line-height: 1.3 !important; }
+            body { font-size: 0.98rem; color: #868ba1 !important; line-height: 1.3 !important; margin-top: 68px; scroll-behavior: smooth; }
+            .small { letter-spacing: -0.25px; line-height: 1.1; font-size: 0.9rem; }
+            .xsmall { letter-spacing: -0.25px; line-height: 1.1; font-size: 0.7rem; }
+            /* add dark blue to match other FPA pages */
+            .bg-fpa-dark { background-color: #224872 !important; }
+            .border-fpa-dark { border-color: #224872 !important; }
+            .text-fpa-dark { color: #224872; }
+            .protected { background: #f0f0f5; color: #b80000; text-transform: uppercase; padding: 0 5px; border-left: 1px solid #b80000; border-right: 1px solid #b80000; font-size: 10px; line-height: 1.1; display: inline-block; }
+            /* override default BS Yeti theme to match other FPA pages */
             p, .btn { font-weight: 400 !important; }
-            h1, h2, h3, h4, h5, h6 { color: #343a40 !important; }
-            .small { letter-spacing: -0.25px; line-height: 1.1; }
+            h1, h2, h3, h4, h5, h6 { color: #343a40; font-weight: 400; }
+            small { letter-spacing: -0.25px; line-height: 1.2 !important; }
+            .bg-info, .badge-info, .btn-info { background-color: #17a2b8 !important; }
+            .border-info, .btn-info { border-color: #17a2b8 !important; }
+            .btn-info:hover { color: #fff !important;background-color: #138496 !important;border-color: #117a8b !important; }
+            .btn-outline-info {color: #17a2b8 !important;border-color: #17a2b8 !important; }
+            .btn-outline-info:hover { color: #fff !important;background-color: #17a2b8 !important;border-color: #17a2b8 !important; }
+            .text-info { color: #17a2b8 !important; }
+            .alert-info {color: #0c5460 !important;background-color: #d1ecf1 !important;border-color: #bee5eb !important; }
+            .bg-light { background-color: rgba(0,0,0,0.03) !important; }
             /* increase default container widths to better suit dashboard type page */
-            @media (min-width: 576px) { .container { max-width: 900px; } }
-            @media (min-width: 768px) { .container { max-width: 960px; } }
-            @media (min-width: 1200px) { .container { max-width: 1280px; } }
+            @media (min-width: 576px) { .container { max-width: 540px; } }
+            @media (min-width: 768px) { .container { max-width: 720px; } }
+            @media (min-width: 992px) { .container { max-width: 960px; } }
+            @media (min-width: 1200px) { .container { max-width: 1160px; } }
+            @media (min-width: 1440px) { .container { max-width: 1240px; } }
         </style>
 
+
+		<script>
+            /**
+             * toggle show/hide FPA options panel/form
+             * is overriden when doIT = 1 to hide panel/form and only show post output
+             * @RussW 23/05/2020
+             *
+             */
+            function toggleFPA(showHideDiv, switchTextDiv) {
+                var ele = document.getElementById(showHideDiv);
+                var text = document.getElementById(switchTextDiv);
+                if ( ele.style.display == 'block' ) {
+                    ele.style.display = 'none';
+                    text.innerHTML    = '<i class="fas fa-chevron-circle-right"></i> Open the <strong><?php echo _RES; ?></strong>';
+                } else {
+                    ele.style.display = 'block';
+                    text.innerHTML    = '<i class="fas fa-chevron-circle-down"></i> Close the <strong><?php echo _RES; ?></strong>';
+                }
+            }
+		</script>
+
     </head>
-    <body>
+    <body data-spy="scroll" data-target=".navbar" data-offset="68">
 
-        <header class="navbar 1navbar-expand navbar-light bg-white fixed-top shadow border-bottom">
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow">
 
-            <a class="navbar-brand mr-0 mr-md-2 text-primary py-2" href="#" aria-label="<?php echo _RES; ?>">
-                <span class="d-inline-block d-sm-none" aria-hidden="true">FPA</span>
-                <span class="d-none d-sm-inline-block"><?php echo _RES; ?></span>
-                <span class="ml-1 small text-muted"><?php echo 'v'. _RES_VERSION; ?></span>
-            </a>
+                <a class="navbar-brand mr-0 mr-md-2 text-primary py-2 lead font-weight-bolder" href="fpa-en.php" aria-label="<?php echo _RES; ?>">
+                    <span class="d-inline-block d-sm-none" aria-hidden="true">FPA</span>
+                    <span class="d-none d-sm-inline-block"><?php echo _RES; ?></span>
+                    <span class="ml-1 small text-muted"><?php echo 'v'. _RES_VERSION; ?></span>
+                </a>
 
-            <ul class="navbar-nav flex-row ml-md-auto">
-                <!-- docs & errata info
-                <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="View the FPA guided tour">
-                    <a class="btn btn-outline-primary mr-1" href="#" role="button" aria-label="View the FPA guided tour">
-                        <i class="fas fa-shoe-prints lead"></i>
-                    </a>
-                </li>
-                -->
-                <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="Visit the FPA documentation site on Github">
-                    <a class="1nav-link btn btn-outline-primary mr-1" href="https://forumpostassistant.github.io/docs/" target="_blank" rel="noopener" role="button" aria-label="Visit the FPA documentation site on Github">
-                        <i class="fas fa-book-reader lead"></i>
-                    </a>
-                </li>
-                <!-- Help & info
-                <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="View FPA help information">
-                    <a class="btn btn-outline-primary mr-1" href="#" role="button" data-toggle="collapse" data-target="#fpaHelp" aria-controls="fpaHelp" aria-expanded="false" aria-label="View FPA help information">
-                        <i class="fas fa-question-circle lead"></i>
-                    </a>
-                </li>
-                <li class="nav-item py-2 border-right mr-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="View FPA copyright, credits and errata information">
-                    <a class="btn btn-outline-primary mr-2" href="#" role="button" data-toggle="collapse" data-target="#fpaCopyrightCredits" aria-controls="fpaCopyrightCredits" aria-expanded="false" aria-label="View FPA copyright, credits and errata information">
-                        <i class="fas fa-info-circle lead"></i>
-                    </a>
-                </li>
-                -->
-                <!-- fpa info & notices
-                <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="The current FPA information privacy level is <?php echo @$privacyLevel; ?>">
-                    <a class="btn btn-info mr-1" href="#" role="button" aria-label="The current FPA information privacy level is <?php echo @$privacyLevel; ?>">
-                        <i class="fas fa-user-shield lead"></i>
-                    </a>
-                </li>
-                <li class="nav-item py-2 border-right d-none d-md-inline-block mr-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="Print the current FPA audit report">
-                    <a class="btn btn-info lead mr-2" href="#" role="button" aria-label="Print the current FPA audit report">
-                        <i class="fas fa-print lead"></i>
-                    </a>
-                </li>
-                -->
-                <!-- fpa warnings -->
-                <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="Delete the FPA script now">
-                    <a class="btn btn-danger mr-1" href="#" role="button" aria-label="Delete FPA now">
-                        <i class="fas fa-times-circle lead"></i>
-                    </a>
-                </li>
-                <!-- TODO: if not latest FPA, show download
-                <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="Your FPA script is out of date, download the latest release from Github">
-                    <a class="btn btn-warning" href="#" role="button" aria-label="Your FPA script is out of date, download the latest release from Github">
-                        <i class="fas fa-cloud-download-alt lead"></i>
-                    </a>
-                </li>
-                -->
-                <!-- TODO: else, show ok
-                <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="Your FPA script is up to date">
-                    <a class="btn btn-outline-success" href="#" role="button" aria-label="Your FPA script is up to date">
-                        <i class="fas fa-thumbs-up lead"></i>
-                    </a>
-                </li>
-                -->
-            </ul>
+                <ul class="navbar-nav flex-row ml-md-auto">
+                    <li class="nav-item dropdown py-2 d-none d-lg-inline-block">
+                        <a class="nav-link 1dropdown-toggle px-2 mr-1" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="Report navigation">
+                            <i class="fas fa-ellipsis-v fa-fw lead"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right shadow" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item py-1" href="#fpa-dashboard">Dashboard</a>
+                            <?php if ( @$_POST['doIT'] == '1' ) { ?>
+                                <a class="dropdown-item py-1" href="#postDetails">Post Content</a>
+                            <?php } ?>
+                            <a class="dropdown-item py-1" href="#instance-discovery">Discovery</a>
+                            <?php if ( $showTables == '1' ) { ?>
+                                <a class="dropdown-item py-1" href="#database-tables">Database</a>
+                            <?php } ?>
+                            <a class="dropdown-item py-1" href="#folder-checks">Permissions</a>
+                            <?php if ( $showComponents == '1' OR $showModules == '1' OR $showLibraries == '1' OR $showPlugins == '1' ) { ?>
+                            <a class="dropdown-item py-1" href="#extensions">Extensions</a>
+                            <?php } ?>
+                            <a class="dropdown-item py-1" href="#templates">Templates</a>
+                            <div class="dropdown-divider mb-0"></div>
+                            <a class="dropdown-item py-2 bg-danger text-white lead" href="fpa-en.php?act=delete"><i class="fas fa-times-circle"></i> Delete FPA</a>
+                        </div>
+                    </li>
+                    <!-- TODO: if not latest FPA, show download -->
+                    <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Download FPA" data-content="<?php echo _RES_FPALATEST2; ?>">
+                        <a class="btn btn-outline-warning mr-1" href="<?php echo _RES_FPALINK2; ?>" rel="noreferrer noopener" target="_blank" role="button" aria-label="<?php echo _RES_FPALATEST2; ?>">
+                            <i class="fas fa-cloud-download-alt lead"></i>
+                        </a>
+                    </li>
+                    <!-- TODO: else, show ok
+                    <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="Your FPA script is up to date">
+                        <a class="btn btn-outline-success" href="#" role="button" aria-label="Your FPA script is up to date">
+                            <i class="fas fa-thumbs-up lead"></i>
+                        </a>
+                    </li>
+                    -->
+                    <!-- docs & errata info
+                    <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="View the FPA guided tour">
+                        <a class="btn btn-outline-primary mr-1" href="#" role="button" aria-label="View the FPA guided tour">
+                            <i class="fas fa-shoe-prints lead"></i>
+                        </a>
+                    </li>
+                    -->
+                    <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Documentation" data-content="Visit the FPA documentation site on Github">
+                        <a class="1nav-link btn btn-outline-info mr-1" href="https://forumpostassistant.github.io/docs/" rel="noreferrer noopener" target="_blank" role="button" aria-label="Visit the FPA documentation site on Github">
+                            <i class="fas fa-book-reader lead"></i>
+                        </a>
+                    </li>
+                    <!-- Help & info
+                    <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="View FPA help information">
+                        <a class="btn btn-outline-primary mr-1" href="#" role="button" data-toggle="collapse" data-target="#fpaHelp" aria-controls="fpaHelp" aria-expanded="false" aria-label="View FPA help information">
+                            <i class="fas fa-question-circle lead"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item py-2 border-right mr-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="View FPA copyright, credits and errata information">
+                        <a class="btn btn-outline-primary mr-2" href="#" role="button" data-toggle="collapse" data-target="#fpaCopyrightCredits" aria-controls="fpaCopyrightCredits" aria-expanded="false" aria-label="View FPA copyright, credits and errata information">
+                            <i class="fas fa-info-circle lead"></i>
+                        </a>
+                    </li>
+                    -->
+                    <!-- fpa info & notices
+                    <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="The current FPA information privacy level is <?php echo @$privacyLevel; ?>">
+                        <a class="btn btn-info mr-1" href="#" role="button" aria-label="The current FPA information privacy level is <?php echo @$privacyLevel; ?>">
+                            <i class="fas fa-user-shield lead"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item py-2 border-right d-none d-md-inline-block mr-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="Print the current FPA audit report">
+                        <a class="btn btn-info lead mr-2" href="#" role="button" aria-label="Print the current FPA audit report">
+                            <i class="fas fa-print lead"></i>
+                        </a>
+                    </li>
+                    -->
+                    <!-- fpa security warning -->
+                    <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Security Notice" data-content="Delete the FPA script now">
+                        <a class="btn btn-danger mr-1" href="fpa-en.php?act=delete" role="button" aria-label="Delete FPA now">
+                            <i class="fas fa-times-circle lead"></i>
+                        </a>
+                    </li>
+                </ul>
 
+            </nav>
         </header>
 
 
-        <section class="1jumbotron 1jumbotron-fluid mt-5" id="snapshot-information">
-            <div class="container-fluid text-center px-0 py-3">
 
-                <div class="card bg-primary text-white">
-                <div class="card-body">
-                    <h2 class="h3 text-center"><?php echo _FPA_VER .': v'. _RES_VERSION; ?></h2>
-                    <small class="text-center">
-                        <?php echo _RES_RELEASE .' ('. _RES_BRANCH .'&nbsp -'. _RES_LANG; ?>)<br />
-                        FPA last updated on: <?php echo _last_updated; ?>
-                    </small>
-                </div>
-                </div>
+        <?php
+            /**
+             * SEEING A WHITE SCREEN WHILST RUNNING FPA? OR SOMEONE HELPING YOU SENT YOU HERE?
+             * uncomment _FPA_DIAG above and re-run FPA
+             *
+             * display_errors, enables php errors to be displayed on the screen
+             * error_reporting, sets the level of errors to report, "-1" is all errors
+             * log_errors, enables errors to be logged to a file, fpa_error.log in the "/" folder
+             *
+             * moved inside body to avoid page layout errors - @RussW 27/05/2020
+             *
+             */
+            if ( defined( '_FPA_DEV' ) OR defined( '_FPA_DIAG' ) ) {
 
-            </div>
+                echo '<div class="alert alert-warning text-white text-center p-0 m-0">';
+
+                    // display developer-mode notice
+                    if ( defined( '_FPA_DEV' ) ) {
+                        ini_set( 'display_errors', 'Off' ); // default-display
+
+                        echo '<h4 class="text-white m-1 p-0 text-capitalize">'. _FPA_DEVENA .'</h4>';
+
+                    } // end developer-mode display
+
+                    // display diagnostic-mode notice
+                    if ( defined( '_FPA_DIAG' ) ) {
+                        ini_set( 'display_errors', 1 );
+
+                        ini_set ( 'error_reporting', '-1' );
+                        ini_set( 'error_log', $fpa['diagLOG'] );
+
+                        echo '<h4 class="text-white m-1 p-0 text-capitalize">'. _FPA_DIAENA .'</h4>';
+                        echo '<p class="text-dark">'. _FPA_DIADSC .' '. $fpa['diagLOG'] .'</p>';
+
+                            if ( file_exists( $fpa['diagLOG'] ) ) {
+
+                                $fpa['fpaLASTERR'] = @array_pop( file( $fpa['diagLOG'] ) );
+                                echo '<p class="border border-white p-2 mt-2 w-75 mx-auto"><strong>Last Known Error</strong><br />'. $fpa['fpaLASTERR'] .'</p>';
+
+                            } else {
+                                echo '<p class="border border-white p-2 mt-2 w-75 mx-auto"><strong>Last Known Error</strong><br />' ._FPA_NER .'</p>';
+                            }
+
+                    } // end diagnostic-mode display
+
+                echo '</div><!--/.alert DEV/DIAG-->';
+
+            } else { // end developer- or diag -mode display
+                ini_set( 'display_errors', 0 ); // default-display
+            }
+        ?>
+
+
+
+        <?php
+        /**
+         * fpa snapshot section
+         *
+         * basic joomla and environment checks and display
+         *
+         */
+        ?>
+        <section class="bg-light pt-2" id="fpa-dashboard">
+            <div class="container pt-4 pb-3">
+
+                <h1 class="font-weight-light border-bottom"><?php echo _FPA_DASHBOARD; ?></h1>
+                <p class="text-dark text-justify mb-lg-5"><?php echo _FPA_DASHBOARD_CONFIDENCE_NOTE; ?></p>
+
+                <div class="row">
+                    <div class="col-md-8 col-lg-8">
+
+                        <div class="row">
+                            <?php
+                                /**
+                                 * fpa snapshot section
+                                 * basic joomla and environment checks and display
+                                 *
+                                 * SUPPORT SECTIONS
+                                 * added a 2.5 section - @PhilD 4-20-12
+                                 * added a 3.1, 3.2 section - @PhilD 01-01-14
+                                 *
+                                 * Note:
+                                 * With the release of Joomla! 3.2, the CMS introduced a new feature called, Strong Passwords.
+                                 * The intent was to enhance the encryption of password hashing and storage through the use of BCrypt,
+                                 * thus increasing the security of Joomla! 3.2 user accounts. Bcrypt was not available in the early releases
+                                 * of php 5.3, and with the first releases, a bug in the algorithm surfaced. This prompted a change in the
+                                 * later php versions to fix it. The Joomla 3 series required a minimum php version of 5.3+ which unfortunately
+                                 * includes php versions without BCrypt and the buggy first release of BCrypt. The Strong Passwords feature
+                                 * has built in compatibility to determine if BCrypt was available based on a php version check of the Joomla
+                                 * installation's server. The version check is used to determine exactly what the Strong Passwords feature
+                                 * would enable, BCrypt or the next best available password hashing encryption available. Unfortunately,
+                                 * this can lead to access issues under certain circumstances.
+                                 * To reflect this issue with Joomla 3.2.0 and earlier versions of php 5.3, the FPA checks to see if the
+                                 * Joomla! version is 3.2.0 and then checks the php version on the server. If the version php version is less
+                                 * than 5.3.7 then the FPA will report that php does not support Joomla!
+                                 *
+                                 * PHP version of 5.3.1+ is supported by Joomla 3.2.1 due to the fix put in place in Joomla 3.2.1
+                                 *
+                                 * MySQL:
+                                 * On Medialayer at least, mysql 5.0.87-community will work with current versions of Joomla and has inno db enabled
+                                 *
+                                 */
+
+                                /**
+                                 * MariaDB check. Get the Database type and look for MariaDB. All current versions of MariaDB should be current
+                                 * with Joomla. The issue with using version numbers is mysql also uses numbers, so this check differentiates
+                                 * between mysql and MariaDB. If there is a better idea given the current FPA code feel free to submit it.
+                                 * @PhilD 03-17-17
+                                 *
+                                 */
+                                $input_line = @$database['dbHOSTSERV'];
+                                preg_match("/\b(\w*mariadb\w*)\b/i", $input_line, $output_array);
+
+                                if  (@$instance['cmsRELEASE'] >= '4.0') {
+                                    $fpa['supportENV']['minPHP']        = '7.2.5';
+                                    $fpa['supportENV']['minSQL']        = '5.6.0';
+                                    $fpa['supportENV']['maxPHP']        = '8.0.0';
+                                    $fpa['supportENV']['maxSQL']        = '9.0.0';
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif  (@$instance['cmsRELEASE'] == '3.10') {
+                                    $fpa['supportENV']['minPHP']        = '5.3.10';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '8.0.0';
+                                    $fpa['supportENV']['maxSQL']        = '9.0.0';
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif  (@$instance['cmsRELEASE'] == '3.9') {
+                                    $fpa['supportENV']['minPHP']        = '5.3.10';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '7.5.0';
+                                    $fpa['supportENV']['maxSQL']        = '8.5.0';
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif  (@$instance['cmsRELEASE'] > '3.7' AND @$instance['cmsDEVLEVEL'] > '2') {
+                                    $fpa['supportENV']['minPHP']        = '5.3.10';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '7.5.0';
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif ( @$instance['cmsRELEASE'] >= '3.5') {
+                                    $fpa['supportENV']['minPHP']        = '5.3.10';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '7.1.99';
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif ( @$instance['cmsRELEASE']  == '3.3' OR @$instance['cmsRELEASE']  == '3.4')  {
+                                    $fpa['supportENV']['minPHP']        = '5.3.10';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '6.0.0';
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif ( @$instance['cmsRELEASE'] == '3.2' AND @$instance['cmsDEVLEVEL'] >= 1) {
+                                    $fpa['supportENV']['minPHP']        = '5.3.1';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+                                } elseif ( @$instance['cmsRELEASE'] == '3.2' AND @$instance['cmsDEVLEVEL'] == 0) {
+                                    $fpa['supportENV']['minPHP']        = '5.3.7';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+                                } elseif ( @$instance['cmsRELEASE'] == '3.1' ) {
+                                    $fpa['supportENV']['minPHP']        = '5.3.1';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+                                } elseif ( @$instance['cmsRELEASE'] == '3.0' ) {
+                                    $fpa['supportENV']['minPHP']        = '5.3.1';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+                                } elseif ( @$instance['cmsRELEASE'] == '2.5' ) {
+                                    $fpa['supportENV']['minPHP']        = '5.2.4';
+                                    $fpa['supportENV']['minSQL']        = '5.0.4';
+                                    $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
+                                    $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif ( @$instance['cmsRELEASE'] == '1.7' ) {
+                                    $fpa['supportENV']['minPHP']        = '5.2.4';
+                                    $fpa['supportENV']['minSQL']        = '5.0.4';
+                                    $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
+                                    $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif ( @$instance['cmsRELEASE'] == '1.6' ) {
+                                    $fpa['supportENV']['minPHP']        = '5.2.4';
+                                    $fpa['supportENV']['minSQL']        = '5.0.4';
+                                    $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
+                                    $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif ( @$instance['cmsRELEASE'] == '1.5' ) {
+
+                                    if ( @$instance['cmsDEVLEVEL'] <= '14' ) {
+                                        $fpa['supportENV']['minPHP']        = '4.3.10';
+                                        $fpa['supportENV']['minSQL']        = '3.23.0';
+                                        $fpa['supportENV']['maxPHP']        = '5.2.17';
+                                        $fpa['supportENV']['maxSQL']        = '5.5.0';  // limited by ENGINE TYPE changes in 5.5 and install sql syntax
+
+                                    } else {
+                                        $fpa['supportENV']['minPHP']        = '4.3.10';
+                                        $fpa['supportENV']['minSQL']        = '3.23.0';
+                                        $fpa['supportENV']['maxPHP']        = '5.3.6';
+                                        $fpa['supportENV']['maxSQL']        = '5.5.0';  // limited by ENGINE TYPE changes in 5.5 and install sql syntax
+
+                                    }
+
+                                    $fpa['supportENV']['badPHP'][0]     = '4.3.9';
+                                    $fpa['supportENV']['badPHP'][1]     = '4.4.2';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.0.4';
+                                    $fpa['supportENV']['badZND'][0]     = '2.5.10';
+
+                                } elseif ( @$instance['cmsRELEASE'] == '1.0' ) {
+                                    $fpa['supportENV']['minPHP']        = '3.0.1';
+                                    $fpa['supportENV']['minSQL']        = '3.0.0';
+                                    $fpa['supportENV']['maxPHP']        = '5.2.17';  // changed max supported php from 4.4.9 to 5.2.17 - 03/12/17 - PD
+                                    $fpa['supportENV']['maxSQL']        = '5.0.91';  // limited by ENGINE TYPE changes in 5.0 and install sql syntax
+                                    $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } else {
+                                    $fpa['supportENV']['minPHP']        = _FPA_NA;
+                                    $fpa['supportENV']['minSQL']        = _FPA_NA;
+                                    $fpa['supportENV']['maxPHP']        = _FPA_NA;
+                                    $fpa['supportENV']['maxSQL']        = _FPA_NA;
+                                    $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+                                }
+                            ?>
+
+                            <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                <small class="d-block text-truncate"><?php echo _FPA_SUPPHP .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL']; ?></small>
+                                <div class="border bg-white p-2 py-lg-3">
+
+                                    <?php // minimum and maximum PHP support requirements met?
+                                        if ( $fpa['supportENV']['minPHP'] == _FPA_NA ) {
+                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                            $snapshot['phpSUP4J'] = _FPA_U;
+
+                                        } elseif ( ( version_compare( PHP_VERSION, $fpa['supportENV']['minPHP'], '>=' ) ) AND ( version_compare( PHP_VERSION, $fpa['supportENV']['maxPHP'], '<=' ) ) ) {
+                                            echo '<span class="text-success">'. _FPA_Y .'</span>';
+                                            $snapshot['phpSUP4J'] = _FPA_Y;
+
+                                        } elseif ( ( version_compare( PHP_VERSION, $fpa['supportENV']['minPHP'], '<' ) ) OR ( version_compare( PHP_VERSION, $fpa['supportENV']['maxPHP'], '>' ) ) ) {
+                                            echo '<span class="text-danger">'. _FPA_N .'</span>';
+                                            $snapshot['phpSUP4J'] = _FPA_N;
+
+                                        } else {
+                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                            $snapshot['phpSUP4J'] = _FPA_U;
+                                        }
+                                    ?>
+
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                <small class="d-block text-truncate">PHP API</small>
+                                <div class="border bg-white p-2 py-lg-3">
+
+                                    <?php // PHP API
+                                        if ( @$phpenv['phpAPI'] ) {
+
+                                            if ( @$phpenv['phpAPI'] == 'apache2handler' ) {
+                                                echo '<span class="text-warning">'. @$phpenv['phpAPI'] .'</span>';
+
+                                            } else {
+                                                echo '<span class="text-success">'. @$phpenv['phpAPI'] .'</span>';
+                                            }
+
+                                        } else {
+                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                        }
+                                    ?>
+
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                <small class="d-block text-truncate"><?php echo _FPA_SUPPHP; ?> MySQL</small>
+                                <div class="border bg-white p-2 py-lg-3">
+
+                                    <?php // MySQL supported by PHP?
+                                        if ( array_key_exists( 'mysql', $phpextensions ) ) {
+                                            echo '<span class="text-success">'. _FPA_Y .'</span>';
+                                            $snapshot['phpSUP4MYSQL'] = _FPA_Y;
+
+                                        } else {
+                                            echo '<span class="">'. _FPA_N .'</span>';
+                                            $snapshot['phpSUP4MYSQL'] = _FPA_N;
+                                        }
+                                    ?>
+
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                <small class="d-block text-truncate"><?php echo _FPA_SUPPHP; ?> MySQLi</small>
+                                <div class="border bg-white p-2 py-lg-3">
+
+                                    <?php // MySQLi supported by PHP?
+                                        if ( array_key_exists( 'mysqli', $phpextensions ) ) {
+                                            echo '<span class="text-success">'. _FPA_Y .'</span>';
+                                            $snapshot['phpSUP4MYSQL-i'] = _FPA_Y;
+
+                                        } else {
+                                            echo '<span class="text-warning">'. _FPA_N .'</span>';
+                                            $snapshot['phpSUP4MYSQL-i'] = _FPA_N;
+                                        }
+                                    ?>
+
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                <small class="d-block text-truncate"><?php echo _FPA_SUPSQL .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL']; ?></small>
+                                <div class="border bg-white p-2 py-lg-3">
+
+                                    <?php // minimum and maximum MySQL support requirements met?
+                                        if ( $fpa['supportENV']['minSQL'] == _FPA_NA OR @$database['dbERROR'] != _FPA_N ) {
+                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                            $snapshot['sqlSUP4J'] = _FPA_U;
+
+                                        } elseif ( ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['minSQL'], '>=' ) ) AND ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['maxSQL'], '<=' ) ) ) {
+
+                                            // WARNING, will run, but ONLY after modifying install SQL to remove ENGINE TYPE statements (removed in MySQL 5.5)
+                                            if ( ( $instance['cmsRELEASE'] == '1.5' ) AND ( @$database['dbHOSTSERV'] > '5.1.43' ) ) {
+                                                echo '<span class="text-warning">'. _FPA_M .' (<a href="http://forum.joomla.org/viewtopic.php?p=2297327" target="_new">'. _FPA_SPNOTE .'</a>)</span>';
+                                                $snapshot['sqlSUP4J'] = _FPA_M;
+
+                                            } else {
+                                                echo '<span class="text-success">'. _FPA_Y .'</span>';
+                                                $snapshot['sqlSUP4J'] = _FPA_Y;
+                                            }
+
+                                        } elseif ( ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['minSQL'], '<' ) ) OR ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['maxSQL'], '>' ) ) ) {
+
+                                            // WARNING, will run, but ONLY after modifying install SQL to remove ENGINE TYPE statements (removed in MySQL 5.5)
+                                            if ( ( $instance['cmsRELEASE'] == '1.5' ) AND ( @$database['dbHOSTSERV'] > '5.1.43' ) ) {
+                                                echo '<span class="text-warning">'. _FPA_M .' (<a href="http://forum.joomla.org/viewtopic.php?p=2297327" target="_new">'. _FPA_SPNOTE .'</a>)</span>';
+                                                $snapshot['sqlSUP4J'] = _FPA_M;
+
+                                            }
+                                            //Added this elseif to give the ok for postgreSQL
+                                            elseif ($instance['configDBTYPE'] == 'postgresql' AND $database['dbHOSTSERV'] >= 8.3 ) {
+                                                echo '<span class="text-success">'. _FPA_Y .'</span>';
+                                                $snapshot['sqlSUP4J'] = _FPA_Y;
+                                            }
+                                            //Added this elseif to give the ok for PDO postgreSQL
+                                            elseif ($instance['configDBTYPE'] == 'pgsql' AND $database['dbHOSTSERV'] >= 8.3 ) {
+                                                echo '<span class="text-success">'. _FPA_Y .'</span>';
+                                                $snapshot['sqlSUP4J'] = _FPA_Y;
+                                            }
+                                            //Added this elseif to give the ok for MariaDB -- PhilD 03-17-17
+                                            elseif (strtoupper(@$output_array[0]) == "MARIADB") {
+                                                echo '<span class="text-success">'. _FPA_MDB .'</span>';
+                                                $snapshot['sqlSUP4J'] = _FPA_Y;
+                                            }
+                                            else {
+                                                echo '<span class="text-danger">'. _FPA_N .'</span>';
+                                                $snapshot['sqlSUP4J'] = _FPA_N;
+                                            }
+
+                                        } else {
+                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                            $snapshot['sqlSUP4J'] = _FPA_U;
+                                        }
+                                    ?>
+
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                <small class="d-block text-truncate"><?php echo _FPA_SUPSQL; ?> MySQLi</small>
+                                <div class="border bg-white p-2 py-lg-3">
+
+                                    <?php // MySQLi supported by MySQL?
+                                        if ( !@$database['dbHOSTSERV'] OR @$database['dbERROR'] != _FPA_N ) {
+                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                            $snapshot['sqlSUP4SQL-i'] = _FPA_U;
+
+                                        } elseif ( version_compare( @$database['dbHOSTSERV'], '5.0.7', '>=' ) ) {
+                                            echo '<span class="text-success">'. _FPA_Y .'</span>';
+
+                                        } else {
+                                            echo '<span class="text-danger">'. _FPA_N .'</span>';
+                                            $snapshot['sqlSUP4SQL-i'] = _FPA_N;
+                                        }
+                                    ?>
+
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                <small class="d-block text-truncate">Database Connection Type</small>
+                                <div class="border bg-white p-2 py-lg-3">
+
+                                    <?php // J! connection to MySQL
+                                        if ( @$instance['configDBTYPE'] ) {
+
+                                            if ( ( @$snapshot['sqlSUP4SQL-i'] == _FPA_N OR @$snapshot['sqlSUP4SQL-i'] == _FPA_U ) AND @$instance['configDBTYPE'] == 'mysqli') {
+                                                echo '<span class="text-danger">'. @$instance['configDBTYPE'] .'</span>';
+
+                                            } else {
+                                                echo '<span class="text-success">'. @$instance['configDBTYPE'] .'</span>';
+                                            }
+
+                                        } else {
+                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                        }
+                                    ?>
+
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                <small class="d-block text-truncate">Database <?php echo _FPA_DEF .' '. _FPA_TCOL; ?></small>
+                                <div class="border bg-white p-2 py-lg-3">
+
+                                    <?php // MySQL default collation
+                                        if ( @$database['dbHOSTDEFCHSET'] ) {
+                                            echo '<span class="text-success">'. @$database['dbHOSTDEFCHSET'] .'</span>';
+
+                                        } else {
+                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                        }
+                                    ?>
+
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                <small class="d-block text-truncate">PHP <?php echo _FPA_VER; ?></small>
+                                <div class="border bg-white p-2 py-lg-3">
+
+                                    <?php // Unsupported PHP version
+                                        if ( version_compare( PHP_VERSION, '5', '<' ) ) {
+                                            echo '<span class="text-danger">'. PHP_VERSION .'</span>';
+
+                                        } else {
+                                            echo '<span class="text-success">'. PHP_VERSION .'</span>';
+                                        }
+                                    ?>
+
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                <small class="d-block text-truncate"><?php echo _FPA_BADPHP; ?></small>
+                                <div class="border bg-white p-2 py-lg-3">
+
+                                    <?php // known buggy php releases (mainly for installation on 1.5)
+                                        foreach ( $fpa['supportENV']['badPHP'] as $badKey => $badValue ) {
+                                            if ( version_compare( PHP_VERSION, $badValue, '==' ) ) {
+                                                $badANS = _FPA_Y;
+                                                continue;
+                                            }
+
+                                        }
+
+                                        if ( @$badANS == _FPA_Y ) {
+                                            $badClass = 'text-danger';
+                                            $snapshot['buggyPHP'] = _FPA_N;
+
+                                        } else {
+                                            $badANS = _FPA_N;
+                                            $badClass = 'success';
+                                            $snapshot['buggyPHP'] = _FPA_N;
+                                        }
+                                    ?>
+
+                                    <span class="text-<?php echo $badClass; ?>"><?php echo $badANS; ?></span>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                <small class="d-block text-truncate">Database <?php echo _FPA_VER; ?></small>
+                                <div class="border bg-white p-2 py-lg-3">
+                                    <span class="">
+                                        <?php // MySQL Version
+                                            if ( @$database['dbHOSTSERV'] ) {
+                                                echo @$database['dbHOSTSERV'];
+                                            } else {
+                                                echo _FPA_U;
+                                            }
+                                        ?>
+                                    </span>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                <small class="d-block text-truncate"><?php echo _FPA_BADZND; ?></small>
+                                <div class="border bg-white p-2 py-lg-3">
+
+                                    <?php // known buggy zend releases (mainly for installation on 1.5)
+                                        $badValue   = ''; // reset variables to fix zend check bug
+                                        $badANS     = '';
+                                        foreach ( $fpa['supportENV']['badZND'] as $badKey => $badValue ) {
+
+                                            if ( version_compare( $phpextensions['Zend Engine'], $badValue, '==' ) ) {
+                                                $badANS = _FPA_Y;
+                                                continue;
+                                            }
+
+                                        }
+
+                                        if ( @$badANS == _FPA_Y ) {
+                                            $badClass = 'danger';
+                                            $snapshot['buggyZEND'] = _FPA_Y;
+
+                                        } else {
+                                            $badANS = _FPA_N;
+                                            $badClass = 'success';
+                                            $snapshot['buggyZEND'] = _FPA_N;
+                                        }
+                                    ?>
+
+                                    <span class="text-<?php echo $badClass; ?>"><?php echo $badANS; ?></span>
+                                </div>
+
+                            </div>
+
+                        </div><!-- /.row-->
+
+                    <?php showDev( $snapshot ); ?>
+                    </div><!--/.col-->
+                    <div class="col-md-4 col-lg-4">
+                        <?php
+                        /**
+                         * confidence rating based on basic environment tests
+                         *
+                         * a quick and dirty visual feedback method to display a score/rating in the confidence that
+                         * Joomla! will run/work based on some basic initial test results
+                         * @RussW added 23/05/2020
+                         *
+                         */
+
+                        /**
+                         * confidenceScore
+                         * scale :
+                         * 0  = danger/no/unknown/unsupported/bad
+                         * 1  = warning/ok/old(minor)/maybe
+                         * 2  = success/yes/latest/good
+                         *
+                         */
+                        (float)$confidenceScore = 0;
+                        $confidenceResult = array();
+                        $confidenceHelp   = array();
+
+                            // check php handler & phpsuexec
+                            if (substr($phpenv['phpAPI'], 0, 3) == 'cgi' OR $phpenv['phpAPI'] != 'apache2handler') {
+                                $confidenceResult['PHP API'] = 2;
+
+                            } elseif ($phpenv['phpAPI'] == 'apache2handler') {
+                                $confidenceResult['PHP API'] = 1;
+
+                                if ($phpenv['phpPHPSUEXEC'] == _FPA_Y) {
+                                    $confidenceResult['phpPHPSUEXEC'] = 2;
+
+                                } elseif ($phpenv['phpPHPSUEXEC'] == _FPA_N) {
+                                    $confidenceResult['PHPsuExec available'] = 1;
+
+                                } else {
+                                    $confidenceResult['PHPsuExec available'] = 0;
+                                }
+
+                            } else {
+                                $confidenceResult['PHP API'] = 0;
+                            }
+
+                            // check apache suexec
+                            if ($phpenv['phpAPACHESUEXEC'] == _FPA_Y) {
+                                $confidenceResult['Apache suExec available'] = 2;
+
+                            } elseif (substr($phpenv['phpAPI'], 0, 4) == 'lite') {
+                                $confidenceResult['Server suExec available'] = 1;
+
+                            } else {
+                                $confidenceResult['Server suExec available'] = 0;
+                            }
+
+                            // check for UTF8 support
+                            if (array_key_exists( 'mbstring', $phpextensions )) {
+                                $confidenceResult['PHP mbstring available'] = 2;
+                            } else {
+                                $confidenceResult['PHP mbstring available'] = 1;
+                            }
+
+                            // check for compression extensions
+                            if (array_key_exists( 'zip', $phpextensions ) OR array_key_exists( 'zlib', $phpextensions ) OR array_key_exists( 'bz2', $phpextensions )) {
+                                $confidenceResult['PHP zip, zlib or bz2 available'] = 2;
+                            } else {
+                                $confidenceResult['PHP zip, zlib or bz2 available'] = 1;
+                            }
+
+                            // check for encryption extensions
+                            if (array_key_exists( 'mcrypt', $phpextensions ) OR array_key_exists( 'sodium', $phpextensions )) {
+                                $confidenceResult['PHP mcrypt or sodium available'] = 2;
+                            } else {
+                                $confidenceResult['PHP mcrypt or sodium available'] = 1;
+                            }
+
+                            // check for cURL extensions
+                            if (array_key_exists( 'curl', $phpextensions ) OR array_key_exists( 'sodium', $phpextensions )) {
+                                $confidenceResult['PHP cURL available'] = 2;
+                            } else {
+                                $confidenceResult['PHP cURL available'] = 1;
+                            }
+
+                            // check for XML extensions
+                            if (array_key_exists( 'xml', $phpextensions ) OR array_key_exists( 'libxml', $phpextensions )) {
+                                $confidenceResult['PHP xml or libxml available'] = 2;
+                            } else {
+                                $confidenceResult['PHP xml or libxml available'] = 1;
+                            }
+
+                            // check for database support
+                            if ($snapshot['phpSUP4MYSQL'] == _FPA_Y OR $snapshot['phpSUP4MYSQL-i'] == _FPA_Y) {
+                                $confidenceResult[_FPA_SUPPHP .' MySQL or MySQLi'] = 2;
+
+                            } else {
+                                $confidenceResult[_FPA_SUPPHP .' MySQL or MySQLi'] = 0;
+                            }
+
+                            // check for bad php versions
+                            if ($snapshot['buggyPHP'] == _FPA_N) {
+                                $confidenceResult[_FPA_BADPHP] = 2;
+
+                            } else {
+                                $confidenceResult[_FPA_BADPHP] = 0;
+                            }
+
+                            // check bad zend versions
+                            if ($snapshot['buggyZEND'] == _FPA_N) {
+                                $confidenceResult[_FPA_BADZND] = 2;
+
+                            } else {
+                                $confidenceResult[_FPA_BADZND] = 0;
+                            }
+
+                            // check if php sessionpath writable
+                            if ($phpenv['phpSESSIONPATHWRITABLE'] == _FPA_Y) {
+                                $confidenceResult['PHP Session Path '. _FPA_WRITABLE] = 2;
+
+                            } else {
+                                $confidenceResult['PHP Session Path '. _FPA_WRITABLE] = 0;
+                            }
+
+                            // check if system tmp is writable
+                            if ($system['sysTMPDIRWRITABLE'] == _FPA_Y) {
+                                $confidenceResult[_FPA_SERV .' Tmp '. _FPA_WRITABLE] = 2;
+
+                            } else {
+                                $confidenceResult[_FPA_SERV .' Tmp '. _FPA_WRITABLE] = 0;
+                            }
+
+
+                            // only test these items if instance is found (installed or not)
+                            if ($instance['instanceFOUND'] == _FPA_Y) {
+
+                                // does php support J! version
+                                if ($snapshot['phpSUP4J'] == _FPA_Y) {
+                                    $confidenceResult[_FPA_SUPPHP .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] .' <small>(PHP '. PHP_VERSION .')</small>'] = 2;
+
+                                } elseif ($snapshot['phpSUP4J'] == _FPA_M) {
+                                        $confidenceResult[_FPA_SUPPHP .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] .' <small>(PHP '. PHP_VERSION .')</small>'] = 1;
+
+                                } else {
+                                    $confidenceResult[_FPA_SUPPHP .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] .' <small>(PHP v'. PHP_VERSION .')</small>'] = 0;
+                                }
+
+                                // does db support J! version
+                                if ($snapshot['sqlSUP4J'] == _FPA_Y) {
+                                    $confidenceResult[_FPA_SUPSQL .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL']] = 2;
+
+                                } elseif ($snapshot['sqlSUP4J'] == _FPA_M) {
+                                    $confidenceResult[_FPA_SUPSQL .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL']] = 1;
+
+                                } else {
+                                    $confidenceResult[_FPA_SUPSQL .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL']] = 0;
+                                }
+
+                            } // end instandFOUND checks
+
+
+                            // nothing to change here if adding new confidence results (auto counts & calculates)
+                            $countConfidence = count($confidenceResult)*2;
+                            $confidenceScore = (array_sum($confidenceResult) / $countConfidence)*100;
+
+
+                            /**
+                             * showstoppers & belt 'n' braces
+                             *
+                             * if guaranteed to break Joomla!, definately unsupported, any of the following criteria
+                             * are met or if score result is not numeric or a positive number between 0-100, force
+                             * $confidenceScore to 0(zero)/F
+                             *
+                             */
+
+                            // unsupported minimum PHP version
+                            if (version_compare( PHP_VERSION, '5', '<' ))  {
+                                $confidenceScore = 0;
+                            }
+
+                            // mysql or php does not support installed Joomla! version
+                            if ($instance['instanceFOUND'] == _FPA_Y AND ($snapshot['phpSUP4J'] == _FPA_NO OR $snapshot['sqlSUP4J'] == _FPA_NO)) {
+                                $confidenceScore = 0;
+                            }
+
+                            // bad score result
+                            if (!is_numeric($confidenceScore) OR $confidenceScore < 0) {
+                                $confidenceScore = 0;
+                            }
+
+                            /**
+                             * set the $confidenceHelp icon colour
+                             *
+                             * we limit the colours use for the help icon and don't use the $confidenceScore colour scheme
+                             * so that it is more generic and will change the icon only within larger score variations.
+                             *
+                             * the colour changes are purely a visual method of informing the user that some audit tests
+                             * do not equal 2 (top score) and may need review (via the help icon button/panel)
+                             *
+                             * 0 - 25.000 (F rated) = danger
+                             * 25.001 - 99.999 (E, D, C, B & A rated) = warning
+                             * 100 (A+ rated) = info (default)
+                             *
+                             */
+                            if ($confidenceScore == 100) {
+                                $helpIconColor = 'info';
+
+                            } elseif ($confidenceScore == 0 OR $confidenceScore <= 25) {
+                                $helpIconColor = 'danger';
+
+                            } elseif ($confidenceScore > 40 OR $confidenceScore < 100) {
+                                $helpIconColor = 'warning';
+
+                            } else {
+                                $helpIconColor = 'info';
+                            }
+
+                            /**
+                             * generate a formated audit results table
+                             * displayed in the confidenceResult Help collapsable
+                             *
+                             * @param array $confidenceResult
+                             * @return $confidenceHelp
+                             */
+                            function confidenceShowHelp(array $confidenceResult) {
+
+                                echo '<table class="table table-striped table-bordered table-sm">';
+                                foreach ($confidenceResult as $confidenceHelpDesc => $confidenceHelpScore) {
+                                    if ($confidenceHelpScore == 2) {
+                                        $helpIcon  = 'check-circle';
+                                        $helpColor = 'success';
+                                    } elseif ($confidenceHelpScore == 1) {
+                                        $helpIcon  = 'info-circle';
+                                        $helpColor = 'info';
+                                    } elseif ($confidenceHelpScore == 0) {
+                                        $helpIcon  = 'times-circle';
+                                        $helpColor = 'danger';
+                                    } else {
+                                        $helpIcon  = 'question-circle';
+                                        $helpColor = 'light';
+                                    }
+                                    echo '<tr><td class="col-8">'. $confidenceHelpDesc .'</td><td class="col-4"><i class="fas fa-'. $helpIcon .' text-'. $helpColor .'"></i></td></tr>';
+                                }
+                                echo '</table>';
+
+                                return $confidenceResult;
+                            }
+                        ?>
+                        <div class="mx-lg-3">
+                            <div class="bg-white shadow text-center">
+                                <div class="m-2 float-right" data-toggle="popover" data-trigger="hover" data-placement="top" data-fallbackPlacement="flip" data-title="Confidence Audit Help" data-content="Click the icon to review the basic audit tests and results that determine this rating">
+                                    <i class="fas fa-question-circle fa-lg text-<?php echo $helpIconColor; ?>" data-toggle="collapse" data-target="#confidenceHelp" aria-expanded="false" aria-controls="confidenceHelp" role="button"aria-label="View confidence results"></i>
+                                </div>
+                                <h5 class="text-center border-bottom p-2"><?php echo _FPA_DASHBOARD_CONFIDENCE_TITLE; ?></h5>
+
+                                <div class="collapse text-left p-2" id="confidenceHelp">
+                                    <h6 class=" text-center pb-2 m-0">Basic Audit Results</h6>
+                                    <?php $confidenceHelp = confidenceShowHelp($confidenceResult); ?>
+                                </div>
+
+                                <?php
+                                    /**
+                                     * generate confidence rating
+                                     * based on $confidenceScore
+                                     * A - F & messaging
+                                     *
+                                     */
+                                    if ($confidenceScore > 100 OR $confidenceScore < 0) {
+                                        $confidenceRating = '<i class="fas fa-question-circle text-light"></i>';
+                                        $confidenceColor  = 'muted';
+                                        $confidenceMessage = _FPA_U;
+
+                                    } elseif ($confidenceScore >= 0 AND $confidenceScore <= 25) {
+                                        $confidenceRating  = 'F';
+                                        $confidenceColor   = 'danger';
+                                        $confidenceMessage = 'Joomla! is very unlikely to run or will observe major problems';
+
+                                    } elseif ($confidenceScore <= 40) {
+                                        $confidenceRating  = 'E';
+                                        $confidenceColor   = 'warning';
+                                        $confidenceMessage = 'Joomla! is unlikely to run or will observe many problems';
+
+                                    } elseif ($confidenceScore <= 60) {
+                                        $confidenceRating  = 'D';
+                                        $confidenceColor   = 'warning';
+                                        $confidenceMessage = 'Joomla! is likely to run but is very likely to observe many problems';
+
+                                    } elseif ($confidenceScore <= 75) {
+                                        $confidenceRating  = 'C';
+                                        $confidenceColor   = 'info';
+                                        $confidenceMessage = 'Joomla! is likely to run but some features are likely to observe problems';
+
+                                    } elseif ($confidenceScore <= 90) {
+                                        $confidenceRating  = 'B';
+                                        $confidenceColor   = 'primary';
+                                        $confidenceMessage = 'Joomla! is very likely to run but some features may observe minor problems';
+
+                                    } elseif ($confidenceScore < 100) {
+                                        $confidenceRating  = 'A';
+                                        $confidenceColor   = 'success';
+                                        $confidenceMessage = 'Joomla! should run and should not observe any problems';
+
+                                    } elseif ($confidenceScore == 100) {
+                                        $confidenceRating  = 'A+';
+                                        $confidenceColor   = 'success';
+                                        $confidenceMessage = 'Joomla! should run and should not observe any problems';
+
+                                    } else { // catch-all
+                                        $confidenceRating  = '<i class="fas fa-question-circle text-light"></i>';
+                                        $confidenceColor   = 'muted';
+                                        $confidenceMessage = _FPA_U;
+                                    }
+                                ?>
+                                <h1 class="text-center display-2 text-<?php echo $confidenceColor; ?> mb-0"><strong><?php echo $confidenceRating; ?></strong></h1>
+                                <span class="badge badge-pill badge-light text-dark <?php echo $confidenceColor; ?> mx-auto position-relative" style="top:-15px;"><?php echo number_format($confidenceScore, 1); ?>%</span>
+                                <?php if ($confidenceMessage) { ?>
+                                    <p class="xsmall text-center border-top bg-white text-<?php echo $confidenceColor; ?> p-2 mb-2"><?php echo $confidenceMessage; ?></p>
+                                <?php } ?>
+                            </div>
+                            <?php showDev( $confidenceResult ); ?>
+
+                            <!-- access the FPA optionPanels -->
+                            <a class="d-block btn btn-primary 1mt-4 1mb-2" role="button" href="javascript:toggleFPA('fpaOptions','fpaButton');" id="fpaButton" ><i class="fas fa-chevron-circle-right"></i> Open the <strong><?php echo _RES; ?></strong></a>
+                        </div>
+
+                    </div><!--/.col-->
+                </div><!--/.row-->
+
+            </div><!--/.container-->
         </section>
 
 
-        <main class="container py-5">
-
-        <?php
-        /** ENVIRONMENT SUPPORT NOTICE (snapshot) **************************************************
-         ** this section displays a message explaining if the system, mysql and php environment
-         ** can support the discovered version of Joomla!
-         **
-         ** REQUIREMENTS: (as far as I know!)
-         **          ______________________________________________________
-         **          | J3.0   | J1.7/6 | J!1.5.0-14 | J1.5.0-23 |  J!1.0  |
-         ** ------------------------------------------------------
-         ** MIN PHP  | 5.3.1  | 5.2.4  |   4.3.10   |  4.3.10   |  3.0.1  |
-         ** MAX PHP  | -----  | -----  |   5.2.17   |  5.3.6    |  4.4.9  | // 5.0.0 was first release to include MySQLi support
-         ** ------------------------------------------------------
-         ** MIN MYSQL | 5.1.6 | 5.0.4  |   3.23.0   |  3.23.0   |  3.0.0  |
-         ** MAX MYSQL | ----- | -----  |   5.1.43   |  5.1.43   |  5.0.91 | // only limited to 4.1.29 & 5.1 because install sql still has ENGINE TYPE statements (removed in MySQL 5.5)
-         ** ------------------------------------------------------
-         ** BAD PHP  | -----  | -----  |   4.39, 4.4.2, 5.0.5   |  -----  |
-         ** BAD SQL  | -----  | -----  |        >5.0.0          |  -----  |
-         ** BAD ZEND | -----  | -----  |         2.5.10         |  -----  |
-         *****************************************************************************************/
-
-            echo '<section class="" id="fpa-snapshot">';
-
-            /** SUPPORT SECTIONS *************************************************************/
-            /** added a 2.5 section - Phil 4-20-12 *******/
-            /** added a 3.1, 3.2 section - Phil 01-01-14
-                Note:
-                With the release of Joomla! 3.2, the CMS introduced a new feature called, Strong Passwords.
-                The intent was to enhance the encryption of password hashing and storage through the use of BCrypt,
-                thus increasing the security of Joomla! 3.2 user accounts. Bcrypt was not available in the early releases
-                of php 5.3, and with the first releases, a bug in the algorithm surfaced. This prompted a change in the
-                later php versions to fix it. The Joomla 3 series required a minimum php version of 5.3+ which unfortunately
-                includes php versions without BCrypt and the buggy first release of BCrypt. The Strong Passwords feature
-                has built in compatibility to determine if BCrypt was available based on a php version check of the Joomla
-                installation's server. The version check is used to determine exactly what the Strong Passwords feature
-                would enable, BCrypt or the next best available password hashing encryption available. Unfortunately,
-                this can lead to access issues under certain circumstances.
-                To reflect this issue with Joomla 3.2.0 and earlier versions of php 5.3, the FPA checks to see if
-                the Joomla! version is 3.2.0 and then checks the php version on the server. If the version php version
-                is less than 5.3.7 then the FPA will report that php does not support Joomla!
-                PHP version of 5.3.1+ is supported by Joomla 3.2.1 due to the fix put in place in Joomla 3.2.1
-                Mysql:
-                On Medialayer at least, mysql 5.0.87-community will work with current versions of Joomla and has inno db enabled
-                *******/
-
-                /** MariaDB check. Get the Database type and look for MariaDB. All current versions of MariaDB
-                    should be current with Joomla. The issue with using version numbers is mysql also uses numbers,
-                    so this check differentiates between mysql and MariaDB. If there is a better idea given the
-                    current FPA code feel free to submit it.  -- PhilD 03-17-17
-                ****/
-                $input_line = @$database['dbHOSTSERV'];
-                preg_match("/\b(\w*mariadb\w*)\b/i", $input_line, $output_array);
-
-
-            if  (@$instance['cmsRELEASE'] >= '4.0') {
-                $fpa['supportENV']['minPHP']        = '7.2.5';
-                $fpa['supportENV']['minSQL']        = '5.6.0';
-                $fpa['supportENV']['maxPHP']        = '8.0.0';
-                $fpa['supportENV']['maxSQL']        = '9.0.0';
-                $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-            } elseif  (@$instance['cmsRELEASE'] == '3.10') {
-                $fpa['supportENV']['minPHP']        = '5.3.10';
-                $fpa['supportENV']['minSQL']        = '5.1.0';
-                $fpa['supportENV']['maxPHP']        = '8.0.0';
-                $fpa['supportENV']['maxSQL']        = '9.0.0';
-                $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-            } elseif  (@$instance['cmsRELEASE'] == '3.9') {
-                $fpa['supportENV']['minPHP']        = '5.3.10';
-                $fpa['supportENV']['minSQL']        = '5.1.0';
-                $fpa['supportENV']['maxPHP']        = '7.5.0';
-                $fpa['supportENV']['maxSQL']        = '8.5.0';
-                $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-            } elseif  (@$instance['cmsRELEASE'] > '3.7' and @$instance['cmsDEVLEVEL'] > '2') {
-                $fpa['supportENV']['minPHP']        = '5.3.10';
-                $fpa['supportENV']['minSQL']        = '5.1.0';
-                $fpa['supportENV']['maxPHP']        = '7.5.0';
-                $fpa['supportENV']['maxSQL']        = '5.8.0';
-                $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-            } elseif ( @$instance['cmsRELEASE'] >= '3.5') {
-                $fpa['supportENV']['minPHP']        = '5.3.10';
-                $fpa['supportENV']['minSQL']        = '5.1.0';
-                $fpa['supportENV']['maxPHP']        = '7.1.99';
-                $fpa['supportENV']['maxSQL']        = '5.8.0';
-                $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-            } elseif ( @$instance['cmsRELEASE']  == '3.3' or @$instance['cmsRELEASE']  == '3.4')  {
-                $fpa['supportENV']['minPHP']        = '5.3.10';
-                $fpa['supportENV']['minSQL']        = '5.1.0';
-                $fpa['supportENV']['maxPHP']        = '6.0.0';
-                $fpa['supportENV']['maxSQL']        = '5.8.0';
-                $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-            } elseif ( @$instance['cmsRELEASE'] == '3.2' and @$instance['cmsDEVLEVEL'] >= 1) {
-                $fpa['supportENV']['minPHP']        = '5.3.1';
-                $fpa['supportENV']['minSQL']        = '5.1.0';
-                $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-                $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-                $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-            } elseif ( @$instance['cmsRELEASE'] == '3.2' and @$instance['cmsDEVLEVEL'] == 0) {
-                $fpa['supportENV']['minPHP']        = '5.3.7';
-                $fpa['supportENV']['minSQL']        = '5.1.0';
-                $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-                $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-                $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-            } elseif ( @$instance['cmsRELEASE'] == '3.1' ) {
-                $fpa['supportENV']['minPHP']        = '5.3.1';
-                $fpa['supportENV']['minSQL']        = '5.1.0';
-                $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-                $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-                $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-            } elseif ( @$instance['cmsRELEASE'] == '3.0' ) {
-                $fpa['supportENV']['minPHP']        = '5.3.1';
-                $fpa['supportENV']['minSQL']        = '5.1.0';
-                $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-                $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-                $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-            } elseif ( @$instance['cmsRELEASE'] == '2.5' ) {
-                $fpa['supportENV']['minPHP']        = '5.2.4';
-                $fpa['supportENV']['minSQL']        = '5.0.4';
-                $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-                $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-                $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
-                $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-            } elseif ( @$instance['cmsRELEASE'] == '1.7' ) {
-                $fpa['supportENV']['minPHP']        = '5.2.4';
-                $fpa['supportENV']['minSQL']        = '5.0.4';
-                $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-                $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-                $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
-                $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-            } elseif ( @$instance['cmsRELEASE'] == '1.6' ) {
-                $fpa['supportENV']['minPHP']        = '5.2.4';
-                $fpa['supportENV']['minSQL']        = '5.0.4';
-                $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-                $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-                $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
-                $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-            } elseif ( @$instance['cmsRELEASE'] == '1.5' ) {
-
-                if ( @$instance['cmsDEVLEVEL'] <= '14' ) {
-                    $fpa['supportENV']['minPHP']        = '4.3.10';
-                    $fpa['supportENV']['minSQL']        = '3.23.0';
-                    $fpa['supportENV']['maxPHP']        = '5.2.17';
-                    $fpa['supportENV']['maxSQL']        = '5.5.0';  // limited by ENGINE TYPE changes in 5.5 and install sql syntax
-
-                } else {
-                    $fpa['supportENV']['minPHP']        = '4.3.10';
-                    $fpa['supportENV']['minSQL']        = '3.23.0';
-                    $fpa['supportENV']['maxPHP']        = '5.3.6';
-                    $fpa['supportENV']['maxSQL']        = '5.5.0';  // limited by ENGINE TYPE changes in 5.5 and install sql syntax
-
-                }
-
-                $fpa['supportENV']['badPHP'][0]     = '4.3.9';
-                $fpa['supportENV']['badPHP'][1]     = '4.4.2';
-                $fpa['supportENV']['badPHP'][2]     = '5.0.4';
-                $fpa['supportENV']['badZND'][0]     = '2.5.10';
-
-            } elseif ( @$instance['cmsRELEASE'] == '1.0' ) {
-                $fpa['supportENV']['minPHP']        = '3.0.1';
-                $fpa['supportENV']['minSQL']        = '3.0.0';
-            //	$fpa['supportENV']['maxPHP']        = '4.4.9';
-                $fpa['supportENV']['maxPHP']        = '5.2.17';   // changed max supported php from 4.4.9 to 5.2.17 - 03/12/17 - PD
-                $fpa['supportENV']['maxSQL']        = '5.0.91';  // limited by ENGINE TYPE changes in 5.0 and install sql syntax
-                $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
-                $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-            } else {
-                $fpa['supportENV']['minPHP']        = _FPA_NA;
-                $fpa['supportENV']['minSQL']        = _FPA_NA;
-                $fpa['supportENV']['maxPHP']        = _FPA_NA;
-                $fpa['supportENV']['maxSQL']        = _FPA_NA;
-                $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
-                $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-            }
-
-
-            echo '<div class="container-fluid" 1style="1width:85%;1margin:0 auto;1margin-top:10px;">';
-            echo '<div class="row">';
-
-            // minimum and maximum PHP support requirements met?
-            echo '<div class="col-sm-6 col-md-3 text-center" 1style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">';
-
-                echo '<div class="card">';
-                echo '<div class="card-header">';
-                echo '<h5 class="card-title text-bold">'. _FPA_SUPPHP .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] .'</h5>';
-                echo '</div>';
-                echo '<div class="card-body">';
-
-                if ( $fpa['supportENV']['minPHP'] == _FPA_NA ) {
-                    echo '<div class="1normal-note"><span class="text-warning">'. _FPA_U .'</span></div>';
-                    $snapshot['phpSUP4J'] = _FPA_U;
-
-                } elseif ( ( version_compare( PHP_VERSION, $fpa['supportENV']['minPHP'], '>=' ) ) AND ( version_compare( PHP_VERSION, $fpa['supportENV']['maxPHP'], '<=' ) ) ) {
-                    echo '<div class="1normal-note"><span class="text-success">'. _FPA_Y .'</span></div>';
-                    $snapshot['phpSUP4J'] = _FPA_Y;
-
-                } elseif ( ( version_compare( PHP_VERSION, $fpa['supportENV']['minPHP'], '<' ) ) OR ( version_compare( PHP_VERSION, $fpa['supportENV']['maxPHP'], '>' ) ) ) {
-                    echo '<div class="1normal-note"><span class="text-danger">'. _FPA_N .'</span></div>';
-                    $snapshot['phpSUP4J'] = _FPA_N;
-
-                } else {
-                    echo '<div class="1normal-note"><span class="text-warning">'. _FPA_U .'</span></div>';
-                    $snapshot['phpSUP4J'] = _FPA_U;
-                }
-                echo '</div><!--/.card-body-->';
-                echo '</div><!--/.card-->';
-
-            echo '</div>';
-
-
-            // PHP API
-            echo '<div class="col-sm-6 col-md-3 text-center" 1style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">PHP API<br />';
-
-                if ( @$phpenv['phpAPI'] ) {
-
-                    if ( @$phpenv['phpAPI'] == 'apache2handler' ) {
-                        echo '<div class="normal-note"><span class="warn-text">'. @$phpenv['phpAPI'] .'</span></div>';
-
-                    } else {
-                        echo '<div class="normal-note"><span class="ok">'. @$phpenv['phpAPI'] .'</span></div>';
-                    }
-
-                } else {
-                    echo '<div class="normal-note"><span class="warn-text">'. _FPA_U .'</span></div>';
-                }
-
-            echo '</div>';
-
-
-            // MySQL supported by PHP?
-            echo '<div class="col-sm-6 col-md-3 text-center" 1style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">'. _FPA_SUPPHP .' MySQL<br />';
-
-                if ( array_key_exists( 'mysql', $phpextensions ) ) {
-                    echo '<div class="normal-note"><span class="ok">'. _FPA_Y .'</span></div>';
-                    $snapshot['phpSUP4MYSQL'] = _FPA_Y;
-
-                } else {
-                    echo '<div class="normal-note"><span class="alert-text">'. _FPA_N .'</span></div>';
-                    $snapshot['phpSUP4MYSQL'] = _FPA_N;
-                }
-
-            echo '</div>';
-
-
-            // MySQLi supported by PHP?
-            echo '<div class="col-sm-6 col-md-3 text-center" 1style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">'. _FPA_SUPPHP .' MySQLi<br />';
-
-                if ( array_key_exists( 'mysqli', $phpextensions ) ) {
-                    echo '<div class="normal-note"><span class="ok">'. _FPA_Y .'</span></div>';
-                    $snapshot['phpSUP4MYSQL-i'] = _FPA_Y;
-
-                } else {
-                    echo '<div class="normal-note"><span class="warn-text">'. _FPA_N .'</span></div>';
-                    $snapshot['phpSUP4MYSQL-i'] = _FPA_N;
-                }
-
-            echo '</div>';
-
-            echo '</div><!-- /.row-->';
-            echo '<div class="row">';
-
-
-            echo '<br style="clear:both;" /><br />';
-
-            // minimum and maximum MySQL support requirements met?
-            echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">'. _FPA_SUPSQL .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] .'<br />';
-
-                if ( $fpa['supportENV']['minSQL'] == _FPA_NA OR @$database['dbERROR'] != _FPA_N ) {
-                    echo '<div class="normal-note"><span class="warn-text">'. _FPA_U .'</span></div>';
-                    $snapshot['sqlSUP4J'] = _FPA_U;
-
-                } elseif ( ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['minSQL'], '>=' ) ) AND ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['maxSQL'], '<=' ) ) ) {
-
-                    // WARNING, will run, but ONLY after modifying install SQL to remove ENGINE TYPE statements (removed in MySQL 5.5)
-                    if ( ( $instance['cmsRELEASE'] == '1.5' ) AND ( @$database['dbHOSTSERV'] > '5.1.43' ) ) {
-                        echo '<div class="normal-note"><span class="warn-text">'. _FPA_M .' (<a href="http://forum.joomla.org/viewtopic.php?p=2297327" target="_new">'. _FPA_SPNOTE .'</a>)</span></div>';
-                        $snapshot['sqlSUP4J'] = _FPA_M;
-
-                    } else {
-                        echo '<div class="normal-note"><span class="ok">'. _FPA_Y .'</span></div>';
-                        $snapshot['sqlSUP4J'] = _FPA_Y;
-                    }
-
-                } elseif ( ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['minSQL'], '<' ) ) OR ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['maxSQL'], '>' ) ) ) {
-
-                    // WARNING, will run, but ONLY after modifying install SQL to remove ENGINE TYPE statements (removed in MySQL 5.5)
-                    if ( ( $instance['cmsRELEASE'] == '1.5' ) AND ( @$database['dbHOSTSERV'] > '5.1.43' ) ) {
-                        echo '<div class="normal-note"><span class="warn-text">'. _FPA_M .' (<a href="http://forum.joomla.org/viewtopic.php?p=2297327" target="_new">'. _FPA_SPNOTE .'</a>)</span></div>';
-                        $snapshot['sqlSUP4J'] = _FPA_M;
-
-                    }
-                    //Added this elseif to give the ok for postgreSQL
-                    elseif ($instance['configDBTYPE'] == 'postgresql' AND $database['dbHOSTSERV'] >= 8.3 ) {
-                        echo '<div class="normal-note"><span class="ok">'. _FPA_Y .'</span></div>';
-                        $snapshot['sqlSUP4J'] = _FPA_Y;
-                    }
-
-                    //Added this elseif to give the ok for PDO postgreSQL
-                    elseif ($instance['configDBTYPE'] == 'pgsql' AND $database['dbHOSTSERV'] >= 8.3 ) {
-                        echo '<div class="normal-note"><span class="ok">'. _FPA_Y .'</span></div>';
-                        $snapshot['sqlSUP4J'] = _FPA_Y;
-                    }
-
-                    //Added this elseif to give the ok for MariaDB -- PhilD 03-17-17
-                    elseif (strtoupper(@$output_array[0]) == "MARIADB") {
-                        echo '<div class="normal-note"><span class="ok">'. _FPA_MDB .'</span></div>';
-                        $snapshot['sqlSUP4J'] = _FPA_Y;
-                    }
-                    else {
-                        echo '<div class="normal-note"><span class="alert-text">'. _FPA_N .'</span></div>';
-                        $snapshot['sqlSUP4J'] = _FPA_N;
-                    }
-
-                } else {
-                    echo '<div class="normal-note"><span class="warn-text">'. _FPA_U .'</span></div>';
-                    $snapshot['sqlSUP4J'] = _FPA_U;
-                }
-
-            echo '</div>';
-
-
-            // MySQLi supported by MySQL?
-            echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">'. _FPA_SUPSQL .' MySQLi<br />';
-
-                if ( !@$database['dbHOSTSERV'] OR @$database['dbERROR'] != _FPA_N ) {
-                    echo '<div class="normal-note"><span class="warn-text">'. _FPA_U .'</span></div>';
-                    $snapshot['sqlSUP4SQL-i'] = _FPA_U;
-
-                } elseif ( version_compare( @$database['dbHOSTSERV'], '5.0.7', '>=' ) ) {
-                    echo '<div class="normal-note"><span class="ok">'. _FPA_Y .'</span></div>';
-
-                } else {
-                    echo '<div class="normal-note"><span class="warn-text">'. _FPA_N .'</span></div>';
-                    $snapshot['sqlSUP4SQL-i'] = _FPA_N;
-                }
-
-            echo '</div>';
-
-
-            // J! connection to MySQL
-            echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">Database Connection Type<br />';
-
-                if ( @$instance['configDBTYPE'] ) {
-
-                    if ( ( @$snapshot['sqlSUP4SQL-i'] == _FPA_N OR @$snapshot['sqlSUP4SQL-i'] == _FPA_U ) AND @$instance['configDBTYPE'] == 'mysqli') {
-                        echo '<div class="normal-note"><span class="alert-text">'. @$instance['configDBTYPE'] .'</span></div>';
-
-                    } else {
-                        echo '<div class="normal-note"><span class="ok">'. @$instance['configDBTYPE'] .'</span></div>';
-                    }
-
-                } else {
-                    echo '<div class="normal-note"><span class="warn-text">'. _FPA_U .'</span></div>';
-                }
-
-            echo '</div>';
-
-
-            // MySQL default collation
-            echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">Database '. _FPA_DEF .' '. _FPA_TCOL .'<br />';
-
-                if ( @$database['dbHOSTDEFCHSET'] ) {
-                    echo '<div class="normal-note"><span class="ok">'. @$database['dbHOSTDEFCHSET'] .'</span></div>';
-
-                } else {
-                    echo '<div class="normal-note"><span class="warn-text">'. _FPA_U .'</span></div>';
-                }
-
-            echo '</div>';
-
-            echo '</div><!-- /.row-->';
-            echo '<div class="row">';
-
-            echo '<br style="clear:both;" /><br />';
-
-            // Unsupported PHP version
-            echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">PHP '. _FPA_VER .'<br />';
-
-                if ( version_compare( PHP_VERSION, '5', '<' ) ) {
-                    echo '<div class="normal-note"><span class="alert-text">'. PHP_VERSION .'</span></div>';
-
-                } else {
-                    echo '<div class="normal-note"><span class="ok">'. PHP_VERSION .'</span></div>';
-                }
-
-            echo '</div>';
-
-
-            // known buggy php releases (mainly for installation on 1.5)
-            echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">'. _FPA_BADPHP .'<br />';
-
-                foreach ( $fpa['supportENV']['badPHP'] as $badKey => $badValue ) {
-                    if ( version_compare( PHP_VERSION, $badValue, '==' ) ) {
-                        $badANS = _FPA_Y;
-                        continue;
-                    }
-
-                }
-
-                if ( @$badANS == _FPA_Y ) {
-                    $badClass = 'alert-text';
-                    $snapshot['buggyPHP'] = _FPA_N;
-
-                } else {
-                    $badANS = _FPA_N;
-                    $badClass = 'ok';
-                    $snapshot['buggyPHP'] = _FPA_N;
-                }
-
-            echo '<div class="normal-note"><span class="'. $badClass .'">'. $badANS .'</span></div>';
-
-            echo '</div>';
-
-
-            // MySQL Version
-            echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">Database '. _FPA_VER .'<br />';
-            echo '<div class="normal-note">';
-                if ( @$database['dbHOSTSERV'] ) {
-                    echo @$database['dbHOSTSERV'];
-                } else {
-                    echo _FPA_U;
-                }
-            echo '</div>';
-            echo '</div>';
-
-
-            // known buggy zend releases (mainly for installation on 1.5)
-            echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">'. _FPA_BADZND .'<br />';
-        // reset variables to fix zend check bug
-            $badValue = "";
-            $badANS = "";
-                foreach ( $fpa['supportENV']['badZND'] as $badKey => $badValue ) {
-
-                    if ( version_compare( $phpextensions['Zend Engine'], $badValue, '==' ) ) {
-                        $badANS = _FPA_Y;
-                        continue;
-                    }
-
-                }
-
-                if ( @$badANS == _FPA_Y ) {
-                    $badClass = 'alert-text';
-                    $snapshot['buggyZEND'] = _FPA_Y;
-
-                } else {
-                    $badANS = _FPA_N;
-                    $badClass = 'ok';
-                    $snapshot['buggyZEND'] = _FPA_N;
-                }
-
-            echo '<div class="normal-note"><span class="'. $badClass .'">'. $badANS .'</span></div>';
-
-            echo '</div>';
-
-            echo '</div><!-- /.row-->';
-            echo '</div><!--/.container-->';
-
-            echo '<div style="clear:both;"><br /></div>';
-
-            echo '</section>';
-    ?>
 
+        <main class="main">
+
+            <?php
+            /**
+             * fpa settings & post output section
+             *
+             */
+            ?>
+            <section class="border-top" id="post-form">
+
+                <div class="container mb-2">
+
+                    <!-- POST FORM -->
+                    <form method="post" name="postDetails" id="postDetails">
+
+                        <div id="fpaOptions" style="display: none;">
+                            <div class="row mt-5">
+                                <div class="col-lg-6 mb-4 d-flex">
+
+                                    <div class="card border align-items-stretch text-dark w-100 optionPanel">
+                                        <div class="card-body">
+                                            <h5 class="text-info"><i class="fas fa-question-circle"></i> <?php echo _FPA_INSTRUCTIONS;  ?></h5>
+                                            <?php
+                                                echo '<ol>';
+                                                echo '<li class="text-muted py-1">'. _FPA_INS_1 .'</li>';
+                                                echo '<li class="text-muted py-1">'. _FPA_INS_2 .'</li>';
+                                                echo '<li class="text-muted py-1">'. _FPA_INS_3 .'</li>';
+                                                echo '<li class="text-muted py-1">'. _FPA_INS_4 .'</li>';
+                                                echo '<li class="py-1">'. _FPA_INS_5 .'</li>';
+                                                echo '<li class="py-1">'. _FPA_INS_6 .'</li>';
+                                                echo '</ol>';
+                                            ?>
+                                        </div>
+                                    </div><!--/.card-->
+
+                                </div>
+                                <div class="col-lg-6 mb-4 d-flex">
+
+                                    <div class="card border align-items-stretch text-muted w-100 optionPanel">
+                                        <div class="card-body">
+                                            <h5 class="text-muted mb-0"><i class="fas fa-info-circle"></i> Optional Information</h5>
+                                            <span class="xsmall"><?php  echo _FPA_POST_NOTE; ?></span>
+
+                                            <div class="form-group row mt-3">
+                                                <label for="probDSC" class="col-md-4 col-form-label small"><?php echo _FPA_PROB_DSC; ?>:</label>
+                                                <div class="col-md-8">
+                                                    <input class="form-control form-control-sm bg-light" type="text" name="probDSC" />
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label for="probMSG1" class="col-md-4 col-form-label small"><?php echo _FPA_PROB_MSG; ?>:</label>
+                                                <div class="col-md-8">
+                                                    <input class="form-control form-control-sm bg-light" type="text" name="probMSG1" />
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <?php if ( isset($phpenv['phpLASTERR']) ) { ?>
+                                                    <label for="probMSG2" class="col-md-4 col-form-label small text-warning"><?php echo _FPA_LAST .' '. _FPA_ER; ?>:</label>
+                                                    <div class="col-md-8">
+                                                        <input class="form-control form-control-sm bg-light text-warning" type="text" name="probMSG2" value="<?php echo $phpenv['phpLASTERR']; ?>" aria-describedby="lastErrorHelp" />
+                                                        <small id="lastErrorHelp" class="form-text text-muted text-right xsmall">auto-completed from your php error log</small>
+                                                    </div>
+                                                <?php } else { ?>
+                                                    <label for="probMSG2" class="col-md-4 col-form-label small"><?php echo _FPA_PROB_MSG; ?>:</label>
+                                                    <div class="col-md-8">
+                                                        <input class="form-control form-control-sm bg-light" type="text" name="probMSG2" />
+                                                    </div>
+                                                <?php } ?>
+                                            </div>
+
+                                            <div class="form-group row">
+                                                <label for="probACT" class="col-md-4 col-form-label small"><?php echo _FPA_PROB_ACT; ?>:</label>
+                                                <div class="col-md-8">
+                                                    <textarea class="form-control form-control-sm bg-light" name="probACT" rows="2"></textarea>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div><!--/.card-->
+
+                                </div>
+                                <div class="col-lg-6 mb-4 d-flex">
+
+                                    <div class="card border align-items-stretch w-100 optionPanel">
+                                        <div class="card-body">
+                                            <h5 class="text-primary"><i class="fas fa-running"></i> Run-Time Options</h5>
+
+                                            <div class="row">
+                                                <div class="col-sm-7 text-dark mb-3">
+
+                                                <?php
+                                                    if ( @$_POST['showElevated'] == 0 AND  @$_POST['doIT'] == 1  ) {
+                                                        $selectshowElevated = '';
+                                                    } else {
+                                                        $selectshowElevated = 'CHECKED'; // changed to checked - Phil - 4-20-12
+                                                    }
+
+                                                    if ( @$_POST['showTables'] == 0 AND  @$_POST['doIT'] == 1  ) {
+                                                        $selectshowTables = '';
+                                                    } else {
+                                                        $selectshowTables = 'CHECKED';
+                                                    }
+
+                                                    if ( @$_POST['showComponents'] == 0 AND  @$_POST['doIT'] == 1  ) {
+                                                        $selectshowComponents = '';
+                                                    } else {
+                                                        $selectshowComponents = 'CHECKED'; // changed to checked - Phil - 4-20-12
+                                                    }
+
+                                                    if ( @$_POST['showModules'] == 0 AND  @$_POST['doIT'] == 1  ) {
+                                                        $selectshowModules = '';
+                                                    } else {
+                                                        $selectshowModules = 'CHECKED'; // changed to checked - Phil - 4-20-12
+                                                    }
+
+                                                    if ( @$_POST['showLibraries'] == 0 AND  @$_POST['doIT'] == 1  ) {
+                                                        $selectshowLibraries = '';
+                                                    } else {
+                                                        $selectshowLibraries = 'CHECKED';
+                                                    }
+
+                                                    if ( @$_POST['showPlugins'] == 0 AND  @$_POST['doIT'] == 1  ) {
+                                                        $selectshowPlugins = '';
+                                                    } else {
+                                                        $selectshowPlugins = 'CHECKED'; // changed to checked - Phil - 4-20-12
+                                                    }
+                                                    if ( @$_POST['showCoreEx'] == 0 AND  @$_POST['doIT'] == 1 ) {
+                                                        $selectshowCoreEx = '';
+                                                    } else {
+                                                        $selectshowCoreEx = 'CHECKED';
+                                                    }
+                                                    if ( $instance['instanceFOUND'] != _FPA_Y ) {
+                                                        $dis = 'DISABLED';
+
+                                                    } else {
+                                                        $dis = '';
+                                                    }
+                                                    ?>
+
+                                                    <h6 class="text-muted mb-0"><?php echo _FPA_OPT .' '. $dis; ?>:</h6>
+
+                                                    <div class="form-check">
+                                                        <input <?php echo $dis; ?> class="form-check-input" type="checkbox" name="showElevated" id="showElevatedCheck" value="1" <?php echo $selectshowElevated; ?> />
+                                                        <label class="form-check-label mt-1" for="showElevatedCheck"><?php echo _FPA_SHOWELV; ?></label>
+                                                    </div>
+
+                                                    <div class="form-check">
+                                                        <input <?php echo $dis; ?> class="form-check-input" type="checkbox" name="showTables" id="showTablesCheck" value="1" <?php echo $selectshowTables; ?> />
+                                                        <label class="form-check-label mt-1" for="showTablesCheck"><?php echo _FPA_SHOWDBT; ?></label>
+                                                    </div>
+
+                                                    <div class="form-check">
+                                                        <input <?php echo $dis; ?> class="form-check-input" type="checkbox" name="showComponents" id="showComponentsCheck" value="1" <?php echo $selectshowComponents; ?> />
+                                                        <label class="form-check-label mt-1" for="showComponentsCheck"><?php echo _FPA_SHOWCOM; ?></label>
+                                                    </div>
+
+                                                    <div class="form-check">
+                                                        <input <?php echo $dis; ?> class="form-check-input" type="checkbox" name="showModules" id="showModulesCheck" value="1" <?php echo $selectshowModules; ?> />
+                                                        <label class="form-check-label mt-1" for="showModulesCheck"><?php echo _FPA_SHOWMOD; ?></label>
+                                                    </div>
+
+                                                    <div class="form-check">
+                                                        <input <?php echo $dis; ?> class="form-check-input" type="checkbox" name="showLibraries" id="showLibrariesCheck" value="1" <?php echo $selectshowLibraries; ?> />
+                                                        <label class="form-check-label mt-1" for="showLibrariesCheck"><?php echo _FPA_SHOWLIB; ?></label>
+                                                    </div>
+
+                                                    <div class="form-check">
+                                                        <input <?php echo $dis; ?> class="form-check-input" type="checkbox" name="showPlugins" id="showPluginsCheck" value="1" <?php echo $selectshowPlugins; ?> />
+                                                        <label class="form-check-label mt-1" for="showPluginsCheck"><?php echo _FPA_SHOWPLG; ?></label>
+                                                    </div>
+
+                                                    <div class="form-check">
+                                                        <input <?php echo $dis; ?> class="form-check-input" type="checkbox" name="showCoreEx" id="showCoreExCheck" value="1" <?php echo $selectshowCoreEx; ?> />
+                                                        <label class="form-check-label mt-1" for="showCoreExCheck"><?php echo _FPA_SHOWCEX; ?></label>
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-sm-5 text-dark mb-3">
+
+                                                <?php
+                                                    if ( $showProtected == 2 OR @$_POST['showProtected'] == 2 ) {
+                                                        $selectshowProtected_1 = '';
+                                                        $selectshowProtected_2 = 'CHECKED';
+
+                                                    } elseif ( $showProtected == 1 OR @$_POST['showProtected'] == 1 ) {
+                                                        $selectshowProtected_1 = 'CHECKED';
+                                                        $selectshowProtected_2 = '';
+
+                                                    } elseif ( $showProtected == 2 ) {
+                                                        $selectshowProtected_1 = '';
+                                                        $selectshowProtected_2 = 'CHECKED';
+
+                                                    } else {
+                                                        $selectshowProtected_1 = '';
+                                                        $selectshowProtected_2 = 'CHECKED';
+                                                    }
+                                                ?>
+
+                                                    <h6 class="text-muted mb-0">Information Privacy :</h6>
+
+                                                    <div class="form-check mb-1">
+                                                        <input class="form-check-input" type="radio" name="showProtected" id="showProtected1" value="1" <?php echo $selectshowProtected_1; ?> aria-describedby="privacyNoHelp" />
+                                                        <label class="form-check-label mt-1" for="showProtected1"><?php echo _FPA_PRIVNON; ?></label>
+                                                        <small id="privacyNoHelp" class="form-text text-muted"><?php echo _FPA_PRIVNONNOTE; ?></small>
+                                                    </div>
+
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="showProtected" id="showProtected2" value="2" <?php echo $selectshowProtected_2; ?> aria-describedby="privacyPartialHelp" />
+                                                        <label class="form-check-label mt-1" for="showProtected2"><?php echo _FPA_PRIVPAR .' <small class="text-success">('. _FPA_DEF .')</small>'; ?></label>
+                                                        <small id="privacyPartialHelp" class="form-text text-muted"><?php echo _FPA_PRIVPARNOTE; ?></small>
+                                                    </div>
+
+                                                </div>
+                                            </div><!--/.row-->
+
+                                        </div>
+                                    </div><!--/.card-->
+
+                                </div>
+                                <div class="col-lg-6 mb-4 d-flex">
+
+                                    <div class="card border shadow align-items-stretch w-100 optionPanel">
+                                        <div class="card-header text-uppercase text-center small">
+                                            <?php echo _FPA_INS_5; ?>
+                                        </div>
+                                        <div class="card-body">
+
+                                            <!-- Generate the diagnostic post output -->
+                                            <div class="py-3">
+                                                <input type="hidden" name="doIT" value="1" />
+
+                                                <input type="submit" class="btn btn-success btn-lg btn-block w-75 mx-auto shadow-sm" name="submit" value="<?php echo _FPA_CLICK; ?>" />
+
+                                                <input type="reset" class="btn btn-light btn-sm btn-block w-25 mx-auto" name="reset" value="reset" />
+                                            </div>
+
+
+                                            <?php
+                                                if ( @$_POST['increasePOPS'] ) {
+                                                    $selectPOPS = 'CHECKED';
+                                                } else {
+                                                    $selectPOPS = '';
+                                                }
+                                            ?>
+                                            <!-- // !TODO make this more robust across multiple server configs -->
+                                            <div class="form-check pt-3">
+                                                <input class="form-check-input" type="checkbox" name="increasePOPS" id="showIncreasePOPSCheck" value="1" <?php echo $selectPOPS; ?> aria-describedby="popsHelp" />
+                                                <label class="form-check-label mt-1" for="showElevatedCheck">PHP &quot;<span class="text-warning"><?php echo _FPA_OUTMEM; ?></span>&quot; <?php echo _FPA_OR; ?> &quot;<span class="text-warning"><?php echo _FPA_OUTTIM; ?></span>&quot; <?php echo _FPA_ERRS; ?>?</label>
+                                                <small id="pospHelp" class="form-text text-muted xsmall"><?php echo _FPA_INCPOPS; ?></small>
+                                            </div>
+
+                                        </div>
+                                    </div><!--/.card-->
+
+                                </div>
+                            </div><!--/.row-->
+                        </div><!--/fpaOptions-->
+
+
+                        <?php if ( @$_POST['doIT'] == '1' ) { ?>
+                            <!-- post instructions and output -->
+                            <div class="row mt-5">
+                                <div class="col-lg-6 mb-4 d-flex">
+
+                                    <div class="border border-info text-dark bg-white p-3 align-items-stretch w-100">
+                                        <h5 class="text-info"><i class="fas fa-question-circle"></i> <?php echo _FPA_INSTRUCTIONS;  ?></h5>
+                                        <?php echo _FPA_INS_7; ?>
+                                    </div>
+
+                                </div><!--/.col-->
+                                <div class="col-lg-6 mb-4 d-flex">
+
+                                    <div class="border border-dark bg-white shadow p-3 align-items-stretch w-100">
+                                        <h5 class="text-center text-uppercase"><?php echo _FPA_POSTD; ?></h5>
+                                        <div id="postCharCount"></div>
+
+                                            <?php
+                                            /** LOAD UP THE SELECTED CONFIGURATION AND DIAGNOSTIC INFORMATION FOR THE POST
+                                             * this section loads up a text-box with BBCode for the forum, it will quote each section
+                                             * to make viewing easier and once used to the format, hopefully making it simpler to
+                                             * pinpoint related information quickly
+                                             *
+                                             * the user then copies and pastes this outputin to forum post
+                                             *
+                                             * many "if/then/else" statements have been placed in single lines for ease of management,
+                                             * this looks ugly and goes against coding practices but *shrug*, it's messy otherwise
+                                             *
+                                             * NOTE IF MODIFYING: carriage returns and line breaks MUST be double-quoted, not single-
+                                             * quote, hence some of the weird quoting and formating
+                                             */
+                                            ?>
+
+                                            <?php
+                                            /**
+                                             * BBCode for the Joomla! Forum
+                                             */
+
+                                            echo '<textarea class="protected xsmall text-dark w-100 border bg-light p-1" type="text" rows="10" name="postOUTPUT" id="postOUTPUT">';
+                                            echo '[quote="'. _RES .' (v'. _RES_VERSION .') : '. @date( 'jS F Y' ) .'"]';
+
+                                            if ( $_POST['probDSC'] ) { echo '[quote="'. _FPA_PROB_DSC .' :: "][size=85]'. $_POST['probDSC'] .' [/size][/quote]'; }
+
+                                            if ( $_POST['probMSG1'] ) { echo '[quote="'. _FPA_PROB_MSG .' :: "][size=85]'. $_POST['probMSG1'] .'[/size][/quote]'; }
+
+                                            if ( $phpenv['phpLASTERR'] AND $_POST['probMSG2'] ) { echo '[quote="'. _FPA_LAST .' PHP '. _FPA_ER .' :: "][size=85][color=#800000]'. $_POST['probMSG2'] .'[/color][/size][/quote]';
+                                            } elseif ( !@$phpenv['phpLASTERROR'] AND $_POST['probMSG2'] ) { echo '[quote="'. _FPA_PROB_MSG .' :: "][size=85]'. $_POST['probMSG2'] .'[/size][/quote]'; }
+
+                                            if ( $_POST['probACT'] ) { echo '[quote="'. _FPA_PROB_ACT .' "][size=85]'. $_POST['probACT'] .'[/size][/quote]'; }
+
+                                            // do the basic information
+                                            echo '[quote="'. _FPA_BASIC .' '. _FPA_ENVIRO .' ::"][size=85]';
+
+                                            // Joomla! cms details
+                                            echo '[b]'. _FPA_APP .' '. _FPA_INSTANCE.' :: [/b]';
+                                            if ( $instance['instanceFOUND'] == _FPA_Y ) { echo '[color=Blue]'. $instance['cmsPRODUCT'] .' [b]'. $instance['cmsRELEASE'] .'.'. $instance['cmsDEVLEVEL'] .'[/b]-'. $instance['cmsDEVSTATUS'] .' ('. $instance['cmsCODENAME'] .') '. $instance['cmsRELDATE'] .'[/color]';
+                                            } else { echo '[color=orange]'. _FPA_NF .'[/color]'; }
+
+                                            // Multiple version file warning
+                                            if ($vFileSum > 1) {
+                                            echo "\r\n";
+                                            echo '[color=Red][b]' . _FPA_MVFW . '[/b][/color]'; }
+
+                                            // Joomla! platform details
+                                            if ( @$instance['platformPRODUCT'] ) {
+                                            echo "\r\n";
+                                            echo '[b]'. _FPA_APP .' '. _FPA_PLATFORM .' :: [/b] [color=Blue]'. @$instance['platformPRODUCT'] .' [b]'. @$instance['platformRELEASE'] .'.'. @$instance['platformDEVLEVEL'] .'[/b]-'. @$instance['platformDEVSTATUS'] .' ('. @$instance['platformCODENAME'] .') '. @$instance['platformRELDATE'] .'[/color]'; }
+
+                                            echo "\r\n";
+
+                                            echo '[b]'. _FPA_APP .' '. _FPA_YC .' :: [/b]';
+
+                                            if ( $instance['instanceCONFIGURED'] == _FPA_Y ) {
+                                                echo '[color=Green]'. _FPA_Y .'[/color] | ';
+
+                                                if ( $instance['configWRITABLE'] == _FPA_Y ) { echo '[color=Green]'. _FPA_WRITABLE .'[/color] ('; } else { echo _FPA_RO .' ('; }
+
+                                                if ( substr( $instance['configMODE'],1 ,1 ) == '7' OR substr( $instance['configMODE'],2 ,1 ) >= '5' OR substr( $instance['configMODE'],3 ,1 ) >= '5' ) { echo '[color=Red]'; } else { echo '[color=Green]'; }
+                                                echo $instance['configMODE'] .'[/color]) | ';
+
+                                                if ( @$instance['definesEXIST'] == _FPA_Y ) {
+                                                echo   _FPA_DEFI . ' ' . _FPA_E . ' | ';
+
+                                                    if ( @$instance['equalPATH'] == _FPA_N ) {
+                                                        echo '[color=Red]'. _FPA_DEFIPA .'[/color]  | ';
+                                                    }
+                                                }
+
+                                                echo "\r\n";
+
+                                                echo '[b]'. _FPA_CFG .' '. _FPA_OPTS .' :: Offline:[/b] '. $instance['configOFFLINE'] .' | [b]SEF:[/b] '. $instance['configSEF'] .' | [b]SEF Suffix:[/b] '. $instance['configSEFSUFFIX'] .' | [b]SEF ReWrite:[/b] '. $instance['configSEFRWRITE'] .' | ';
+                                                echo '[b].htaccess/web.config:[/b] ';
+
+                                                if ( ($instance['configSITEHTWC'] == _FPA_N AND $instance['configSEFRWRITE'] == '1') OR ($instance['configSITEHTWC'] == _FPA_N AND $instance['configSEFRWRITE'] == 'true' )) { echo '[color=orange]'. $instance['configSITEHTWC'] .' (ReWrite Enabled but no .htaccess?)[/color] | ';
+                                                } elseif ( $instance['configSITEHTWC'] == _FPA_Y ) { echo '[color=Green]'. $instance['configSITEHTWC'] .'[/color] | ';
+                                                } elseif ( $instance['configSITEHTWC'] == _FPA_N ) { echo '[color=orange]'. $instance['configSITEHTWC'] .'[/color] | '; }
+
+                                                echo '[b]GZip:[/b] '. $instance['configGZIP'] .' | [b]Cache:[/b] '. $instance['configCACHING'] .' | [b]CacheTime:[/b] '. $instance['configCACHETIME'] .' | [b]CacheHandler:[/b] '. $instance['configCACHEHANDLER'] .' | [b]CachePlatformPrefix:[/b] '. $instance['configCACHEPLFPFX'] .' | [b]FTP Layer:[/b] '. $instance['configFTP'] .' | [b]Proxy:[/b] '. $instance['configPROXY'] .' | [b]LiveSite:[/b] '. $instance['configLIVESITE'] .' | [b]Session lifetime:[/b] '. $instance['configLIFETIME'] .' | [b]Session handler:[/b] '. $instance['configSESSHAND'] .' | [b]Shared sessions:[/b] '. $instance['configSHASESS'] .' | [b]SSL:[/b] '. $instance['configSSL'] .' | [b]Error Reporting:[/b] '. $instance['configERRORREP'] .' | [b]Site Debug:[/b] '. $instance['configSITEDEBUG'] .' | ';
+
+                                                if ( version_compare( $instance['cmsRELEASE'], '1.5', '>=' ) ) {
+                                                    echo '[b]Language Debug:[/b] '. $instance['configLANGDEBUG'] .' | ';
+                                                    echo '[b]Default Access:[/b] '. $instance['configACCESS'] .' | [b]Unicode Slugs:[/b] '. $instance['configUNICODE'] .' | [b]dbConnection Type:[/b] '. $instance['configDBTYPE'] .' | ';
+                                                }
+
+                                                echo '[b]' . _FPA_SUPPHP .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] . ': [/b]' ;
+
+                                                if ( $snapshot['phpSUP4J'] == _FPA_Y ) { echo '[color=Green]'; } else { echo '[color=Red]'; }
+                                                echo $snapshot['phpSUP4J'] .'[/color] | ';
+
+                                                echo '[b]' . _FPA_SUPSQL .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] . ': [/b]' ;
+
+                                                if ( $snapshot['sqlSUP4J'] == _FPA_Y ) { echo '[color=Green]'; } else { echo '[color=Red]'; }
+                                                echo $snapshot['sqlSUP4J'] .'[/color] | ';
+
+                                                echo '[b]'. _FPA_DB .' '. _FPA_CREDPRES .':[/b] ';
+
+                                                if ( $instance['configDBCREDOK'] == _FPA_Y ) { echo '[color=Green]'; } else { echo '[color=Red]'; }
+                                                echo $instance['configDBCREDOK'] .'[/color] | ';
+
+                                            } else {
+
+                                                if ( @$instance['definesEXIST'] == _FPA_Y ) {
+                                                    echo '[color=orange]'. _FPA_NF .' (' . _FPA_DEFI . ' ' . _FPA_E . ')[/color]';
+                                                    if ( @$instance['equalPATH'] == _FPA_N ) {
+                                                        echo '[color=Red]'. _FPA_DEFIPA .'[/color] ';
+                                                    }
+                                                } else {
+                                                    echo '[color=orange]'. _FPA_NF .'[/color]';
+                                                }
+
+                                            }
+                                            echo "\r\n\r\n";
+
+                                            echo '[b]'. _FPA_HOST .' '. _FPA_CFG .' :: OS:[/b] '. $system['sysPLATOS'] .' |  [b]OS '._FPA_VER.':[/b] '. $system['sysPLATREL'] .' | [b]'. _FPA_TEC .':[/b] '. $system['sysPLATTECH'] .' | [b]'. _FPA_WSVR .':[/b] '. $system['sysSERVSIG'] .' | [b]Encoding:[/b] '. $system['sysENCODING'] .' |  [b]'. _FPA_SYS .' TMP '. _FPA_WRITABLE .':[/b] ';
+                                            if ( $system['sysTMPDIRWRITABLE'] == _FPA_Y ) { echo '[color=Green]'; } else { echo '[color=Red]'; }
+                                            echo $system['sysTMPDIRWRITABLE'] .'[/color] | ';
+
+                                            if ( function_exists( 'disk_free_space' ) ) {
+                                                $free_space = sprintf( '%.2f', disk_free_space( './' ) /1073741824 );
+                                                $system['sysFREESPACE'] = $free_space .' GiB';
+                                                echo '[b]  ' . _FPA_FDSKSP . ' :[/b] ' . $system['sysFREESPACE'] . ' |';
+                                            } else {
+                                                echo '[b]  ' . _FPA_FDSKSP . ' :[/b] ' . _FPA_U . ' |';
+                                            }
+
+                                            echo "\r\n\r\n";
+
+                                            echo '[b]PHP '. _FPA_CFG .' :: '. _FPA_VER .':[/b] ';
+                                            if ( version_compare( $phpenv['phpVERSION'], '5.0.0', '<' ) ) { echo '[color=Red]'. $phpenv['phpVERSION'] .'[/color] | '; } else { echo '[b]'. $phpenv['phpVERSION'] .'[/b] | '; }
+
+                                            echo '[b]PHP API:[/b] ';
+                                            if ( $phpenv['phpAPI'] == 'apache2handler' ) { echo '[color=orange]'. $phpenv['phpAPI'] .'[/color] | '; } else { echo '[b]'. $phpenv['phpAPI'] .'[/b] | '; }
+
+                                            echo '[b]Session Path '. _FPA_WRITABLE .':[/b] ';
+                                            if ( $phpenv['phpSESSIONPATHWRITABLE'] == _FPA_Y ) { echo '[color=Green]'. $phpenv['phpSESSIONPATHWRITABLE'] .'[/color] | '; } elseif ( $phpenv['phpSESSIONPATHWRITABLE'] == _FPA_N ) { echo '[color=Red]'. $phpenv['phpSESSIONPATHWRITABLE'] .'[/color] | '; } else { echo '[color=orange]'. $phpenv['phpSESSIONPATHWRITABLE'] .'[/color] | '; }
+
+                                            echo '[b]Display Errors:[/b] '. $phpenv['phpERRORDISPLAY'] .' | [b]Error Reporting:[/b] '. $phpenv['phpERRORREPORT'] .' | [b]Log Errors To:[/b] '. $phpenv['phpERRLOGFILE'] .' | [b]Last Known Error:[/b] '. @$phpenv['phpLASTERRDATE'] .' | [b]Register Globals:[/b] '. $phpenv['phpREGGLOBAL'] .' | [b]Magic Quotes:[/b] '. $phpenv['phpMAGICQUOTES'] .' | [b]Safe Mode:[/b] '. $phpenv['phpSAFEMODE'] .' | [b]Allow url fopen:[/b] '. $phpenv['phpURLFOPEN'] .' | [b]Open Base:[/b] '. $phpenv['phpOPENBASE'] .' | [b]Uploads:[/b] '. $phpenv['phpUPLOADS'] .' | [b]Max. Upload Size:[/b] '. $phpenv['phpMAXUPSIZE'] .' | [b]Max. POST Size:[/b] '. $phpenv['phpMAXPOSTSIZE'] .' | [b]Max. Input Time:[/b] '. $phpenv['phpMAXINPUTTIME'] .' | [b]Max. Execution Time:[/b] '. $phpenv['phpMAXEXECTIME'] .' | [b]Memory Limit:[/b] '. $phpenv['phpMEMLIMIT'];
+
+                                            echo "\r\n\r\n";
+
+                                            echo '[b]Database '. _FPA_CFG .' :: [/b] ';
+                                            if ( @$instance['configDBTYPE'] == 'sqlsrv' ) { echo '[color=brown][b]' . _FPA_MSSQL_SUPP . '[/b][/color]  '; }
+
+                                            if ( $database['dbDOCHECKS'] == _FPA_N AND @$instance['configDBTYPE'] != 'sqlsrv') {
+                                                echo '[color=orange]'. _FPA_DB .' '. _FPA_DBCREDINC .'[/color] '. _FPA_NODISPLAY;
+
+                                                echo "\r\n";
+
+                                                if ( @$instance['configDBCREDOK'] != _FPA_Y AND $instance['instanceFOUND'] == _FPA_Y ) {
+                                                    echo '[color=Red][b]'. _FPA_MISSINGCRED .': [/b][/color] ';
+                                                    if ( @$instance['configDBTYPE'] == '' ) { echo '[color=orange][b]Connection Type[/b] missing[/color] | '; }
+                                                    if ( @$instance['configDBNAME'] == '' ) { echo '[color=orange][b]Database Name[/b] missing[/color] |'; }
+                                                    if ( @$instance['configDBHOST'] == '' ) { echo '[color=orange][b]MySQL Host[/b] missing[/color] | '; }
+                                                    if ( @$instance['configDBPREF'] == '' ) { echo '[color=orange][b]Table Prefix[/b] missing[/color] | '; }
+                                                    if ( @$instance['configDBUSER'] == '' ) { echo '[color=orange][b]Database Username[/b] missing[/color] | '; }
+                                                    if ( @$instance['configDBPASS'] == '' ) { echo '[color=orange][b]Database Password[/b] missing[/color] |'; }
+                                                }
+
+
+                                            } elseif ( @$database['dbERROR'] != _FPA_N AND @$instance['configDBTYPE'] != 'sqlsrv') {
+                                                echo '[color=Red][b]'. _FPA_ECON .':[/b] ';
+                                                echo  @$database['dbERROR'] .'[/color]' ;
+                                            } elseif (@$instance['configDBTYPE'] != 'sqlsrv') {
+                                                echo '[b]'. _FPA_VER .':[/b] [b]'. $database['dbHOSTSERV'] .'[/b] (Client:'. $database['dbHOSTCLIENT'] .') | ';
+                                                echo '[b]'. _FPA_DB .' '. _FPA_TSIZ .':[/b] '. $database['dbSIZE'] .' | [b]'. _FPA_CONF_PREF_TABLE . ':&nbsp[/b] '. $confPrefTables . ' | [b]'. _FPA_OTHER_TABLE . ':&nbsp[/b] '. $notconfPrefTables ;
+                                            }
+
+                                            echo '[/size][/quote]';
+
+                                            // do detailed information
+                                            echo '[quote="'. _FPA_DETAILED .' '. _FPA_ENVIRO .' ::"][size=85]';
+
+                                            echo '[b]'. _FPA_PHPEXT_TITLE .' :: [/b]';
+
+                                            foreach ( $phpextensions as $key => $show ) {
+
+                                                if ( $show != $phpextensions['ARRNAME'] ) {
+                                                    // find the requirements and mark them as present or missing
+                                                    if ( $key == 'libxml' OR $key == 'xml' OR $key == 'zip' OR $key == 'openssl' OR $key == 'zlib' OR $key == 'curl' OR $key == 'iconv' OR $key == 'mbstring' OR $key == 'mysql' OR $key == 'mysqli' OR $key == 'pdo_mysql' OR $key == 'mcrypt' OR $key == 'suhosin' OR $key == 'cgi' OR $key == 'cgi-fcgi' ) {
+                                                        echo '[color=Green][b]'. $key .'[/b][/color] ('. $show .') | ';
+                                                    } elseif ( $key == 'apache2handler' ) {
+                                                        echo '[color=orange]'. $key .'[/color] ('. $show .') | ';
+                                                    } else {
+                                                        echo $key .' ('. $show .') | ';
+                                                    }
+
+                                                } // endif !arrname
+
+                                                if ( !in_array( $key, $phpreq ) ) {
+                                                    unset ( $phpreq[$key] );
+                                                }
+
+                                            }
 
+                                            if ( version_compare( $instance['cmsRELEASE'], '3.8', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
+                                                unset($phpreq['mcrypt']);
+                                            }
 
+                                            if (version_compare( $phpenv['phpVERSION'], '7.0.0', '>=' ))   {
+                                                unset($phpreq['mysql']);
+                                            }
 
+                                            echo "\r\n";
+                                            echo '[b]'. _FPA_POTME .' :: [/b]';
+                                            foreach ( $phpreq as $missingkey => $missing ) {
+                                                echo '[color=orange]'. $missingkey .'[/color] | ';
+                                            }
 
+                                            // disabled PHP functions
+                                            if ( $phpenv['phpDISABLED'] ) {
+                                                echo "\r\n";
+                                                echo '[b]'. _FPA_DI_PHP_FU .' :: [/b]';
+                                                $disabledfunctions = explode(",",$phpenv['phpDISABLED']);
+                                                $arrlength = count($disabledfunctions);
+                                                for ($x = 0; $x < $arrlength; $x++) {
+                                                    echo  $disabledfunctions[$x] .' | ';
+                                                }
+                                            }
 
+                                            echo "\r\n\r\n";
+                                            echo '[b]Switch User '. _FPA_ENVIRO .'[/b] [i](Experimental)[/i][b] :: PHP CGI:[/b] '. $phpenv['phpCGI'] .' | [b]Server SU:[/b] '. $phpenv['phpAPACHESUEXEC'] .' |  [b]PHP SU:[/b] '. $phpenv['phpPHPSUEXEC'] .' |   [b]Custom SU (LiteSpeed/Cloud/Grid):[/b] '. $phpenv['phpCUSTOMSU'];
+                                            echo "\r\n";
+                                            echo '[b]'. _FPA_POTOI .':[/b] ';
+                                            if ( $phpenv['phpOWNERPROB'] == _FPA_Y ) { echo '[color=Red]'; } elseif ( $phpenv['phpOWNERPROB'] == _FPA_N ) { echo '[color=Green]'; } else { echo '[color=orange]'; }
+                                            echo $phpenv['phpOWNERPROB'] .'[/color] ';
+
+                                            // IF APACHE with PHP in Module mode
+                                            if ( $phpenv['phpAPI'] == 'apache2handler' ) {
+                                                echo "\r\n\r\n";
+
+                                                echo '[b]'. _FPA_APAMOD_TITLE .' :: [/b]';
+
+                                                foreach ( $apachemodules as $key => $show ) {
+
+                                                    if ( $show != $apachemodules['ARRNAME'] ) {
+
+                                                        // find the requirements and mark them as present or missing
+                                                        if ( $show == 'mod_rewrite' OR $show == 'mod_cgi' OR $show == 'mod_cgid' OR $show == 'mod_expires' OR $show == 'mod_deflate' OR $show == 'mod_auth'  ) {
+                                                            echo '[color=Green][b]'. $show .'[/b][/color] | ';
+                                                        } elseif ( $show == 'mod_php4' ) {
+                                                            echo '[color=Red]'. $show .'[/color] | ';
+                                                        } else {
+                                                            echo $show .' | ';
+                                                        }
+
+                                                    } // endif !arrname
+
+                                                    if ( !in_array( $show, $apachereq ) ) {
+                                                        unset ( $apachereq['ARRNAME'] );
+                                                        unset ( $apachereq[$show] );
+                                                    }
+
+                                                }
+
+                                                echo "\r\n";
+                                                echo '[b]'. _FPA_POTMM .' :: [/b]';
+                                                foreach ( $apachereq as $missingkey => $missing ) {
+                                                    echo '[color=orange]'. $missingkey .'[/color] | ';
+                                                }
+
+                                                echo "\r\n";
+
+                                            } // end if Apache and PHP module
+
+                                            echo '[/size][/quote]';
+
+
+                                            if ( $instance['instanceFOUND'] == _FPA_Y ) {
+                                                echo '[quote="Folder Permissions ::"][size=85]';
+
+                                                echo '[b]'. _FPA_COREDIR_TITLE .' :: [/b]';
+
+                                                    foreach ( $folders as $i => $show ) {
+
+                                                        if ( $show != $folders['ARRNAME'] ) {
+
+                                                            if ( $_POST['showProtected'] == '3' ) {
+                                                                echo '[color=orange]--'. _FPA_HIDDEN .'--[/color] (';
+                                                            } else {
+                                                                echo $show .' (';
+                                                            }
+
+                                                            if ( substr( $modecheck[$show]['mode'],1 ,1 ) == '7' OR substr( $modecheck[$show]['mode'],2 ,1 ) == '7' ) {
+                                                                echo '[color=Red]'. $modecheck[$show]['mode'] .'[/color]) | ';
+                                                            } else {
+                                                                echo $modecheck[$show]['mode'] .') | ';
+                                                            }
+
+                                                        }
+
+                                                    }
+
+
+                                                    if ( @$_POST['showElevated'] == '1' ) {
+                                                        echo "\r\n\r\n";
+
+                                                        $limitCount = '0';
+                                                        echo '[b]'. _FPA_ELEVPERM_TITLE .'[/b] [i]('. _FPA_FIRST .' 10)[/i][b] :: [/b]';
+
+                                                            foreach ( $elevated as $key => $show ) {
+
+                                                                if ( $limitCount >= '11' ) {
+                                                                    unset ( $key );
+                                                                } else {
+
+                                                                    if ( $show != $elevated['ARRNAME'] ) {
+
+                                                                        if ( $_POST['showProtected'] == '3' ) {
+                                                                            echo '[color=orange]--'. _FPA_HIDDEN .'--[/color] (';
+                                                                        } else {
+
+                                                                            if ( $key == 'None' ) {
+                                                                                echo '[color=Green][b]'. $key .'[/b][/color] ';
+                                                                            } else {
+                                                                                echo $key .'/ (';
+                                                                            }
+
+                                                                        }
+
+                                                                        if ( $key != 'None' ) {
+
+                                                                            if ( substr( $show['mode'],1 ,1 ) == '7' OR substr( $show['mode'],2 ,1 ) == '7' ) {
+                                                                                echo '[color=Red]'. $show['mode'] .'[/color]) | ';
+                                                                            } else {
+                                                                                echo $show['mode'] .') | ';
+                                                                            }
+
+                                                                        }
+
+                                                                    }
+
+                                                                }
+
+                                                                $limitCount ++;
+                                                            }
+
+                                                    }
+
+                                                    echo '[/size][/quote]';
+
+                                            } // end if InstanceFOUND
+
+
+
+                                            // do the Database Statistics and Table information
+                                            if ( $database['dbDOCHECKS'] == _FPA_Y AND @$database['dbERROR'] == _FPA_N AND @$_POST['showTables'] == '1' AND $database['dbHOSTINFO'] <> _FPA_U AND $instance['configDBTYPE'] <> 'postgresql' AND $instance['configDBTYPE'] <> 'pgsql' ) {
+                                                echo '[quote="Database Information ::"][size=85]';
+                                                echo '[b]'. _FPA_DB .' '. _FPA_STATS .' :: [/b]';
+                                                foreach ( $database['dbHOSTSTATS'] as $show ) {
+                                                    $dbPieces = explode(": ", $show );
+                                                    echo '[b]'. $dbPieces[0] .':[/b] '. $dbPieces[1] .' | ';
+                                                }
+                                                echo '[/size][/quote]';
+                                            }
+
+
+                                            // do the Extensions information
+                                            if ( $instance['instanceFOUND'] == _FPA_Y AND ( @$_POST['showComponents'] == '1' OR @$_POST['showModules'] == '1' OR @$_POST['showPlugins'] == '1' ) ) {
+                                                echo '[quote="Extensions Discovered ::"][size=85]';
+
+                                                if ( $_POST['showProtected'] == '3' ) {
+                                                    echo '[color=orange][b]Strict[/b] Information Privacy was selected.[/color] Nothing to display.';
+                                                    echo '[/size][/quote]';
+                                                } else {
+
+                                                    if ( @$_POST['showComponents'] == '1' ) {
+                                                        echo '[b]'. _FPA_EXTCOM_TITLE .' :: '. _FPA_SITE .' :: [/b]';
+                                                        if ( $showCoreEx == 1) {
+                                                            echo "\r\n";
+                                                            echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
+                                                            if ( isset ($component['SITE'])) {
+                                                                foreach ( $component['SITE'] as $key => $show ) {
+                                                                    if (isset($exset[0]['name'])) {
+                                                                        $extarrkey = recursive_array_search($show['name'], $exset);
+                                                                            if ($extarrkey  !== False) {
+                                                                                $extenabled = $exset[$extarrkey]['enabled'];
+                                                                            } else { $extenabled = '?' ;}
+                                                                    } else { $extenabled = '?' ;}
+                                                                        if ($extenabled <> 0 AND $extenabled <> 1 ){
+                                                                            $extenabled = '?';
+                                                                        }
+                                                                        if ( $show['type'] == _FPA_JCORE) {
+                                                                            echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
+                                                                        }
+                                                                }
+                                                            }
+                                                            echo '[/color]';
+                                                        }
+                                                        echo "\r\n";
+                                                        echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
+                                                        if ( isset ($component['SITE'])) {
+                                                            foreach ( $component['SITE'] as $key => $show ) {
+                                                                if (isset($exset[0]['name'])) {
+                                                                    $extarrkey = recursive_array_search($show['name'], $exset);
+                                                                        if ($extarrkey  !== False) {
+                                                                            $extenabled = $exset[$extarrkey]['enabled'];
+                                                                        } else { $extenabled = '?'; }
+                                                                } else { $extenabled = '?'; }
+                                                                if ($extenabled <> 0 AND $extenabled <> 1 ) {
+                                                                    $extenabled = '?';
+                                                                }
+                                                                if ( $show['type'] == _FPA_3PD){
+                                                                    echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
+                                                                }
+                                                            }
+                                                        }
+                                                        echo '[/color]';
+                                                        echo "\r\n\r\n";
+
+                                                        echo '[b]'. _FPA_EXTCOM_TITLE .' :: '. _FPA_ADMIN .' :: [/b]';
+                                                        if ( $showCoreEx == 1) {
+                                                            echo "\r\n";
+                                                            echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
+                                                            if ( isset ($component['ADMIN'])) {
+                                                                foreach ( $component['ADMIN'] as $key => $show ) {
+                                                                    if (isset($exset[0]['name'])) {
+                                                                        $extarrkey = recursive_array_search($show['name'], $exset);
+                                                                        if ($extarrkey  !== False) {
+                                                                            $extenabled = $exset[$extarrkey]['enabled'];
+                                                                        } else { $extenabled = '?' ;}
+                                                                    } else { $extenabled = '?' ;}
+                                                                    if ($extenabled <> 0 AND $extenabled <> 1 ) {
+                                                                        $extenabled = '?';
+                                                                    }
+                                                                    if ( $show['type'] == _FPA_JCORE) {
+                                                                        echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
+                                                                    }
+                                                                }
+                                                            }
+                                                            echo '[/color]';
+                                                        }
+                                                        echo "\r\n";
+                                                        echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
+                                                        if ( isset ($component['ADMIN'])) {
+                                                            foreach ( $component['ADMIN'] as $key => $show ) {
+                                                                if (isset($exset[0]['name'])) {
+                                                                    $extarrkey = recursive_array_search($show['name'], $exset);
+                                                                    if ($extarrkey  !== False) {
+                                                                        $extenabled = $exset[$extarrkey]['enabled'];
+                                                                    } else { $extenabled = '?'; }
+                                                                } else { $extenabled = '?'; }
+                                                                if ($extenabled <> 0 AND $extenabled <> 1 ) {
+                                                                    $extenabled = '?';
+                                                                }
+                                                                if ( $show['type'] == _FPA_3PD) {
+                                                                    echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
+                                                                }
+                                                            }
+                                                        }
+                                                        echo '[/color]';
+                                                    }
+                                                    echo "\r\n\r\n";
+
+                                                    if ( @$_POST['showModules'] == '1' ) {
+                                                        echo '[b]'. _FPA_EXTMOD_TITLE .' :: '. _FPA_SITE .' :: [/b]';
+                                                        if ( $showCoreEx == 1) {
+                                                            echo "\r\n";
+                                                            echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
+                                                            if ( isset ($module['SITE'])) {
+                                                                foreach ( $module['SITE'] as $key => $show ) {
+                                                                    if (isset($exset[0]['name'])) {
+                                                                        $extarrkey = recursive_array_search($show['name'], $exset);
+                                                                        if ($extarrkey  !== False) {
+                                                                            $extenabled = $exset[$extarrkey]['enabled'];
+                                                                        } else { $extenabled = '?'; }
+                                                                    } else { $extenabled = '?'; }
+                                                                        if ($extenabled <> 0 AND $extenabled <> 1 ) {
+                                                                            $extenabled = '?';
+                                                                        }
+                                                                        if ( $show['type'] == _FPA_JCORE) {
+                                                                            echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
+                                                                        }
+                                                                }
+                                                            }
+                                                            echo '[/color]';
+                                                        }
+                                                        echo "\r\n";
+                                                        echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
+                                                        if ( isset ($module['SITE'])) {
+                                                            foreach ( $module['SITE'] as $key => $show ) {
+                                                                if (isset($exset[0]['name'])) {
+                                                                    $extarrkey = recursive_array_search($show['name'], $exset);
+                                                                    if ($extarrkey  !== False) {
+                                                                        $extenabled = $exset[$extarrkey]['enabled'];
+                                                                    } else { $extenabled = '?'; }
+                                                                } else { $extenabled = '?'; }
+                                                                if ($extenabled <> 0 AND $extenabled <> 1 ) {
+                                                                    $extenabled = '?';
+                                                                }
+                                                                if ( $show['type'] == _FPA_3PD) {
+                                                                    echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
+                                                                }
+                                                            }
+                                                        }
+                                                        echo '[/color]';
+                                                        echo "\r\n\r\n";
+
+                                                        echo '[b]'. _FPA_EXTMOD_TITLE .' :: '. _FPA_ADMIN .' :: [/b]';
+                                                        if ( $showCoreEx == 1) {
+                                                            echo "\r\n";
+                                                            echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
+                                                            if ( isset ($module['ADMIN'])) {
+                                                                foreach ( $module['ADMIN'] as $key => $show ) {
+                                                                    if (isset($exset[0]['name'])) {
+                                                                        $extarrkey = recursive_array_search($show['name'], $exset);
+                                                                        if ($extarrkey  !== False) {
+                                                                            $extenabled = $exset[$extarrkey]['enabled'];
+                                                                        } else { $extenabled = '?'; }
+                                                                    } else { $extenabled = '?'; }
+                                                                    if ($extenabled <> 0 AND $extenabled <> 1 ){
+                                                                        $extenabled = '?';
+                                                                    }
+                                                                    if ( $show['type'] == _FPA_JCORE) {
+                                                                        echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
+                                                                    }
+                                                                }
+                                                            }
+                                                            echo '[/color]';
+                                                        }
+                                                        echo "\r\n";
+                                                        echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
+                                                        if ( isset ($module['ADMIN'])) {
+                                                            foreach ( $module['ADMIN'] as $key => $show ) {
+                                                                if (isset($exset[0]['name'])) {
+                                                                    $extarrkey = recursive_array_search($show['name'], $exset);
+                                                                    if ($extarrkey  !== False) {
+                                                                        $extenabled = $exset[$extarrkey]['enabled'];
+                                                                    } else { $extenabled = '?' ;}
+                                                                } else { $extenabled = '?' ;}
+                                                                if ($extenabled <> 0 AND $extenabled <> 1 ) {
+                                                                    $extenabled = '?';
+                                                                }
+                                                                if ( $show['type'] == _FPA_3PD) {
+                                                                    echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
+                                                                }
+                                                            }
+                                                        }
+                                                        echo '[/color]';
+                                                    }
+                                                    echo "\r\n\r\n";
+
+
+                                                    if ( @$_POST['showLibraries'] == '1' ) {
+                                                        echo '[b]'. _FPA_EXTLIB_TITLE .' :: [/b]';
+                                                        if ( @$_POST[showCoreEx] == '1') {
+                                                            echo "\r\n";
+                                                            echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
+                                                            if ( isset ($library['SITE'])) {
+                                                                foreach ( $library['SITE'] as $key => $show ) {
+                                                                    if (isset($exset[0]['name'])) {
+                                                                        $extarrkey = recursive_array_search($show['name'], $exset);
+                                                                        if ($extarrkey  !== False) {
+                                                                            $extenabled = $exset[$extarrkey]['enabled'];
+                                                                        } else { $extenabled = '?'; }
+                                                                    } else { $extenabled = '?'; }
+                                                                    if ($extenabled <> 0 AND $extenabled <> 1 ) {
+                                                                        $extenabled = '?';
+                                                                    }
+                                                                    if ( $show['type'] == _FPA_JCORE) {
+                                                                        echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
+                                                                    }
+                                                                }
+                                                            }
+                                                            echo '[/color]';
+                                                        }
+                                                        echo "\r\n";
+                                                        echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
+                                                        if ( isset ($library['SITE'])) {
+                                                            foreach ( $library['SITE'] as $key => $show ) {
+                                                                if (isset($exset[0]['name'])) {
+                                                                    $extarrkey = recursive_array_search($show['name'], $exset);
+                                                                    if ($extarrkey  !== False) {
+                                                                        $extenabled = $exset[$extarrkey]['enabled'];
+                                                                    } else { $extenabled = '?'; }
+                                                                } else { $extenabled = '?'; }
+                                                                if ($extenabled <> 0 AND $extenabled <> 1 ) {
+                                                                    $extenabled = '?';
+                                                                }
+                                                                if ( $show['type'] == _FPA_3PD) {
+                                                                    echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
+                                                                }
+                                                            }
+                                                        }
+                                                        echo '[/color]';
+                                                    }
+                                                    echo "\r\n\r\n";
+
+                                                    if ( @$_POST['showPlugins'] == '1' ) {
+                                                        echo '[b]'. _FPA_EXTPLG_TITLE .' :: [/b]';
+                                                        if ( $showCoreEx == 1) {
+                                                            echo "\r\n";
+                                                            echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
+                                                            if ( isset ($plugin['SITE'])) {
+                                                                foreach ( $plugin['SITE'] as $key => $show ) {
+                                                                    if (isset($exset[0]['name'])) {
+                                                                        $extarrkey = recursive_array_search($show['name'], $exset);
+                                                                        if ($extarrkey  !== False) {
+                                                                            $extenabled = $exset[$extarrkey]['enabled'];
+                                                                        } else { $extenabled = '?'; }
+                                                                    } else { $extenabled = '?'; }
+                                                                    if ($extenabled <> 0 AND $extenabled <> 1 ){
+                                                                        $extenabled = '?';
+                                                                    }
+                                                                    if ( $show['type'] == _FPA_JCORE) {
+                                                                        echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
+                                                                    }
+                                                                }
+                                                            }
+                                                            echo '[/color]';
+                                                        }
+                                                        echo "\r\n";
+                                                        echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
+                                                        if ( isset ($plugin['SITE'])) {
+                                                            foreach ( $plugin['SITE'] as $key => $show ) {
+                                                                if (isset($exset[0]['name'])) {
+                                                                    $extarrkey = recursive_array_search($show['name'], $exset);
+                                                                    if ($extarrkey  !== False) {
+                                                                        $extenabled = $exset[$extarrkey]['enabled'];
+                                                                    } else { $extenabled = '?'; }
+                                                                } else { $extenabled = '?'; }
+                                                                if ($extenabled <> 0 AND $extenabled <> 1 ) {
+                                                                    $extenabled = '?';
+                                                                }
+                                                                if ( $show['type'] == _FPA_3PD) {
+                                                                    echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
+                                                                }
+                                                            }
+                                                        }
+                                                        echo '[/color]';
+                                                    } // end if showComponents, Modules, Plugins, if cmsFOUND
+                                                    echo '[/size][/quote]';
+                                                } // end showProtected != strict
+
+
+                                                // do the template information
+                                                if ( $instance['instanceFOUND'] == _FPA_Y ) {
+                                                    echo '[quote="'. _FPA_TMPL_TITLE .' Discovered ::"][size=85]';
+
+                                                    if ( $_POST['showProtected'] == '3' ) {
+                                                        echo '[color=orange][b]'. _FPA_STRICT .'[/b] '. _FPA_INFOPRI .'[/color] '. _FPA_NODISPLAY;
+                                                        echo '[/size][/quote]';
+                                                    } else {
+
+                                                        echo '[b]'. _FPA_TMPL_TITLE .' :: '. _FPA_SITE .' :: [/b]';
+                                                        if ( isset ($template['SITE'])) {
+                                                            foreach ( $template['SITE'] as $key => $show ) {
+                                                                if (substr($instance['cmsRELEASE'],0,1) <> 1 AND @$database['dbHOSTINFO'] <> _FPA_U OR $postgresql = _FPA_Y) {
+                                                                    if (isset($exset[0]['name'])) {
+                                                                        $extarrkey = recursive_array_search($show['name'], $exset);
+                                                                            if ($extarrkey  !== False) {
+                                                                                $extenabled = $exset[$extarrkey]['enabled'];
+                                                                            } else { $extenabled = '?'; }
+                                                                        } else { $extenabled = '?'; }
+                                                                        if ($extenabled <> 0 AND $extenabled <> 1 ){
+                                                                            $extenabled = '?';
+                                                                        }
+                                                                        if (isset($tmpldef[0]['template'])) {
+                                                                            $extarrkey = recursive_array_search($show['name'], $tmpldef);
+                                                                            if ($extarrkey  !== False) {
+                                                                                $deftempl = $tmpldef[$extarrkey]['home'];
+                                                                            } else { $deftempl = ''; }
+                                                                        } else { $deftempl = ''; }
+                                                                        if ($deftempl == 1 ) {
+                                                                            $bldop = '[b][u]';
+                                                                            $bldcl = '[/u][/b]';
+                                                                        } else {
+                                                                            $bldop = '';
+                                                                            $bldcl = '';
+                                                                        }
+                                                                    } else {
+                                                                        $bldop = '';
+                                                                        $bldcl = '';
+                                                                        $extenabled = '';
+                                                                    }
+                                                                    if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1) {
+                                                                        if ( $show['type'] == _FPA_3PD) {
+                                                                            echo '[color=Brown]'. $bldop . $show['name'] .' ('. $show['version'] .')' . $bldcl . '[/color]  '.$extenabled.' | ';
+                                                                        } else {
+                                                                            echo '[color=Blue]'. $bldop . $show['name'] .' ('. $show['version'] .')' . $bldcl . '[/color]  '.$extenabled.' | ';
+                                                                        }
+                                                                    }
+                                                            }
+                                                        }
+                                                        echo "\r\n";
+
+                                                        echo '[b]'. _FPA_TMPL_TITLE .' :: '. _FPA_ADMIN .' :: [/b]';
+                                                        if ( isset ($template['ADMIN'])) {
+                                                            foreach ( $template['ADMIN'] as $key => $show ) {
+                                                                if (substr($instance['cmsRELEASE'],0,1) <> 1 AND @$database['dbHOSTINFO'] <> _FPA_U OR $postgresql = _FPA_Y ) {
+                                                                    if (isset($exset[0]['name'])) {
+                                                                        $extarrkey = recursive_array_search($show['name'], $exset);
+                                                                        if ($extarrkey  !== False) {
+                                                                            $extenabled = $exset[$extarrkey]['enabled'];
+                                                                        } else { $extenabled = '?'; }
+                                                                    } else { $extenabled = '?'; }
+                                                                        if ($extenabled <> 0 AND $extenabled <> 1 ) {
+                                                                            $extenabled = '?';
+                                                                        }
+                                                                        if (isset($tmpldef[0]['template'])) {
+                                                                            $extarrkey = recursive_array_search($show['name'], $tmpldef);
+                                                                                if ($extarrkey  !== False) {
+                                                                                    $deftempl = $tmpldef[$extarrkey]['home'];
+                                                                                } else { $deftempl = ''; }
+                                                                        } else { $deftempl = ''; }
+                                                                            if ($deftempl == 1 ) {
+                                                                                $bldop = '[b][u]';
+                                                                                $bldcl = '[/u][/b]';
+                                                                            } else {
+                                                                                $bldop = '';
+                                                                                $bldcl = '';
+                                                                            }
+                                                                } else {
+                                                                    $bldop = '';
+                                                                    $bldcl = '';
+                                                                    $extenabled = '';
+                                                                }
+                                                                if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1) {
+                                                                    if ( $show['type'] == _FPA_3PD) {
+                                                                        echo '[color=Brown]'. $bldop . $show['name'] .' ('. $show['version'] .')' . $bldcl . '[/color]  '.$extenabled.' | ';
+                                                                    } else {
+                                                                        echo '[color=Blue]'. $bldop . $show['name'] .' ('. $show['version'] .')' . $bldcl . '[/color]  '.$extenabled.' | ';
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+
+                                                    }
+                                                    echo '[/size][/quote]';
+                                                }
+                                            } // end if InstanceFOUND
+                                            echo '[/quote]';
+                                            echo '</textarea>';
+                                        ?>
+
+                                        <button class="btn btn-warning btn-lg btn-block" onclick="return false;" id="copyPOST"><i class="fas fa-copy"></i> Copy Post Content To Clipboard</button>
+
+                                    </div><!--/.card-->
+
+                                </div><!--/.col-->
+                            </div><!--/.row-->
+                        <?php } // end post doIT ?>
+
+                    </form>
+                    <!-- POST FORM -->
+
+                </div><!--/.container-->
+
+            </section><!--/post form-->
+
+
+
+            <?php
+            /**
+             * fpa instance discovery information section
+             *
+             */
+            ?>
+            <section class="py-3" id="instance-discovery">
+                <div class="container mt-5">
+
+                    <h1 class="font-weight-light border-bottom mb-4"><?php echo _FPA_DISCOVERY_REPORT; ?></h1>
+
+	                <div class="row row-cols-1 row-cols-lg-2 application-discovery">
+                        <div class="col mb-4 d-flex align-self-stretch">
+
+                            <div class="card border shadow w-100">
+                                <div class="card-header bg-info text-white">
+                                    <?php echo $instance['ARRNAME']; ?> :: Discovery
+                                </div>
+                                <div class="card-body">
+
+                                    <div class="row row-cols-2 row-cols-md-4">
+
+                                        <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                            <div class="bg-white small w-100 border">
+                                                <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">CMS <?php echo _FPA_F; ?></div>
+
+                                                <?php if ( $instance['instanceFOUND'] == _FPA_Y AND $instance['platformVFILE'] != _FPA_N) { ?>
+
+                                                    <div class="xsmall mb-1"><?php echo @$instance['cmsPRODUCT']; ?></div>
+                                                    <div class="font-weight-bolder mb-1"><?php echo @$instance['cmsRELEASE'] .'.'. @$instance['cmsDEVLEVEL']; ?></div>
+
+                                                    <?php
+                                                        if ( strtolower( @$instance['cmsDEVSTATUS'] ) == 'stable' ) {
+                                                            $statusClass = 'success';
+
+                                                        } elseif ( strtolower( substr( @$instance['cmsDEVSTATUS'],0, 4 ) ) == 'alph' OR strtolower( substr( @$instance['cmsDEVSTATUS'],0, 4 ) ) == 'beta' ) {
+                                                            $statusClass = 'danger';
+
+                                                        } elseif ( strtolower( substr( @$instance['cmsDEVSTATUS'],0, 2 ) ) == 'rc' ) {
+                                                            $statusClass = 'warning';
+
+                                                        } else {
+                                                            $statusClass = 'warning';
+                                                        }
+                                                    ?>
+                                                    <div class="badge badge-<?php echo $statusClass; ?> text-uppercase w-100"><?php echo @$instance['cmsDEVSTATUS']; ?></div>
+
+                                                    <?php
+                                                        // warning if more than one instance of version.php found
+                                                        if ($vFileSum > 1) {
+                                                            echo '<div class="bg-danger text-white xsmall py-1">' . _FPA_MVFWF . '</div>';
+                                                        }
+                                                    ?>
+
+                                                <?php } else { ?>
+                                                    <div class="border border-warning text-warning small mx-auto w-75"><?php echo @$instance['instanceFOUND']; ?></div>
+                                                <?php } // instanceFOUND ?>
+
+                                            </div>
+
+                                        </div><!--/.col-->
+                                        <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                           <div class="bg-white small w-100 border">
+                                                <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_PLATFORM; ?></div>
+
+                                                <?php if ( $instance['instanceFOUND'] == _FPA_Y ) { ?>
+
+                                                    <div class="xsmall mb-1"><?php echo @$instance['platformPRODUCT']; ?></div>
+                                                    <div class="font-weight-bolder mb-1"><?php echo @$instance['platformRELEASE'] .'.'. @$instance['platformDEVLEVEL']; ?></div>
+
+                                                    <?php
+                                                        if ( strtolower( @$instance['platformDEVSTATUS'] ) == 'stable' ) {
+                                                            $statusClass = 'success';
+
+                                                        } elseif ( strtolower( substr( @$instance['platformDEVSTATUS'],0, 4 ) ) == 'alph' OR strtolower( substr( @$instance['cmsDEVSTATUS'],0, 4 ) ) == 'beta' ) {
+                                                            $statusClass = 'danger';
+
+                                                        } elseif ( strtolower( substr( @$instance['platformDEVSTATUS'],0, 2 ) ) == 'rc' ) {
+                                                            $statusClass = 'warning';
+
+                                                        } else {
+                                                            $statusClass = 'warning';
+                                                        }
+                                                    ?>
+                                                    <div class="badge badge-<?php echo $statusClass; ?> text-uppercase w-100"><?php echo @$instance['platformDEVSTATUS']; ?></div>
+
+                                                    <?php
+                                                        // warning if more than one instance of version.php found
+                                                        if ($vFileSum > 1) {
+                                                            echo '<div class="bg-danger text-white xsmall py-1">' . _FPA_MVFWF . '</div>';
+                                                        }
+                                                    ?>
+
+                                                <?php } else { ?>
+                                                    <div class="border border-warning text-warning small mx-auto w-75"><?php echo @$instance['instanceFOUND']; ?></div>
+                                                <?php } // instanceFOUND ?>
+
+                                            </div>
+
+                                        </div><!--/.col-->
+                                        <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                            <div class="bg-white small w-100 border">
+                                                <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_E; ?></div>
+
+                                                    <?php
+                                                        if ( $instance['instanceCONFIGURED'] == _FPA_Y ) {
+                                                            $statusClass = 'success';
+
+                                                        } else {
+                                                            $statusClass = 'warning';
+                                                        }
+                                                    ?>
+                                                    <div class="border border-<?php echo $statusClass; ?> text-<?php echo $statusClass; ?> small mx-auto w-75 mb-1"><?php echo @$instance['instanceCONFIGURED']; ?></div>
+                                            </div>
+
+                                        </div><!--/.col-->
+                                        <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                            <div class="bg-white small w-100 border">
+                                                <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_VER; ?></div>
+
+                                                    <?php
+                                                        if ( @$instance['instanceCFGVERMATCH'] == _FPA_Y ) {
+                                                            echo '<div class="font-weight-bolder mb-1">'. $instance['configVALIDFOR'] .'</div>';
+                                                            echo '<div class="border border-success text-success xsmall mx-auto w-75 mb-1">'. _FPA_YMATCH .' CMS</div>';
+
+                                                        } elseif ( @$instance['instanceCFGVERMATCH'] == _FPA_N ) {
+                                                            echo '<div class="font-weight-bolder mb-1">'. $instance['configVALIDFOR'] .'</div>';
+                                                            echo '<div class="border border-success text-success xsmall mx-auto w-75">'. _FPA_NMATCH .' CMS</div>';
+
+                                                        } elseif ( @$instance['configVALIDFOR'] == _FPA_U ) {
+                                                            echo '<div class="border border-warning text-warning small mx-auto w-75">'. $instance['configVALIDFOR'] .'</div>';
+                                                        }
+                                                    ?>
+
+                                            </div>
+
+                                        </div><!--/.col-->
+
+                                        <?php if ( $instance['instanceCONFIGURED'] != _FPA_N AND $instance['instanceFOUND'] != _FPA_N ) { ?>
+
+                                            <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                <div class="bg-white small w-100 border">
+                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_VALID; ?></div>
+
+                                                        <?php
+                                            				if ( @$instance['configSANE'] == _FPA_Y AND @$instance['configSIZEVALID'] != _FPA_N ) {
+                                                                $saneClass = 'success';
+                                                                $configVALID = _FPA_Y;
+
+                                                            } elseif ( @$instance['configVALIDFOR'] == _FPA_U ) {
+                                                                $saneClass = 'warning';
+                                                                $configVALID = _FPA_N;
+                                                            }
+                                                        ?>
+                                                        <div class="border border-<?php echo $saneClass; ?> text-<?php echo $saneClass; ?> small mx-auto w-75 mb-1"><?php echo $configVALID; ?></div>
+
+                                                </div>
+
+                                            </div><!--/.col-->
+                                            <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                <div class="bg-white small w-100 border">
+                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_MODE; ?></div>
+
+                                                        <?php
+                                                            // looking for --7 or -7- or -77 (default folder permissions are usually 755)
+                                                            if ( substr( $instance['configMODE'],0 ,1 ) == '7' OR substr( $instance['configMODE'],1 ,1 ) == '7' OR substr( $instance['configMODE'],2 ,1 ) == '7' ) {
+                                                                $modeClass = 'border border-danger text-danger';
+
+                                                            } elseif ( substr( $instance['configMODE'],1 ,1 ) >= '5' OR substr( $instance['configMODE'],2 ,1 ) >= '5' ) {
+                                                                $modeClass = 'border border-warning text-warning';
+
+                                                            } elseif ( $instance['configMODE'] == _FPA_N ) {
+                                                                $modeClass = 'border border-warning text-warning';
+
+                                                            } else {
+                                                                $modeClass = 'font-weight-bolder';
+                                                            }
+
+                                                        ?>
+                                                        <div class="<?php echo $modeClass; ?> small mx-auto w-75 mb-1"><?php echo $instance['configMODE']; ?></div>
+
+                                                        <?php
+                                                            // is the file writable?
+                                                            if ( ( $instance['configWRITABLE'] == _FPA_Y ) AND ( substr( $instance['configMODE'],0 ,1 ) == '7' OR substr( $instance['configMODE'],1 ,1 ) == '7' OR substr( $instance['configMODE'],2 ,1 ) == '7' ) ) {
+                                                                $writeClass = 'border border-danger text-danger';
+                                                                $canWrite = 'Writable';
+
+                                                            } elseif ( ( $instance['configWRITABLE'] == _FPA_Y ) AND ( substr( $instance['configMODE'],0 ,1 ) <= '6' ) ) {
+                                                                $writeClass = 'border border-success text-success';
+                                                                $canWrite = _FPA_WRITABLE;
+
+                                                            } elseif ( ( $instance['configWRITABLE'] != _FPA_Y ) ) {
+                                                                $writeClass = 'border border-warning text-warning';
+                                                                $canWrite = _FPA_RO;
+
+                                                            }
+                                                        ?>
+                                                        <div class="<?php echo $writeClass; ?> xsmall mx-auto w-75 mb-1"><?php echo $canWrite; ?></div>
+
+                                                </div>
+
+                                            </div><!--/.col-->
+                                            <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                <div class="bg-white small w-100 border">
+                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_OWNER; ?></div>
+
+                                                    <?php
+                                                        if ( $showProtected == 1 ) {
+                                                            echo $instance['configOWNER']['name'];
+
+                                                        } else {
+                                                            echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
+                                                        }
+                                                    ?>
+
+                                                </div>
+
+                                            </div><!--/.col-->
+                                            <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                <div class="bg-white small w-100 border">
+                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_GROUP; ?></div>
+
+                                                    <?php
+                                                        if ( $showProtected == 1 ) {
+                                                            echo $instance['configGROUP']['name'];
+
+                                                        } else {
+                                                            echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
+                                                        }
+                                                    ?>
+
+                                                </div>
+
+                                            </div><!--/.col-->
+
+                                        <?php } else { ?>
+
+                                            <div class="col-12 col-md-12 text-center my-2">
+                                                <p class="border border-warning text-warning p-2 mb-0 xsmall">
+                                                    <?php
+                                                        if ( $instance['instanceFOUND'] != _FPA_Y ) {
+                                                            echo _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $instance['ARRNAME'].' '. _FPA_TESTP .'<br />';
+                                                        }
+
+                                                        if ( $instance['instanceCONFIGURED'] == _FPA_Y ) {
+                                                            echo _FPA_BUT .' '. _FPA_CFG .' '. _FPA_F;
+                                                        }
+                                                    ?>
+                                                </p>
+                                            </div><!--/.col-12-->
+
+                                        <?php } // instance found & configured ?>
+
+                                    </div><!--./row-->
+
+                                </div>
+                            </div><!--/.card (discovery)-->
+
+                        </div><!--/.col-->
+                        <div class="col mb-4 d-flex align-self-stretch">
+
+                            <div class="card border shadow w-100">
+                                <div class="card-header bg-info text-white">
+                                    <?php echo $instance['ARRNAME']; ?> :: Configuration
+                                </div>
+                                <div class="card-body">
+
+                                    <div class="row row-cols-2 row-cols-md-4">
+
+                                        <?php if ( $instance['instanceCONFIGURED'] == _FPA_Y AND $instance['configVALIDFOR'] != _FPA_U ) { ?>
+
+                                            <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                <div class="bg-white small w-100 border">
+                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">Offline?</div>
+                                                    <?php
+                                                        if ( $instance['configOFFLINE'] == 'false' ) {
+                                                            $offlineStatus = _FPA_N;
+                                                            $offlineClass  = 'border border-info text-info';
+
+                                                        } elseif ( $instance['configOFFLINE'] == 'true' ) {
+                                                                $offlineStatus = _FPA_Y;
+                                                                $offlineClass  = 'border border-warning text-warning';
+                                                        } else {
+                                                            $offlineStatus = _FPA_U;
+                                                            $offlineClass  = 'border border-danger text-danger';
+                                                        }
+                                                    ?>
+                                                    <div class="<?php echo $offlineClass; ?> mx-auto w-75 mb-1"><?php echo $offlineStatus; ?></div>
+                                                </div>
+
+                                            </div><!--/.col-->
+                                            <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                <div class="bg-white small w-100 border">
+                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">SEF URL's</div>
+                                                    <?php
+                                                        if ( $instance['configSEF'] == 'true' ) {
+                                                            $sefClass  = 'info';
+
+                                                        } else {
+                                                            $sefClass  = 'warning';
+                                                        }
+                                                    ?>
+                                                    <div class="xsmall w-100 mb-1 text-left px-1 mb-1 ">
+                                                        <?php echo _FPA_EN; ?>: <span class="text-<?php echo $sefClass; ?> text-capitalize float-right"><?php echo $instance['configSEF']; ?></span>
+                                                    </div>
+
+                                                    <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1 ">
+                                                        Suffix: <span class="float-right text-capitalize"><?php echo $instance['configSEFSUFFIX']; ?></span>
+                                                    </div>
+
+                                                    <?php
+                                                        if ( ($instance['configSEFRWRITE'] == '1' OR $instance['configSEFRWRITE'] == 'true' ) AND $instance['configSITEHTWC'] != _FPA_Y ) {
+                                                            $rewriteTitleClass = 'danger';
+                                                            $rewriteClass      = 'danger';
+
+                                                            if ($system['sysSHORTWEB'] != 'MIC') {
+                                                                $htwcMissing = '.htaccess missing';
+                                                            } else {
+                                                                $htwcMissing = 'web.config missing';
+                                                            }
+
+                                                        } else {
+                                                            $rewriteTitleClass = 'default';
+                                                            $rewriteClass      = 'info';
+                                                            $htwcMissing       = '';
+                                                        }
+                                                    ?>
+                                                    <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1 text-<?php echo $rewriteTitleClass; ?>">
+                                                        Rewrite: <span class="text-<?php echo $rewriteClass; ?> text-capitalize float-right"><?php echo $instance['configSEFRWRITE']; ?></span>
+                                                        <?php
+                                                            if ( !empty($htwcMissing) ) {
+                                                                echo '<span class="xsmall text-'.$rewriteClass.' float-right">'. $htwcMissing .'</span>';
+                                                            }
+                                                        ?>
+                                                    </div>
+
+                                                </div>
+
+                                            </div><!--/.col-->
+                                            <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                <div class="bg-white small w-100 border">
+                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">Compression</div>
+                                                    <?php
+                                                        if ( $instance['configGZIP'] == 'true' ) {
+                                                            $gzipClass  = 'info';
+
+                                                        } else {
+                                                            $gzipClass  = 'default';
+                                                        }
+                                                    ?>
+                                                    <div class="xsmall w-100 mb-1 text-left px-1 mb-1 ">
+                                                        GZip: <span class="text-<?php echo $gzipClass; ?> text-capitalize float-right"><?php echo $instance['configGZIP']; ?></span>
+                                                    </div>
+
+                                                    <?php
+                                                        if ( $instance['configCACHING'] == 'true' ) {
+                                                            $cacheClass  = 'info';
+
+                                                        } else {
+                                                            $cacheClass  = 'default';
+                                                        }
+                                                    ?>
+                                                    <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1 ">
+                                                        Cache: <span class="text-<?php echo $cacheClass; ?> text-capitalize float-right"><?php echo $instance['configCACHING']; ?></span>
+                                                    </div>
+
+                                                </div>
+
+                                            </div><!--/.col-->
+                                            <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                <div class="bg-white small w-100 border">
+                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">Debugging</div>
+
+                                                    <?php
+                                                        if ( $instance['configERRORREP'] == 'none' ) {
+                                                            $debugClass  = 'info';
+
+                                                        } else {
+                                                            $debugClass  = 'warning';
+                                                        }
+                                                    ?>
+                                                    <div class="xsmall w-100 mb-1 text-left px-1 mb-1">
+                                                        Error Rep: <span class="text-<?php echo $debugClass; ?> float-right text-capitalize"><?php echo substr($instance['configERRORREP'], 0, 5); ?></span>
+                                                    </div>
+
+                                                    <?php
+                                                        if ( $instance['configSITEDEBUG'] == 'true' ) {
+                                                            $debugClass  = 'warning';
+
+                                                        } else {
+                                                            $debugClass  = 'info';
+                                                        }
+                                                    ?>
+                                                    <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
+                                                        Site Debug: <span class="text-<?php echo $debugClass; ?> text-capitalize float-right"><?php echo $instance['configSITEDEBUG']; ?></span>
+                                                    </div>
+
+                                                    <?php
+                                                        if ( $instance['configLANGDEBUG'] == 'true' ) {
+                                                            $debugClass  = 'warning';
+
+                                                        } else {
+                                                            $debugClass  = 'info';
+                                                        }
+                                                    ?>
+                                                    <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
+                                                        Lang Debug: <span class="text-<?php echo $debugClass; ?> text-capitalize float-right"><?php echo $instance['configLANGDEBUG']; ?></span>
+                                                    </div>
+
+                                                </div>
+
+                                            </div><!--/.col-->
+                                            <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                               <div class="bg-white small w-100 border">
+                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_DB; ?></div>
+
+                                                    <div class="xsmall w-100 mb-1 text-left px-1 mb-1">
+                                                        Type: <span class=" float-right text-capitalize"><?php echo substr(@$instance['configDBTYPE'], 0, 5); ?></span>
+                                                    </div>
+
+                                                    <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
+                                                        Version: <span class=" float-right text-capitalize"><?php echo substr(@$database['dbHOSTSERV'], 0, 5); ?></span>
+                                                    </div>
+
+                                                    <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
+                                                        CharSet: <span class=" float-right"><?php echo substr(@$database['dbCHARSET'], 0, 5); ?></span>
+                                                    </div>
+
+                                                </div>
+
+                                            </div><!--/.col-->
+                                            <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                <div class="bg-white small w-100 border">
+                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">DB <?php echo _FPA_CRED; ?></div>
+                                                    <?php
+                                                        if ( $instance['configDBCREDOK'] == _FPA_Y ) {
+                                                            $credStatus = _FPA_YACOMP;
+                                                            $credClass  = 'border border-success text-success';
+
+                                                        } else {
+                                                            $credStatus = _FPA_NACOMP;
+                                                            $credClass  = 'border border-warning text-warning';
+                                                        }
+                                                    ?>
+                                                    <div class="<?php echo $credClass; ?> mx-auto w-75 mb-1 xsmall"><?php echo $credStatus; ?></div>
+                                                </div>
+
+                                            </div><!--/.col-->
+                                            <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                <div class="bg-white small w-100 border">
+                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_SEC; ?></div>
+
+                                                    <?php
+                                                        if ( $instance['configSSL'] == '1' ) {
+                                                            $sslClass  = 'info';
+
+                                                        } else {
+                                                            $sslClass  = 'warning';
+                                                        }
+                                                    ?>
+                                                    <div class="xsmall w-100 mb-1 text-left px-1 mb-1">
+                                                        SSL: <span class="text-<?php echo $sslClass; ?> float-right text-capitalize"><?php echo @$instance['configSSL']; ?></span>
+                                                    </div>
+
+                                                    <?php
+                                                        if ( $instance['configACCESS'] == '1' ) {
+                                                            $accessClass   = 'info';
+                                                            $accessStatus  = 'Public';
+
+                                                        } elseif ( $instance['configACCESS'] == '2' ) {
+                                                            $accessClass   = 'info';
+                                                            $accessStatus  = 'Registered';
+
+                                                        } elseif ( $instance['configACCESS'] == '2' ) {
+                                                            $accessClass   = 'info';
+                                                            $accessStatus  = 'Special';
+
+                                                        } else {
+                                                            $accessClass  = 'warning';
+                                                            $accessStatus  = _FPA_U;
+                                                        }
+                                                    ?>
+                                                    <div class="xsmall border-top w-100 mb-1 text-left px-1 mb-1">
+                                                        Access: <span class="text-<?php echo $accessClass; ?> float-right text-capitalize"><?php echo $accessStatus; ?></span>
+                                                    </div>
+
+                                                </div>
+
+                                            </div><!--/.col-->
+                                            <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                <div class="bg-white small w-100 border">
+                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_FEAT; ?></div>
+
+                                                    <?php
+                                                        if ( $instance['configFTP'] == '1' ) {
+                                                            $ftpClass  = 'warning';
+
+                                                        } else {
+                                                            $ftpClass  = 'info';
+                                                        }
+                                                    ?>
+                                                    <div class="xsmall w-100 mb-1 text-left px-1 mb-1">
+                                                        FTP: <span class="text-<?php echo $ftpClass; ?> float-right text-capitalize"><?php echo @$instance['configFTP']; ?></span>
+                                                    </div>
+
+                                                    <div class="xsmall border-top w-100 mb-1 text-left px-1 mb-1">
+                                                        Unicode Slug: <span class="float-right text-capitalize"><?php echo $instance['configUNICODE']; ?></span>
+                                                    </div>
+
+                                                </div>
+
+                                            </div><!--/.col-->
+
+                                        <?php } else { ?>
+
+                                            <div class="col-12 col-md-12 text-center my-2">
+                                                <p class="border border-warning text-warning p-2 mb-0 xsmall">
+                                                    <?php echo _FPA_CFG .' '. _FPA_NF .' '. _FPA_OR .' '. _FPA_NVALID .', '. _FPA_NO .' '. $instance['ARRNAME'].' '. _FPA_TESTP .'<br />';?>
+                                                </p>
+                                            </div><!--/.col-12-->
+
+                                        <?php } // instance found & configured ?>
+
+                                    </div><!--./row-->
+
+                                </div>
+                            </div><!--/.card (configuration)-->
+
+                        </div><!--/.col-->
+                    </div><!--./row application-discovery-->
+                    <?php showDev( $instance ); ?>
+
+	                <div class="row row-cols-1 row-cols-lg-2 hosting-discovery">
+                        <div class="col mb-4 d-flex align-self-stretch">
+
+                            <div class="card border shadow w-100">
+                                <div class="card-header bg-info text-white"><?php echo $phpenv['ARRNAME'] .' :: '. _FPA_DISC; ?></div>
+                                <div class="card-body">
+
+                                    <table class="table table-striped table-bordered table-sm">
+                                        <tbody>
+                                            <tr class="flex-fill">
+                                                <td class="text-capitalize w-50">PHP <?php echo _FPA_VER; ?></td>
+                                                <td>
+                                                    <?php echo $phpenv['phpVERSION']; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">PHP API</td>
+                                                <td>
+                                                    <?php
+                                                        if ( $phpenv['phpAPI'] == 'apache2handler' ) {
+                                                            $status = 'warning';
+
+                                                        } else {
+                                                            $status = 'success';
+
+                                                        }
+                                                        echo '<span class="text-'. $status.'">'. $phpenv['phpAPI'] .'</span>';
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">Display Errors</td>
+                                                <td>
+                                                    <?php echo $phpenv['phpERRORDISPLAY']; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">Error Report Level</td>
+                                                <td>
+                                                    <?php echo $phpenv['phpERRORREPORT']; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">MySQL <?php echo _FPA_SUP; ?></td>
+                                                <td>
+                                                    <?php echo $phpenv['phpSUPPORTSMYSQL']; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">MySQLi <?php echo _FPA_SUP; ?></td>
+                                                <td>
+                                                    <?php echo $phpenv['phpSUPPORTSMYSQLI']; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">Magic Quotes</td>
+                                                <td>
+                                                    <?php echo $phpenv['phpMAGICQUOTES'] ? 'true' : 'false'; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">Safe Mode</td>
+                                                <td>
+                                                    <?php echo $phpenv['phpSAFEMODE'] ? 'true' : 'false'; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">Memory Limit</td>
+                                                <td>
+                                                    <?php
+                                                        echo $phpenv['phpMEMLIMIT'];
+                                                        if ( @$_POST['increasePOPS'] == 1 ) { // the user set the increasePOPS setting for memory or time out errors
+                                                            echo '&nbsp;<i class="text-warning">('. _FPA_UINC .' '. $fpa['ORIGphpMEMLIMIT'] .')</i>';
+                                                        }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">PHP Uploads Enabled</td>
+                                                <td>
+                                                    <?php echo $phpenv['phpUPLOADS']; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">Max. Upload Size</td>
+                                                <td>
+                                                    <?php echo $phpenv['phpMAXUPSIZE']; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">Max. Post Size</td>
+                                                <td>
+                                                    <?php echo $phpenv['phpMAXPOSTSIZE']; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">Max. Input Time</td>
+                                                <td>
+                                                    <?php echo $phpenv['phpMAXINPUTTIME']; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">Max. Execution Time</td>
+                                                <td>
+                                                    <?php
+                                                        echo $phpenv['phpMAXEXECTIME'];
+                                                        if ( @$_POST['increasePOPS'] == 1 ) { // the user set the increasePOPS setting for memory or time out errors
+                                                            echo '&nbsp;<i class="text-warning">('. _FPA_UINC .' '. $fpa['ORIGphpMAXEXECTIME'] .')</i>';
+                                                        }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">Register Globals</td>
+                                                <td>
+                                                    <?php echo $phpenv['phpREGGLOBAL'] ? 'true' : 'false'; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">Allow URL fopen</td>
+                                                <td>
+                                                    <?php echo $phpenv['phpURLFOPEN']; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">Open Base Path</td>
+                                                <td>
+                                                    <?php echo $phpenv['phpOPENBASE']; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">Disabled Functions</td>
+                                                <td class="xsmall">
+                                                    <?php echo str_replace (',', ', ', $phpenv['phpDISABLED']); ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">Session Path</td>
+                                                <td class="xsmall">
+                                                    <?php
+                                                        if ( $showProtected == 1 ) {
+                                                            echo $phpenv['phpSESSIONPATH'] .'<br />';
+                                                        } else {
+                                                            echo '<span class="protected">'. _FPA_HIDDEN .'</span><br />';
+                                                        }
+
+                                                        if ( $phpenv['phpSESSIONPATHWRITABLE'] == _FPA_Y ) {
+                                                            $wColor = 'success';
+
+                                                        } elseif ( $phpenv['phpSESSIONPATHWRITABLE'] == _FPA_N ) {
+                                                            $wColor = 'danger';
+
+                                                        } else {
+                                                            $phpenv['phpSESSIONPATHWRITABLE'] = _FPA_U;
+                                                        }
+                                                        echo _FPA_WRITABLE.': <span class="text-'. $wColor .'">'. $phpenv['phpSESSIONPATHWRITABLE'] .'</span>';
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">System php.ini</td>
+                                                <td class="xsmall">
+                                                    <?php
+                                                        echo $phpenv['phpINIFILE'] .'<br />';
+                                                        echo 'Multiple ini files:&nbsp;';
+                                                        echo $phpenv['phpINIOTHER'] ? 'true' : 'false';
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    Last Known PHP Error<br />
+                                                    <?php
+                                                        if ( $phpenv['phpLASTERR'] ) {
+                                                            echo '<span class="text-danger xsmall">'. $phpenv['phpLASTERR'] .'</span>';
+
+                                                        } else {
+                                                            echo '<span class="text-success">None</span>';
+                                                        }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                <?php showDev( $phpenv ); ?>
+                                </div>
+                            </div><!--/.card (php)-->
+
+                        </div><!--/.col-->
+                        <div class="col mb-4 d-flex align-self-stretch">
+
+                            <div class="card border shadow w-100">
+                                <div class="card-header bg-info text-white"><?php echo $system['ARRNAME'] .' :: '. _FPA_DISC; ?></div>
+                                <div class="card-body">
+
+                                    <table class="table table-striped table-bordered table-sm mb-5">
+                                        <tbody>
+                                            <tr class="flex-fill">
+                                                <td class="text-capitalize w-50"><?php echo _FPA_PLATFORM; ?></td>
+                                                <td>
+                                                    <?php echo  $system['sysPLATOS']; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">Kernel <?php echo _FPA_VER; ?></td>
+                                                <td>
+                                                    <?php echo  $system['sysPLATREL']; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize"><?php echo _FPA_TEC; ?></td>
+                                                <td>
+                                                    <?php echo  $system['sysPLATTECH']; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize"><?php echo _FPA_HNAME; ?></td>
+                                                <td>
+                                                    <?php
+                                                        if ( $showProtected == 1 ) {
+                                                            echo $system['sysPLATNAME'];
+
+                                                        } else {
+                                                            echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
+                                                        }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">Total Disk Space</td>
+                                                <td>
+                                                    <?php
+                                                        if (function_exists('disk_total_space')) {
+                                                            $total_space = sprintf('%.2f', disk_total_space('./') / 1073741824);
+                                                            echo $total_space . ' GiB';
+
+                                                        } else {
+                                                            echo _FPA_U;
+                                                        }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">Free Disk Space</td>
+                                                <td>
+                                                    <?php
+                                                        if (function_exists('disk_free_space')) {
+                                                            $free_space = sprintf('%.2f', disk_free_space('./') / 1073741824);
+                                                            if (function_exists('disk_total_space')) {
+                                                                $percent_free = $free_space ? round($free_space / $total_space, 2) * 100 : 0;
+
+                                                                if ($percent_free <= '5') {
+                                                                    $status = 'text-warning';
+                                                                } else {
+                                                                    $status = '';
+                                                                }
+
+                                                                echo $free_space .' GiB (<span class="'. $status .' xsmall">'. $percent_free .'%</span>)';
+                                                                $system['sysFREESPACE'] = $free_space . ' GiB';
+
+                                                            } else {
+                                                                echo $free_space . ' GiB';
+                                                            }
+
+                                                        } else {
+                                                            echo _FPA_U;
+                                                        }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize"><?php echo _FPA_SERV; ?> Name</td>
+                                                <td>
+                                                    <?php
+                                                        if ( $showProtected == 1 ) {
+                                                            echo $system['sysSERVNAME'];
+
+                                                        } else {
+                                                            echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
+                                                        }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize"><?php echo _FPA_SERV; ?> IP Address</td>
+                                                <td>
+                                                    <?php
+                                                        if ( $showProtected == 1 ) {
+                                                            echo $system['sysSERVIP'];
+
+                                                        } else {
+                                                            echo '<span class="protected">'. _FPA_HIDDEN .'</span>&nbsp;';
+                                                        }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize"><?php echo _FPA_SERV; ?> Signature</td>
+                                                <td>
+                                                    <?php echo $system['sysSERVSIG']; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize"><?php echo _FPA_SERV; ?> Encoding</td>
+                                                <td>
+                                                    <?php echo str_replace(',', ', ', $system['sysENCODING']); ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">Executing <?php echo _FPA_USR; ?></td>
+                                                <td>
+                                                    <?php echo $system['sysEXECUSER']; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize"><?php echo _FPA_SERV .' '. _FPA_USR; ?></td>
+                                                <td>
+                                                    <?php echo $system['sysWEBOWNER']; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize"><?php echo _FPA_SERV .' '.  _FPA_DROOT; ?></td>
+                                                <td>
+                                                    <?php
+                                                        if ( $showProtected == 1 ) {
+                                                            echo '<span class="xsmall">'. $system['sysDOCROOT'] .'</span>';
+
+                                                        } else {
+                                                            echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
+                                                        }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize"><?php echo _FPA_SERV; ?> /Tmp Directory</td>
+                                                <td class="xsmall">
+                                                    <?php
+                                                        if ( $showProtected == 1 ) {
+                                                            echo $system['sysSYSTMPDIR'] .'<br />';
+
+                                                        } else {
+                                                            echo '<span class="protected">'. _FPA_HIDDEN .'</span><br />';
+                                                        }
+
+                                                        if ( $system['sysTMPDIRWRITABLE'] == _FPA_Y ) {
+                                                            $wColor = 'success';
+
+                                                        } elseif ( $system['sysTMPDIRWRITABLE'] == _FPA_N ) {
+                                                            $wColor = 'danger';
+
+                                                        } else {
+                                                            $system['sysTMPDIRWRITABLE'] = _FPA_U;
+                                                        }
+                                                        echo _FPA_WRITABLE.': <span class="text-'. $wColor .'">'. $system['sysTMPDIRWRITABLE'] .'</span>';
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <?php
+                                    /**
+                                     * permisison & ownership checks
+                                     *
+                                     * very basic checks for PHP API and process/executing user & current user
+                                     * designed to replace the old 'funky' and generally inaccurate suExec routines
+                                     *
+                                     * if not 'cgi' then is very likely to have issues unless there is a custom cloud
+                                     * solution in place
+                                     *
+                                     * however, if not cgi but the current & process user match, it's likely to be a
+                                     * custom/cloud solution and might be ok
+                                     *
+                                     * if is 'cgi' then the process and current should match with no issues. however,
+                                     * some cloud solutions 'fuzz' this method and users don't always have to match
+                                     * @RussW added 24/05/2020
+                                     *
+                                     */
+                                    ?>
+                                    <table class="table table-striped table-bordered 1table-sm">
+                                        <thead>
+                                            <tr>
+                                                <td colspan="3" class="bg-info text-white">Switch  <?php echo  _FPA_USR .' '.  _FPA_CFG; ?></td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="text-center">Server suExec</td>
+                                                <td class="text-center">PHP suExec</td>
+                                                <td class="text-center">Ownership</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-center lead">
+                                                    <?php
+                                                        if ($phpenv['phpAPACHESUEXEC'] == _FPA_Y OR substr($phpenv['phpAPI'], 0, 4) == 'lite') {
+                                                            $sColor = 'success';
+                                                            $phpenv['phpAPACHESUEXEC'] = _FPA_Y;
+
+                                                        } elseif ($phpenv['phpAPACHESUEXEC'] == _FPA_N) {
+                                                            $sColor = 'warning';
+
+                                                        } else {
+                                                            $phpenv['phpAPACHESUEXEC'] = _FPA_U;
+                                                            $sColor = '';
+                                                        }
+                                                        echo '<span class="badge badge-pill badge-'. $sColor .'">'. $phpenv['phpAPACHESUEXEC'] .'</span>';
+                                                    ?>
+                                                </td>
+                                                <td class="text-center lead">
+                                                    <?php
+                                                        if ($phpenv['phpPHPSUEXEC'] == _FPA_Y) {
+                                                            $sColor = 'success';
+
+                                                        } elseif ($phpenv['phpPHPSUEXEC'] == _FPA_N) {
+                                                            $sColor = 'warning';
+
+                                                        } else {
+                                                            $phpenv['phpPHPSUEXEC'] = _FPA_U;
+                                                            $sColor = '';
+                                                        }
+                                                        echo '<span class="badge badge-pill badge-'. $sColor .'">'. $phpenv['phpPHPSUEXEC'] .'</span>';
+                                                    ?>
+                                                </td>
+                                                <td class="text-center xsmall">
+                                                    <span class="text-muted">Current User:</span> <?php echo  $system['sysCURRUSER']; ?><br />
+                                                    <span class="text-muted">Process User:</span> <?php echo  $system['sysEXECUSER']; ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <?php
+                                                        if ($phpenv['phpAPACHESUEXEC'] != _FPA_Y AND $phpenv['phpPHPSUEXEC'] != _FPA_Y) {
+                                                                // not handlers installed
+                                                                $suColor = 'danger';
+                                                                $suStatus = _FPA_Y;
+                                                                $suMSG    = 'No user process permission or ownership management utilites available. Without a custom management utility you will have problems with file permissions and ownership';
+
+                                                        } elseif (stristr($phpenv['phpAPI'], 'cgi') === FALSE) { // NOT cgi
+
+                                                            if (($system['sysCURRUSER'] == $system['sysEXECUSER'])) {
+                                                                // not cgi but has Apache suExec and the users match
+                                                                $suColor = 'warning';
+                                                                $suStatus = _FPA_M;
+                                                                $suMSG    = 'Depending on any custom effective perrmissions, extension & template installations and file & image uploads might work.';
+
+                                                            } elseif ($phpenv['phpAPACHESUEXEC'] == _FPA_Y AND ($system['sysCURRUSER'] != $system['sysEXECUSER'])) {
+                                                                $suColor = 'warning';
+                                                                $suStatus = _FPA_Y;
+                                                                $suMSG    = 'Extension & template installations and file & image uploads are very unlikely to work.';
+
+                                                            } else {
+                                                                $suColor  = 'warning';
+                                                                $suStatus = _FPA_U;
+                                                                $suMSG    = 'Unable to determine effective perrmissions or ownership information.';
+                                                            }
+
+                                                        } else { // is php cgi
+
+                                                            if ($system['sysCURRUSER'] == $system['sysEXECUSER']) {
+                                                                // is cgi and users match
+                                                                $suColor  = 'success';
+                                                                $suStatus = _FPA_N;
+                                                                $suMSG    = 'Extension & template installations and file & image uploads should not have any problems.';
+
+                                                            } elseif ($system['sysCURRUSER'] != $system['sysEXECUSER']) {
+                                                                    // is cgi and users dont match (weird)
+                                                                    $suColor  = 'warning';
+                                                                    $suStatus = _FPA_M;
+                                                                    $suMSG    = 'Extension & template installations and file & image uploads might have some problems.';
+
+                                                            } else {
+                                                                $suColor  = 'dark';
+                                                                $suStatus = _FPA_U;
+                                                                $suMSG    = 'Unable to determine effective perrmissions or ownership information.';
+                                                            }
+                                                        }
+                                                    ?>
+
+                                                    <?php echo _FPA_PERMOWN; ?> Problems&nbsp;:&nbsp;<span class="badge badge-<?php echo $suColor; ?>"><?php echo $suStatus; ?></span>&nbsp;<span class="badge badge-light"><?php echo $phpenv['phpAPI']; ?></span>
+                                                    <p class="my-1"><?php echo $suMSG; ?></p>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                <?php showDev( $system ); ?>
+                                </div>
+                            </div><!--/.card (system)-->
+
+                        </div><!--/.col-->
+                    </div><!--./row hosting-discovery-->
+
+                    <div class="row row-cols-12 php-extensions">
+                        <div class="col mb-4 d-flex align-self-stretch">
+
+                            <div class="card border shadow w-100">
+                                <div class="card-header bg-info text-white"><?php echo $phpextensions['ARRNAME'] .' :: '. _FPA_DISC; ?></div>
+                                <div class="card-body">
+
+                                    <div class="row row-cols-2 row-cols-xs-3 row-cols-sm-4 row-cols-lg-6">
+
+                                        <?php
+                                            foreach ( $phpextensions as $key => $show ) {
+                                                if ( $show != $phpextensions['ARRNAME'] ) {
+
+                                                    if ( $key == 'exif' ) {
+                                                        $pieces = explode( " $", $show );
+                                                        $show = $pieces[0];
+                                                    }
+
+                                                    // find and highlight the requirements and mark them as present or missing
+                                                    if ( $key == 'libxml' OR $key == 'xml' OR $key == 'zip' OR $key == 'openssl' OR $key == 'zlib' OR $key == 'curl' OR $key == 'iconv' OR $key == 'mbstring' OR $key == 'mysql' OR $key == 'mysqli' OR $key == 'pdo_mysql' OR $key == 'mcrypt' OR $key == 'sodium' OR $key == 'suhosin' OR $key == 'cgi' OR $key == 'cgi-fcgi' ) {
+                                                        $status = 'success';
+                                                        $border = 'success';
+                                                        $weight = 'bolder';
+
+                                                    } elseif ( $key == 'apache2handler') {
+                                                        $status = 'warning';
+                                                        $border = 'warning';
+                                                        $weight = 'bold';
+
+                                                    } else {
+                                                        $status = 'dark';
+                                                        $border = 'default';
+                                                        $weight = 'normal';
+                                                    }
+
+                                                    if (empty($show)) {
+                                                        $show = '-';
+                                                    }
+
+                                                    echo '<div class="col d-flex align-self-stretch">';
+                                                    echo '<div class="bg-light border border-'.$border.' text-center small mb-2 w-100">';
+                                                    echo '<div class="text-'.$status.' font-weight-'.$weight.' px-1 py-2">'. $key .'</div>';
+                                                    echo '<div class="bg-white text-truncate px-1 py-2">'.$show.'</div>';
+                                                    echo '</div>';
+                                                    echo '</div>';
+
+                                                } // dont show if ARRNAME
+
+                                                    // look for recommended extensions that aren't installed
+                                                    if ( !in_array( $key, $phpreq ) ) {
+                                                        unset ( $phpreq[$key] );
+                                                    }
+
+                                            } //foreach $phpextensions
+                                        ?>
+                                    </div><!--row-->
+
+                                    <?php
+                                        if ( version_compare( $instance['cmsRELEASE'], '3.8', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
+                                            unset($phpreq['mcrypt']);
+                                        }
+
+                                        if (version_compare( $phpenv['phpVERSION'], '7.0.0', '>=' ))   {
+                                            unset($phpreq['mysql']);
+                                        }
+
+                                        if ( $phpreq ) {
+                                            echo '<h6 class="mt-3">'. _FPA_POTME .':</h6>';
+                                            echo '<div class="row row-cols-2 row-cols-xs-3 row-cols-sm-4 row-cols-lg-6">';
+
+                                            foreach ( $phpreq as $missingkey => $missing ) {
+                                                echo '<div class="col">';
+                                                echo '<div class="border border-warning text-warning text-center xsmall p-2 mb-2">'. $missingkey .'</div>';
+                                                echo '</div>';
+                                            }
+
+                                            echo '</div>';
+                                        }
+                                    ?>
+
+                                <?php showDev( $phpextensions ); ?>
+                                <?php showDev( $phpreq ); ?>
+                                </div>
+                            </div><!--/.card (php extensions)-->
+
+                        </div><!--/.col-->
+                    </div><!--row (php extensions)-->
+
+                    <?php if ( $phpenv['phpAPI'] == 'apache2handler' ) { ?>
+
+                        <div class="row row-cols-12 apache-modules">
+                            <div class="col mb-4 d-flex align-self-stretch">
+
+                                <div class="card border shadow w-100">
+                                    <div class="card-header bg-info text-white"><?php echo $apachemodules['ARRNAME'] .' :: '. _FPA_DISC; ?></div>
+                                    <div class="card-body">
+
+                                        <div class="row row-cols-2 row-cols-xs-3 row-cols-sm-4 row-cols-lg-6">
+
+                                            <?php
+                                                foreach ( $apachemodules as $key => $show ) {
+
+                                                    if ( $show != $apachemodules['ARRNAME'] ) {
+
+                                                        // find and highlight the requirements and mark them as present or missing
+                                                        if ( $show == 'mod_rewrite' OR $show == 'mod_cgi' OR $show == 'mod_cgid' OR $show == 'mod_expires' OR $show == 'mod_deflate' OR $show == 'mod_auth'  ) {
+                                                            $status = 'success';
+                                                            $border = 'success';
+                                                            $weight = 'bolder';
+
+                                                        } elseif ( $show == 'mod_php4' OR $show == 'mod_php5' ) {
+                                                            $status = 'warning';
+                                                            $border = 'warning';
+                                                            $weight = 'bold';
+
+                                                        } else {
+                                                            $status = 'dark';
+                                                            $border = 'default';
+                                                            $weight = 'normal';
+                                                        }
+                                                        echo '<div class="col d-flex align-self-stretch">';
+                                                        echo '<div class="bg-light border border-'.$border.' text-center small mb-2 w-100">';
+                                                        echo '<div class="text-'.$status.' font-weight-'.$weight.' px-1 py-2">'. $key .'</div>';
+                                                        //echo '<div class="bg-white text-truncate px-1 py-2">'.$show.'</div>';
+                                                        echo '</div>';
+                                                        echo '</div>';
+
+                                                    } // dont show if ARRNAME
+
+                                                        // look for recommended modules that aren't installed
+                                                        if ( !in_array( $show, $apachereq ) ) {
+                                                            unset ( $apachereq['ARRNAME'] );
+                                                            unset ( $apachereq[$show] );
+                                                        }
+
+                                                } //foreach $apachemodules
+                                            ?>
+                                        </div><!--row-->
+
+                                        <?php
+                                            if ( $apachereq ) {
+                                                echo '<h6 class="mt-3">'. _FPA_POTMM .':</h6>';
+                                                echo '<div class="row row-cols-2 row-cols-xs-3 row-cols-sm-4 row-cols-lg-6">';
+
+                                                foreach ( $apachereq as $missingkey => $missing ) {
+                                                    echo '<div class="col">';
+                                                    echo '<div class="border border-warning text-warning text-center xsmall p-2 mb-2">'. $missingkey .'</div>';
+                                                    echo '</div>';
+                                                }
+
+                                                echo '</div>';
+                                            }
+
+                                            unset ( $key, $show );
+                                        ?>
+
+                                    <?php showDev( $apachemodules ); ?>
+                                    <?php $apachereq['ARRNAME'] = 'Potential Missing Apache Modules'; ?>
+                                    <?php showDev( $apachereq ); ?>
+                                    </div>
+                                </div><!--/.card (apache modules)-->
+
+                            </div><!--/.col-->
+                        </div><!--row (apache modules)-->
+
+                    <?php } // end apache-modules ?>
+
+	                <div class="row row-cols-1 row-cols-lg-2 database-discovery">
+                        <div class="col mb-4 d-flex align-self-stretch">
+
+                            <div class="card border shadow w-100">
+                                <div class="card-header bg-info text-white"><?php echo $database['ARRNAME'] .' :: '. _FPA_DISC; ?></div>
+                                <div class="card-body">
+
+                                    <table class="table table-striped table-bordered table-sm">
+                                        <tbody>
+                                            <tr class="flex-fill">
+                                                <td class="text-capitalize w-50"><?php echo @$instance['configDBTYPE'] .' '. _FPA_VER; ?></td>
+                                                <td>
+                                                    <?php
+                                                        if ( @$database['dbHOSTSERV'] ) {
+                                                            echo  _FPA_SERV .': '. $database['dbHOSTSERV'];
+
+                                                        } else {
+                                                            echo _FPA_SERV .': <span class="text-warning">'. _FPA_U .'</span>';
+                                                        }
+
+                                                        if ( @$database['dbHOSTCLIENT'] ) {
+                                                            echo '<br />'. _FPA_CLNT .': '. substr ($database['dbHOSTCLIENT'], 0, 30) .'...';
+
+                                                        } else {
+                                                            echo _FPA_CLNT .': <span class="text-warning">'. _FPA_U .'</span>';
+                                                        }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize"><?php echo @$instance['configDBTYPE'] .' '. _FPA_HNAME; ?></td>
+                                                <td>
+                                                    <?php
+                                                        if ( $showProtected == 1 ) {
+
+                                                            if ( $instance['configDBHOST'] ) {
+                                                                echo $instance['configDBHOST'];
+
+                                                            } else {
+                                                                echo '<span class="text-danger">'. _FPA_NC .'</span>';
+                                                            }
+
+                                                        } else {
+                                                            echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
+                                                        }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize"><?php echo  _FPA_CONT; ?></td>
+                                                <td>
+                                                    <?php
+                                                        if ( $database['dbLOCAL'] == _FPA_Y ) {
+                                                            echo '('. _FPA_LOCAL .') '. @$database['dbHOSTINFO'];
+
+                                                        } elseif ( $database['dbLOCAL'] == _FPA_N AND @$database['dbHOSTINFO'] ) {
+
+                                                            if ( $showProtected <= 2 ) {
+                                                                echo '('. _FPA_REMOTE .') '. $database['dbHOSTINFO'];
+
+                                                            } else {
+                                                                echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
+                                                            }
+
+                                                        } elseif ( $database['dbLOCAL'] == _FPA_N AND !@$database['dbHOSTINFO'] ) {
+                                                            echo '('. _FPA_REMOTE .') <span class="text-warning"> '. _FPA_U .'</span>';
+
+                                                        } else {
+                                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                        }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize">PHP <?php echo _FPA_SUP; ?></td>
+                                                <td>
+                                                    <?php
+                                                        if ( @$instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_N ) {
+                                                            echo '<span class="text-danger">'. $instance['configDBTYPE'] .' '. _FPA_IS .' '. _FPA_NSUP .' '. _FPA_BY .' PHP '. $phpenv['phpVERSION'] .'</span>';
+
+                                                        } elseif (  @$instance['configDBTYPE'] == 'mysql' AND $phpenv['phpSUPPORTSMYSQL'] == _FPA_N ) {
+                                                            echo '<span class="text-danger">'. $instance['configDBTYPE'] .' '. _FPA_IS .' '. _FPA_NSUP .' '. _FPA_BY .' PHP '. $phpenv['phpVERSION'] .'</span>';
+
+                                                        } elseif ( ( @$instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_Y ) OR ( @$instance['configDBTYPE'] == 'mysql' AND $phpenv['phpSUPPORTSMYSQL'] == _FPA_Y ) OR @$instance['configDBTYPE'] == 'pdomysql' OR @$instance['configDBTYPE'] == 'postgresql'OR @$instance['configDBTYPE'] == 'pgsql') {
+                                                            echo '<span class="text-success">'. $instance['configDBTYPE'] .' '. _FPA_IS .' '. _FPA_YSUP .' '. _FPA_BY .' PHP '. $phpenv['phpVERSION'] .'</span>';
+
+                                                        } else {
+                                                            echo '<span class="text-warning">PHP '. $phpenv['phpVERSION'] .' '. _FPA_SUP .' '. _FPA_IS .' '. _FPA_U .'</span>';
+                                                        }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize"><?php echo  _FPA_CON .' '. _FPA_TO .' '. @$instance['configDBTYPE']; ?></td>
+                                                <td>
+                                                    <?php
+                                                        if ( $database['dbDOCHECKS'] == _FPA_N ) {
+                                                            echo '<span class="text-warning">'. _FPA_NOA .', '. _FPA_NC .'</span>';
+
+                                                        } elseif ( @$database['dbERROR'] == _FPA_N ) {
+                                                            echo '<span class="text-success">'. _FPA_Y .', '. _FPA_YCON .'</span>';
+
+                                                        } elseif ( @$database['dbERROR'] != _FPA_N ) {
+                                                            echo '<span class="text-danger">'. _FPA_N .', '. _FPA_ER .'</span>';
+                                                        }
+                                                    ?>
+                                                </td>
+                                            </tr>
+
+                                            <?php if ( @$database['dbERROR'] AND @$database['dbERROR'] != _FPA_N ) { ?>
+                                                <tr>
+                                                    <td class="text-capitalize text-danger"><?php echo _FPA_ECON; ?></td>
+                                                    <td>
+                                                        <?php
+                                                            echo '<span class="text-danger">'. $database['dbERROR'] .'</span>';
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                            <?php } // dbERROR ?>
+
+                                            <tr>
+                                                <td class="text-capitalize"><?php echo @$instance['configDBTYPE'] .' '. _FPA_CHARS; ?></td>
+                                                <td>
+                                                    <?php
+                                                        if ( @$database['dbCHARSET'] ) {
+                                                            echo $database['dbCHARSET'];
+
+                                                        } else {
+                                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                        }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize"><?php echo _FPA_DEF .' '. _FPA_CHARS; ?></td>
+                                                <td>
+                                                    <?php
+                                                        if ( @$database['dbHOSTDEFCHSET'] ) {
+                                                            echo $database['dbHOSTDEFCHSET'];
+
+                                                        } else {
+                                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                        }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize"><?php echo _FPA_DB .' '. _FPA_TCOL; ?></td>
+                                                <td>
+                                                    <?php
+                                                        if ( @$database['dbCOLLATION'] ) {
+                                                            echo $database['dbCOLLATION'];
+
+                                                        } elseif ( @$database['dbERROR'] != _FPA_N ) {
+                                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
+
+                                                        } else {
+                                                            echo '<span class="text-warning">'. _FPA_NC .'</span>';
+                                                        }
+                                                    ?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="text-capitalize"><?php echo _FPA_DB .' '. _FPA_TSIZ; ?></td>
+                                                <td>
+                                                    <?php
+                                                        if ( @$database['dbSIZE'] ) {
+                                                            echo $database['dbSIZE'];
+
+                                                        } else {
+                                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                        }
+                                                    ?>
+                                                </td>
+                                            </tr>
+
+                                            <?php if ( @$instance['configDBCREDOK'] != _FPA_Y AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
+                                                <tr>
+                                                    <td class="text-capitalize text-warning"><?php echo _FPA_MISSINGCRED; ?></td>
+                                                    <td class="xsmall">
+                                                        <?php
+                                                            if ( @$instance['configDBTYPE'] == '' ) {
+                                                                echo _FPA_CONT .': <span class="text-warning">'. _FPA_NF .'</span><br />';
+                                                            }
+                                                            if ( @$instance['configDBHOST'] == '' ) {
+                                                                echo _FPA_DB.' '. _FPA_HNAME .': <span class="text-warning">'. _FPA_NF .'</span><br />';
+                                                            }
+                                                            if ( @$instance['configDBNAME'] == '' ) {
+                                                                echo _FPA_DB .' Name: <span class="text-warning">'. _FPA_NF .'</span><br />';
+                                                            }
+                                                            if ( @$instance['configDBPREF'] == '' ) {
+                                                                echo _FPA_TBL .' Prefix: <span class="text-warning">'. _FPA_NF .'</span><br />';
+                                                            }
+                                                            if ( @$instance['configDBUSER'] == '' ) {
+                                                                echo _FPA_DB .' '. _FPA_USER .': <span class="text-warning">'. _FPA_NF .'</span><br />';
+                                                            }
+                                                            if ( @$instance['configDBPASS'] == '' ) {
+                                                                echo _FPA_DB .' '. _FPA_PASS .': <span class="text-warning">'. _FPA_NF .'</span><br />';
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                            <?php } // credentialsMissing ?>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div><!--/.card (discovery)-->
+
+                        </div><!--/.col-->
+                        <div class="col mb-4 d-flex align-self-stretch">
+
+                            <div class="card border shadow w-100">
+                                <div class="card-header bg-info text-white"><?php echo $database['ARRNAME'] .' :: '. _FPA_PERF; ?></div>
+                                <div class="card-body">
+
+                                    <table class="table table-striped table-bordered table-sm">
+                                        <tbody>
+                                            <?php if ( $database['dbDOCHECKS'] == _FPA_Y AND @$database['dbERROR'] == _FPA_N AND $instance['configDBTYPE'] <> 'postgresql' AND $instance['configDBTYPE'] <> 'pgsql' AND $instance['instanceFOUND'] == _FPA_Y) { ?>
+
+                                                <?php $pieces = explode( ':', $database['dbHOSTSTATS'][0] ); ?>
+                                                <tr class="flex-fill">
+                                                    <td class="text-capitalize w-50"><?php echo $pieces[0]; ?></td>
+                                                    <td>
+                                                        <?php
+                                                            /**
+                                                             * convert uptime from seconds to days, hours, minutes
+                                                             *
+                                                             * @param $seconds
+                                                             * @return $days $hours $minutes
+                                                             */
+                                                            function uptimeToWords($seconds) {
+                                                                $days = intval(intval($seconds) / (3600*24));
+                                                                $hours = (intval($seconds) / 3600) % 24;
+                                                                $minutes = (intval($seconds) / 60) % 60;
+
+                                                                $days = $days ? $days . 'd ' : '';
+                                                                $hours = $hours ? $hours . 'h ' : '';
+                                                                $minutes = $minutes ? $minutes . 'm ' : '';
+
+                                                                return $days .' '. $hours .' '. $minutes;
+                                                            }
+                                                            echo uptimeToWords($pieces[1]);
+                                                        ?>
+                                                    </td>
+                                                </tr>
+
+                                                <?php $pieces = explode( ':', $database['dbHOSTSTATS'][1] ); ?>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
+                                                    <td>
+                                                        <?php echo $pieces[1]; ?>
+                                                    </td>
+                                                </tr>
+
+                                                <?php $pieces = explode( ':', $database['dbHOSTSTATS'][2] ); ?>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
+                                                    <td>
+                                                        <?php echo $pieces[1]; ?>
+                                                    </td>
+                                                </tr>
+
+                                                <?php $pieces = explode( ':', $database['dbHOSTSTATS'][3] ); ?>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
+                                                    <td>
+                                                        <?php echo $pieces[1]; ?>
+                                                    </td>
+                                                </tr>
+
+                                                <?php $pieces = explode( ':', $database['dbHOSTSTATS'][4] ); ?>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
+                                                    <td>
+                                                        <?php echo $pieces[1]; ?>
+                                                    </td>
+                                                </tr>
+
+                                                <?php $pieces = explode( ':', $database['dbHOSTSTATS'][5] ); ?>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
+                                                    <td>
+                                                        <?php echo $pieces[1]; ?>
+                                                    </td>
+                                                </tr>
+
+                                                <?php $pieces = explode( ':', $database['dbHOSTSTATS'][6] ); ?>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
+                                                    <td>
+                                                        <?php echo $pieces[1]; ?>
+                                                    </td>
+                                                </tr>
+
+                                                <?php $pieces = explode( ':', $database['dbHOSTSTATS'][7] ); ?>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
+                                                    <td>
+                                                        <?php echo $pieces[1]; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">No. Tables</td>
+                                                    <td>
+                                                        <?php
+                                                            if ( $database['dbTABLECOUNT'] ) {
+                                                                echo $database['dbTABLECOUNT'] .' tables';
+
+                                                            } else {
+                                                                echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+
+                                            <?php } else { ?>
+
+                                                <tr>
+                                                    <td class="text-center">
+                                                        <?php
+                                                            if (@$instance['configDBTYPE'] == 'postgresql' or @$instance['configDBTYPE'] == 'pgsql'){
+                                                                echo _FPA_NIMPLY . ' ' . _FPA_PGSQL;
+
+                                                            } elseif ( @$instance['configDBTYPE'] == 'sqlsrv' ) {
+                                                                echo '<span class="text-warning">'.  _FPA_MSSQL_SUPP .'</span>';
+
+                                                            } else {
+                                                                echo '<span class="text-warning">'. _FPA_NCON .'<br />'. _FPA_NO .' '. $database['ARRNAME'] .' '. _FPA_PERF .' '. _FPA_TESTP .'</span>';
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+
+                                            <?php } ?>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div><!--/.card (performance)-->
+
+                        </div><!--/.col-->
+                    </div><!--./row (database-discovery)-->
+
+                <?php showDev( $database ); ?>
+                </div><!--/.container-->
+            </section><!--#instance-discovery-->
+
+
+
+            <?php
+            /**
+             * instance database table list (optional)
+             *
+             */
+            ?>
+            <?php if ( $showTables == '1' ) { ?>
+
+                <section class="py-3" id="database-tables">
+                    <div class="container mt-5">
+
+                        <h1 class="h2 border-bottom mb-4"><?php echo _FPA_DB .' '. _FPA_DBTBL_TITLE; ?></h1>
+
+                        <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
+
+                        <div class="table-responsive-md">
+
+                            <table class="table table-striped table-bordered table-sm">
+                                <thead>
+                                    <tr class="bg-info text-white xsmall">
+                                        <th class="py-2"><?php echo _FPA_TNAM; ?></th>
+                                        <th class="py-2 text-center"><?php echo _FPA_TSIZ; ?></th>
+                                        <th class="py-2 text-center"><?php echo _FPA_TREC; ?></th>
+                                        <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_TAVL; ?></th>
+                                        <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_TFRA; ?></th>
+                                        <th class="py-2 text-center"><?php echo _FPA_TENG; ?></th>
+                                        <th class="py-2 text-center"><?php echo _FPA_TCOL; ?></th>
+                                        <th class="py-2 text-center d-none d-md-table-cell"><?php echo _FPA_TCRE; ?></th>
+                                        <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_TUPD; ?></th>
+                                        <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_TCKD; ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <?php
+                                    if ( $instance['instanceFOUND'] == _FPA_Y AND @$database['dbERROR'] == _FPA_N ) {
+
+                                        // initialise some variables for table footer statistics
+                                        $dbTotalTABL =  count($tables);
+                                        $dbTotalSIZE = 0;
+                                        $dbTotalRCDS = 0;
+                                        $dbTotalFRAG = 0;
+
+                                        foreach ( $tables as $i => $show ) {
+
+                                            if ( $show != $tables['ARRNAME'] ) {
+
+                                                if ( (float)str_ireplace(' KiB', '', $show['FRAGSIZE'] > 0 )) {
+                                                    $fragClass = 'text-info';
+                                                } else {
+                                                    $fragClass = 'text-dark';
+                                                }
+
+                                                echo '<tr>';
+
+                                                if ( $showProtected <= 2 ) {
+                                                    echo '<td class="xsmall">'. $show['TABLE'] .'</td>';
+                                                } else {
+                                                    echo '<td class="xsmall"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></td>';
+                                                }
+
+                                                echo '<td class="xsmall text-center">'. $show['SIZE'] .'</td>';
+                                                echo '<td class="xsmall text-center">'. $show['RECORDS'] .'</td>';
+                                                echo '<td class="xsmall text-center d-none d-lg-table-cell">'. $show['AVGLEN'] .'</td>';
+                                                echo '<td class="xsmall text-center d-none d-lg-table-cell '.$fragClass.'">'. $show['FRAGSIZE'] .'</td>';
+                                                echo '<td class="xsmall text-center">'. $show['ENGINE'] .'</td>';
+                                                echo '<td class="xsmall text-center">'. $show['COLLATION'] .'</td>';
+
+                                                $pieces = explode( " ", $show['CREATED'] );
+                                                echo '<td class="xsmall text-center d-none d-md-table-cell">'. $pieces['0'] .'</td>';
+
+                                                $pieces = explode( " ", $show['UPDATED'] );
+                                                echo '<td class="xsmall text-center d-none d-lg-table-cell">'. $pieces['0'] .'</td>';
+
+                                                $pieces = explode( " ", $show['CHECKED'] );
+                                                echo '<td class="xsmall text-center d-none d-lg-table-cell">'. $pieces['0'] .'</td>';
+
+                                                // calculate some statistics for the table footer as we iterate the database array
+                                                $dbTotalSIZE = $dbTotalSIZE + str_ireplace(' KiB', '', $show['SIZE']);
+                                                $dbTotalRCDS = $dbTotalRCDS + $show['RECORDS'];
+                                                $dbTotalFRAG = $dbTotalFRAG + str_ireplace(' KiB', '', $show['FRAGSIZE']);
+                                                $dbFragPERC  = number_format(($dbTotalFRAG / $dbTotalSIZE) * 100);
+
+                                                echo '</tr>';
+
+                                            } // endif , dont show array name
+
+                                        } // end foreach
+                                        ?>
+
+                                </tbody>
+
+                                        <?php
+                                        // calculated database statistics
+                                        echo '<tfoot>';
+                                        echo '<tr class="bg-info text-white xsmall">';
+                                        echo '<th class="py-2">'. _FPA_TNAM .'</th>';
+                                        echo '<th class="py-2 text-center">'. _FPA_TSIZ .'</th>';
+                                        echo '<th class="py-2 text-center">'. _FPA_TREC .'</th>';
+                                        echo '<th class="py-2 text-center d-none d-lg-table-cell">'. _FPA_TAVL .'</th>';
+                                        echo '<th class="py-2 text-center d-none d-lg-table-cell">'. _FPA_TFRA .'</th>';
+                                        echo '<th class="py-2 text-center">'. _FPA_TENG .'</th>';
+                                        echo '<th class="py-2 text-center">'. _FPA_TCOL .'</th>';
+                                        echo '<th class="py-2 text-center d-none d-md-table-cell">'. _FPA_TCRE .'</th>';
+                                        echo '<th class="py-2 text-center d-none d-lg-table-cell">'. _FPA_TUPD .'</th>';
+                                        echo '<th class="py-2 text-center d-none d-lg-table-cell">'. _FPA_TCKD .'</th>';
+                                        echo '</tr>';
+                                        echo '<tr class="text-info">';
+                                        echo '<td>'. ($dbTotalTABL -1) .' Tables</td>'; // -1 to not count the array name
+                                        echo '<td class="text-center">'. sprintf( '%.2f', ( $dbTotalSIZE /1024 ) ) .' MiB</td>';
+                                        echo '<td class="text-center">'. $dbTotalRCDS .'</td>';
+                                        echo '<td class="d-none d-lg-table-cell"></td>';
+                                        echo '<td class="text-center d-none d-lg-table-cell">'. sprintf( '%.2f', ( $dbTotalFRAG /1024 ) ) .' MiB<br />'.$dbFragPERC.'%</td>';
+                                        echo '<td></td>';
+                                        echo '<td></td>';
+                                        echo '<td class="d-none d-md-table-cell"></td>';
+                                        echo '<td class="d-none d-lg-table-cell"></td>';
+                                        echo '<td class="d-none d-lg-table-cell"></td>';
+                                        echo '</tr>';
+                                        echo '</tfoot>';
+
+                                    } else { // an instance wasn't found in the initial checks, so no tables to check
+                                        echo '<tr class="table-warning text-center p-3">';
+                                        echo '<td class="lead" colspan="10">'. _FPA_NCON .', '. _FPA_NO .' '. $tables['ARRNAME'] .' '. _FPA_TESTP .'</td>';
+                                        echo '</tr>';
+                                    }
+
+                                ?>
+                            </table>
+
+                        </div><!--/.table-responsive-->
+
+                        <?php showDev( $tables ); ?>
+                    </div><!--/.container-->
+                </section>
+
+            <?php } // end showTables?>
+
+
+
+            <?php
+            /**
+             * instance known directory & elevated permisisons list (optional)
+             *
+             */
+            ?>
+            <section class="py-3" id="folder-checks">
+
+                <div class="container mt-5">
+
+                    <h1 class="h2 border-bottom mb-4"><?php echo $folders['ARRNAME'] .' '. $modecheck['ARRNAME']; ?></h1>
+
+                    <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
+
+                    <div class="table-responsive-md">
+
+                        <table class="table table-striped table-bordered table-sm">
+                            <thead>
+                                <tr class="bg-info text-white xsmall">
+                                    <th class="py-2"><?php echo _FPA_FOLDER; ?></th>
+                                    <th class="py-2 text-center"><?php echo _FPA_MODE; ?></th>
+                                    <th class="py-2 text-center"><?php echo _FPA_WRITABLE; ?></th>
+                                    <th class="py-2 text-center d-none d-md-table-cell"><?php echo _FPA_OWNER; ?></th>
+                                    <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_GROUP; ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php
+                                if ( $instance['instanceFOUND'] == _FPA_Y ) {
+
+                                    foreach ( $folders as $i => $show ) {
+
+                                        if ( $show != 'Core Folders' ) {
+
+                                            echo '<tr>';
+
+                                            /**
+                                             * modeset checks
+                                             *
+                                             * looking for --7 or -7- or -77 (default folder permissions are usually 755)
+                                             *
+                                             */
+                                            if ( substr( $modecheck[$show]['mode'],1 ,1 ) == '7' OR substr( $modecheck[$show]['mode'],2 ,1 ) == '7' ) {
+                                                $modeClass  = 'white bg-danger';
+                                                $alertClass = 'danger';
+                                                $userClass  = 'default';
+                                                $groupClass = 'default';
+
+                                            } elseif ( $modecheck[$show]['mode'] == '755' ) {
+                                                $modeClass  = 'success';
+                                                $alertClass = 'success';
+                                                $userClass  = 'default';
+                                                $groupClass = 'default';
+
+                                            } else if ( substr( $modecheck[$show]['mode'],0 ,1 ) <= '5' AND $modecheck[$show]['mode'] != '---' ) {
+                                                $modeClass  = 'white bg-warning ';
+                                                $alertClass = 'warning';
+                                                $userClass  = 'default';
+                                                $groupClass = 'default';
+
+                                            } else if ( $modecheck[$show]['group']['name'] == _FPA_N ) {
+                                                $modeClass  = 'white bg-warning';
+                                                $alertClass = 'warning';
+                                                $userClass  = 'warning';
+                                                $groupClass = 'warning';
+
+                                            } else {
+                                                $modeClass  = 'default';
+                                                $alertClass = 'default';
+                                                $userClass  = 'default';
+                                                $groupClass = 'default';
+                                            }
+
+                                            /**
+                                             * effective writeable permissions
+                                             *
+                                             * is the folder writable by the executing user
+                                             *
+                                             */
+                                            if ( ( $modecheck[$show]['writable'] != _FPA_Y ) ) {
+                                                $writeClass = 'warning';
+
+                                            } elseif ( ( $modecheck[$show]['writable'] == _FPA_Y ) AND ( substr( $modecheck[$show]['mode'],0 ,1 ) == '7' ) ) {
+                                                $writeClass = 'success';
+
+                                            } elseif ( $modecheck[$show]['writable'] == _FPA_N ) {
+                                                $writeClass = 'danger';
+
+                                            } else {
+                                                $writeClass = 'muted';
+                                            }
+
+                                            /**
+                                             * users effective rights on folder
+                                             *
+                                             * does the folder exist? if so,
+                                             * does the folder actual owner equal the effective (executing) owner? if not,
+                                             * does the folder actual user group equal the effective (executing) user group?
+                                             */
+                                            // is the 'executing' owner the same as the folder owner? and is the users groupID the same as the folders groupID?
+                                            if ( ( $modecheck[$show]['owner']['name'] != $system['sysEXECUSER'] ) AND ( $modecheck[$show]['group']['name'] != _FPA_DNE ) ) {
+                                                $userClass  = 'warning';
+                                                $groupClass = 'default';
+
+                                            } elseif ( isset( $modecheck[$show]['group']['gid'] ) AND isset( $modecheck[$show]['owner']['gid'] ) ) {
+
+                                                if ( $modecheck[$show]['group']['gid'] != $modecheck[$show]['owner']['gid'] ) {
+                                                    $userClass  = 'default';
+                                                    $groupClass = 'warning';
+                                                }
+
+                                            } elseif ( $modecheck[$show]['group']['name'] == _FPA_DNE ) {
+                                                $modeClass  = 'warning';
+                                                $alertClass = 'warning';
+                                                $writeClass = 'warning';
+                                                $userClass  = 'warning';
+                                                $groupClass = 'warning';
+                                            }
+
+                                            echo '<td class="text-'.$alertClass.'">';
+                                            echo $show;
+                                                if ($modecheck[$show]['group']['name'] == _FPA_DNE) {
+                                                    echo ' <span class="xsmall">('. _FPA_DNE .')</span>';
+                                                }
+                                            echo '</td>';
+                                            echo '<td class="text-'.$modeClass.' text-center">'. $modecheck[$show]['mode'] .'</td>';
+                                            echo '<td class="text-'.$writeClass.' text-center">';
+                                                // change writable status to visual icon cues instead of text
+                                                if ($modecheck[$show]['writable'] == _FPA_Y) {
+                                                    echo '<i class="fas fa-check-circle fa-lg"></i>';
+
+                                                } elseif ($modecheck[$show]['writable'] == _FPA_N) {
+                                                    echo '<i class="fas fa-times-circle fa-lg"></i>';
+
+                                                } elseif ($modecheck[$show]['writable'] == '-') {
+                                                    echo '<i class="fas fa-minus-circle fa-lg text-muted"></i>';
+
+                                                } else {
+                                                    echo $modecheck[$show]['writable'];
+                                                }
+                                            echo '</td>';
+                                            echo '<td class="'.$userClass.' xsmall text-center d-none d-md-table-cell">'. $modecheck[$show]['owner']['name'] .'</td>';
+                                            echo '<td class="'.$groupClass.' xsmall text-center d-none d-lg-table-cell">';
+                                                if ($modecheck[$show]['group']['name'] == _FPA_DNE) {
+                                                    echo '-';
+
+                                                } else {
+                                                    echo $modecheck[$show]['group']['name'];
+                                                }
+                                            echo '</td>';
+
+                                            echo '</tr>';
+
+                                        } // endif , dont show array name
+
+                                    } // end foreach
+
+                                } else { // an instance wasn't found in the initial checks, so no folders to check
+                                    echo '<tr class="table-warning text-center p-3">';
+                                    echo '<td class="lead" colspan="5">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_N .' '. $modecheck['ARRNAME'] .' '. _FPA_TESTP .'</td>';
+                                    echo '</tr>';
+                                }
+
+                            ?>
+                            </tbody>
+                        </table>
+
+                    </div><!--/.table-responsive permissions-->
+
+                    <?php showDev( $folders ); ?>
+                    <?php showDev( $modecheck ); ?>
+                    <?php unset ( $key, $show ); ?>
+                </div><!--/.container-->
+
+
+                <?php if ( $showElevated == '1' ) { ?>
+
+                    <div class="container mt-5">
+
+                        <h1 class="h2 border-bottom mb-4"><?php echo $elevated['ARRNAME'] .' <span class="small text-muted">('. _FPA_FIRST .' 10)</span>'; ?></h1>
+
+                        <div class="table-responsive-md">
+
+                            <table class="table table-striped table-bordered table-sm">
+                                <thead>
+                                    <tr class="bg-info text-white xsmall">
+                                        <th class="py-2"><?php echo _FPA_FOLDER; ?></th>
+                                        <th class="py-2 text-center"><?php echo _FPA_MODE; ?></th>
+                                        <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_WRITABLE; ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                <?php
+                                    if ( $instance['instanceFOUND'] == _FPA_Y ) {
+
+                                        foreach ( $elevated as $key => $show ) {
+
+
+                                            if ( $show != $elevated['ARRNAME'] ) {
+
+                                                echo '<tr>';
+
+                                                /**
+                                                 * modeset checks
+                                                 *
+                                                 * looking for --7 or -7- or -77 (default folder permissions are usually 755)
+                                                 *
+                                                 */
+                                                if ( substr( $show['mode'],1 ,1 ) == '7' OR substr( $show['mode'],2 ,1 ) == '7' ) {
+                                                    $modeClass  = 'white bg-danger';
+                                                    $alertClass = 'danger';
+
+                                                } else {
+                                                    $modeClass  = 'default';
+                                                    $alertClass = 'default';
+                                                }
+
+                                                /**
+                                                 * effective writeable permissions
+                                                 *
+                                                 * is the folder writable by the executing user
+                                                 *
+                                                 */
+                                                if ( ( $show['writable'] == _FPA_Y ) ) {
+                                                    $writeClass = 'danger';
+
+                                                } else {
+                                                    $writeClass = 'warning';
+                                                }
+
+                                                echo '<td class="text-'.$alertClass.'">'. $key .'/</td>';
+
+                                                echo '<td class="text-'.$modeClass.' text-center">'. $show['mode'] .'</td>';
+
+                                                echo '<td class="text-'.$writeClass.' text-center d-none d-lg-table-cell">';
+
+                                                    if ( substr( $show['mode'],1 ,1 ) == '7' ) {
+                                                        $gIcon  = 'check';
+                                                        $gColor = 'danger';
+                                                    } else {
+                                                        $gIcon  = 'minus';
+                                                        $gColor = 'muted';
+                                                    }
+                                                    if ( substr( $show['mode'],2 ,1 ) == '7' ) {
+                                                        $wIcon  = 'check';
+                                                        $wColor = 'danger';
+                                                    } else {
+                                                        $wIcon  = 'minus';
+                                                        $wColor = 'muted';
+                                                    }
+
+                                                    echo '<table class="table table-borderless table-sm m-0"><tbody><tr class=" bg-transparent">';
+                                                    echo '<td class="p-0 xsmall bg-transparent">Group Writable<br /><i class="fas fa-'.$gIcon.'-circle text-'.$gColor.' fa-lg pt-1"></i></td>';
+                                                    echo '<td class="p-0 xsmall bg-transparent">World Writable<br /><i class="fas fa-'.$wIcon.'-circle text-'.$wColor.' fa-lg pt-1"></i></td>';
+                                                    echo '</tr></tbody></table>';
+
+                                                echo '</td>';
+
+                                                echo '</tr>';
+
+                                            } // endif , dont show array name
+
+                                        } // end foreach
+
+                                    } else { // an instance wasn't found in the initial checks, so no elevated permissions to check
+                                        echo '<tr class="table-warning text-center p-3">';
+                                        echo '<td class="lead" colspan="3">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $elevated['ARRNAME'] .' '. _FPA_TESTP .' '. _FPA_TESTP .'</td>';
+                                        echo '</tr>';
+                                    }
+
+                                ?>
+                                </tbody>
+                            </table>
+
+                        </div><!--/.table-responsive elevated-->
+
+                        <?php showDev( $elevated ); ?>
+                        <?php unset ( $key, $show ); ?>
+                    </div><!--/.container-->
+
+                <?php } // end elevated ?>
+
+            </section><!--/#folder-checks-->
+
+
+
+            <?php
+            /**
+             * instance installed components (optional)
+             *
+             */
+            ?>
+            <div id="extensions">
+
+                <?php if ( $showComponents == '1' ) { ?>
+
+                    <section class="py-3" id="components">
+
+                        <div class="container mt-5 site-components">
+
+                            <h1 class="h2 border-bottom mb-4"><?php echo $component['ARRNAME'] .' :: '. _FPA_SITE; ?></h1>
+
+                            <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
+
+                            <div class="table-responsive-md">
+
+                                <table class="table table-striped table-bordered table-sm">
+                                    <thead>
+                                        <tr class="bg-info text-white xsmall">
+                                            <th class="py-2"><?php echo _FPA_TNAM; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_VER; ?></th>
+                                            <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_CRE; ?></th>
+                                            <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_AUTH; ?></th>
+                                            <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_ADDR; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_TYPE; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_EN; ?></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if ( $instance['instanceFOUND'] == _FPA_Y ) { ?>
+
+                                            <?php if ( isset ( $component['SITE'])) { ?>
+                                                <?php foreach ( $component['SITE'] as $key => $show ) { ?>
+
+                                                    <tr>
+
+                                                        <?php
+                                                            if (isset($exset[0]['name'])) {
+                                                                $extarrkey = recursive_array_search($show['name'], $exset);
+
+                                                                if ($extarrkey  !== False) {
+                                                                    $extenabled = $exset[$extarrkey]['enabled'];
+
+                                                                } else {
+                                                                    $extenabled = '?' ;
+                                                                }
+
+                                                            } else {
+                                                                $extenabled = '?' ;
+                                                            }
+
+                                                            if ($extenabled <> 0 AND $extenabled <> 1 ){
+                                                                $extenabled = '?';
+                                                            }
+
+                                                            if ( $show['type'] == _FPA_3PD) {
+                                                                $typeColor = 'info';
+                                                            } else {
+                                                                $typeColor = 'dark';
+                                                            }
+
+                                                            if ($extenabled != 1) {
+                                                                $typeColor = 'muted';
+                                                            }
+                                                        ?>
+
+                                                        <td class="text-<?php echo $typeColor; ?>"><?php echo $show['name']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center"><?php echo $show['version']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> d-none d-lg-table-cell"><?php echo $show['creationDate']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center d-none d-lg-table-cell"><?php echo $show['author']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center d-none d-lg-table-cell"><?php echo $show['authorUrl']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center"><?php echo $show['type']; ?></td>
+
+                                                        <td class="text-center">
+                                                            <?php
+                                                                if ($extenabled == 1) {
+                                                                    $statusIcon  = 'check';
+                                                                    $statusColor = 'success';
+                                                                } elseif ($extenabled == '?') {
+                                                                    $statusIcon  = 'question';
+                                                                    $statusColor = 'warning';
+                                                                } else {
+                                                                    $statusIcon  = 'minus';
+                                                                    $statusColor = 'muted';
+                                                                }
+                                                            ?>
+                                                            <i class="fas fa-<?php echo $statusIcon; ?>-circle text-<?php echo $statusColor; ?>"></i>
+                                                        </td>
+
+                                                    </tr>
+
+                                                <?php } // foreach ?>
+                                            <?php } // isset ?>
+
+                                        <?php } else { ?>
+                                            <tr class="table-warning text-center p-3">
+                                                <td colspan="7" class="lead"><?php echo _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP; ?></td>
+                                            </tr>
+                                        <?php } // instanceFOUND ?>
+                                    </tbody>
+                                </table>
+
+                            </div><!--/.table-responsive-->
+
+                        </div><!--/.container(site-components)-->
+
+
+                        <div class="container mt-5 admin-components">
+
+                            <h1 class="h2 border-bottom mb-4"><?php echo $component['ARRNAME'] .' :: '. _FPA_ADMIN; ?></h1>
+
+                            <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
+
+                            <div class="table-responsive-md">
+
+                                <table class="table table-striped table-bordered table-sm">
+                                    <thead>
+                                        <tr class="bg-info text-white xsmall">
+                                            <th class="py-2"><?php echo _FPA_TNAM; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_VER; ?></th>
+                                            <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_CRE; ?></th>
+                                            <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_AUTH; ?></th>
+                                            <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_ADDR; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_TYPE; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_EN; ?></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if ( $instance['instanceFOUND'] == _FPA_Y ) { ?>
+
+                                            <?php if ( isset ( $component['ADMIN'])) { ?>
+                                                <?php foreach ( $component['ADMIN'] as $key => $show ) { ?>
+
+                                                    <tr>
+
+                                                        <?php
+                                                            if (isset($exset[0]['name'])) {
+                                                                $extarrkey = recursive_array_search($show['name'], $exset);
+
+                                                                if ($extarrkey  !== False) {
+                                                                    $extenabled = $exset[$extarrkey]['enabled'];
+
+                                                                } else {
+                                                                    $extenabled = '?' ;
+                                                                }
+
+                                                            } else {
+                                                                $extenabled = '?' ;
+                                                            }
+
+                                                            if ($extenabled <> 0 AND $extenabled <> 1 ){
+                                                                $extenabled = '?';
+                                                            }
+
+                                                            if ( $show['type'] == _FPA_3PD) {
+                                                                $typeColor = 'info';
+                                                            } else {
+                                                                $typeColor = 'dark';
+                                                            }
+
+                                                            if ($extenabled != 1) {
+                                                                $typeColor = 'muted';
+                                                            }
+                                                        ?>
+
+                                                        <td class="text-<?php echo $typeColor; ?>"><?php echo $show['name']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center"><?php echo $show['version']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> d-none d-lg-table-cell"><?php echo $show['creationDate']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center d-none d-lg-table-cell"><?php echo $show['author']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center d-none d-lg-table-cell"><?php echo $show['authorUrl']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center"><?php echo $show['type']; ?></td>
+
+                                                        <td class="text-center">
+                                                            <?php
+                                                                if ($extenabled == 1) {
+                                                                    $statusIcon  = 'check';
+                                                                    $statusColor = 'success';
+                                                                } elseif ($extenabled == '?') {
+                                                                    $statusIcon  = 'question';
+                                                                    $statusColor = 'warning';
+                                                                } else {
+                                                                    $statusIcon  = 'minus';
+                                                                    $statusColor = 'muted';
+                                                                }
+                                                            ?>
+                                                            <i class="fas fa-<?php echo $statusIcon; ?>-circle text-<?php echo $statusColor; ?>"></i>
+                                                        </td>
+
+                                                    </tr>
+
+                                                <?php } // foreach ?>
+                                            <?php } // isset ?>
+
+                                        <?php } else { ?>
+                                            <tr class="table-warning text-center p-3">
+                                                <td colspan="7" class="lead"><?php echo _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP; ?></td>
+                                            </tr>
+                                        <?php } // instanceFOUND ?>
+                                    </tbody>
+                                </table>
+
+                            </div><!--/.table-responsive-->
+
+                            <?php showDev( $component ); ?>
+                            <?php unset ( $key, $show ); ?>
+                        </div><!--/.container(admin-components)-->
+
+                    </section><!--/#components-->
+
+                <?php } // ShowComponents ?>
+
+
+                <?php if ( $showModules == '1' ) { ?>
+
+                    <section class="py-3" id="modules">
+
+                        <div class="container mt-5 site-modules">
+
+                            <h1 class="h2 border-bottom mb-4"><?php echo $module['ARRNAME'] .' :: '. _FPA_SITE; ?></h1>
+
+                            <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
+
+                            <div class="table-responsive-md">
+
+                                <table class="table table-striped table-bordered table-sm">
+                                    <thead>
+                                        <tr class="bg-info text-white xsmall">
+                                            <th class="py-2"><?php echo _FPA_TNAM; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_VER; ?></th>
+                                            <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_CRE; ?></th>
+                                            <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_AUTH; ?></th>
+                                            <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_ADDR; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_EN; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_TYPE; ?></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if ( $instance['instanceFOUND'] == _FPA_Y ) { ?>
+
+                                            <?php if ( isset ( $module['SITE'])) { ?>
+                                                <?php foreach ( $module['SITE'] as $key => $show ) { ?>
+
+                                                    <tr>
+
+                                                        <?php
+                                                            if (isset($exset[0]['name'])) {
+                                                                $extarrkey = recursive_array_search($show['name'], $exset);
+
+                                                                if ($extarrkey  !== False) {
+                                                                    $extenabled = $exset[$extarrkey]['enabled'];
+
+                                                                } else {
+                                                                    $extenabled = '?' ;
+                                                                }
+
+                                                            } else {
+                                                                $extenabled = '?' ;
+                                                            }
+
+                                                            if ($extenabled <> 0 AND $extenabled <> 1 ){
+                                                                $extenabled = '?';
+                                                            }
+
+                                                            if ( $show['type'] == _FPA_3PD) {
+                                                                $typeColor = 'info';
+                                                            } else {
+                                                                $typeColor = 'dark';
+                                                            }
+
+                                                            if ($extenabled != 1) {
+                                                                $typeColor = 'muted';
+                                                            }
+                                                        ?>
+
+                                                        <td class="text-<?php echo $typeColor; ?>"><?php echo $show['name']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center"><?php echo $show['version']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> d-none d-lg-table-cell"><?php echo $show['creationDate']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center d-none d-lg-table-cell"><?php echo $show['author']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center d-none d-lg-table-cell"><?php echo $show['authorUrl']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center"><?php echo $show['type']; ?></td>
+
+                                                        <td class="text-center">
+                                                            <?php
+                                                                if ($extenabled == 1) {
+                                                                    $statusIcon  = 'check';
+                                                                    $statusColor = 'success';
+                                                                } elseif ($extenabled == '?') {
+                                                                    $statusIcon  = 'question';
+                                                                    $statusColor = 'warning';
+                                                                } else {
+                                                                    $statusIcon  = 'minus';
+                                                                    $statusColor = 'muted';
+                                                                }
+                                                            ?>
+                                                            <i class="fas fa-<?php echo $statusIcon; ?>-circle text-<?php echo $statusColor; ?>"></i>
+                                                        </td>
+
+                                                    </tr>
+
+                                                <?php } // foreach ?>
+                                            <?php } // isset ?>
+
+                                        <?php } else { ?>
+                                            <tr class="table-warning text-center p-3">
+                                                <td colspan="7" class="lead"><?php echo _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $module['ARRNAME'] .' '. _FPA_TESTP; ?></td>
+                                            </tr>
+                                        <?php } // instanceFOUND ?>
+                                    </tbody>
+                                </table>
+
+                            </div><!--/.table-responsive-->
+
+                        </div><!--/.container(site-modules)-->
+
+
+                        <div class="container mt-5 admin-modules">
+
+                            <h1 class="h2 border-bottom mb-4"><?php echo $module['ARRNAME'] .' :: '. _FPA_ADMIN; ?></h1>
+
+                            <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
+
+                            <div class="table-responsive-md">
+
+                                <table class="table table-striped table-bordered table-sm">
+                                    <thead>
+                                        <tr class="bg-info text-white xsmall">
+                                            <th class="py-2"><?php echo _FPA_TNAM; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_VER; ?></th>
+                                            <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_CRE; ?></th>
+                                            <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_AUTH; ?></th>
+                                            <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_ADDR; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_TYPE; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_EN; ?></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if ( $instance['instanceFOUND'] == _FPA_Y ) { ?>
+
+                                            <?php if ( isset ( $module['ADMIN'])) { ?>
+                                                <?php foreach ( $module['ADMIN'] as $key => $show ) { ?>
+
+                                                    <tr>
+
+                                                        <?php
+                                                            if (isset($exset[0]['name'])) {
+                                                                $extarrkey = recursive_array_search($show['name'], $exset);
+
+                                                                if ($extarrkey  !== False) {
+                                                                    $extenabled = $exset[$extarrkey]['enabled'];
+
+                                                                } else {
+                                                                    $extenabled = '?' ;
+                                                                }
+
+                                                            } else {
+                                                                $extenabled = '?' ;
+                                                            }
+
+                                                            if ($extenabled <> 0 AND $extenabled <> 1 ){
+                                                                $extenabled = '?';
+                                                            }
+
+                                                            if ( $show['type'] == _FPA_3PD) {
+                                                                $typeColor = 'info';
+                                                            } else {
+                                                                $typeColor = 'dark';
+                                                            }
+
+                                                            if ($extenabled != 1) {
+                                                                $typeColor = 'muted';
+                                                            }
+                                                        ?>
+
+                                                        <td class="text-<?php echo $typeColor; ?>"><?php echo $show['name']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center"><?php echo $show['version']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> d-none d-lg-table-cell"><?php echo $show['creationDate']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center d-none d-lg-table-cell"><?php echo $show['author']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center d-none d-lg-table-cell"><?php echo $show['authorUrl']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center"><?php echo $show['type']; ?></td>
+
+                                                        <td class="text-center">
+                                                            <?php
+                                                                if ($extenabled == 1) {
+                                                                    $statusIcon  = 'check';
+                                                                    $statusColor = 'success';
+                                                                } elseif ($extenabled == '?') {
+                                                                    $statusIcon  = 'question';
+                                                                    $statusColor = 'warning';
+                                                                } else {
+                                                                    $statusIcon  = 'minus';
+                                                                    $statusColor = 'muted';
+                                                                }
+                                                            ?>
+                                                            <i class="fas fa-<?php echo $statusIcon; ?>-circle text-<?php echo $statusColor; ?>"></i>
+                                                        </td>
+
+                                                    </tr>
+
+                                                <?php } // foreach ?>
+                                            <?php } // isset ?>
+
+                                        <?php } else { ?>
+                                            <tr class="table-warning text-center p-3">
+                                                <td colspan="7" class="lead"><?php echo _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $module['ARRNAME'] .' '. _FPA_TESTP; ?></td>
+                                            </tr>
+                                        <?php } // instanceFOUND ?>
+                                    </tbody>
+                                </table>
+
+                            </div><!--/.table-responsive-->
+
+                            <?php showDev( $module ); ?>
+                            <?php unset ( $key, $show ); ?>
+                        </div><!--/.container(admin-modules)-->
+
+                    </section><!--/#modules-->
+
+                <?php } // ShowModules ?>
+
+
+                <?php if ( $showLibraries == '1' ) { ?>
+
+                    <section class="py-3" id="library">
+
+                        <div class="container mt-5 libraries">
+
+                            <h1 class="h2 border-bottom mb-4"><?php echo $library['ARRNAME'] .' :: '; ?></h1>
+
+                            <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
+
+                            <div class="table-responsive-md">
+
+                                <table class="table table-striped table-bordered table-sm">
+                                    <thead>
+                                        <tr class="bg-info text-white xsmall">
+                                            <th class="py-2"><?php echo _FPA_TNAM; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_VER; ?></th>
+                                            <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_CRE; ?></th>
+                                            <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_AUTH; ?></th>
+                                            <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_ADDR; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_TYPE; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_EN; ?></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if ( $instance['instanceFOUND'] == _FPA_Y ) { ?>
+
+                                            <?php if ( isset ( $library['SITE'])) { ?>
+                                                <?php foreach ( $library['SITE'] as $key => $show ) { ?>
+
+                                                    <tr>
+
+                                                        <?php
+                                                            if (isset($exset[0]['name'])) {
+                                                                $extarrkey = recursive_array_search($show['name'], $exset);
+
+                                                                if ($extarrkey  !== False) {
+                                                                    $extenabled = $exset[$extarrkey]['enabled'];
+
+                                                                } else {
+                                                                    $extenabled = '?' ;
+                                                                }
+
+                                                            } else {
+                                                                $extenabled = '?' ;
+                                                            }
+
+                                                            if ($extenabled <> 0 AND $extenabled <> 1 ){
+                                                                $extenabled = '?';
+                                                            }
+
+                                                            if ( $show['type'] == _FPA_3PD) {
+                                                                $typeColor = 'info';
+                                                            } else {
+                                                                $typeColor = 'dark';
+                                                            }
+
+                                                            if ($extenabled != 1) {
+                                                                $typeColor = 'muted';
+                                                            }
+                                                        ?>
+
+                                                        <td class="text-<?php echo $typeColor; ?>"><?php echo $show['name']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center"><?php echo $show['version']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> d-none d-lg-table-cell"><?php echo $show['creationDate']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center d-none d-lg-table-cell"><?php echo $show['author']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center d-none d-lg-table-cell"><?php echo $show['authorUrl']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center"><?php echo $show['type']; ?></td>
+
+                                                        <td class="text-center">
+                                                            <?php
+                                                                if ($extenabled == 1) {
+                                                                    $statusIcon  = 'check';
+                                                                    $statusColor = 'success';
+                                                                } elseif ($extenabled == '?') {
+                                                                    $statusIcon  = 'question';
+                                                                    $statusColor = 'warning';
+                                                                } else {
+                                                                    $statusIcon  = 'minus';
+                                                                    $statusColor = 'muted';
+                                                                }
+                                                            ?>
+                                                            <i class="fas fa-<?php echo $statusIcon; ?>-circle text-<?php echo $statusColor; ?>"></i>
+                                                        </td>
+
+                                                    </tr>
+
+                                                <?php } // foreach ?>
+                                            <?php } // isset ?>
+
+                                        <?php } else { ?>
+                                            <tr class="table-warning text-center p-3">
+                                                <td colspan="7" class="lead"><?php echo _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $library['ARRNAME'] .' '. _FPA_TESTP; ?></td>
+                                            </tr>
+                                        <?php } // instanceFOUND ?>
+                                    </tbody>
+                                </table>
+
+                            </div><!--/.table-responsive-->
+
+                            <?php showDev( $library ); ?>
+                            <?php unset ( $key, $show ); ?>
+                        </div><!--/.container(libraries)-->
+
+                    </section><!--/#library-->
+
+                <?php } // ShowLibraries ?>
+
+
+                <?php if ( $showPlugins == '1' ) { ?>
+
+                    <section class="py-3" id="plugins">
+
+                        <div class="container mt-5 plugins">
+
+                            <h1 class="h2 border-bottom mb-4"><?php echo $plugin['ARRNAME'] .' :: '; ?></h1>
+
+                            <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
+
+                            <div class="table-responsive-md">
+
+                                <table class="table table-striped table-bordered table-sm">
+                                    <thead>
+                                        <tr class="bg-info text-white xsmall">
+                                            <th class="py-2"><?php echo _FPA_TNAM; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_VER; ?></th>
+                                            <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_CRE; ?></th>
+                                            <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_AUTH; ?></th>
+                                            <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_ADDR; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_TYPE; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_EN; ?></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if ( $instance['instanceFOUND'] == _FPA_Y ) { ?>
+
+                                            <?php if ( isset ( $plugin['SITE'])) { ?>
+                                                <?php foreach ( $plugin['SITE'] as $key => $show ) { ?>
+
+                                                    <tr>
+
+                                                        <?php
+                                                            if (isset($exset[0]['name'])) {
+                                                                $extarrkey = recursive_array_search($show['name'], $exset);
+
+                                                                if ($extarrkey  !== False) {
+                                                                    $extenabled = $exset[$extarrkey]['enabled'];
+
+                                                                } else {
+                                                                    $extenabled = '?' ;
+                                                                }
+
+                                                            } else {
+                                                                $extenabled = '?' ;
+                                                            }
+
+                                                            if ($extenabled <> 0 AND $extenabled <> 1 ){
+                                                                $extenabled = '?';
+                                                            }
+
+                                                            if ( $show['type'] == _FPA_3PD) {
+                                                                $typeColor = 'info';
+                                                            } else {
+                                                                $typeColor = 'dark';
+                                                            }
+
+                                                            if ($extenabled != 1) {
+                                                                $typeColor = 'muted';
+                                                            }
+                                                        ?>
+
+                                                        <td class="text-<?php echo $typeColor; ?>"><?php echo $show['name']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center"><?php echo $show['version']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> d-none d-lg-table-cell"><?php echo $show['creationDate']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center d-none d-lg-table-cell"><?php echo $show['author']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center d-none d-lg-table-cell"><?php echo $show['authorUrl']; ?></td>
+
+                                                        <td class="text-<?php echo $typeColor; ?> text-center"><?php echo $show['type']; ?></td>
+
+                                                        <td class="text-center">
+                                                            <?php
+                                                                if ($extenabled == 1) {
+                                                                    $statusIcon  = 'check';
+                                                                    $statusColor = 'success';
+                                                                } elseif ($extenabled == '?') {
+                                                                    $statusIcon  = 'question';
+                                                                    $statusColor = 'warning';
+                                                                } else {
+                                                                    $statusIcon  = 'minus';
+                                                                    $statusColor = 'muted';
+                                                                }
+                                                            ?>
+                                                            <i class="fas fa-<?php echo $statusIcon; ?>-circle text-<?php echo $statusColor; ?>"></i>
+                                                        </td>
+
+                                                    </tr>
+
+                                                <?php } // foreach ?>
+                                            <?php } // isset ?>
+
+                                        <?php } else { ?>
+                                            <tr class="table-warning text-center p-3">
+                                                <td colspan="7" class="lead"><?php echo _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $plugin['ARRNAME'] .' '. _FPA_TESTP; ?></td>
+                                            </tr>
+                                        <?php } // instanceFOUND ?>
+                                    </tbody>
+                                </table>
+
+                            </div><!--/.table-responsive-->
+
+                            <?php showDev( $library ); ?>
+                            <?php unset ( $key, $show ); ?>
+                        </div><!--/.container(plugins)-->
+
+                    </section><!--/#plugins-->
+
+                <?php } // ShowPlugins ?>
+
+            </div>
+
+
+
+            <?php
+            /**
+             * instance installed templates
+             *
+             */
+            ?>
+            <section class="py-3" id="templates">
+
+                <div class="container mt-5 site-templates">
+
+                    <h1 class="h2 border-bottom mb-4"><?php echo $template['ARRNAME'] .' :: '. _FPA_SITE; ?></h1>
+
+                    <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
+
+                    <div class="table-responsive-md">
+
+                        <table class="table table-striped table-bordered table-sm">
+                            <thead>
+                                <tr class="bg-info text-white xsmall">
+                                    <th class="py-2"><?php echo _FPA_TNAM; ?></th>
+                                    <th class="py-2 text-center"><?php echo _FPA_VER; ?></th>
+                                    <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_CRE; ?></th>
+                                    <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_AUTH; ?></th>
+                                    <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_ADDR; ?></th>
+                                    <th class="py-2 text-center"><?php echo _FPA_TYPE; ?></th>
+                                    <th class="py-2 text-center"><?php echo _FPA_EN; ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if ( $instance['instanceFOUND'] == _FPA_Y ) { ?>
+
+                                    <?php if ( isset ( $template['SITE'])) { ?>
+                                        <?php foreach ( $template['SITE'] as $key => $show ) { ?>
+
+                                            <tr>
+
+                                                <?php
+                                                    if (isset($exset[0]['name'])) {
+                                                        $extarrkey = recursive_array_search($show['name'], $exset);
+
+                                                        if ($extarrkey  !== False) {
+                                                            $extenabled = $exset[$extarrkey]['enabled'];
+
+                                                        } else {
+                                                            $extenabled = '?' ;
+                                                        }
+
+                                                    } else {
+                                                        $extenabled = '?' ;
+                                                    }
+
+                                                    if ($extenabled <> 0 AND $extenabled <> 1 ){
+                                                        $extenabled = '?';
+                                                    }
+
+                                                    if ( $show['type'] == _FPA_3PD) {
+                                                        $typeColor = 'info';
+                                                    } else {
+                                                        $typeColor = 'dark';
+                                                    }
+
+                                                    if ($extenabled != 1) {
+                                                        $typeColor = 'muted';
+                                                    }
+                                                ?>
+
+                                                <td class="text-<?php echo $typeColor; ?>"><?php echo $show['name']; ?></td>
+
+                                                <td class="text-<?php echo $typeColor; ?> text-center"><?php echo $show['version']; ?></td>
+
+                                                <td class="text-<?php echo $typeColor; ?> d-none d-lg-table-cell"><?php echo $show['creationDate']; ?></td>
+
+                                                <td class="text-<?php echo $typeColor; ?> text-center d-none d-lg-table-cell"><?php echo $show['author']; ?></td>
+
+                                                <td class="text-<?php echo $typeColor; ?> text-center d-none d-lg-table-cell"><?php echo $show['authorUrl']; ?></td>
+
+                                                <td class="text-<?php echo $typeColor; ?> text-center"><?php echo $show['type']; ?></td>
+
+                                                <td class="text-center">
+                                                    <?php
+                                                        if ($extenabled == 1) {
+                                                            $statusIcon  = 'check';
+                                                            $statusColor = 'success';
+                                                        } elseif ($extenabled == '?') {
+                                                            $statusIcon  = 'question';
+                                                            $statusColor = 'warning';
+                                                        } else {
+                                                            $statusIcon  = 'minus';
+                                                            $statusColor = 'muted';
+                                                        }
+                                                    ?>
+                                                    <i class="fas fa-<?php echo $statusIcon; ?>-circle text-<?php echo $statusColor; ?>"></i>
+                                                </td>
+
+                                            </tr>
+
+                                        <?php } // foreach ?>
+                                    <?php } // isset ?>
+
+
+                                <?php } else { ?>
+                                    <tr class="table-warning text-center p-3">
+                                        <td colspan="7" class="lead"><?php echo _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $module['ARRNAME'] .' '. _FPA_TESTP; ?></td>
+                                    </tr>
+                                <?php } // instanceFOUND ?>
+                            </tbody>
+                        </table>
+
+                    </div><!--/.table-responsive-->
+
+                </div><!--/.container(site-tempates)-->
+
+
+                <div class="container mt-5 admin-templates">
+
+                    <h1 class="h2 border-bottom mb-4"><?php echo $template['ARRNAME'] .' :: '. _FPA_ADMIN; ?></h1>
+
+                    <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
+
+                    <div class="table-responsive-md">
+
+                        <table class="table table-striped table-bordered table-sm">
+                            <thead>
+                                <tr class="bg-info text-white xsmall">
+                                    <th class="py-2"><?php echo _FPA_TNAM; ?></th>
+                                    <th class="py-2 text-center"><?php echo _FPA_VER; ?></th>
+                                    <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_CRE; ?></th>
+                                    <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_AUTH; ?></th>
+                                    <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_ADDR; ?></th>
+                                    <th class="py-2 text-center"><?php echo _FPA_TYPE; ?></th>
+                                    <th class="py-2 text-center"><?php echo _FPA_EN; ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php if ( $instance['instanceFOUND'] == _FPA_Y ) { ?>
+
+                                    <?php if ( isset ( $template['ADMIN'])) { ?>
+                                        <?php foreach ( $template['ADMIN'] as $key => $show ) { ?>
+
+                                            <tr>
+
+                                                <?php
+                                                    if (isset($exset[0]['name'])) {
+                                                        $extarrkey = recursive_array_search($show['name'], $exset);
+
+                                                        if ($extarrkey  !== False) {
+                                                            $extenabled = $exset[$extarrkey]['enabled'];
+
+                                                        } else {
+                                                            $extenabled = '?' ;
+                                                        }
+
+                                                    } else {
+                                                        $extenabled = '?' ;
+                                                    }
+
+                                                    if ($extenabled <> 0 AND $extenabled <> 1 ){
+                                                        $extenabled = '?';
+                                                    }
+
+                                                    if ( $show['type'] == _FPA_3PD) {
+                                                        $typeColor = 'info';
+                                                    } else {
+                                                        $typeColor = 'dark';
+                                                    }
+
+                                                    if ($extenabled != 1) {
+                                                        $typeColor = 'muted';
+                                                    }
+                                                ?>
+
+                                                <td class="text-<?php echo $typeColor; ?>"><?php echo $show['name']; ?></td>
+
+                                                <td class="text-<?php echo $typeColor; ?> text-center"><?php echo $show['version']; ?></td>
+
+                                                <td class="text-<?php echo $typeColor; ?> d-none d-lg-table-cell"><?php echo $show['creationDate']; ?></td>
+
+                                                <td class="text-<?php echo $typeColor; ?> text-center d-none d-lg-table-cell"><?php echo $show['author']; ?></td>
+
+                                                <td class="text-<?php echo $typeColor; ?> text-center d-none d-lg-table-cell"><?php echo $show['authorUrl']; ?></td>
+
+                                                <td class="text-<?php echo $typeColor; ?> text-center"><?php echo $show['type']; ?></td>
+
+                                                <td class="text-center">
+                                                    <?php
+                                                        if ($extenabled == 1) {
+                                                            $statusIcon  = 'check';
+                                                            $statusColor = 'success';
+                                                        } elseif ($extenabled == '?') {
+                                                            $statusIcon  = 'question';
+                                                            $statusColor = 'warning';
+                                                        } else {
+                                                            $statusIcon  = 'minus';
+                                                            $statusColor = 'muted';
+                                                        }
+                                                    ?>
+                                                    <i class="fas fa-<?php echo $statusIcon; ?>-circle text-<?php echo $statusColor; ?>"></i>
+                                                </td>
+
+                                            </tr>
+
+                                        <?php } // foreach ?>
+                                    <?php } // isset ?>
+
+                                <?php } else { ?>
+                                    <tr class="table-warning text-center p-3">
+                                        <td colspan="7" class="lead"><?php echo _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $template['ARRNAME'] .' '. _FPA_TESTP; ?></td>
+                                    </tr>
+                                <?php } // instanceFOUND ?>
+                            </tbody>
+                        </table>
+
+                    </div><!--/.table-responsive-->
+
+                    <?php showDev( $template ); ?>
+                    <?php unset ( $key, $show ); ?>
+                </div><!--/.container(admin-templates)-->
+
+            </section><!--/#templates-->
 
         </main>
 
-<?php
-	/** display the fpa heading ***************************************************************/
-	echo '<div class="snapshot-information">';
-	echo '<div class="header-title" style="">'. _RES .'</div>';
-	echo '<div class="header-column-title" style="text-align:center;">'. _FPA_VER .': v'. _RES_VERSION .'-'. _RES_RELEASE .' ('. _RES_BRANCH .'&nbsp -'. _RES_LANG .')</div>';
-	echo '<div class="header-column-title" style="text-align:center;"> FPA last updated on: '. _last_updated . '</p>' ;
-	echo '<br />';
 
-	/** ENVIRONMENT SUPPORT NOTICE (snapshot) **************************************************
-	** this section displays a message explaining if the system, mysql and php environment
-	** can support the discovered version of Joomla!
-	**
-	** REQUIREMENTS: (as far as I know!)
-	**          ______________________________________________________
-	**          | J3.0   | J1.7/6 | J!1.5.0-14 | J1.5.0-23 |  J!1.0  |
-	** ------------------------------------------------------
-	** MIN PHP  | 5.3.1  | 5.2.4  |   4.3.10   |  4.3.10   |  3.0.1  |
-	** MAX PHP  | -----  | -----  |   5.2.17   |  5.3.6    |  4.4.9  | // 5.0.0 was first release to include MySQLi support
-	** ------------------------------------------------------
-	** MIN MYSQL | 5.1.6 | 5.0.4  |   3.23.0   |  3.23.0   |  3.0.0  |
-	** MAX MYSQL | ----- | -----  |   5.1.43   |  5.1.43   |  5.0.91 | // only limited to 4.1.29 & 5.1 because install sql still has ENGINE TYPE statements (removed in MySQL 5.5)
-	** ------------------------------------------------------
-	** BAD PHP  | -----  | -----  |   4.39, 4.4.2, 5.0.5   |  -----  |
-	** BAD SQL  | -----  | -----  |        >5.0.0          |  -----  |
-	** BAD ZEND | -----  | -----  |         2.5.10         |  -----  |
-	*****************************************************************************************/
 
-	echo '<div>';
-	echo '<div style="width:85%;margin:0 auto;margin-top:10px;">';
-
-	/** SUPPORT SECTIONS *************************************************************/
-	/** added a 2.5 section - Phil 4-20-12 *******/
-	/** added a 3.1, 3.2 section - Phil 01-01-14
-		Note:
-		With the release of Joomla! 3.2, the CMS introduced a new feature called, Strong Passwords.
-		The intent was to enhance the encryption of password hashing and storage through the use of BCrypt,
-		thus increasing the security of Joomla! 3.2 user accounts. Bcrypt was not available in the early releases
-		of php 5.3, and with the first releases, a bug in the algorithm surfaced. This prompted a change in the
-		later php versions to fix it. The Joomla 3 series required a minimum php version of 5.3+ which unfortunately
-		includes php versions without BCrypt and the buggy first release of BCrypt. The Strong Passwords feature
-		has built in compatibility to determine if BCrypt was available based on a php version check of the Joomla
-		installation's server. The version check is used to determine exactly what the Strong Passwords feature
-		would enable, BCrypt or the next best available password hashing encryption available. Unfortunately,
-		this can lead to access issues under certain circumstances.
-		To reflect this issue with Joomla 3.2.0 and earlier versions of php 5.3, the FPA checks to see if
-		the Joomla! version is 3.2.0 and then checks the php version on the server. If the version php version
-		is less than 5.3.7 then the FPA will report that php does not support Joomla!
-		PHP version of 5.3.1+ is supported by Joomla 3.2.1 due to the fix put in place in Joomla 3.2.1
-		Mysql:
-		On Medialayer at least, mysql 5.0.87-community will work with current versions of Joomla and has inno db enabled
-		*******/
-
-		/** MariaDB check. Get the Database type and look for MariaDB. All current versions of MariaDB
-			should be current with Joomla. The issue with using version numbers is mysql also uses numbers,
-			so this check differentiates between mysql and MariaDB. If there is a better idea given the
-			current FPA code feel free to submit it.  -- PhilD 03-17-17
-		****/
-		$input_line = @$database['dbHOSTSERV'];
-		preg_match("/\b(\w*mariadb\w*)\b/i", $input_line, $output_array);
-
-
-	if  (@$instance['cmsRELEASE'] >= '4.0') {
-		$fpa['supportENV']['minPHP']        = '7.2.5';
-		$fpa['supportENV']['minSQL']        = '5.6.0';
-		$fpa['supportENV']['maxPHP']        = '8.0.0';
-		$fpa['supportENV']['maxSQL']        = '9.0.0';
-		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
-		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
-		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
-		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
-		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
-		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
-		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
-		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-	} elseif  (@$instance['cmsRELEASE'] == '3.10') {
-		$fpa['supportENV']['minPHP']        = '5.3.10';
-		$fpa['supportENV']['minSQL']        = '5.1.0';
-		$fpa['supportENV']['maxPHP']        = '8.0.0';
-		$fpa['supportENV']['maxSQL']        = '9.0.0';
-		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
-		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
-		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
-		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
-		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
-		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
-		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
-		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-	} elseif  (@$instance['cmsRELEASE'] == '3.9') {
-		$fpa['supportENV']['minPHP']        = '5.3.10';
-		$fpa['supportENV']['minSQL']        = '5.1.0';
-		$fpa['supportENV']['maxPHP']        = '7.5.0';
-		$fpa['supportENV']['maxSQL']        = '8.5.0';
-		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
-		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
-		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
-		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
-		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
-		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
-		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
-		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-	} elseif  (@$instance['cmsRELEASE'] > '3.7' and @$instance['cmsDEVLEVEL'] > '2') {
-		$fpa['supportENV']['minPHP']        = '5.3.10';
-		$fpa['supportENV']['minSQL']        = '5.1.0';
-		$fpa['supportENV']['maxPHP']        = '7.5.0';
-		$fpa['supportENV']['maxSQL']        = '5.8.0';
-		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
-		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
-		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
-		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
-		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
-		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
-		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
-		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-	} elseif ( @$instance['cmsRELEASE'] >= '3.5') {
-		$fpa['supportENV']['minPHP']        = '5.3.10';
-		$fpa['supportENV']['minSQL']        = '5.1.0';
-		$fpa['supportENV']['maxPHP']        = '7.1.99';
-		$fpa['supportENV']['maxSQL']        = '5.8.0';
-		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
-		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
-		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
-		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
-		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
-		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
-		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
-		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-	} elseif ( @$instance['cmsRELEASE']  == '3.3' or @$instance['cmsRELEASE']  == '3.4')  {
-		$fpa['supportENV']['minPHP']        = '5.3.10';
-		$fpa['supportENV']['minSQL']        = '5.1.0';
-		$fpa['supportENV']['maxPHP']        = '6.0.0';
-		$fpa['supportENV']['maxSQL']        = '5.8.0';
-		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
-		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
-		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
-		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
-		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
-		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
-		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
-		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-	} elseif ( @$instance['cmsRELEASE'] == '3.2' and @$instance['cmsDEVLEVEL'] >= 1) {
-		$fpa['supportENV']['minPHP']        = '5.3.1';
-		$fpa['supportENV']['minSQL']        = '5.1.0';
-		$fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-		$fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
-		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
-		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
-		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
-		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
-		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
-		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
-		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
-	} elseif ( @$instance['cmsRELEASE'] == '3.2' and @$instance['cmsDEVLEVEL'] == 0) {
-		$fpa['supportENV']['minPHP']        = '5.3.7';
-		$fpa['supportENV']['minSQL']        = '5.1.0';
-		$fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-		$fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
-		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
-		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
-		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
-		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
-		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
-		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
-		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
-	} elseif ( @$instance['cmsRELEASE'] == '3.1' ) {
-		$fpa['supportENV']['minPHP']        = '5.3.1';
-		$fpa['supportENV']['minSQL']        = '5.1.0';
-		$fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-		$fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
-		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
-		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
-		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
-		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
-		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
-		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
-		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
-	} elseif ( @$instance['cmsRELEASE'] == '3.0' ) {
-		$fpa['supportENV']['minPHP']        = '5.3.1';
-		$fpa['supportENV']['minSQL']        = '5.1.0';
-		$fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-		$fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-		$fpa['supportENV']['badPHP'][0]     = '5.3.0';
-		$fpa['supportENV']['badPHP'][1]     = '5.3.1';
-		$fpa['supportENV']['badPHP'][2]     = '5.3.2';
-		$fpa['supportENV']['badPHP'][3]     = '5.3.3';
-		$fpa['supportENV']['badPHP'][4]     = '5.3.4';
-		$fpa['supportENV']['badPHP'][5]     = '5.3.5';
-		$fpa['supportENV']['badPHP'][6]     = '5.3.6';
-		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
-	} elseif ( @$instance['cmsRELEASE'] == '2.5' ) {
-		$fpa['supportENV']['minPHP']        = '5.2.4';
-		$fpa['supportENV']['minSQL']        = '5.0.4';
-		$fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-		$fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-		$fpa['supportENV']['badPHP'][0]     = _FPA_NA;
-		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-	} elseif ( @$instance['cmsRELEASE'] == '1.7' ) {
-		$fpa['supportENV']['minPHP']        = '5.2.4';
-		$fpa['supportENV']['minSQL']        = '5.0.4';
-		$fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-		$fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-		$fpa['supportENV']['badPHP'][0]     = _FPA_NA;
-		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-	} elseif ( @$instance['cmsRELEASE'] == '1.6' ) {
-		$fpa['supportENV']['minPHP']        = '5.2.4';
-		$fpa['supportENV']['minSQL']        = '5.0.4';
-		$fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-		$fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-		$fpa['supportENV']['badPHP'][0]     = _FPA_NA;
-		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-	} elseif ( @$instance['cmsRELEASE'] == '1.5' ) {
-
-		if ( @$instance['cmsDEVLEVEL'] <= '14' ) {
-			$fpa['supportENV']['minPHP']        = '4.3.10';
-			$fpa['supportENV']['minSQL']        = '3.23.0';
-			$fpa['supportENV']['maxPHP']        = '5.2.17';
-			$fpa['supportENV']['maxSQL']        = '5.5.0';  // limited by ENGINE TYPE changes in 5.5 and install sql syntax
-
-		} else {
-			$fpa['supportENV']['minPHP']        = '4.3.10';
-			$fpa['supportENV']['minSQL']        = '3.23.0';
-			$fpa['supportENV']['maxPHP']        = '5.3.6';
-			$fpa['supportENV']['maxSQL']        = '5.5.0';  // limited by ENGINE TYPE changes in 5.5 and install sql syntax
-
-		}
-
-		$fpa['supportENV']['badPHP'][0]     = '4.3.9';
-		$fpa['supportENV']['badPHP'][1]     = '4.4.2';
-		$fpa['supportENV']['badPHP'][2]     = '5.0.4';
-		$fpa['supportENV']['badZND'][0]     = '2.5.10';
-
-	} elseif ( @$instance['cmsRELEASE'] == '1.0' ) {
-		$fpa['supportENV']['minPHP']        = '3.0.1';
-		$fpa['supportENV']['minSQL']        = '3.0.0';
-	//	$fpa['supportENV']['maxPHP']        = '4.4.9';
-		$fpa['supportENV']['maxPHP']        = '5.2.17';   // changed max supported php from 4.4.9 to 5.2.17 - 03/12/17 - PD
-		$fpa['supportENV']['maxSQL']        = '5.0.91';  // limited by ENGINE TYPE changes in 5.0 and install sql syntax
-		$fpa['supportENV']['badPHP'][0]     = _FPA_NA;
-		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-	} else {
-		$fpa['supportENV']['minPHP']        = _FPA_NA;
-		$fpa['supportENV']['minSQL']        = _FPA_NA;
-		$fpa['supportENV']['maxPHP']        = _FPA_NA;
-		$fpa['supportENV']['maxSQL']        = _FPA_NA;
-		$fpa['supportENV']['badPHP'][0]     = _FPA_NA;
-		$fpa['supportENV']['badZND'][0]     = _FPA_NA;
-	}
-
-
-
-	// minimum and maximum PHP support requirements met?
-	echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">'. _FPA_SUPPHP .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] .'<br />';
-
-		if ( $fpa['supportENV']['minPHP'] == _FPA_NA ) {
-			echo '<div class="normal-note"><span class="warn-text">'. _FPA_U .'</span></div>';
-			$snapshot['phpSUP4J'] = _FPA_U;
-
-		} elseif ( ( version_compare( PHP_VERSION, $fpa['supportENV']['minPHP'], '>=' ) ) AND ( version_compare( PHP_VERSION, $fpa['supportENV']['maxPHP'], '<=' ) ) ) {
-			echo '<div class="normal-note"><span class="ok">'. _FPA_Y .'</span></div>';
-			$snapshot['phpSUP4J'] = _FPA_Y;
-
-		} elseif ( ( version_compare( PHP_VERSION, $fpa['supportENV']['minPHP'], '<' ) ) OR ( version_compare( PHP_VERSION, $fpa['supportENV']['maxPHP'], '>' ) ) ) {
-			echo '<div class="normal-note"><span class="alert-text">'. _FPA_N .'</span></div>';
-			$snapshot['phpSUP4J'] = _FPA_N;
-
-		} else {
-			echo '<div class="normal-note"><span class="warn-text">'. _FPA_U .'</span></div>';
-			$snapshot['phpSUP4J'] = _FPA_U;
-		}
-
-	echo '</div>';
-
-
-	// PHP API
-	echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">PHP API<br />';
-
-		if ( @$phpenv['phpAPI'] ) {
-
-			if ( @$phpenv['phpAPI'] == 'apache2handler' ) {
-				echo '<div class="normal-note"><span class="warn-text">'. @$phpenv['phpAPI'] .'</span></div>';
-
-			} else {
-				echo '<div class="normal-note"><span class="ok">'. @$phpenv['phpAPI'] .'</span></div>';
-			}
-
-		} else {
-			echo '<div class="normal-note"><span class="warn-text">'. _FPA_U .'</span></div>';
-		}
-
-	echo '</div>';
-
-
-	// MySQL supported by PHP?
-	echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">'. _FPA_SUPPHP .' MySQL<br />';
-
-		if ( array_key_exists( 'mysql', $phpextensions ) ) {
-			echo '<div class="normal-note"><span class="ok">'. _FPA_Y .'</span></div>';
-			$snapshot['phpSUP4MYSQL'] = _FPA_Y;
-
-		} else {
-			echo '<div class="normal-note"><span class="alert-text">'. _FPA_N .'</span></div>';
-			$snapshot['phpSUP4MYSQL'] = _FPA_N;
-		}
-
-	echo '</div>';
-
-
-	// MySQLi supported by PHP?
-	echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">'. _FPA_SUPPHP .' MySQLi<br />';
-
-		if ( array_key_exists( 'mysqli', $phpextensions ) ) {
-			echo '<div class="normal-note"><span class="ok">'. _FPA_Y .'</span></div>';
-			$snapshot['phpSUP4MYSQL-i'] = _FPA_Y;
-
-		} else {
-			echo '<div class="normal-note"><span class="warn-text">'. _FPA_N .'</span></div>';
-			$snapshot['phpSUP4MYSQL-i'] = _FPA_N;
-		}
-
-	echo '</div>';
-
-	echo '<br style="clear:both;" /><br />';
-
-	// minimum and maximum MySQL support requirements met?
-	echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">'. _FPA_SUPSQL .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] .'<br />';
-
-		if ( $fpa['supportENV']['minSQL'] == _FPA_NA OR @$database['dbERROR'] != _FPA_N ) {
-			echo '<div class="normal-note"><span class="warn-text">'. _FPA_U .'</span></div>';
-			$snapshot['sqlSUP4J'] = _FPA_U;
-
-		} elseif ( ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['minSQL'], '>=' ) ) AND ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['maxSQL'], '<=' ) ) ) {
-
-			// WARNING, will run, but ONLY after modifying install SQL to remove ENGINE TYPE statements (removed in MySQL 5.5)
-			if ( ( $instance['cmsRELEASE'] == '1.5' ) AND ( @$database['dbHOSTSERV'] > '5.1.43' ) ) {
-				echo '<div class="normal-note"><span class="warn-text">'. _FPA_M .' (<a href="http://forum.joomla.org/viewtopic.php?p=2297327" target="_new">'. _FPA_SPNOTE .'</a>)</span></div>';
-				$snapshot['sqlSUP4J'] = _FPA_M;
-
-			} else {
-				echo '<div class="normal-note"><span class="ok">'. _FPA_Y .'</span></div>';
-				$snapshot['sqlSUP4J'] = _FPA_Y;
-			}
-
-		} elseif ( ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['minSQL'], '<' ) ) OR ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['maxSQL'], '>' ) ) ) {
-
-			// WARNING, will run, but ONLY after modifying install SQL to remove ENGINE TYPE statements (removed in MySQL 5.5)
-			if ( ( $instance['cmsRELEASE'] == '1.5' ) AND ( @$database['dbHOSTSERV'] > '5.1.43' ) ) {
-				echo '<div class="normal-note"><span class="warn-text">'. _FPA_M .' (<a href="http://forum.joomla.org/viewtopic.php?p=2297327" target="_new">'. _FPA_SPNOTE .'</a>)</span></div>';
-				$snapshot['sqlSUP4J'] = _FPA_M;
-
-			}
-			//Added this elseif to give the ok for postgreSQL
-			elseif ($instance['configDBTYPE'] == 'postgresql' AND $database['dbHOSTSERV'] >= 8.3 ) {
-				echo '<div class="normal-note"><span class="ok">'. _FPA_Y .'</span></div>';
-				$snapshot['sqlSUP4J'] = _FPA_Y;
-			}
-
-			//Added this elseif to give the ok for PDO postgreSQL
-			elseif ($instance['configDBTYPE'] == 'pgsql' AND $database['dbHOSTSERV'] >= 8.3 ) {
-				echo '<div class="normal-note"><span class="ok">'. _FPA_Y .'</span></div>';
-				$snapshot['sqlSUP4J'] = _FPA_Y;
-			}
-
-			//Added this elseif to give the ok for MariaDB -- PhilD 03-17-17
-			elseif (strtoupper(@$output_array[0]) == "MARIADB") {
-				echo '<div class="normal-note"><span class="ok">'. _FPA_MDB .'</span></div>';
-				$snapshot['sqlSUP4J'] = _FPA_Y;
-			}
-			else {
-				echo '<div class="normal-note"><span class="alert-text">'. _FPA_N .'</span></div>';
-				$snapshot['sqlSUP4J'] = _FPA_N;
-			}
-
-		} else {
-			echo '<div class="normal-note"><span class="warn-text">'. _FPA_U .'</span></div>';
-			$snapshot['sqlSUP4J'] = _FPA_U;
-		}
-
-	echo '</div>';
-
-
-	// MySQLi supported by MySQL?
-	echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">'. _FPA_SUPSQL .' MySQLi<br />';
-
-		if ( !@$database['dbHOSTSERV'] OR @$database['dbERROR'] != _FPA_N ) {
-			echo '<div class="normal-note"><span class="warn-text">'. _FPA_U .'</span></div>';
-			$snapshot['sqlSUP4SQL-i'] = _FPA_U;
-
-		} elseif ( version_compare( @$database['dbHOSTSERV'], '5.0.7', '>=' ) ) {
-			echo '<div class="normal-note"><span class="ok">'. _FPA_Y .'</span></div>';
-
-		} else {
-			echo '<div class="normal-note"><span class="warn-text">'. _FPA_N .'</span></div>';
-			$snapshot['sqlSUP4SQL-i'] = _FPA_N;
-		}
-
-	echo '</div>';
-
-
-	// J! connection to MySQL
-	echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">Database Connection Type<br />';
-
-		if ( @$instance['configDBTYPE'] ) {
-
-			if ( ( @$snapshot['sqlSUP4SQL-i'] == _FPA_N OR @$snapshot['sqlSUP4SQL-i'] == _FPA_U ) AND @$instance['configDBTYPE'] == 'mysqli') {
-				echo '<div class="normal-note"><span class="alert-text">'. @$instance['configDBTYPE'] .'</span></div>';
-
-			} else {
-				echo '<div class="normal-note"><span class="ok">'. @$instance['configDBTYPE'] .'</span></div>';
-			}
-
-		} else {
-			echo '<div class="normal-note"><span class="warn-text">'. _FPA_U .'</span></div>';
-		}
-
-	echo '</div>';
-
-
-	// MySQL default collation
-	echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">Database '. _FPA_DEF .' '. _FPA_TCOL .'<br />';
-
-		if ( @$database['dbHOSTDEFCHSET'] ) {
-			echo '<div class="normal-note"><span class="ok">'. @$database['dbHOSTDEFCHSET'] .'</span></div>';
-
-		} else {
-			echo '<div class="normal-note"><span class="warn-text">'. _FPA_U .'</span></div>';
-		}
-
-	echo '</div>';
-
-	echo '<br style="clear:both;" /><br />';
-
-	// Unsupported PHP version
-	echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">PHP '. _FPA_VER .'<br />';
-
-		if ( version_compare( PHP_VERSION, '5', '<' ) ) {
-			echo '<div class="normal-note"><span class="alert-text">'. PHP_VERSION .'</span></div>';
-
-		} else {
-			echo '<div class="normal-note"><span class="ok">'. PHP_VERSION .'</span></div>';
-		}
-
-	echo '</div>';
-
-
-	// known buggy php releases (mainly for installation on 1.5)
-	echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">'. _FPA_BADPHP .'<br />';
-
-		foreach ( $fpa['supportENV']['badPHP'] as $badKey => $badValue ) {
-			if ( version_compare( PHP_VERSION, $badValue, '==' ) ) {
-				$badANS = _FPA_Y;
-				continue;
-			}
-
-		}
-
-		if ( @$badANS == _FPA_Y ) {
-			$badClass = 'alert-text';
-			$snapshot['buggyPHP'] = _FPA_N;
-
-		} else {
-			$badANS = _FPA_N;
-			$badClass = 'ok';
-			$snapshot['buggyPHP'] = _FPA_N;
-		}
-
-	echo '<div class="normal-note"><span class="'. $badClass .'">'. $badANS .'</span></div>';
-
-	echo '</div>';
-
-
-	// MySQL Version
-	echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">Database '. _FPA_VER .'<br />';
-	echo '<div class="normal-note">';
-		if ( @$database['dbHOSTSERV'] ) {
-			echo @$database['dbHOSTSERV'];
-		} else {
-			echo _FPA_U;
-		}
-	echo '</div>';
-	echo '</div>';
-
-
-	// known buggy zend releases (mainly for installation on 1.5)
-	echo '<div style="font-weight:bold;font-size:9px;text-transform:uppercase;width:24%;float:left;text-align:center;">'. _FPA_BADZND .'<br />';
-// reset variables to fix zend check bug
-	$badValue = "";
-	$badANS = "";
-		foreach ( $fpa['supportENV']['badZND'] as $badKey => $badValue ) {
-
-			if ( version_compare( $phpextensions['Zend Engine'], $badValue, '==' ) ) {
-				$badANS = _FPA_Y;
-				continue;
-			}
-
-		}
-
-		if ( @$badANS == _FPA_Y ) {
-			$badClass = 'alert-text';
-			$snapshot['buggyZEND'] = _FPA_Y;
-
-		} else {
-			$badANS = _FPA_N;
-			$badClass = 'ok';
-			$snapshot['buggyZEND'] = _FPA_N;
-		}
-
-	echo '<div class="normal-note"><span class="'. $badClass .'">'. $badANS .'</span></div>';
-
-	echo '</div>';
-
-
-	echo '</div>';
-	echo '<div style="clear:both;"><br /></div>';
-
-	echo '</div>';
-
-
-
-	//links for download that are found in the grey FPA box area.
-	echo '<div style="text-align:center;"><a style="color:#4D8000!important;" href="'. _RES_FPALINK .''. _RES_LANG .'" target="_github">'. _RES_FPALATEST .' '. _RES .'</a></div>';
-	echo '<div style="clear:both;"></div>';
-	echo "<p></p>";
-	echo '<div style="text-align:center!important;"><a style="color:#4D8000!important;" href="'. _RES_FPALINK2 .''. _RES_LANG .'" target="_github">'. _RES_FPALATEST2 .' '. _RES .'</a><p></div>';
-	echo _FPA_DELNOTE_LN1;
-	echo _FPA_DELNOTE_LN2;
-	echo _FPA_DELNOTE_LN3;
-	echo '</div>';
-	showDev ( $snapshot );
-	?>
-
-
-
-
-
-
-	<!-- POST FORM -->
-	<div style="margin: 0px auto;text-align:left;text-shadow: 1px 1px 1px #FFF; width:820px; background-color:#FFF;border:1px solid #999966; color:#4D8000; font-size:10px; font-family:arial; padding:5px;-moz-box-shadow: 3px 3px 3px #C0C0C0;-webkit-box-shadow: 3px 3px 3px #C0C0C0;box-shadow: 3px 3px 3px #C0C0C0;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;">
-		<div id="headerDiv" class="">
-
-			<?php
-				// someone clicked the "Generate Post" button, so we want to keep the form open once the page refreshes
-				if ( @$_POST['doIT'] == 1 ) {
-					$displayMode = 'block';
-
-				} else {
-					$displayMode = 'none';
-				}
-			?>
-
-			<div id="titleText"><a id="myHeader" style="line-height:22px;text-decoration:none;color:#4D8000;" href="javascript:toggle2('myContent','myHeader');" ><span style="font-size:12px;color:#4D8000;"><span style="font-size:18px;color:#008000;">&Theta;</span> Show the <strong><?php echo _RES; ?></strong></span></a></div>
-
-		</div>
-		<div style="clear:both;"></div>
-		<div id="contentDiv" style="">
-
-			<div id="myContent" style="display: <?php echo $displayMode; ?>;">
-
-				<div class="half-section-container" style="width:730px;">
-
-					<div class="half-section-information-left" style="width:340px;padding-top:10px;padding-bottom:10px;border-color:#CCC;box-shadow: inset 3px 3px 3px #C0C0C0;-webkit-box-shadow: inset 3px 3px 3px #C0C0C0;background-color:transparent!important;">
-
-						<div class="normal-note" style="min-height:135px;">
-						<strong><?php echo _FPA_INSTRUCTIONS;  ?></strong>
-
-						<?php
-							echo '<ol style="margin-left:-15px;">';
-							echo '<li><span class="normal">'. _FPA_INS_1 .'</span></li>';
-							echo '<li><span class="normal">'. _FPA_INS_2 .'</span></li>';
-							echo '<li><span class="normal">'. _FPA_INS_3 .'</span></li>';
-							echo '<li><span class="normal">'. _FPA_INS_4 .'</span></li><br />';
-							echo '<li><span class="normal">'. _FPA_INS_5 .'</span></li><br />';
-							echo '<li><span class="normal">'. _FPA_INS_6 .'</span></li>';
-							echo '</ol>';
-						?>
-						</div>
-
-					<br />
-
-						<div class="normal-note" style="min-height:145px;padding-left:10px;">
-						<strong>Optional Information</strong><br /><br />
-
-							<form method="post" name="postDetails" id="postDetails">
-
-								<div style="text-align:right;padding:2px;"><div class="normal" style="text-align:left;width:120px;float:left;"><?php echo _FPA_PROB_DSC; ?>:</div> <input class="normal-note" style="background-color: #FFFFCC;width:175px;font-size:9px;" type="text" name="probDSC" /></div>
-								<div style="text-align:right;padding:2px;"><div class="normal" style="text-align:left;width:120px;float:left;"><?php echo _FPA_PROB_MSG; ?>:</div> <input class="normal-note" style="background-color: #FFFFCC;width:175px;font-size:9px;" type="text" name="probMSG1" /></div>
-
-								<?php
-									if ( isset($phpenv['phpLASTERR']) ) {
-										echo '<div style="text-align:right;padding:2px;"><div class="warn-text" style="text-align:left;width:120px;float:left;">'. _FPA_LAST .' '. _FPA_ER .':</div> <input class="normal-note" style="color: #800000;background-color: #FFFFCC;width:175px;font-size:9px;" type="text" value="'. $phpenv['phpLASTERR'] .'" name="probMSG2" /><br /><span class="normal" style="font-size:8px;">auto-completed from your php error log&nbsp;&nbsp;</span></div>';
-									} else {
-										echo '<div style="text-align:right;padding:2px;"><div class="normal" style="text-align:left;width:120px;float:left;">'. _FPA_PROB_MSG .':</div> <input class="normal-note" style="background-color: #FFFFCC;width:175px;font-size:9px;" type="text" name="probMSG2" /></div>';
-									}
-								?>
-
-								<div style="text-align:right;padding:2px;"><div class="normal" style="text-align:left;width:120px;float:left;"><?php  echo _FPA_PROB_ACT;  ?>:</div> <textarea class="normal-note" style="background-color: #FFFFCC;width:175px;font-size:9px;" type="text" name="probACT"></textarea></div>
-
-								<?php  echo _FPA_POST_NOTE; ?>
-
-						</div>
-
-					</div>
-
-
-					<div class="half-section-information-right" style="width:340px;padding-top:10px;padding-bottom:10px;border-color:#CCC;box-shadow: inset 3px 3px 3px #C0C0C0;-webkit-box-shadow: inset 3px 3px 3px #C0C0C0;background-color:transparent!important;">
-
-						<div class="normal-note" style="min-height:135px;">
-						<!-- intended Post location -->
-
-						<div style="color:#4D8000;">
-						<span style="color:#4D8000;font-weight:bold;padding-right:20px;"><strong>Run-Time Options</strong></span>
-						</div>
-						<br />
-
-
-
-							<div style="float:left; width:170px;">
-
-							<?php
-								if ( @$_POST['showElevated'] == 0 AND  @$_POST['doIT'] == 1  ) {
-									$selectshowElevated = '';
-								} else {
-									$selectshowElevated = 'CHECKED'; // changed to checked - Phil - 4-20-12
-								}
-
-								if ( @$_POST['showTables'] == 0 AND  @$_POST['doIT'] == 1  ) {
-									$selectshowTables = '';
-								} else {
-									$selectshowTables = 'CHECKED';
-								}
-
-								if ( @$_POST['showComponents'] == 0 AND  @$_POST['doIT'] == 1  ) {
-									$selectshowComponents = '';
-								} else {
-									$selectshowComponents = 'CHECKED'; // changed to checked - Phil - 4-20-12
-								}
-
-								if ( @$_POST['showModules'] == 0 AND  @$_POST['doIT'] == 1  ) {
-									$selectshowModules = '';
-								} else {
-									$selectshowModules = 'CHECKED'; // changed to checked - Phil - 4-20-12
-								}
-
-								if ( @$_POST['showLibraries'] == 0 AND  @$_POST['doIT'] == 1  ) {
-									$selectshowLibraries = '';
-								} else {
-									$selectshowLibraries = 'CHECKED';
-								}
-
-								if ( @$_POST['showPlugins'] == 0 AND  @$_POST['doIT'] == 1  ) {
-									$selectshowPlugins = '';
-								} else {
-									$selectshowPlugins = 'CHECKED'; // changed to checked - Phil - 4-20-12
-								}
-								if ( @$_POST['showCoreEx'] == 0 AND  @$_POST['doIT'] == 1 ) {
-									$selectshowCoreEx = '';
-								} else {
-									$selectshowCoreEx = 'CHECKED';
-								}
-								if ( $instance['instanceFOUND'] != _FPA_Y ) {
-									$dis = 'DISABLED';
-
-								} else {
-									$dis = '';
-								}
-								?>
-
-								<strong><?php echo _FPA_OPT .' '. $dis; ?>:</strong><br />
-								<input <?php echo $dis; ?> style="font-size:9px;" type="checkbox" name="showElevated" value="1" <?php echo $selectshowElevated ?> /><span class="normal"><?php echo _FPA_SHOWELV; ?></span><br />
-								<input <?php echo $dis; ?> style="font-size:9px;" type="checkbox" name="showTables" value="1" <?php echo $selectshowTables ?> /><span class="normal"><?php echo _FPA_SHOWDBT; ?></span><br />
-								<input <?php echo $dis; ?> style="font-size:9px;" type="checkbox" name="showComponents" value="1" <?php echo $selectshowComponents ?> /><span class="normal"><?php echo _FPA_SHOWCOM; ?></span><br />
-								<input <?php echo $dis; ?> style="font-size:9px;" type="checkbox" name="showModules" value="1" <?php echo $selectshowModules ?> /><span class="normal"><?php echo _FPA_SHOWMOD; ?></span><br />
-								<input <?php echo $dis; ?> style="font-size:9px;" type="checkbox" name="showLibraries" value="1" <?php echo $selectshowLibraries ?> /><span class="normal"><?php echo _FPA_SHOWLIB; ?></span><br />
-            					<input <?php echo $dis; ?> style="font-size:9px;" type="checkbox" name="showPlugins" value="1" <?php echo $selectshowPlugins ?> /><span class="normal"><?php echo _FPA_SHOWPLG; ?></span><br />
-								<input <?php echo $dis; ?> style="font-size:9px;" type="checkbox" name="showCoreEx" value="1" <?php echo $selectshowCoreEx ?> /><span class="normal"><?php echo _FPA_SHOWCEX; ?></span><br />
-							</div>
-
-							<div style="float:right; width:150px;">
-							<?php
-								if ( $showProtected == 2 OR @$_POST['showProtected'] == 2 ) {
-									$selectshowProtected_1 = '';
-									$selectshowProtected_2 = 'CHECKED';
-								} elseif ( $showProtected == 1 OR @$_POST['showProtected'] == 1 ) {
-									$selectshowProtected_1 = 'CHECKED';
-									$selectshowProtected_2 = '';
-								} elseif ( $showProtected == 2 ) {
-									$selectshowProtected_1 = '';
-									$selectshowProtected_2 = 'CHECKED';
-								} else {
-									$selectshowProtected_1 = '';
-									$selectshowProtected_2 = 'CHECKED';
-								}
-							?>
-
-								<strong>Information Privacy :</strong><br />
-								<input style="font-size:9px;" type="radio" name="showProtected" value="1" <?php echo $selectshowProtected_1; ?> /><span class="alert-text"><?php echo _FPA_PRIVNON; ?></span><br /><span style="line-height:8px;padding:0px;margin:0px;margin-left:15px;font-size:8px;"><?php echo _FPA_PRIVNONNOTE; ?></span><br />
-								<input style="font-size:9px;" type="radio" name="showProtected" value="2" <?php echo $selectshowProtected_2; ?> /><span class="ok"><?php echo _FPA_PRIVPAR .' ('. _FPA_DEF .')'; ?></span><br /><span style="line-height:8px;padding:0px;margin:0px;margin-left:15px;font-size:8px;"><?php echo _FPA_PRIVPARNOTE; ?></span><br />
-							</div>
-
-						<div style="clear:both;"></div>
-						</div>
-
-					<br />
-
-						<div class="normal-note" style="min-height:145px;">
-						<div style="clear:both;"><br /></div>
-
-							<!-- Generate the diagnostic post output -->
-							<div style = "margin: 0px auto; width:90%;text-align:center;margin-top:10px;">
-								<input type="hidden" name="doIT" value="1" />
-
-								<input type="submit" class="ok-hilite" style="box-shadow: 2px 2px 2px #C0C0C0;-moz-box-shadow: 2px 2px 2px #C0C0C0;-webkit-box-shadow: 2px 2px 2px #C0C0C0;text-transform:uppercase;cursor:pointer;cursor:hand;" name="submit" value="<?php echo _FPA_CLICK; ?>" />
-
-									<div class="normal" style="text-shadow:none!important;margin-left:10px;float:left;width:95%;text-align:left;">
-										<br />
-										<span class="ok"><?php echo _FPA_INS_5; ?></span>
-									</div>
-
-
-								<input type="reset" class="warn" style="font-size:8px;cursor:pointer;cursor:hand;" name="reset" value="reset" />
-
-
-							<div style="clear:both;"><br /></div>
-							</div>
-
-
-
-							<div style="clear:both;"></div>
-							<?php
-								if ( @$_POST['increasePOPS'] ) {
-									$selectPOPS = 'CHECKED';
-								} else {
-									$selectPOPS = '';
-								}
-							?>
-							<!-- // !TODO make this more robust across multiple server configs -->
-							<div class="normal" style="margin-left:15px;border-top:1px dotted #CCC;margin-top:30px;margin-right:15px;">
-								<input style="font-size:9px;" type="checkbox" name="increasePOPS" value="1" <?php echo $selectPOPS; ?> />PHP &quot;<span class="warn-text"><?php echo _FPA_OUTMEM; ?></span>&quot; <?php echo _FPA_OR; ?> &quot;<span class="warn-text"><?php echo _FPA_OUTTIM; ?></span>&quot; <?php echo _FPA_ERRS; ?>?<br />
-								<span style="margin-left:15px;font-size:8px;"><?php echo _FPA_INCPOPS; ?></span>
-							</div>
-
-						</div>
-
-					</div>
-
-				</div>
-
-		<div style="clear:both;"></div>
-
-		<?php
-			if ( @$_POST['doIT'] == '1' ) {
-
-				echo '<div class="normal-note" style="width:725px;text-align:center;margin: 0px auto;padding:2px;padding-top:5px;">';
-
-				echo '<span class="ok" style="text-transform:uppercase;">'. _RES .' '. _FPA_POSTD .'</span><br />';
-
-
-				/** LOAD UP THE SELECTED CONFIGURATION AND DIAGNOSTIC INFORMATION FOR THE POST ************
-				** this section loads up a text-box with BBCode for the forum, it will quote each section
-				** to make viewing easier and once used to the format, hopefully making it simpler to
-				** pinpoint related information quickly
-				**
-				** the user then copies and pastes this outputin to forum post
-				**
-				** many "if/then/else" statements have been placed in single lines for ease of management,
-				** this looks ugly and goes against coding practices but *shrug*, it's messy otherwise
-				**
-				** NOTE IF MODIFYING: carriage returns and line breaks MUST be double-quoted, not single-
-				** quote, hence some of the weird quoting and formating
-				*****************************************************************************************/
-				echo '<textarea class="protected" style="width:700px;height:400px;font-size:9px;margin-top:5px;" type="text" rows="20" cols="100" name="postOUTPUT" id="postOUTPUT">';
-
-
-				/** BBCode for the Joomla! Forum
-				*****************************************************************************************/
-					echo '[quote="'. _RES .' (v'. _RES_VERSION .') : '. @date( 'jS F Y' ) .'"]';
-
-					if ( $_POST['probDSC'] ) { echo '[quote="'. _FPA_PROB_DSC .' :: "][size=85]'. $_POST['probDSC'] .' [/size][/quote]'; }
-
-					if ( $_POST['probMSG1'] ) { echo '[quote="'. _FPA_PROB_MSG .' :: "][size=85]'. $_POST['probMSG1'] .'[/size][/quote]'; }
-
-					if ( $phpenv['phpLASTERR'] AND $_POST['probMSG2'] ) { echo '[quote="'. _FPA_LAST .' PHP '. _FPA_ER .' :: "][size=85][color=#800000]'. $_POST['probMSG2'] .'[/color][/size][/quote]';
-					} elseif ( !@$phpenv['phpLASTERROR'] AND $_POST['probMSG2'] ) { echo '[quote="'. _FPA_PROB_MSG .' :: "][size=85]'. $_POST['probMSG2'] .'[/size][/quote]'; }
-
-					if ( $_POST['probACT'] ) { echo '[quote="'. _FPA_PROB_ACT .' "][size=85]'. $_POST['probACT'] .'[/size][/quote]'; }
-
-					// do the basic information
-					echo '[quote="'. _FPA_BASIC .' '. _FPA_ENVIRO .' ::"][size=85]';
-
-					// Joomla! cms details
-					echo '[b]'. _FPA_APP .' '. _FPA_INSTANCE.' :: [/b]';
-					if ( $instance['instanceFOUND'] == _FPA_Y ) { echo '[color=Blue]'. $instance['cmsPRODUCT'] .' [b]'. $instance['cmsRELEASE'] .'.'. $instance['cmsDEVLEVEL'] .'[/b]-'. $instance['cmsDEVSTATUS'] .' ('. $instance['cmsCODENAME'] .') '. $instance['cmsRELDATE'] .'[/color]';
-					} else { echo '[color=orange]'. _FPA_NF .'[/color]'; }
-
-					// Multiple version file warning
-					if ($vFileSum > 1) {
-					echo "\r\n";
-					echo '[color=Red][b]' . _FPA_MVFW . '[/b][/color]';}
-
-					// Joomla! platform details
-					if ( @$instance['platformPRODUCT'] ) {
-					echo "\r\n";
-					echo '[b]'. _FPA_APP .' '. _FPA_PLATFORM .' :: [/b] [color=Blue]'. @$instance['platformPRODUCT'] .' [b]'. @$instance['platformRELEASE'] .'.'. @$instance['platformDEVLEVEL'] .'[/b]-'. @$instance['platformDEVSTATUS'] .' ('. @$instance['platformCODENAME'] .') '. @$instance['platformRELDATE'] .'[/color]'; }
-
-					echo "\r\n";
-
-					echo '[b]'. _FPA_APP .' '. _FPA_YC .' :: [/b]';
-
-					if ( $instance['instanceCONFIGURED'] == _FPA_Y ) {
-					   echo '[color=Green]'. _FPA_Y .'[/color] | ';
-
-					if ( $instance['configWRITABLE'] == _FPA_Y ) { echo '[color=Green]'. _FPA_WRITABLE .'[/color] ('; } else { echo _FPA_RO .' ('; }
-
-					if ( substr( $instance['configMODE'],1 ,1 ) == '7' OR substr( $instance['configMODE'],2 ,1 ) >= '5' OR substr( $instance['configMODE'],3 ,1 ) >= '5' ) { echo '[color=Red]'; } else { echo '[color=Green]'; }
-					   echo $instance['configMODE'] .'[/color]) | ';
-
-					if ( @$instance['definesEXIST'] == _FPA_Y ) {
-                       echo   _FPA_DEFI . ' ' . _FPA_E . ' | ';
-					   if ( @$instance['equalPATH'] == _FPA_N ) {
-					       echo '[color=Red]'. _FPA_DEFIPA .'[/color]  | ';
-					   }
-					}
-
-					echo "\r\n";
-
-					echo '[b]'. _FPA_CFG .' '. _FPA_OPTS .' :: Offline:[/b] '. $instance['configOFFLINE'] .' | [b]SEF:[/b] '. $instance['configSEF'] .' | [b]SEF Suffix:[/b] '. $instance['configSEFSUFFIX'] .' | [b]SEF ReWrite:[/b] '. $instance['configSEFRWRITE'] .' | ';
-					echo '[b].htaccess/web.config:[/b] ';
-
-						if ( ($instance['configSITEHTWC'] == _FPA_N AND $instance['configSEFRWRITE'] == '1') OR ($instance['configSITEHTWC'] == _FPA_N AND $instance['configSEFRWRITE'] == 'true' )) { echo '[color=orange]'. $instance['configSITEHTWC'] .' (ReWrite Enabled but no .htaccess?)[/color] | ';
-						} elseif ( $instance['configSITEHTWC'] == _FPA_Y ) { echo '[color=Green]'. $instance['configSITEHTWC'] .'[/color] | ';
-						} elseif ( $instance['configSITEHTWC'] == _FPA_N ) { echo '[color=orange]'. $instance['configSITEHTWC'] .'[/color] | '; }
-
-					echo '[b]GZip:[/b] '. $instance['configGZIP'] .' | [b]Cache:[/b] '. $instance['configCACHING'] .' | [b]CacheTime:[/b] '. $instance['configCACHETIME'] .' | [b]CacheHandler:[/b] '. $instance['configCACHEHANDLER'] .' | [b]CachePlatformPrefix:[/b] '. $instance['configCACHEPLFPFX'] .' | [b]FTP Layer:[/b] '. $instance['configFTP'] .' | [b]Proxy:[/b] '. $instance['configPROXY'] .' | [b]LiveSite:[/b] '. $instance['configLIVESITE'] .' | [b]Session lifetime:[/b] '. $instance['configLIFETIME'] .' | [b]Session handler:[/b] '. $instance['configSESSHAND'] .' | [b]Shared sessions:[/b] '. $instance['configSHASESS'] .' | [b]SSL:[/b] '. $instance['configSSL'] .' | [b]Error Reporting:[/b] '. $instance['configERRORREP'] .' | [b]Site Debug:[/b] '. $instance['configSITEDEBUG'] .' | ';
-
-						if ( version_compare( $instance['cmsRELEASE'], '1.5', '>=' ) ) {
-							echo '[b]Language Debug:[/b] '. $instance['configLANGDEBUG'] .' | ';
-							echo '[b]Default Access:[/b] '. $instance['configACCESS'] .' | [b]Unicode Slugs:[/b] '. $instance['configUNICODE'] .' | [b]dbConnection Type:[/b] '. $instance['configDBTYPE'] .' | ';
-						}
-
-						echo '[b]' . _FPA_SUPPHP .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] . ': [/b]' ;
-							if ( $snapshot['phpSUP4J'] == _FPA_Y ) { echo '[color=Green]'; } else { echo '[color=Red]'; }
-							 echo $snapshot['phpSUP4J'] .'[/color] | ';
-
-						echo '[b]' . _FPA_SUPSQL .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] . ': [/b]' ;
-							if ( $snapshot['sqlSUP4J'] == _FPA_Y ) { echo '[color=Green]'; } else { echo '[color=Red]'; }
-							 echo $snapshot['sqlSUP4J'] .'[/color] | ';
-
-						echo '[b]'. _FPA_DB .' '. _FPA_CREDPRES .':[/b] ';
-							if ( $instance['configDBCREDOK'] == _FPA_Y ) { echo '[color=Green]'; } else { echo '[color=Red]'; }
-							echo $instance['configDBCREDOK'] .'[/color] | ';
-
-					} else {
-					   if ( @$instance['definesEXIST'] == _FPA_Y ) {
-					       echo '[color=orange]'. _FPA_NF .' (' . _FPA_DEFI . ' ' . _FPA_E . ')[/color]';
-					       if ( @$instance['equalPATH'] == _FPA_N ) {
-					           echo '[color=Red]'. _FPA_DEFIPA .'[/color] ';
-					       }
-					   } else {
-					       echo '[color=orange]'. _FPA_NF .'[/color]';
-					   }
-					}
-					echo "\r\n\r\n";
-
-
-					echo '[b]'. _FPA_HOST .' '. _FPA_CFG .' :: OS:[/b] '. $system['sysPLATOS'] .' |  [b]OS '._FPA_VER.':[/b] '. $system['sysPLATREL'] .' | [b]'. _FPA_TEC .':[/b] '. $system['sysPLATTECH'] .' | [b]'. _FPA_WSVR .':[/b] '. $system['sysSERVSIG'] .' | [b]Encoding:[/b] '. $system['sysENCODING'] .' |  [b]'. _FPA_SYS .' TMP '. _FPA_WRITABLE .':[/b] ';
-						if ( $system['sysTMPDIRWRITABLE'] == _FPA_Y ) { echo '[color=Green]'; } else { echo '[color=Red]'; }
-						echo $system['sysTMPDIRWRITABLE'] .'[/color] | ';
-
-					if ( function_exists( 'disk_free_space' ) )
-						{
-						$free_space = sprintf( '%.2f', disk_free_space( './' ) /1073741824 );
-						$system['sysFREESPACE'] = $free_space .' GiB';
-						  echo '[b]  ' . _FPA_FDSKSP . ' :[/b] ' . $system['sysFREESPACE'] . ' |';
-						}
-						else
-						{
-						  echo '[b]  ' . _FPA_FDSKSP . ' :[/b] ' . _FPA_U . ' |';
-						}
-
-					echo "\r\n\r\n";
-
-					echo '[b]PHP '. _FPA_CFG .' :: '. _FPA_VER .':[/b] ';
-						if ( version_compare( $phpenv['phpVERSION'], '5.0.0', '<' ) ) { echo '[color=Red]'. $phpenv['phpVERSION'] .'[/color] | '; } else { echo '[b]'. $phpenv['phpVERSION'] .'[/b] | '; }
-
-					echo '[b]PHP API:[/b] ';
-						if ( $phpenv['phpAPI'] == 'apache2handler' ) { echo '[color=orange]'. $phpenv['phpAPI'] .'[/color] | '; } else { echo '[b]'. $phpenv['phpAPI'] .'[/b] | '; }
-
-					echo '[b]Session Path '. _FPA_WRITABLE .':[/b] ';
-						if ( $phpenv['phpSESSIONPATHWRITABLE'] == _FPA_Y ) { echo '[color=Green]'. $phpenv['phpSESSIONPATHWRITABLE'] .'[/color] | '; } elseif ( $phpenv['phpSESSIONPATHWRITABLE'] == _FPA_N ) { echo '[color=Red]'. $phpenv['phpSESSIONPATHWRITABLE'] .'[/color] | '; } else { echo '[color=orange]'. $phpenv['phpSESSIONPATHWRITABLE'] .'[/color] | '; }
-
-					echo '[b]Display Errors:[/b] '. $phpenv['phpERRORDISPLAY'] .' | [b]Error Reporting:[/b] '. $phpenv['phpERRORREPORT'] .' | [b]Log Errors To:[/b] '. $phpenv['phpERRLOGFILE'] .' | [b]Last Known Error:[/b] '. @$phpenv['phpLASTERRDATE'] .' | [b]Register Globals:[/b] '. $phpenv['phpREGGLOBAL'] .' | [b]Magic Quotes:[/b] '. $phpenv['phpMAGICQUOTES'] .' | [b]Safe Mode:[/b] '. $phpenv['phpSAFEMODE'] .' | [b]Allow url fopen:[/b] '. $phpenv['phpURLFOPEN'] .' | [b]Open Base:[/b] '. $phpenv['phpOPENBASE'] .' | [b]Uploads:[/b] '. $phpenv['phpUPLOADS'] .' | [b]Max. Upload Size:[/b] '. $phpenv['phpMAXUPSIZE'] .' | [b]Max. POST Size:[/b] '. $phpenv['phpMAXPOSTSIZE'] .' | [b]Max. Input Time:[/b] '. $phpenv['phpMAXINPUTTIME'] .' | [b]Max. Execution Time:[/b] '. $phpenv['phpMAXEXECTIME'] .' | [b]Memory Limit:[/b] '. $phpenv['phpMEMLIMIT'];
-
-					echo "\r\n\r\n";
-
-									echo '[b]Database '. _FPA_CFG .' :: [/b] ';
-					if ( @$instance['configDBTYPE'] == 'sqlsrv' ) { echo '[color=brown][b]' . _FPA_MSSQL_SUPP . '[/b][/color]  '; }
-
-					if ( $database['dbDOCHECKS'] == _FPA_N AND @$instance['configDBTYPE'] != 'sqlsrv') {
-					echo '[color=orange]'. _FPA_DB .' '. _FPA_DBCREDINC .'[/color] '. _FPA_NODISPLAY;
-					echo "\r\n";
-
-							if ( @$instance['configDBCREDOK'] != _FPA_Y AND $instance['instanceFOUND'] == _FPA_Y ) {
-								echo '[color=Red][b]'. _FPA_MISSINGCRED .': [/b][/color] ';
-								if ( @$instance['configDBTYPE'] == '' ) { echo '[color=orange][b]Connection Type[/b] missing[/color] | '; }
-								if ( @$instance['configDBNAME'] == '' ) { echo '[color=orange][b]Database Name[/b] missing[/color] |'; }
-								if ( @$instance['configDBHOST'] == '' ) { echo '[color=orange][b]MySQL Host[/b] missing[/color] | '; }
-								if ( @$instance['configDBPREF'] == '' ) { echo '[color=orange][b]Table Prefix[/b] missing[/color] | '; }
-								if ( @$instance['configDBUSER'] == '' ) { echo '[color=orange][b]Database Username[/b] missing[/color] | '; }
-								if ( @$instance['configDBPASS'] == '' ) { echo '[color=orange][b]Database Password[/b] missing[/color] |'; }
-
-							}
-
-
-					} elseif ( @$database['dbERROR'] != _FPA_N AND @$instance['configDBTYPE'] != 'sqlsrv') { echo '[color=Red][b]'. _FPA_ECON .':[/b] ';
-						echo  @$database['dbERROR'] .'[/color]' ;
-					} elseif (@$instance['configDBTYPE'] != 'sqlsrv') {
-						echo '[b]'. _FPA_VER .':[/b] [b]'. $database['dbHOSTSERV'] .'[/b] (Client:'. $database['dbHOSTCLIENT'] .') | ';
-						echo '[b]'. _FPA_DB .' '. _FPA_TSIZ .':[/b] '. $database['dbSIZE'] .' | [b]'. _FPA_CONF_PREF_TABLE . ':&nbsp[/b] '. $confPrefTables . ' | [b]'. _FPA_OTHER_TABLE . ':&nbsp[/b] '. $notconfPrefTables ;
-					}
-
-		echo '[/size][/quote]';
-
-
-
-
-					// do detailed information
-					echo '[quote="'. _FPA_DETAILED .' '. _FPA_ENVIRO .' ::"][size=85]';
-
-					echo '[b]'. _FPA_PHPEXT_TITLE .' :: [/b]';
-
-						foreach ( $phpextensions as $key => $show ) {
-
-							if ( $show != $phpextensions['ARRNAME'] ) {
-
-								// find the requirements and mark them as present or missing
-								if ( $key == 'libxml' OR $key == 'xml' OR $key == 'zip' OR $key == 'openssl' OR $key == 'zlib' OR $key == 'curl' OR $key == 'iconv' OR $key == 'mbstring' OR $key == 'mysql' OR $key == 'mysqli' OR $key == 'pdo_mysql' OR $key == 'mcrypt' OR $key == 'suhosin' OR $key == 'cgi' OR $key == 'cgi-fcgi' ) {
-									echo '[color=Green][b]'. $key .'[/b][/color] ('. $show .') | ';
-								} elseif ( $key == 'apache2handler' ) {
-									echo '[color=orange]'. $key .'[/color] ('. $show .') | ';
-								} else {
-									echo $key .' ('. $show .') | ';
-								}
-
-							} // endif !arrname
-
-							if ( !in_array( $key, $phpreq ) ) {
-								unset ( $phpreq[$key] );
-							}
-
-						}
-
-						if ( version_compare( $instance['cmsRELEASE'], '3.8', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
-						  unset($phpreq['mcrypt']);
-						}
-
-						if (version_compare( $phpenv['phpVERSION'], '7.0.0', '>=' ))   {
-						  unset($phpreq['mysql']);
-						}
-
-						echo "\r\n";
-						echo '[b]'. _FPA_POTME .' :: [/b]';
-						foreach ( $phpreq as $missingkey => $missing ) {
-							echo '[color=orange]'. $missingkey .'[/color] | ';
-						}
-
-			// disabled PHP functions
-			if ( $phpenv['phpDISABLED'] ) {
-                echo "\r\n";
-                echo '[b]'. _FPA_DI_PHP_FU .' :: [/b]';
-                $disabledfunctions = explode(",",$phpenv['phpDISABLED']);
-                $arrlength = count($disabledfunctions);
- 				for($x = 0; $x < $arrlength; $x++) {
- 				   echo  $disabledfunctions[$x] .' | ';
- 				}
-			}
-
-						echo "\r\n\r\n";
-						echo '[b]Switch User '. _FPA_ENVIRO .'[/b] [i](Experimental)[/i][b] :: PHP CGI:[/b] '. $phpenv['phpCGI'] .' | [b]Server SU:[/b] '. $phpenv['phpAPACHESUEXEC'] .' |  [b]PHP SU:[/b] '. $phpenv['phpPHPSUEXEC'] .' |   [b]Custom SU (LiteSpeed/Cloud/Grid):[/b] '. $phpenv['phpCUSTOMSU'];
-						echo "\r\n";
-						echo '[b]'. _FPA_POTOI .':[/b] ';
-							if ( $phpenv['phpOWNERPROB'] == _FPA_Y ) { echo '[color=Red]'; } elseif ( $phpenv['phpOWNERPROB'] == _FPA_N ) { echo '[color=Green]'; } else { echo '[color=orange]'; }
-							echo $phpenv['phpOWNERPROB'] .'[/color] ';
-
-
-						// IF APACHE with PHP in Module mode
-						if ( $phpenv['phpAPI'] == 'apache2handler' ) {
-						echo "\r\n\r\n";
-
-							echo '[b]'. _FPA_APAMOD_TITLE .' :: [/b]';
-
-							foreach ( $apachemodules as $key => $show ) {
-
-								if ( $show != $apachemodules['ARRNAME'] ) {
-
-									// find the requirements and mark them as present or missing
-									if ( $show == 'mod_rewrite' OR $show == 'mod_cgi' OR $show == 'mod_cgid' OR $show == 'mod_expires' OR $show == 'mod_deflate' OR $show == 'mod_auth'  ) {
-										echo '[color=Green][b]'. $show .'[/b][/color] | ';
-									} elseif ( $show == 'mod_php4' ) {
-										echo '[color=Red]'. $show .'[/color] | ';
-									} else {
-										echo $show .' | ';
-									}
-
-								} // endif !arrname
-
-								if ( !in_array( $show, $apachereq ) ) {
-									unset ( $apachereq['ARRNAME'] );
-									unset ( $apachereq[$show] );
-								}
-
-							}
-
-							echo "\r\n";
-							echo '[b]'. _FPA_POTMM .' :: [/b]';
-							foreach ( $apachereq as $missingkey => $missing ) {
-								echo '[color=orange]'. $missingkey .'[/color] | ';
-							}
-
-							echo "\r\n";
-
-						} // end if Apache and PHP module
-
-
-
-					echo '[/size][/quote]';
-
-
-
-						if ( $instance['instanceFOUND'] == _FPA_Y ) {
-							echo '[quote="Folder Permissions ::"][size=85]';
-
-								echo '[b]'. _FPA_COREDIR_TITLE .' :: [/b]';
-
-									foreach ( $folders as $i => $show ) {
-
-										if ( $show != $folders['ARRNAME'] ) {
-
-											if ( $_POST['showProtected'] == '3' ) {
-												echo '[color=orange]--'. _FPA_HIDDEN .'--[/color] (';
-											} else {
-												echo $show .' (';
-											}
-
-											if ( substr( $modecheck[$show]['mode'],1 ,1 ) == '7' OR substr( $modecheck[$show]['mode'],2 ,1 ) == '7' ) {
-												echo '[color=Red]'. $modecheck[$show]['mode'] .'[/color]) | ';
-											} else {
-												echo $modecheck[$show]['mode'] .') | ';
-											}
-
-										}
-
-									}
-
-
-									if ( @$_POST['showElevated'] == '1' ) {
-										echo "\r\n\r\n";
-
-										$limitCount = '0';
-										echo '[b]'. _FPA_ELEVPERM_TITLE .'[/b] [i]('. _FPA_FIRST .' 10)[/i][b] :: [/b]';
-
-											foreach ( $elevated as $key => $show ) {
-
-												if ( $limitCount >= '11' ) {
-													unset ( $key );
-												} else {
-
-													if ( $show != $elevated['ARRNAME'] ) {
-
-														if ( $_POST['showProtected'] == '3' ) {
-															echo '[color=orange]--'. _FPA_HIDDEN .'--[/color] (';
-														} else {
-
-															if ( $key == 'None' ) {
-																echo '[color=Green][b]'. $key .'[/b][/color] ';
-															} else {
-																echo $key .'/ (';
-
-															}
-
-														}
-
-														if ( $key != 'None' ) {
-
-															if ( substr( $show['mode'],1 ,1 ) == '7' OR substr( $show['mode'],2 ,1 ) == '7' ) {
-																echo '[color=Red]'. $show['mode'] .'[/color]) | ';
-															} else {
-																echo $show['mode'] .') | ';
-
-															}
-
-														}
-
-													}
-
-												}
-
-												$limitCount ++;
-												}
-
-									}
-
-								echo '[/size][/quote]';
-
-						} // end if InstanceFOUND
-
-
-
-
-
-					// do the Database Statistics and Table information
-					if ( $database['dbDOCHECKS'] == _FPA_Y AND @$database['dbERROR'] == _FPA_N AND @$_POST['showTables'] == '1' AND $database['dbHOSTINFO'] <> _FPA_U AND $instance['configDBTYPE'] <> 'postgresql' AND $instance['configDBTYPE'] <> 'pgsql' ) {
-						echo '[quote="Database Information ::"][size=85]';
-						echo '[b]'. _FPA_DB .' '. _FPA_STATS .' :: [/b]';
-						foreach ( $database['dbHOSTSTATS'] as $show ) {
-						$dbPieces = explode(": ", $show );
-						echo '[b]'. $dbPieces[0] .':[/b] '. $dbPieces[1] .' | ';
-						}
-						echo '[/size][/quote]';
-					}
-
-					// do the Extensions information
-					if ( $instance['instanceFOUND'] == _FPA_Y AND ( @$_POST['showComponents'] == '1' OR @$_POST['showModules'] == '1' OR @$_POST['showPlugins'] == '1' ) ) {
-					echo '[quote="Extensions Discovered ::"][size=85]';
-
-						if ( $_POST['showProtected'] == '3' ) {
-							echo '[color=orange][b]Strict[/b] Information Privacy was selected.[/color] Nothing to display.';
-							echo '[/size][/quote]';
-						} else {
-
-							if ( @$_POST['showComponents'] == '1' ) {
-								echo '[b]'. _FPA_EXTCOM_TITLE .' :: '. _FPA_SITE .' :: [/b]';
-							if ( $showCoreEx == 1) {
-								echo "\r\n";
-								echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
-                                if ( isset ($component['SITE'])) {
-									foreach ( $component['SITE'] as $key => $show ) {
-										if (isset($exset[0]['name'])) {
-										$extarrkey = recursive_array_search($show['name'], $exset);
-                                        if ($extarrkey  !== False) {
-										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '?' ;}
-										} else { $extenabled = '?' ;}
-										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '?';
-										}
-										if ( $show['type'] == _FPA_JCORE)
-										{
-										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
-										}
-									}
-								}
-                               echo '[/color]';
-							}
-								echo "\r\n";
-								echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
-                                if ( isset ($component['SITE'])) {
-									foreach ( $component['SITE'] as $key => $show ) {
-										if (isset($exset[0]['name'])) {
-										$extarrkey = recursive_array_search($show['name'], $exset);
-                                        if ($extarrkey  !== False) {
-										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '?' ;}
-										} else { $extenabled = '?' ;}
-										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '?';
-										}
-										if ( $show['type'] == _FPA_3PD)
-										{
-										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
-										}
-									}
-								}
-                                          echo '[/color]';
-								echo "\r\n\r\n";
-
-								echo '[b]'. _FPA_EXTCOM_TITLE .' :: '. _FPA_ADMIN .' :: [/b]';
-							if ( $showCoreEx == 1) {
-								echo "\r\n";
-								echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
-                                if ( isset ($component['ADMIN'])) {
-									foreach ( $component['ADMIN'] as $key => $show ) {
-										if (isset($exset[0]['name'])) {
-										$extarrkey = recursive_array_search($show['name'], $exset);
-                                        if ($extarrkey  !== False) {
-										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '?' ;}
-										} else { $extenabled = '?' ;}
-										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '?';
-										}
-										if ( $show['type'] == _FPA_JCORE)
-										{
-										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
-										}
-									}
-								}
-                               echo '[/color]';
-							}
-								echo "\r\n";
-								echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
-                                if ( isset ($component['ADMIN'])) {
-									foreach ( $component['ADMIN'] as $key => $show ) {
-										if (isset($exset[0]['name'])) {
-										$extarrkey = recursive_array_search($show['name'], $exset);
-                                        if ($extarrkey  !== False) {
-										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '?' ;}
-										} else { $extenabled = '?' ;}
-										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '?';
-										}
-										if ( $show['type'] == _FPA_3PD)
-										{
-										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
-										}
-									}
-								}
-                                          echo '[/color]';
-			  			}
-								echo "\r\n\r\n";
-
-							if ( @$_POST['showModules'] == '1' ) {
-								echo '[b]'. _FPA_EXTMOD_TITLE .' :: '. _FPA_SITE .' :: [/b]';
-							if ( $showCoreEx == 1) {
-								echo "\r\n";
-								echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
-                                if ( isset ($module['SITE'])) {
-									foreach ( $module['SITE'] as $key => $show ) {
-										if (isset($exset[0]['name'])) {
-										$extarrkey = recursive_array_search($show['name'], $exset);
-                                        if ($extarrkey  !== False) {
-										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '?' ;}
-										} else { $extenabled = '?' ;}
-										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '?';
-										}
-										if ( $show['type'] == _FPA_JCORE)
-										{
-										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
-										}
-									}
-								}
-                               echo '[/color]';
-							}
-								echo "\r\n";
-								echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
-                                if ( isset ($module['SITE'])) {
-									foreach ( $module['SITE'] as $key => $show ) {
-										if (isset($exset[0]['name'])) {
-										$extarrkey = recursive_array_search($show['name'], $exset);
-                                        if ($extarrkey  !== False) {
-										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '?' ;}
-										} else { $extenabled = '?' ;}
-										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '?';
-										}
-										if ( $show['type'] == _FPA_3PD)
-										{
-										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
-										}
-									}
-								}
-                                          echo '[/color]';
-								echo "\r\n\r\n";
-
-								echo '[b]'. _FPA_EXTMOD_TITLE .' :: '. _FPA_ADMIN .' :: [/b]';
-							if ( $showCoreEx == 1) {
-								echo "\r\n";
-								echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
-                                if ( isset ($module['ADMIN'])) {
-									foreach ( $module['ADMIN'] as $key => $show ) {
-										if (isset($exset[0]['name'])) {
-										$extarrkey = recursive_array_search($show['name'], $exset);
-                                        if ($extarrkey  !== False) {
-										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '?' ;}
-										} else { $extenabled = '?' ;}
-										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '?';
-										}
-										if ( $show['type'] == _FPA_JCORE)
-										{
-										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
-										}
-									}
-								}
-                               echo '[/color]';
-							}
-								echo "\r\n";
-								echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
-                                if ( isset ($module['ADMIN'])) {
-									foreach ( $module['ADMIN'] as $key => $show ) {
-										if (isset($exset[0]['name'])) {
-										$extarrkey = recursive_array_search($show['name'], $exset);
-                                        if ($extarrkey  !== False) {
-										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '?' ;}
-										} else { $extenabled = '?' ;}
-										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '?';
-										}
-										if ( $show['type'] == _FPA_3PD)
-										{
-										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
-										}
-									}
-								}
-                                echo '[/color]';
-			  			}
-								echo "\r\n\r\n";
-
-
-							if ( @$_POST['showLibraries'] == '1' ) {
-								echo '[b]'. _FPA_EXTLIB_TITLE .' :: [/b]';
-							if ( @$_POST[showCoreEx] == '1') {
-								echo "\r\n";
-								echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
-                                if ( isset ($library['SITE'])) {
-									foreach ( $library['SITE'] as $key => $show ) {
-										if (isset($exset[0]['name'])) {
-										$extarrkey = recursive_array_search($show['name'], $exset);
-                                        if ($extarrkey  !== False) {
-										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '?' ;}
-										} else { $extenabled = '?' ;}
-										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '?';
-										}
-										if ( $show['type'] == _FPA_JCORE)
-										{
-										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
-										}
-									}
-								}
-                               echo '[/color]';
-							}
-								echo "\r\n";
-								echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
-                                if ( isset ($library['SITE'])) {
-									foreach ( $library['SITE'] as $key => $show ) {
-										if (isset($exset[0]['name'])) {
-										$extarrkey = recursive_array_search($show['name'], $exset);
-                                        if ($extarrkey  !== False) {
-										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '?' ;}
-										} else { $extenabled = '?' ;}
-										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '?';
-										}
-										if ( $show['type'] == _FPA_3PD)
-										{
-										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
-										}
-									}
-								}
-                                    echo '[/color]';
-			  			    }
-								echo "\r\n\r\n";
-
-							if ( @$_POST['showPlugins'] == '1' ) {
-								echo '[b]'. _FPA_EXTPLG_TITLE .' :: [/b]';
-							if ( $showCoreEx == 1) {
-								echo "\r\n";
-								echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
-                                if ( isset ($plugin['SITE'])) {
-									foreach ( $plugin['SITE'] as $key => $show ) {
-										if (isset($exset[0]['name'])) {
-										$extarrkey = recursive_array_search($show['name'], $exset);
-                                        if ($extarrkey  !== False) {
-										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '?' ;}
-										} else { $extenabled = '?' ;}
-										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '?';
-										}
-										if ( $show['type'] == _FPA_JCORE)
-										{
-										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
-										}
-									}
-								}
-                               echo '[/color]';
-							}
-								echo "\r\n";
-								echo '[b]' .  _FPA_3PD . ':: [/b][color=Brown]';
-                                if ( isset ($plugin['SITE'])) {
-									foreach ( $plugin['SITE'] as $key => $show ) {
-										if (isset($exset[0]['name'])) {
-										$extarrkey = recursive_array_search($show['name'], $exset);
-                                        if ($extarrkey  !== False) {
-										$extenabled = $exset[$extarrkey]['enabled'];
-										} else { $extenabled = '?' ;}
-										} else { $extenabled = '?' ;}
-										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										$extenabled = '?';
-										}
-										if ( $show['type'] == _FPA_3PD)
-										{
-										echo  $show['name'] .' ('. $show['version'] .')  '.$extenabled.' | ';
-										}
-									}
-								}
-                                echo '[/color]';
-						} // end if showComponents, Modules, Plugins, if cmsFOUND
-							echo '[/size][/quote]';
-					} // end showProtected != strict
-
-
-						// do the template information
-						if ( $instance['instanceFOUND'] == _FPA_Y ) {
-							echo '[quote="'. _FPA_TMPL_TITLE .' Discovered ::"][size=85]';
-
-								if ( $_POST['showProtected'] == '3' ) {
-									echo '[color=orange][b]'. _FPA_STRICT .'[/b] '. _FPA_INFOPRI .'[/color] '. _FPA_NODISPLAY;
-									echo '[/size][/quote]';
-								} else {
-
-									echo '[b]'. _FPA_TMPL_TITLE .' :: '. _FPA_SITE .' :: [/b]';
-                                    if ( isset ($template['SITE'])) {
-										foreach ( $template['SITE'] as $key => $show ) {
-										if (substr($instance['cmsRELEASE'],0,1) <> 1 AND @$database['dbHOSTINFO'] <> _FPA_U OR $postgresql = _FPA_Y) {
-										if (isset($exset[0]['name'])) {
-										  $extarrkey = recursive_array_search($show['name'], $exset);
-                                          if ($extarrkey  !== False) {
-										  $extenabled = $exset[$extarrkey]['enabled'];
-										  } else { $extenabled = '?' ;}
-										  } else { $extenabled = '?' ;}
-										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										  $extenabled = '?';
-										}
-										if (isset($tmpldef[0]['template'])) {
-										$extarrkey = recursive_array_search($show['name'], $tmpldef);
-                                        if ($extarrkey  !== False) {
-										$deftempl = $tmpldef[$extarrkey]['home'];
-                                        } else { $deftempl = '' ;}
-										} else { $deftempl = '' ;}
-										if ($deftempl == 1 ){
-										  $bldop = '[b][u]';
-										  $bldcl = '[/u][/b]';
-										} else {
-										  $bldop = '';
-										  $bldcl = '';
-										}
-										} else {
-										  $bldop = '';
-										  $bldcl = '';
-										  $extenabled = '';
-										}
-										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
-										{
-										if ( $show['type'] == _FPA_3PD)
-										{
-										echo '[color=Brown]'. $bldop . $show['name'] .' ('. $show['version'] .')' . $bldcl . '[/color]  '.$extenabled.' | ';
-										} else {
-										echo '[color=Blue]'. $bldop . $show['name'] .' ('. $show['version'] .')' . $bldcl . '[/color]  '.$extenabled.' | ';
-										}
-									}
-								}
-				 			}
-									echo "\r\n";
-
-									echo '[b]'. _FPA_TMPL_TITLE .' :: '. _FPA_ADMIN .' :: [/b]';
-                                    if ( isset ($template['ADMIN'])) {
-										foreach ( $template['ADMIN'] as $key => $show ) {
-										if (substr($instance['cmsRELEASE'],0,1) <> 1 AND @$database['dbHOSTINFO'] <> _FPA_U OR $postgresql = _FPA_Y ) {
-										  if (isset($exset[0]['name'])) {
-										    $extarrkey = recursive_array_search($show['name'], $exset);
-                                            if ($extarrkey  !== False) {
-										    $extenabled = $exset[$extarrkey]['enabled'];
-										  } else { $extenabled = '?' ;}
-										  } else { $extenabled = '?' ;}
-										if ($extenabled <> 0 AND $extenabled <> 1 ){
-										  $extenabled = '?';
-										}
-										if (isset($tmpldef[0]['template'])) {
-										$extarrkey = recursive_array_search($show['name'], $tmpldef);
-                                        if ($extarrkey  !== False) {
-										$deftempl = $tmpldef[$extarrkey]['home'];
-                                        } else { $deftempl = '' ;}
-										} else { $deftempl = '' ;}
-										if ($deftempl == 1 ){
-										  $bldop = '[b][u]';
-										  $bldcl = '[/u][/b]';
-										} else {
-										  $bldop = '';
-										  $bldcl = '';
-										}
-										} else {
-										  $bldop = '';
-										  $bldcl = '';
-										  $extenabled = '';
-										}
-										if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1)
-										{
-										if ( $show['type'] == _FPA_3PD)
-										{
-										echo '[color=Brown]'. $bldop . $show['name'] .' ('. $show['version'] .')' . $bldcl . '[/color]  '.$extenabled.' | ';
-										} else {
-										echo '[color=Blue]'. $bldop . $show['name'] .' ('. $show['version'] .')' . $bldcl . '[/color]  '.$extenabled.' | ';
-										}
-									}
-									}
-							}
-						}
-									echo '[/size][/quote]';
-					}
-					} // end if InstanceFOUND
- 				echo '[/quote]';
-						} // end showProtected != strict
-
-
-				echo '</textarea>';
-				echo '<div style="clear:both;"><br /></div>';
-				echo '<span class="ok">'. _FPA_INS_7 .'</span>';
-				echo '<div style="clear:both;"><br /></div>';
-				echo '</div>';
-
-		?>
-
-						</form>
-
-			</div>
-
-		<div style="clear:both;"><br /></div>
-	  </div>
-</div>
-<!-- POST FORM -->
-
-
-
-
-
-<?php
-	// build a full-width div to hold two 'half-width' section, side-by-side
-	echo '<div class="half-section-container" style="z-index:1;">'; // start half-section container
-
-		/** display the instance information *************************************************/
-		echo '<div class="half-section-information-left">'; // start left content block
-
-		echo '<div class="section-title" style="text-align:center;">'. $instance['ARRNAME'] .' :: Discovery</div>';
-		echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
-		// this is the column heading area, if any
-
-
-		/** mini-content, shown in all cases *************************************************/
-		echo '<div class="mini-content-container">';
-		echo '<div class="mini-content-box">';
-		echo '<div class="mini-content-title">CMS '. _FPA_F .'</div>';
-
-                # die(var_dump($instance));
-			if ( $instance['instanceFOUND'] == _FPA_Y ) {
-				echo @$instance['cmsPRODUCT'] .'<br />';
-				echo '<strong>'. @$instance['cmsRELEASE'] .'.'. @$instance['cmsDEVLEVEL'] .'</strong><br />';
-
-				if ( strtolower( @$instance['cmsDEVSTATUS'] ) == 'stable' ) {
-					$statusClass = 'ok-hilite';
-				} elseif ( strtolower( substr( @$instance['cmsDEVSTATUS'],0, 4 ) ) == 'alph' OR strtolower( substr( @$instance['cmsDEVSTATUS'],0, 4 ) ) == 'beta' ) {
-					$statusClass = 'alert';
-				} elseif ( strtolower( substr( @$instance['cmsDEVSTATUS'],0, 2 ) ) == 'rc' ) {
-					$statusClass = 'warn';
-				} else {
-					$statusClass = 'warn';
-				}
-
-				echo '<div class="'. $statusClass .'" style="margin: 0px auto;margin-top:1px;">'. @$instance['cmsDEVSTATUS'] .'</div>';
-
-			} else {
-				echo '<div class="warn" style="margin: 0px auto;">'. @$instance['instanceFOUND'] .'</div>';
-			}
-
-		// Warning if more than one instance of version.php found
-			if ($vFileSum > 1) {
-				echo "\r\n";
-				echo '<font color="Red">' . _FPA_MVFWF . '</font>';
-			}
-		echo '</div>';
-		echo '</div>';
-
-
-
-
-		// caters for the platform separation
-		echo '<div class="mini-content-container">';
-		echo '<div class="mini-content-box">';
-		echo '<div class="mini-content-title">'. _FPA_PLATFORM .'</div>';
-
-		if ( $instance['platformVFILE'] != _FPA_N ) {
-			echo $instance['platformPRODUCT'] .'<br />';
-			echo '<strong>'. $instance['platformRELEASE'] .'.'. @$instance['platformDEVLEVEL'] .'</strong><br />';
-
-
-				if ( strtolower( $instance['platformDEVSTATUS'] ) == 'stable' ) {
-					$statusClass = 'ok-hilite';
-
-				} elseif ( strtolower( substr( $instance['platformDEVSTATUS'],0, 4 ) ) == 'alph' OR strtolower( substr( $instance['platformDEVSTATUS'],0, 4 ) ) == 'beta' ) {
-					$statusClass = 'alert';
-
-				} elseif ( strtolower( substr( $instance['platformDEVSTATUS'],0, 2 ) ) == 'rc' ) {
-					$statusClass = 'warn';
-
-				}
-
-				echo '<div class="'. $statusClass .'" style="margin: 0px auto;">'. $instance['platformDEVSTATUS'] .'</div>';
-
-		} elseif ( $instance['platformVFILE'] == _FPA_N AND $instance['cmsVFILE'] == _FPA_N) {
-			echo '<div class="warn" style="margin: 0px auto;">'. _FPA_N .'</div>';
-
-		} else {
-			echo _FPA_NA;
-		}
-
-		echo '</div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-container">';
-		echo '<div class="mini-content-box">';
-		echo '<div class="mini-content-title">'. _FPA_CF .' '. _FPA_E .'</div>';
-
-			if ( $instance['instanceCONFIGURED'] == _FPA_N ) {
-				$configuredClass = 'warn';
-
-			} else {
-				$configuredClass = 'ok';
-
-			}
-
-		echo '<div class="'. $configuredClass .'" style="margin: 0px auto;">'. $instance['instanceCONFIGURED'] .'</div>';
-		echo '</div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-container">';
-		echo '<div class="mini-content-box">';
-		echo '<div class="mini-content-title">'. _FPA_CF .' '. _FPA_VER .'</div>';
-
-			if ( @$instance['instanceCFGVERMATCH'] == _FPA_Y ) {
-				echo $instance['configVALIDFOR'];
-				echo '<div class="ok" style="width:99%;margin: 0px auto;">'. _FPA_YMATCH .' CMS</div>';
-
-			} elseif ( @$instance['instanceCFGVERMATCH'] == _FPA_N ) {
-				echo $instance['configVALIDFOR'];
-				echo '<div class="warn" style="width:99%;margin: 0px auto;">CMS '. _FPA_NMATCH .'</div>';
-
-			} elseif ( @$instance['configVALIDFOR'] == _FPA_U ) {
-				echo '<div class="warn" style="width:99%;margin: 0px auto;">'. $instance['configVALIDFOR'] .'</div>';
-
-			}
-
-		echo '</div>';
-		echo '</div>';
-
-
-		/** mini-content, only shown if instance found and configured ************************/
-		if ( $instance['instanceCONFIGURED'] != _FPA_N AND $instance['instanceFOUND'] != _FPA_N ) {
-
-			// force new line of mini-content-boxes
-			echo '<div style="clear:both;"></div>';
-
-			echo '<div class="mini-content-container">';
-			echo '<div class="mini-content-box">';
-			echo '<div class="mini-content-title">'. _FPA_CF .' '. _FPA_VALID .'</div>';
-
-				if ( @$instance['configSANE'] == _FPA_Y AND @$instance['configSIZEVALID'] != _FPA_N ) {
-					$saneClass = 'ok';
-					$configVALID = _FPA_Y;
-
-				} else {
-					$saneClass = 'warn';
-					$configVALID = _FPA_N;
-
-				}
-
-			echo '<div class="'. $saneClass .'" style="width:50px;margin: 0px auto;">'. $configVALID .'</div>';
-			echo '</div>';
-			echo '</div>';
-
-
-			echo '<div class="mini-content-container">';
-			echo '<div class="mini-content-box">';
-			echo '<div class="mini-content-title">'. _FPA_CF .' '. _FPA_MODE .'</div>';
-
-				// looking for --7 or -7- or -77 (default folder permissions are usually 755)
-				if ( substr( $instance['configMODE'],0 ,1 ) == '7' OR substr( $instance['configMODE'],1 ,1 ) == '7' OR substr( $instance['configMODE'],2 ,1 ) == '7' ) {
-					$modeClass = 'alert';
-
-				} elseif ( $instance['configMODE'] <= '644' ) {
-					$modeClass = 'ok';
-
-				} elseif ( substr( $instance['configMODE'],1 ,1 ) >= '5' OR substr( $instance['configMODE'],2 ,1 ) >= '5' ) {
-					$modeClass = 'warn';
-
-				} elseif ( $instance['configMODE'] == _FPA_N ) {
-					$modeClass = 'warn-text';
-
-				} else {
-					$modeClass = 'normal';
-
-				}
-
-			echo '<div class="'. $modeClass .'" style="width:50px;margin: 0px auto;">'. $instance['configMODE'] .'</div>';
-
-				// is the file writable?
-				if ( ( $instance['configWRITABLE'] == _FPA_Y ) AND ( substr( $instance['configMODE'],0 ,1 ) == '7' OR substr( $instance['configMODE'],1 ,1 ) == '7' OR substr( $instance['configMODE'],2 ,1 ) == '7' ) ) {
-					$writeClass = 'alert';
-					$canWrite = 'Writable';
-
-				} elseif ( ( $instance['configWRITABLE'] == _FPA_Y ) AND ( substr( $instance['configMODE'],0 ,1 ) <= '6' ) ) {
-					$writeClass = 'ok';
-					$canWrite = _FPA_WRITABLE;
-
-				} elseif ( ( $instance['configWRITABLE'] != _FPA_Y ) ) {
-					$writeClass = 'warn';
-					$canWrite = _FPA_RO;
-
-				}
-
-			echo '<div class="'. $writeClass .'" style="width:50px;margin: 0px auto;margin-top:1px;">'. $canWrite .'</div>';
-			echo '</div>';
-			echo '</div>';
-
-
-			echo '<div class="mini-content-container">';
-			echo '<div class="mini-content-box">';
-			echo '<div class="mini-content-title">'. _FPA_CF .' '. _FPA_OWNER .'</div>';
-
-				if ( $showProtected <= 2 ) {
-					echo $instance['configOWNER']['name'];
-
-				} else {
-					echo '<span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span>&nbsp;';
-
-				}
-
-			echo '</div>';
-			echo '</div>';
-
-
-			echo '<div class="mini-content-container">';
-			echo '<div class="mini-content-box">';
-			echo '<div class="mini-content-title">'. _FPA_CF .' '. _FPA_GROUP .'</div>';
-
-				if ( $showProtected <= 2 ) {
-					echo $instance['configGROUP']['name'];
-
-				} else {
-					echo '<span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span>&nbsp;';
-
-				}
-
-			echo '</div>';
-			echo '</div>';
-
-		} // end if no instance or configuration found dont display
-
-		echo '</div>';
-
-
-
-		// only do mode/permissions checks if an instance was found in the intial checks
-		if ( $instance['instanceFOUND'] != _FPA_Y ) {
-			// this is the content area
-			echo '<div class="row-content-container nothing-to-display" style="">';
-			echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">';
-			echo _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $instance['ARRNAME'].' '. _FPA_TESTP;
-
-				if ( $instance['instanceCONFIGURED'] == _FPA_Y ) {
-					echo '<br />'. _FPA_BUT .' '. _FPA_CFG .' '. _FPA_F;
-
-				}
-
-			echo '</div>';
-			echo '</div>';
-
-		}
-
-		echo '</div>';
-		// end content left block
-
-
-
-		/** display the system information *************************************************/
-		echo '<div class="half-section-information-right">'; // start right content block
-
-		echo '<div class="section-title" style="text-align:center;">'. $instance['ARRNAME'] .' :: '. _FPA_CFG .'</div>';
-		echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
-
-			// only do mode/permissions checks if an instance was found in the intial checks
-			if ( $instance['instanceCONFIGURED'] == _FPA_Y AND $instance['configVALIDFOR'] != _FPA_U ) {
-
-				echo '<div class="mini-content-container">';
-				echo '<div class="mini-content-box">';
-				echo '<div class="mini-content-title">Offline</div>';
-				echo $instance['configOFFLINE'];
-				echo '</div>';
-				echo '</div>';
-
-
-				echo '<div class="mini-content-container">';
-				echo '<div class="mini-content-box">';
-				echo '<div class="mini-content-title" style="margin-bottom:0px!important;">SEF URL\'s</div>';
-				echo '<div class="mini-content-box-small">';
-				echo '<div style="font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">'. _FPA_EN .':<div style="float:right;font-size:9px;">'. $instance['configSEF'] .'</div></div>';
-				echo '<div style="font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">Suffix:<div style="float:right;font-size:9px;">'. $instance['configSEFSUFFIX'] .'</div></div>';
-
-					if ( $system['sysSHORTWEB'] != 'MIC' AND ($instance['configSEFRWRITE'] == '1' OR $instance['configSEFRWRITE'] == 'true' ) AND $instance['configSITEHTWC'] != _FPA_Y ) {
-						$sefColor = 'ff0000';
-
-					} else {
-						$sefColor = '404040';
-
-					}
-
-				echo '<div style="font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;color:#'. $sefColor .';">ReWrite:<div style="float:right;color:#'. $sefColor .';font-size:9px;">'. $instance['configSEFRWRITE'] .'</div></div>';
-				echo '</div>';
-				echo '</div>';
-				echo '</div>';
-
-
-				echo '<div class="mini-content-container">';
-				echo '<div class="mini-content-box">';
-				echo '<div class="mini-content-title" style="margin-bottom:0px!important;">Compression</div>';
-				echo '<div class="mini-content-box-small">';
-				echo '<div style="font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">GZip:<div style="float:right;font-size:9px;">'. $instance['configGZIP'] .'</div></div>';
-				echo '<div style="font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">Cache:<div style="float:right;font-size:9px;">'. $instance['configCACHING'] .'</div></div>';
-				echo '</div>';
-				echo '</div>';
-				echo '</div>';
-
-
-				echo '<div class="mini-content-container">';
-				echo '<div class="mini-content-box">';
-				echo '<div class="mini-content-title" style="margin-bottom:0px!important;">Debugging</div>';
-				echo '<div class="mini-content-box-small">';
-				echo '<div style="font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">ErrorRep:<div style="float:right;font-size:9px;">'. $instance['configERRORREP'] .'</div></div>';
-				echo '<div style="float:right;font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">Site Debug:<div style="float:right;font-size:9px;">'. $instance['configSITEDEBUG'] .'</div></div>';
-				echo '<div style="float:right;font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">Lang Debug:<div style="float:right;font-size:9px;">'. $instance['configLANGDEBUG'] .'</div></div>';
-				echo '</div>';
-				echo '</div>';
-				echo '</div>';
-
-
-				echo '<div class="mini-content-container">';
-				echo '<div class="mini-content-box">';
-				echo '<div class="mini-content-title" style="margin-bottom:0px!important;">'. _FPA_DB .'</div>';
-				echo '<div class="mini-content-box-small">';
-				echo '<div style="font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">Type:<div style="float:right;font-size:9px;">'. $instance['configDBTYPE'] .'</div></div>';
-				echo '<div style="font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">'. _FPA_VER .':<div style="float:right;font-size:9px;">'. @$database['dbHOSTSERV'] .'</div></div>';
-				echo '<div style="font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">CharSet:<div style="float:right;font-size:9px;">'. @$database['dbCHARSET'] .'</div></div>';
-				echo '</div>';
-				echo '</div>';
-				echo '</div>';
-
-
-				echo '<div class="mini-content-container">';
-				echo '<div class="mini-content-box">';
-				echo '<div class="mini-content-title">'. _FPA_DB .' '. _FPA_CRED .'</div>';
-
-					if ( $instance['configDBCREDOK'] == _FPA_Y ) {
-						echo '<div class="ok" style="width:99%;margin: 0px auto;font-size:9px;">'. _FPA_YACOMP .'</div>';
-					} else {
-						echo '<div class="warn" style="width:99%;margin: 0px auto;font-size:9px;">'. _FPA_NACOMP .'</div>';
-					}
-
-				echo '</div>';
-				echo '</div>';
-
-
-				echo '<div class="mini-content-container">';
-				echo '<div class="mini-content-box">';
-				echo '<div class="mini-content-title" style="margin-bottom:0px!important;">'. _FPA_SEC .'</div>';
-				echo '<div class="mini-content-box-small">';
-				echo '<div style="font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">SSL:<div style="float:right;font-size:9px;">'. $instance['configSSL'] .'</div></div>';
-				echo '<div style="font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">Def\' Access:<div style="float:right;font-size:9px;">'. $instance['configACCESS'] .'</div></div>';
-				echo '</div>';
-				echo '</div>';
-				echo '</div>';
-
-
-				echo '<div class="mini-content-container">';
-				echo '<div class="mini-content-box">';
-				echo '<div class="mini-content-title" style="margin-bottom:0px!important;">'. _FPA_FEAT .'</div>';
-				echo '<div class="mini-content-box-small">';
-				echo '<div style="font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">FTP:<div style="float:right;font-size:9px;">'. $instance['configFTP'] .'</div></div>';
-				echo '<div style="font-size:9px;width:99%;border-bottom: 1px dotted #c0c0c0;">Unicode Slug:<div style="float:right;font-size:9px;">'. $instance['configUNICODE'] .'</div></div>';
-				echo '</div>';
-				echo '</div>';
-				echo '</div>';
-
-
-			} else { // an instance wasn't found in the initial checks, so no folders to check
-
-
-				echo '<div class="mini-content-container">';
-				echo '<div class="mini-content-box">';
-				echo '<div class="mini-content-title">'. _FPA_CF .' '. _FPA_VER .'</div>';
-				echo '<div class="warn" style="width:50px;margin: 0px auto;">'. _FPA_U .'</div>';
-				echo '</div>';
-				echo '</div>';
-
-
-				echo '<div class="mini-content-container">';
-				echo '<div class="mini-content-box">';
-				echo '<div class="mini-content-title">'. _FPA_CF .' '. _FPA_VALID .'</div>';
-
-					if ( @$instance['configSIZEVALID'] == _FPA_N ) {
-						echo '<div class="warn" style="width:99%;margin: 0px auto;">'. _FPA_EMPTY .'</div>';
-					}
-
-				echo '</div>';
-				echo '</div>';
-
-
-				echo '<div class="row-content-container nothing-to-display" style="">';
-				echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">';
-				echo _FPA_CFG .' '. _FPA_NF .' '. _FPA_OR .' '. _FPA_NVALID .'<br /> '. _FPA_NO .' '. $instance['ARRNAME'] .' '. _FPA_TESTP;
-				echo '</div>';
-				echo '</div>';
-			}
-
-		echo '</div>';
-		echo '</div>';
-		// end content right block
-
-	echo '</div>'; // end half-section container
-	showDev( $instance );
-?>
-
-
-
-<?php
-	// build a full-width div to hold two 'half-width' section, side-by-side
-	echo '<div class="half-section-container" style="">'; // start half-section container
-
-		/** display the instance information *************************************************/
-		echo '<div class="half-section-information-left">'; // start left content block
-
-		echo '<div class="section-title" style="text-align:center;">'. $database['ARRNAME'] .' :: '. _FPA_DISC .'</div>';
-		echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;float:left;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px; width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-right:0px;padding-bottom:0px;text-transform:uppercase;">'. @$instance['configDBTYPE'] .' '. _FPA_VER .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-top-right-radius: 5px;-moz-border-top-right-radius: 5px;-webkit-border-top-right-radius: 5px;  border-top-left-radius: 5px;-moz-border-top-left-radius: 5px;-webkit-border-top-left-radius: 5px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;border-top: 1px solid #42AEC2;1px solid #ccebeb;">';
-
-			if ( @$database['dbHOSTSERV'] ) {
-				echo '<span class="normal">'. _FPA_SERV .': '. $database['dbHOSTSERV'] .'&nbsp;</span>';
-
-			} else {
-				echo '<span class="normal">'. _FPA_SERV .':</span> <span class="warn-text">'. _FPA_U .'&nbsp;</span>';
-			}
-
-			if ( @$database['dbHOSTCLIENT'] ) {
-				echo '<span class="normal">&nbsp;&nbsp;'. _FPA_CLNT .': '. $database['dbHOSTCLIENT'] .'&nbsp;</span>';
-
-			} else {
-				echo '<span class="normal">&nbsp;&nbsp;'. _FPA_CLNT .':</span> <span class="warn-text">'. _FPA_U .'&nbsp;</span>';
-			}
-
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;float:left;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:0px;text-transform:uppercase;">'. @$instance['configDBTYPE'] .' '. _FPA_HNAME .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-
-			if ( $showProtected == 1 ) {
-
-				if ( $instance['configDBHOST'] ) {
-					echo '<div class="normal">&nbsp;'. $instance['configDBHOST'] .'&nbsp;</div>';
-
-				} else {
-					echo '<span class="alert-text">&nbsp;'. _FPA_NC .'&nbsp;</span>';
-				}
-
-			} else {
-				echo '<span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span>&nbsp;';
-			}
-
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;float:left;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:0px;text-transform:uppercase;">'. _FPA_CONT .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-
-		echo '<span class="normal">';
-
-			if ( $database['dbLOCAL'] == _FPA_Y ) {
-				echo '('. _FPA_LOCAL .') '. @$database['dbHOSTINFO'] .'&nbsp';
-
-			} elseif ( $database['dbLOCAL'] == _FPA_N AND @$database['dbHOSTINFO'] ) {
-
-				if ( $showProtected <= 2 ) {
-					echo '('. _FPA_REMOTE .') '. $database['dbHOSTINFO'] .'&nbsp';
-
-				} else {
-					echo '<span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span>&nbsp;';
-				}
-
-			} elseif ( $database['dbLOCAL'] == _FPA_N AND !@$database['dbHOSTINFO'] ) {
-				echo '('. _FPA_REMOTE .') <span class="warn-text"> '. _FPA_U .'</span>&nbsp';
-
-			} else {
-				echo '<span class="warn-text">'. _FPA_U .'</span>';
-			}
-
-			echo '</span>';
-
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;float:left;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:0px;text-transform:uppercase;">PHP '. _FPA_SUP .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-
-			if ( @$instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_N ) {
-				echo '<span class="alert-text">'. $instance['configDBTYPE'] .' '. _FPA_IS .' '. _FPA_NSUP .' '. _FPA_BY .' PHP '. $phpenv['phpVERSION'] .'&nbsp;</span>';
-
-			} elseif (  @$instance['configDBTYPE'] == 'mysql' AND $phpenv['phpSUPPORTSMYSQL'] == _FPA_N ) {
- 				echo '<span class="alert-text">'. $instance['configDBTYPE'] .' '. _FPA_IS .' '. _FPA_NSUP .' '. _FPA_BY .' PHP '. $phpenv['phpVERSION'] .'&nbsp;</span>';
-
-			} elseif ( ( @$instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_Y ) OR ( @$instance['configDBTYPE'] == 'mysql' AND $phpenv['phpSUPPORTSMYSQL'] == _FPA_Y ) OR @$instance['configDBTYPE'] == 'pdomysql' OR @$instance['configDBTYPE'] == 'postgresql'OR @$instance['configDBTYPE'] == 'pgsql') {
-				echo '<span class="ok">'. $instance['configDBTYPE'] .' '. _FPA_IS .' '. _FPA_YSUP .' '. _FPA_BY .' PHP '. $phpenv['phpVERSION'] .'&nbsp;</span>';
-
-			} else {
-				echo '<span class="warn-text">PHP '. $phpenv['phpVERSION'] .' '. _FPA_SUP .' '. _FPA_IS .' '. _FPA_U .'&nbsp;</span>';
-			}
-
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;float:left;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:0px;text-transform:uppercase;">'. _FPA_CON .' '. _FPA_TO .' '. @$instance['configDBTYPE'] .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-
-			if ( $database['dbDOCHECKS'] == _FPA_N ) {
-				echo '<span class="warn-text">&nbsp;'. _FPA_NOA .', '. _FPA_NC .'&nbsp;</span>';
-
-			} elseif ( @$database['dbERROR'] == _FPA_N ) {
-				echo '<span class="ok">&nbsp;'. _FPA_Y .', '. _FPA_YCON .'&nbsp;</span>';
-
-			} elseif ( @$database['dbERROR'] != _FPA_N ) {
-				echo '<span class="alert-text">&nbsp;'. _FPA_N .', '. _FPA_ER .'&nbsp;</span>';
-			}
-
-		echo '</div></div>';
-		echo '</div>';
-
-
-
-			if ( @$database['dbERROR'] AND @$database['dbERROR'] != _FPA_N ) {
-
-				echo '<div class="mini-content-box-small" style="">';
-				echo '<div class="alert-text" style="line-height:10px;float:left;text-shadow: #fff 1px 1px 1px;border-bottom: 1px solid #ccebeb;font-size:8px;width:99%;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:0px;text-transform:uppercase;">'. _FPA_ECON .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;border-bottom: 1px solid #ccebeb;">';
-
-				echo '<div class="alert" style="margin:5px;font-weight:normal;font-size:9px;padding:2px;">'. $database['dbERROR'] .'</div>';
-
-				echo '</div></div>';
-				echo '</div>';
-				echo '<br style="clear:both;" />';
-			}
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;float:left;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:0px;text-transform:uppercase;">'. @$instance['configDBTYPE'] .' '. _FPA_CHARS .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;border-bottom: 1px solid #ccebeb;">';
-
-			if ( @$database['dbCHARSET'] ) {
-				echo '<span class="normal">&nbsp;'. $database['dbCHARSET'] .'&nbsp;</span>';
-
-			} else {
-				echo '<span class="warn-text">&nbsp;'. _FPA_U .'&nbsp;</span>';
-			}
-
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;float:left;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:0px;text-transform:uppercase;">'. _FPA_DEF .' '. _FPA_CHARS .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;border-bottom: 1px solid #ccebeb;">';
-
-			if ( @$database['dbHOSTDEFCHSET'] ) {
-				echo '<span class="normal">&nbsp;'. $database['dbHOSTDEFCHSET'] .'&nbsp;</span>';
-
-			} else {
-				echo '<span class="warn-text">&nbsp;'. _FPA_U .'&nbsp;</span>';
-			}
-
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;float:left;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:0px;text-transform:uppercase;">'. _FPA_DB .' '. _FPA_TCOL .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;border-bottom: 1px solid #ccebeb;">';
-
-			if ( @$database['dbCOLLATION'] ) {
-				echo '<div class="normal">&nbsp;'. $database['dbCOLLATION'] .'&nbsp;</div>';
-
-			} elseif ( @$database['dbERROR'] != _FPA_N ) {
-				echo '<span class="warn-text">&nbsp;'. _FPA_U .'&nbsp;</span>';
-
-			} else {
-				echo '<span class="warn-text">&nbsp;'. _FPA_NC .'&nbsp;</span>';
-			}
-
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;float:left;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;font-weight:bold;padding:1px;padding-right:0px;padding-top:0px;padding-bottom:0px;text-transform:uppercase;">'. _FPA_DB .' '. _FPA_TSIZ .':<div style="line-height:9px;text-transform:none!important;float:right;font-size:11px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-bottom-right-radius: 5px;-moz-border-bottom-right-radius: 5px;-webkit-border-bottom-right-radius: 5px;  border-bottom-left-radius: 5px;-moz-border-bottom-left-radius: 5px;-webkit-border-bottom-left-radius: 5px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;border-bottom: 1px solid #42AEC2;">';
-
-			if ( @$database['dbSIZE'] ) {
-				echo '<span class="normal">&nbsp;'. $database['dbSIZE'] .'&nbsp;</span>';
-
-			} else {
-				echo '<span class="warn-text">&nbsp;'. _FPA_U .'&nbsp;</span>';
-			}
-
-		echo '</div></div>';
-
-
-		if ( @$instance['configDBCREDOK'] != _FPA_Y AND $instance['instanceFOUND'] == _FPA_Y ) {
-		echo '<br /><br />';
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;"><span class="alert-text" style="font-size:8px;">'. _FPA_MISSINGCRED .':</span> ';
-
-			if ( @$instance['configDBTYPE'] == '' ) { echo '<span class="warn-text" style="font-size:9px;font-weight:normal;text-transform:none;">&nbsp;<b>'. _FPA_CONT .'</b> '. _FPA_NF .'</span>'; }
-			if ( @$instance['configDBHOST'] == '' ) { echo '<span class="warn-text" style="font-size:9px;font-weight:normal;text-transform:none;">&nbsp;MySQL <b>'. _FPA_HNAME .'</b> '. _FPA_NF .'</span>'; }
-			if ( @$instance['configDBNAME'] == '' ) { echo '<span class="warn-text" style="font-size:9px;font-weight:normal;text-transform:none;">&nbsp;'. _FPA_DB .' <b>'. _FPA_TNAM .'</b> '. _FPA_NF .'</span>'; }
-			if ( @$instance['configDBPREF'] == '' ) { echo '<span class="warn-text" style="font-size:9px;font-weight:normal;text-transform:none;">&nbsp;<b>'. _FPA_TBL .' Prefix</b> '. _FPA_NF .'</span>'; }
-			if ( @$instance['configDBUSER'] == '' ) { echo '<span class="warn-text" style="font-size:9px;font-weight:normal;text-transform:none;">&nbsp;'. _FPA_DB .' <b>'. _FPA_USER .'</b> '. _FPA_NF .'</span>'; }
-			if ( @$instance['configDBPASS'] == '' ) { echo '<span class="warn-text" style="font-size:9px;font-weight:normal;text-transform:none;">&nbsp;'. _FPA_DB .' <b>'. _FPA_PASS .'</b> '. _FPA_NF .'</span>'; }
-
-			echo '</div></div>';
-		}
-
-
-		echo '</div>';
-		echo '</div></div>';
-		// end content left block
-
-
-		/** display the system information *************************************************/
-		echo '<div class="half-section-information-right">'; // start right content block
-
-		echo '<div class="section-title" style="text-align:center;">'. $database['ARRNAME'] .' :: '. _FPA_PERF .'</div>';
-		echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
-
-			// only do mode/permissions checks if an instance was found in the intial checks
-			if ( $database['dbDOCHECKS'] == _FPA_Y AND @$database['dbERROR'] == _FPA_N AND $instance['configDBTYPE'] <> 'postgresql' AND $instance['configDBTYPE'] <> 'pgsql' ) {
-
-				$pieces = explode(": ", $database['dbHOSTSTATS'][0] );
-
-				echo '<div class="mini-content-box-small" style="">';
-				echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px; width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-right:0px;padding-bottom:3px;text-transform:uppercase;">'. $pieces[0] .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-top-right-radius: 5px;-moz-border-top-right-radius: 5px;-webkit-border-top-right-radius: 5px;  border-top-left-radius: 5px;-moz-border-top-left-radius: 5px;-webkit-border-top-left-radius: 5px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;border-top: 1px solid #42AEC2;1px solid #ccebeb;">';
-				echo '<span class="normal">'. $pieces[1] .' seconds&nbsp;</span>';
-				echo '</div></div>';
-				echo '</div>';
-
-
-				$pieces = explode(": ", $database['dbHOSTSTATS'][1] );
-				echo '<div class="mini-content-box-small" style="">';
-				echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. $pieces[0] .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-				echo '<span class="normal">'. $pieces[1] .'&nbsp;</span>';
-				echo '</div></div>';
-				echo '</div>';
-
-
-				$pieces = explode(": ", $database['dbHOSTSTATS'][2] );
-				echo '<div class="mini-content-box-small" style="">';
-				echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. $pieces[0] .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-				echo '<span class="normal">'. $pieces[1] .'&nbsp;</span>';
-				echo '</div></div>';
-				echo '</div>';
-
-
-				$pieces = explode(": ", $database['dbHOSTSTATS'][3] );
-				echo '<div class="mini-content-box-small" style="">';
-				echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. $pieces[0] .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-				echo '<span class="normal">'. $pieces[1] .'&nbsp;</span>';
-				echo '</div></div>';
-				echo '</div>';
-
-
-				$pieces = explode(": ", $database['dbHOSTSTATS'][4] );
-				echo '<div class="mini-content-box-small" style="">';
-				echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. $pieces[0] .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-				echo '<span class="normal">'. $pieces[1] .'&nbsp;</span>';
-				echo '</div></div>';
-				echo '</div>';
-
-
-				$pieces = explode(": ", $database['dbHOSTSTATS'][5] );
-				echo '<div class="mini-content-box-small" style="">';
-				echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. $pieces[0] .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-				echo '<span class="normal">'. $pieces[1] .'&nbsp;</span>';
-				echo '</div></div>';
-				echo '</div>';
-
-
-				$pieces = explode(": ", $database['dbHOSTSTATS'][6] );
-				echo '<div class="mini-content-box-small" style="">';
-				echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. $pieces[0] .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-				echo '<span class="normal">'. $pieces[1] .'&nbsp;</span>';
-				echo '</div></div>';
-				echo '</div>';
-
-
-				$pieces = explode(": ", $database['dbHOSTSTATS'][7] );
-				echo '<div class="mini-content-box-small" style="">';
-				echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. $pieces[0] .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-				echo '<span class="normal">'. $pieces[1] .'&nbsp;</span>';
-				echo '</div></div>';
-				echo '</div>';
-
-
-
-				echo '<div class="mini-content-box-small" style="">';
-				echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;font-weight:bold;padding:1px;padding-right:0px;padding-top:0px;padding-bottom:3px;text-transform:uppercase;"># '. _FPA_OF .' '. _FPA_TBL .':<div style="line-height:9px;text-transform:none!important;float:right;font-size:11px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-bottom-right-radius: 5px;-moz-border-bottom-right-radius: 5px;-webkit-border-bottom-right-radius: 5px;  border-bottom-left-radius: 5px;-moz-border-bottom-left-radius: 5px;-webkit-border-bottom-left-radius: 5px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;border-bottom: 1px solid #42AEC2;">';
-
-					if ( $database['dbTABLECOUNT'] ) {
-						echo '<span class="normal">&nbsp;'. $database['dbTABLECOUNT'] .' tables&nbsp;</span>';
-
-					} else {
-						echo '<span class="warn-text">&nbsp;'. _FPA_U .'&nbsp;</span>';
-					}
-
-				echo '</div></div>';
-				echo '</div>';
-
-
-			} else { // an instance wasn't found in the initial checks
-				echo '<div class="row-content-container nothing-to-display" style="">';
-				if (@$instance['configDBTYPE'] == 'postgresql' or @$instance['configDBTYPE'] == 'pgsql'){
-				    echo '<div class="normal" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_NIMPLY . ' ' . _FPA_PGSQL . '<br /></div>';
-				    echo '</div>';
-				} elseif ( @$instance['configDBTYPE'] == 'sqlsrv' ) {
-                    echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'.  _FPA_MSSQL_SUPP . '<br /></div>';
-				} else {
-				echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_NCON .'<br />'. _FPA_NO .' '. $database['ARRNAME'] .' '. _FPA_PERF .' '. _FPA_TESTP .'</div>';
-				echo '</div>';
-			}
-			}
-
-		echo '</div>';
-		echo '</div>';
-		// end content right block
-
-	echo '<div style="clear:both;"></div>';
-
-	showDev( $database );
-
-	echo '</div>'; // end half-section container
-	echo '<div style="clear:both;"></div>';
-?>
-
-
-
-<?php
-	if ( $showTables == '1' ) {
-
-		/** display the table statistics and details for the selected database *******************/
-		echo '<div class="section-information">';
-		echo '<div class="section-title" style="text-align:center;">'. $tables['ARRNAME'] .'</div>';
-
-		echo '<div class="column-title-container" style="width:99%;margin: 0px auto;clear:both;display:block;">';
-
-		echo '<div class="column-title" style="width:20%;float:left;text-align:center;">'. _FPA_TNAM .'</div>';
-		echo '<div class="column-title" style="width:7%;float:left;left;text-align:center;">'. _FPA_TSIZ .'</div>';
-		echo '<div class="column-title" style="width:6%;float:left;text-align:center;">'. _FPA_TREC .'</div>';
-		echo '<div class="column-title" style="width:8%;float:left;text-align:center;">'. _FPA_TAVL .'</div>';
-		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_TFRA .'</div>';
-		echo '<div class="column-title" style="width:6%;float:left;text-align:center;">'. _FPA_TENG .'</div>';
-		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_TCOL .'</div>';
-		echo '<div class="column-title" style="width:9%;float:left;text-align:center;">'. _FPA_TCRE .'</div>';
-		echo '<div class="column-title" style="width:9%;float:left;text-align:center;">'. _FPA_TUPD .'</div>';
-		echo '<div class="column-title" style="width:9%;float:left;text-align:center;">'. _FPA_TCKD .'</div>';
-		echo '<div style="clear:both;"></div>';
-		echo '</div>';
-
-			if ( $instance['instanceFOUND'] == _FPA_Y AND @$database['dbERROR'] == _FPA_N ) {
-
-				foreach ( $tables as $i => $show ) {
-
-					if ( $show != $tables['ARRNAME'] ) {
-						// produce the output
-						echo '<div style="font-size:9px;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;">';
-
-							if ( $showProtected <= 2 ) {
-								echo '<div style="font-size:9px;text-align:left;float:left;width:20%;">&nbsp;'. $show['TABLE'] .'</div>';
-
-							} else {
-
-								echo '<div style="font-size:9px;text-align:left;float:left;width:20%;">&nbsp;<span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div>';
-
-							}
-
-						echo '<div style="font-size:9px;text-align:center;float:left;width:8%;">'. $show['SIZE'] .'</div>';
-						echo '<div style="font-size:9px;text-align:center;float:left;width:7%;">'. $show['RECORDS'] .'</div>';
-						echo '<div style="font-size:9px;text-align:center;float:left;width:8%;">'. $show['AVGLEN'] .'</div>';
-						echo '<div style="font-size:9px;text-align:center;float:left;width:10%;">'. $show['FRAGSIZE'] .'</div>';
-						echo '<div style="font-size:9px;text-align:center;float:left;width:7%;">'. $show['ENGINE'] .'</div>';
-
-
-						if ( $show['COLLATION'] != $database['dbCOLLATION'] ) {
-							echo '<div style="font-size:9px;text-align:center;float:left;width:12%;"><span class="warn-text" style="font-size:9px;">*</span>'. $show['COLLATION'] .'</div>';
-
-						} else {
-							echo '<div style="font-size:9px;text-align:center;float:left;width:12%;">'. $show['COLLATION'] .'</div>';
-
-						}
-
-						$pieces = explode( " ", $show['CREATED'] );
-						echo '<div style="font-size:9px;text-align:center;float:left;width:9%;">'. $pieces['0'] .'</div>';
-
-						$pieces = explode( " ", $show['UPDATED'] );
-						echo '<div style="font-size:9px;text-align:center;float:left;width:9%;">'. $pieces['0'] .'</div>';
-
-						$pieces = explode( " ", $show['CHECKED'] );
-						echo '<div style="font-size:9px;text-align:center;float:left;width:9%;">'. $pieces['0'] .'</div>';
-
-						echo '<br /></div>';
-
-					} // endif , dont show array name
-
-				} // end foreach
-
-
-			} else { // an instance wasn't found in the initial checks, so no tables to check
-				echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-				echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_NCON .', '. _FPA_NO .' '. $tables['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-				echo '</div>';
-			}
-
-
-		echo '</div>'; // end container
-		showDev( $tables );
-		unset ( $key, $show );
-
-	} // end showTables
-?>
-
-
-
-<?php
-	// build a full-width div to hold two 'half-width' section, side-by-side
-	echo '<div class="half-section-container" style="">'; // start half-section container
-
-		/** display the instance information *************************************************/
-		echo '<div class="half-section-information-left">'; // start left content block
-
-		echo '<div class="section-title" style="text-align:center;">'. $phpenv['ARRNAME'] .' :: '. _FPA_DISC .'</div>';
-		echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px; width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-right:0px;padding-bottom:3px;text-transform:uppercase;">PHP '. _FPA_VER .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-top-right-radius: 5px;-moz-border-top-right-radius: 5px;-webkit-border-top-right-radius: 5px;  border-top-left-radius: 5px;-moz-border-top-left-radius: 5px;-webkit-border-top-left-radius: 5px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;border-top: 1px solid #42AEC2;1px solid #ccebeb;">';
-		echo '<span class="normal">'. $phpenv['phpVERSION'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">PHP API:<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-
-			if ( $phpenv['phpAPI'] == 'apache2handler' ) {
-				$status = 'warn-text';
-
-			} else {
-				$status = 'ok';
-
-			}
-
-		echo '<span class="'. $status.'">'. $phpenv['phpAPI'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Display Errors:<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-		echo '<span class="normal">'. $phpenv['phpERRORDISPLAY'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Error Report Level:<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-		echo '<span class="normal">'. $phpenv['phpERRORREPORT'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">MySQLi '. _FPA_SUP .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-		echo '<span class="normal">'. $phpenv['phpSUPPORTSMYSQLI'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Magic Quotes:<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-		echo '<span class="normal">'. $phpenv['phpMAGICQUOTES'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Safe Mode:<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-		echo '<span class="normal">'. $phpenv['phpSAFEMODE'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Memory Limit:<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-		echo '<span class="normal">';
-
-			if ( @$_POST['increasePOPS'] == 1 ) { // the user set the increasePOPS setting for memory or time out errors
-				echo '<i class="warn-text">('. _FPA_UINC .' '. $fpa['ORIGphpMEMLIMIT'] .')</i>&nbsp;';
-
-			}
-
-		echo $phpenv['phpMEMLIMIT'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Uploads '. _FPA_EN .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-		echo '<span class="normal">'. $phpenv['phpUPLOADS'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Max. Upload Size:<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-		echo '<span class="normal">'. $phpenv['phpMAXUPSIZE'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Max. Post Size:<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-		echo '<span class="normal">'. $phpenv['phpMAXPOSTSIZE'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Max. Input Time:<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-		echo '<span class="normal">'. $phpenv['phpMAXINPUTTIME'] .' seconds&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Max. Execution Time:<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-		echo '<span class="normal">';
-
-			if ( @$_POST['increasePOPS'] == 1 ) { // the user set the increasePOPS setting for memory or time out errors
-				echo '<i class="warn-text">('. _FPA_UINC .' '. $fpa['ORIGphpMAXEXECTIME'] .')</i>&nbsp;';
-
-			}
-
-		echo $phpenv['phpMAXEXECTIME'] .' seconds&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Register Globals:<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-		echo '<span class="normal">'. $phpenv['phpREGGLOBAL'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;font-weight:bold;padding:1px;padding-right:0px;padding-top:0px;padding-bottom:3px;text-transform:uppercase;">Allow url fopen:<div style="line-height:9px;text-transform:none!important;float:right;font-size:11px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-bottom-right-radius: 5px;-moz-border-bottom-right-radius: 5px;-webkit-border-bottom-right-radius: 5px;  border-bottom-left-radius: 5px;-moz-border-bottom-left-radius: 5px;-webkit-border-bottom-left-radius: 5px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;border-bottom: 1px solid #42AEC2;">';
-		echo '<span class="normal">'. $phpenv['phpURLFOPEN'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-		echo "<br />";
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Open Base Path:<div style="float:right;">';
-		echo '<span class="normal" style="font-size:9px;font-weight:normal;text-transform:none;">'. $phpenv['phpOPENBASE'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Session Path:<div style="float:right;">';
-		echo '<span class="normal" style="font-size:9px;font-weight:normal;text-transform:none;">'. $phpenv['phpSESSIONPATH'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Session Path '. _FPA_WRITABLE .':<div style="float:right;">';
-
-			if ( $phpenv['phpSESSIONPATHWRITABLE'] == _FPA_Y ) {
-				echo '<span class="ok" style="font-size:9px;font-weight:normal;text-transform:none;">'. $phpenv['phpSESSIONPATHWRITABLE'] .'&nbsp;</span>';
-
-			} elseif ( $phpenv['phpSESSIONPATHWRITABLE'] == _FPA_N ) {
-				echo '<span class="alert-text" style="font-size:9px;font-weight:normal;text-transform:none;">'. $phpenv['phpSESSIONPATHWRITABLE'] .'&nbsp;</span>';
-
-			} else {
-				echo '<span class="warn-text" style="font-size:9px;font-weight:normal;text-transform:none;">'. _FPA_U .'&nbsp;</span>';
-
-			}
-
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">INI File Path:<div style="float:right;">';
-		echo '<span class="normal" style="font-size:9px;font-weight:normal;text-transform:none;">'. $phpenv['phpINIFILE'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. _FPA_LAST .' '. _FPA_K .' PHP  '. _FPA_ERR .':<div style="float:right;">';
-
-			if ( $phpenv['phpLASTERR'] ) {
-				echo '<div class="alert" style="margin:5px;font-weight:normal;font-size:9px;padding:2px;text-transform:none;word-wrap: break-word;width:325px;">'. $phpenv['phpLASTERR'] .'</div>';
-
-			} else {
-				echo '<span class="ok" style="margin:5px;text-transform:none;font-weight:normal;font-size:9px;padding:2px;">None</span>';
-			}
-
-		echo '</div></div>';
-		echo '</div>';
-
-		echo '</div></div>';
-
-
-
-		/** display the instance information *************************************************/
-		echo '<div class="half-section-information-right">'; // start left content block
-
-		echo '<div class="section-title" style="text-align:center;">'. $system['ARRNAME'] .' :: '. _FPA_DISC .'</div>';
-		echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px; width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-right:0px;padding-bottom:3px;text-transform:uppercase;">'. _FPA_PLATFORM .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-top-right-radius: 5px;-moz-border-top-right-radius: 5px;-webkit-border-top-right-radius: 5px;  border-top-left-radius: 5px;-moz-border-top-left-radius: 5px;-webkit-border-top-left-radius: 5px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;border-top: 1px solid #42AEC2;1px solid #ccebeb;">';
-		echo '<span class="normal">'. $system['sysPLATOS'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Kernel '. _FPA_VER .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-		echo '<span class="normal">'. $system['sysPLATREL'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. _FPA_TEC .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-		echo '<span class="normal">'. $system['sysPLATTECH'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. _FPA_HNAME .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-
-			if ( $showProtected == 1 ) {
-				echo '<span class="normal">'. $system['sysPLATNAME'] .'&nbsp;</span>';
-
-			} else {
-				echo '<span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span>&nbsp;';
-
-			}
-
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Total Disk Space:<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;border-bottom: 1px solid #ccebeb;">';
-        if (function_exists('disk_total_space'))
-        {
-        	$total_space = sprintf('%.2f', disk_total_space('./') / 1073741824);
-        	echo '<span class="normal">' . $total_space . ' GiB&nbsp;</span>';
-        }
-        else
-        {
-        	echo '<span class="normal">' . _FPA_U . '&nbsp;</span>';
-        }
-
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Free Disk Space:<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;border-bottom: 1px solid #ccebeb;">';
-        if (function_exists('disk_free_space'))
-        {
-        	$free_space = sprintf('%.2f', disk_free_space('./') / 1073741824);
-        	if (function_exists('disk_total_space'))
-        	{
-            	$percent_free = $free_space ? round($free_space / $total_space, 2) * 100 : 0;
-            	if ($percent_free <= '5')
-            	{
-            		$status = 'warn';
-            	}
-            	else
-            	{
-            		$status = 'normal';
-            	}
-            	echo '<span class="normal">(<span class="' . $status . '">' . $percent_free . '%</span>)  ' . $free_space . ' GiB&nbsp;</span>';
-            	$system['sysFREESPACE'] = $free_space . ' GiB';
+        <footer class="mt-5" id="fpa-footer">
+            <div class="container text-center p-3 xsmall">
+                <p class="mb-2">
+                    <?php echo _LICENSE_FOOTER .' '. _LICENSE_LINK; ?>
+                </p>
+                <p class="mb-1">
+                    <?php echo _FPA_JDISCLAIMER; ?>
+                </p>
+            </div>
+            <div class="container-fluid bg-fpa-dark text-white py-2">
+                <p class="p-0 m-0 xsmall text-center">
+                    FPA <?php echo _RES_VERSION .' '. _COPYRIGHT_STMT; ?><br />
+                    <small class="text-center">
+                        <?php echo _RES_RELEASE .' ('. _RES_BRANCH .' -'. _RES_LANG; ?>). Last updated on: <?php echo _last_updated; ?>
+                    </small>
+                </p>
+            </div>
+        </footer>
+
+
+
+        <?php
+        /**
+         * security notification
+         *
+         * dismissable toast/alert to replace the space-hog on page message
+         * 5s display if doIT = 1, else 10s display
+         * @RussW 21/05/2020
+         *
+         */
+        ?>
+        <script>
+            var doIT = '<?php echo @$_POST['doIT']; ?>';
+            if ( doIT == '1' ) {
+                var timeleft  = 4;
+            } else {
+                var timeleft  = 9;
             }
-            else
-            {
-                echo '<span class="normal"> ' . $free_space . ' GiB&nbsp;</span>';
-            }
-        }
-        else
-        {
-        	echo '<span class="normal">' . _FPA_U . '&nbsp;</span>';
-        }
+            var noticeTimer = setInterval(function() {
+                if (timeleft <= 0) {
+                    clearInterval(noticeTimer);
+                    document.getElementById("countdown").innerHTML = "0s";
+                } else {
+                    document.getElementById("countdown").innerHTML = timeleft + "s";
+                }
+                timeleft -= 1;
+            }, 1000);
+        </script>
+        <div role="alert" aria-live="assertive" aria-atomic="true" class="toast position-fixed shadow" style="top: 60px; right: 20px; z-index: 9999; width: 90%; max-width: 390px;" data-delay="<?php if (@$_POST['doIT'] == '1') { echo 5000; } else { echo 10000; } ?>" data-animation="false" id="securityToast">
+            <div class="toast-header bg-danger text-white">
+                <i class="fas fa-exclamation-circle fa-lg mr-2"></i>
+                <span class="mr-auto">Security Notification</span>
+                <span class="text-white" id="countdown"></span>
+                <button type="button" class="ml-2 mb-1 text-white close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body text-dark text-justify">
+                <?php //echo _FPA_DELNOTE_LN1; ?>
+                <?php echo _FPA_DELNOTE_LN2; ?>
+                <?php echo _FPA_DELNOTE_LN3; ?>
+            </div>
+        </div>
 
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. _FPA_SERV .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-
-			if ( $showProtected == 1 ) {
-				echo '<span class="normal">'. $system['sysSERVNAME'] .'&nbsp;</span>';
-
-			} else {
-				echo '<span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span>&nbsp;';
-
-			}
-
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. _FPA_SERV .' IP:<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-
-			if ( $showProtected == 1 ) {
-				echo '<span class="normal">'. $system['sysSERVIP'] .'&nbsp;</span>';
-
-			} else {
-				echo '<span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span>&nbsp;';
-
-			}
-
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. _FPA_SERV .' Signature:<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-		echo '<span class="normal">'. $system['sysSERVSIG'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom:1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. _FPA_SERV .' Encoding:<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;1px solid #ccebeb;">';
-		echo '<span class="normal">'. $system['sysENCODING'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Executing '. _FPA_USR .':<div style="line-height:11px;text-transform:none!important;float:right;font-size:9px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;border-bottom: 1px solid #ccebeb;">';
-		echo '<span class="normal">'. $system['sysEXECUSER'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;font-weight:bold;padding:1px;padding-right:0px;padding-top:0px;padding-bottom:3px;text-transform:uppercase;">'. _FPA_SERV .' '. _FPA_USR .':<div style="line-height:9px;text-transform:none!important;float:right;font-size:11px;font-weight:normal;width:60%;background-color:#fff;text-align:right;padding:1px;padding-top:0px;border-bottom-right-radius: 5px;-moz-border-bottom-right-radius: 5px;-webkit-border-bottom-right-radius: 5px;  border-bottom-left-radius: 5px;-moz-border-bottom-left-radius: 5px;-webkit-border-bottom-left-radius: 5px;border-right: 1px solid #42AEC2;border-left: 1px solid #42AEC2;border-bottom: 1px solid #42AEC2;">';
-		echo '<span class="normal">'. $system['sysWEBOWNER'] .'&nbsp;</span>';
-		echo '</div></div>';
-		echo '</div>';
-
-		echo "<br />";
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. _FPA_DROOT .':<div style="float:right;">';
-
-
-			if ( $showProtected <= 2 ) {
-				echo '<span class="normal" style="font-size:9px;font-weight:normal;text-transform:none;">'. $system['sysDOCROOT'] .'&nbsp;</span>';
-
-			} else {
-				echo '<span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span>&nbsp;';
-
-			}
-
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. _FPA_SERV .' Temp:<div style="float:right;">';
-
-			if ( $showProtected <= 2 ) {
-				echo '<span class="normal" style="font-size:9px;font-weight:normal;text-transform:none;">'. $system['sysSYSTMPDIR'] .'&nbsp;</span>';
-
-			} else {
-				echo '<span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span>&nbsp;';
-
-			}
-
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. _FPA_SERV .' Temp '. _FPA_WRITABLE .':<div style="float:right;">';
-
-			if ( $system['sysTMPDIRWRITABLE'] == _FPA_Y ) {
-				echo '<span class="ok" style="font-size:9px;font-weight:normal;text-transform:none;">'. $system['sysTMPDIRWRITABLE'] .'&nbsp;</span>';
-
-			} elseif ( $system['sysTMPDIRWRITABLE'] == _FPA_N ) {
-				echo '<span class="alert-text" style="font-size:9px;font-weight:normal;text-transform:none;">'. $system['sysTMPDIRWRITABLE'] .'&nbsp;</span>';
-
-			} else {
-				echo '<span class="warn-text" style="font-size:9px;font-weight:normal;text-transform:none;">'. _FPA_U .'&nbsp;</span>';
-			}
-
-		echo '</div></div>';
-		echo '</div>';
-
-
-		//echo '<br style="clear:both;" />';
-		echo '<div class="mini-content-box-small" style="">';
-		echo '<div style="line-height:10px;font-size:8px;color:#404040;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">Switch '. _FPA_USR .' '. _FPA_CFG ;
-		echo '<br style="clear:both;" />';
-		echo '<div style="background-color: #fff;border:1px solid #42aec2;border-radius:3px;-moz-border-radius:3px;-webkit-border-radius:3px;text-align:center;margin:2px;width:22%;padding:1px;float:left;font-size:8px;font-weight:normal;">suExec<br /><b>'. $phpenv['phpAPACHESUEXEC'] .'</b></div>';
-		echo '<div style="background-color: #fff;border:1px solid #42aec2;border-radius:3px;-moz-border-radius:3px;-webkit-border-radius:3px;text-align:center;margin:2px;width:22%;padding:1px;float:left;font-size:8px;font-weight:normal;">PHP suExec<br /><b>'. $phpenv['phpPHPSUEXEC'] .'</b></div>';
-		echo '<div style="background-color: #fff;border:1px solid #42aec2;border-radius:3px;-moz-border-radius:3px;-webkit-border-radius:3px;text-align:center;margin:2px;width:22%;padding:1px;float:left;font-size:8px;font-weight:normal;">Custom su<br /><b>'. $phpenv['phpCUSTOMSU'] .'</b></div>';
-		echo '<div style="background-color: #fff;border:1px solid #42aec2;border-radius:3px;-moz-border-radius:3px;-webkit-border-radius:3px;text-align:center;margin:2px;width:22%;padding:1px;float:left;font-size:8px;font-weight:normal;">Ownership Probs<br /><b>';
-
-			if ( $phpenv['phpOWNERPROB'] == _FPA_N ) {
-				$status = 'ok';
-
-			} elseif ( $phpenv['phpOWNERPROB'] == _FPA_M ) {
-				$status = 'warn-text';
-
-			} elseif ( $phpenv['phpOWNERPROB'] == _FPA_Y ) {
-				$status = 'alert-text';
-
-			} else {
-				$status = 'warn-text';
-
-			}
-
-		echo '<span class="'. $status .'" style="font-size:8px;">'. $phpenv['phpOWNERPROB'] .'</span>';
-		echo '</b></div>';
-		echo '</div></div>';
-		echo '</div>';
-
-
-		echo '<br style="clear:both;" />';
-		echo '</div></div>';
-
-
-		echo '<br style="clear:both;" />';
-		echo '</div>';
-
-
-	showDev( $phpenv );
-	showDev( $system );
-?>
-
-
-
-<?php
-		echo '<div class="section-information">'; // start right content block
-
-		echo '<div class="section-title" style="text-align:center;">'. $phpextensions['ARRNAME'] .' :: '. _FPA_DISC .'</div>';
-		echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
-
-			foreach ( $phpextensions as $key => $show ) {
-
-				if ( $show != $phpextensions['ARRNAME'] ) {
-
-					if ( $key == 'exif' ) {
-						$pieces = explode( " $", $show );
-						$show = $pieces[0];
-
-					}
-
-
-					// find the requirements and mark them as present or missing
-					if ( $key == 'libxml' OR $key == 'xml' OR $key == 'zip' OR $key == 'openssl' OR $key == 'zlib' OR $key == 'curl' OR $key == 'iconv' OR $key == 'mbstring' OR $key == 'mysql' OR $key == 'mysqli' OR $key == 'pdo_mysql' OR $key == 'mcrypt' OR $key == 'suhosin' OR $key == 'cgi' OR $key == 'cgi-fcgi' ) {
-						$status = 'ok';
-						$border = '4D8000';
-						$background = 'CAFFD8';
-						$weight = 'normal';
-					} elseif ( $key == 'apache2handler' ) {
-						$status = 'warn-text';
-						$border = 'FFA500';
-						$background = 'FFE4B5';
-						$weight = 'bold';
-					} else {
-						$status = 'normal';
-						$border = '42AEC2';
-						$background = 'FFF';
-						$weight = 'normal';
-					}
-
-
-					echo '<div style="background-color: #'. $background .';border:1px solid #'. $border .';border-radius:3px;-moz-border-radius:3px;-webkit-border-radius:3px;text-align:center;margin:2px;padding:1px;min-height:25px;min-width:82px;float:left;font-size:8px;"><span class="'. $status .'" style="font-size:8px;font-weight:'. $weight .';text-shadow:1px 1px 1px #fff;">'. $key .'</span><br />'. $show .'</div>';
-
-				} // endif !arrname
-
-
-				// look for recommended extensions that aren't installed
-				if ( !in_array( $key, $phpreq ) ) {
-					unset ( $phpreq[$key] );
-				}
-
-			} // end foreach
-
-			if ( version_compare( $instance['cmsRELEASE'], '3.8', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
-			 unset($phpreq['mcrypt']);
-			}
-
-			if (version_compare( $phpenv['phpVERSION'], '7.0.0', '>=' ))   {
-			 unset($phpreq['mysql']);
-			}
-
-			if ( $phpreq ) {
-				echo '<br style="clear:both;" /><br />';
-				echo '<div class="mini-content-box-small" style="">';
-				echo '<div class="warn-text" style="line-height:10px;font-size:9px;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. _FPA_POTME .':<br /><div style="float:left;text-transform:none;">';
-
-				echo '<br style="clear:both;" />';
-
-				$status = 'warn-text';
-				$border = 'FFA500';
-				$background = 'FFF';
-				$weight = 'bold';
-
-
-				foreach ( $phpreq as $missingkey => $missing ) {
-					echo '<div style="background-color: #'. $background .';border:1px solid #'. $border .';border-radius:3px;-moz-border-radius:3px;-webkit-border-radius:3px;text-align:center;margin:2px;padding:1px;min-height:10px;width:82px;float:left;font-size:8px;"><span class="'. $status .'" style="font-size:8px;font-weight:'. $weight .';text-shadow:1px 1px 1px #fff;">'. $missingkey .'</span></div>';
-
-				}
-
-				echo '</div></div>';
-				echo '</div>';
-
-			}
-
-			// disabled PHP functions
-			if ( $phpenv['phpDISABLED'] ) {
-				echo '<br style="clear:both;" /><br />';
-				echo '<div class="mini-content-box-small" style="">';
-				echo '<div class="normal" style="line-height:10px;font-size:9px;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. _FPA_DI_PHP_FU .':<br /><div style="float:left;text-transform:none;">';
-				echo '<br style="clear:both;" />';
-				$status = 'normal';
-				$border = '42AEC2';
-				$background = 'FFF';
-				$weight = 'normal';
-                $disabledfunctions = explode(",",$phpenv['phpDISABLED']);
-                $arrlength = count($disabledfunctions);
-				for($x = 0; $x < $arrlength; $x++) {
-					echo '<div style="background-color: #'. $background .';border:1px solid #'. $border .';border-radius:3px;-moz-border-radius:3px;-webkit-border-radius:3px;text-align:center;margin:2px;padding:1px;min-height:10px;width:82px;float:left;font-size:8px;"><span class="'. $status .'" style="font-size:8px;font-weight:'. $weight .';text-shadow:1px 1px 1px #fff;">'. $disabledfunctions[$x] .'</span></div>';
-				}
-				echo '</div></div>';
-				echo '</div>';
-			}
-
-
-		echo '<br style="clear:both;" />';
-		echo '</div></div>';
-
-
-	showDev( $phpextensions );
-	$phpreq['ARRNAME'] = 'Potential Missing PHP Extensions';
-
-	showDev( $phpreq );
-	unset ( $key, $show );
-?>
-
-
-
-<?php
-		if ( $phpenv['phpAPI'] == 'apache2handler' ) {
-
-			/** display the instance information *************************************************/
-			echo '<div class="section-information">'; // start right content block
-			echo '<div class="section-title" style="text-align:center;">'. $apachemodules['ARRNAME'] .' :: Discovery</div>';
-			echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
-
-				foreach ( $apachemodules as $key => $show ) {
-
-					if ( $show != $apachemodules['ARRNAME'] ) {
-
-						// find the requirements and mark them as present or missing
-						if ( $show == 'mod_rewrite' OR $show == 'mod_cgi' OR $show == 'mod_cgid' OR $show == 'mod_expires' OR $show == 'mod_deflate' OR $show == 'mod_auth'  ) {
-							$status = 'ok';
-							$border = '4D8000';
-							$background = 'CAFFD8';
-							$weight = 'normal';
-
-						} elseif ( $show == 'mod_php4' ) {
-							$status = 'warn-text';
-							$border = 'FFA500';
-							$background = 'FFE4B5';
-							$weight = 'bold';
-
-						} else {
-							$status = 'normal';
-							$border = '42AEC2';
-							$background = 'FFF';
-							$weight = 'normal';
-
-						}
-
-
-						echo '<div class="'. $status .'" style="background-color: #'. $background .';border:1px solid #'. $border .';font-weight: '. $weight .';border-radius:3px;-moz-border-radius:3px;-webkit-border-radius:3px;text-align:center;margin:2px;width:82px;padding:1px;float:left;font-size:8px;">'. $show .'</div>';
-
-
-					} // endif !arrname
-
-
-					// look for recommended extensions that aren't installed
-					if ( !in_array( $show, $apachereq ) ) {
-						unset ( $apachereq['ARRNAME'] );
-						unset ( $apachereq[$show] );
-
-					}
-
-				} // end foreach
-
-
-
-				if ( $apachereq ) {
-					echo '<br style="clear:both;" /><br />';
-					echo '<div class="mini-content-box-small" style="">';
-					echo '<div class="warn-text" style="line-height:10px;font-size:9px;text-shadow: #fff 1px 1px 1px;width:99%;border-bottom: 1px solid #ccebeb;font-weight:bold;padding:1px;padding-top:0px;padding-right:0px;padding-bottom:2px;text-transform:uppercase;">'. _FPA_POTMM .':<br /><div style="float:left;text-transform:none;">';
-
-					echo '<br style="clear:both;" />';
-
-					$status = 'warn-text';
-					$border = 'FFA500';
-					$background = 'FFF';
-					$weight = 'bold';
-
-					foreach ( $apachereq as $missingkey => $missing ) {
-						echo '<div style="background-color: #'. $background .';border:1px solid #'. $border .';border-radius:3px;-moz-border-radius:3px;-webkit-border-radius:3px;text-align:center;margin:2px;padding:1px;min-height:10px;width:82px;float:left;font-size:8px;"><span class="'. $status .'" style="font-size:8px;font-weight:'. $weight .';text-shadow:1px 1px 1px #fff;">'. $missingkey .'</span></div>';
-
-					}
-
-					echo '</div></div>';
-					echo '</div>';
-
-				}
-
-		echo '<br style="clear:both;" />';
-		echo '</div></div>';
-
-		showDev( $apachemodules );
-		$apachereq['ARRNAME'] = 'Potential Missing Apache Modules';
-
-		showDev( $apachereq );
-		unset ( $key, $show );
-
-		}
-?>
-
-
-
-<?php
-	/** display the mode-set details for each core folder ********************************/
-	echo '<div class="section-information">';
-	echo '<div class="section-title" style="text-align:center;">'. $folders['ARRNAME'] .' '. $modecheck['ARRNAME'] .'</div>';
-
-	echo '<div class="column-title-container" style="width:99%;margin: 0px auto;clear:both;display:block;">';
-	// this is the column heading area, if any
-
-	echo '<div class="column-title" style="width:7%;float:left;text-align:center;">'. _FPA_MODE .'</div>';
-	echo '<div class="column-title" style="width:8%;float:left;left;text-align:center;">'. _FPA_WRITABLE .'</div>';
-	echo '<div class="column-title" style="width:58%;float:left;">'. _FPA_FOLDER .'</div>';
-	echo '<div class="column-title" style="width:12%;float:right;text-align:center;">'. _FPA_GROUP .'</div>';
-	echo '<div class="column-title" style="width:12%;float:right;text-align:center;">'. _FPA_OWNER .'</div>';
-	echo '<div style="clear:both;"></div>';
-	echo '</div>';
-
-	// only do mode/permissions checks if an instance was found in the intial checks
-	if ( $instance['instanceFOUND'] == _FPA_Y ) {
-	// this is the content area
-
-		foreach ( $folders as $i => $show ) {
-
-			if ( $show != 'Core Folders' ) {
-
-				// looking for --7 or -7- or -77 (default folder permissions are usually 755)
-				if ( substr( $modecheck[$show]['mode'],1 ,1 ) == '7' OR substr( $modecheck[$show]['mode'],2 ,1 ) == '7' ) {
-					$modeClass = 'alert';
-					$alertClass = 'alert-text';
-					$userClass = 'normal';
-					$groupClass = 'normal';
-				} elseif ( $modecheck[$show]['mode'] == '755' ) {
-					$modeClass = 'ok';
-					$alertClass = 'normal';
-					$userClass = 'normal';
-					$groupClass = 'normal';
-				} else if ( substr( $modecheck[$show]['mode'],0 ,1 ) <= '5' AND $modecheck[$show]['mode'] != '---' ) {
-					$modeClass = 'warn';
-					$alertClass = 'warn-text';
-					$userClass = 'normal';
-					$groupClass = 'normal';
-				} else if ( $modecheck[$show]['group']['name'] == _FPA_N ) {
-					$modeClass = 'warn-text';
-					$alertClass = 'warn-text';
-					$userClass = 'warn-text';
-					$groupClass = 'warn-text';
-				} else {
-					$modeClass = 'normal';
-					$alertClass = 'normal';
-					$userClass = 'normal';
-					$groupClass = 'normal';
-				}
-
-				// is the folder writable?
-				if ( ( $modecheck[$show]['writable'] != _FPA_Y ) ) {
-					$writeClass = 'warn-text';
-				} elseif ( ( $modecheck[$show]['writable'] == _FPA_Y ) AND ( substr( $modecheck[$show]['mode'],0 ,1 ) == '7' ) ) {
-					$writeClass = 'normal';
-				} elseif ( $modecheck[$show]['writable'] == _FPA_N ) {
-					$writeClass = 'ok';
-				}
-
-				// is the 'executing' owner the same as the folder owner? and is the users groupID the same as the folders groupID?
-				if ( ( $modecheck[$show]['owner']['name'] != $system['sysEXECUSER'] ) AND ( $modecheck[$show]['group']['name'] != _FPA_DNE ) ) {
-					$userClass = 'warn-text';
-					$groupClass = 'normal';
-				} elseif ( isset( $modecheck[$show]['group']['gid'] ) AND isset( $modecheck[$show]['owner']['gid'] ) ) {
-
-					if ( $modecheck[$show]['group']['gid'] != $modecheck[$show]['owner']['gid'] ) {
-						$userClass = 'normal';
-						$groupClass = 'warn-text';
-					}
-
-				} elseif ( $modecheck[$show]['group']['name'] == _FPA_DNE ) {
-					$modeClass = 'warn-text';
-					$alertClass = 'warn-text';
-					$writeClass = 'warn-text';
-					$userClass = 'warn-text';
-					$groupClass = 'warn-text';
-				}
-
-				// produce the output
-				echo '<div style="border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;">';
-
-				echo '<div class="column-content '. $modeClass .'" style="float:left;width:7%;text-align:center;">';
-				echo $modecheck[$show]['mode'];  // display the mode
-				echo '</div>';
-
-				echo '<div class="column-content '. $writeClass .'" style="width:8%;float:left;text-align:center;">';
-				echo $modecheck[$show]['writable'];  // display if writable
-				echo '</div>';
-
-				echo '<div class="column-content '. $alertClass .'" style="width:58%;float:left;padding-left:5px;">';
-
-					if ( $showProtected <= 2 ) {
-						echo $show;  // display the folder name
-					} else {
-						echo '<span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span>';
-					}
-
-				echo '</div>';
-
-				echo '<div class="column-content '. $groupClass .'" style="float:right;width:12%;text-align:center;">';
-				echo $modecheck[$show]['group']['name'];  // display the group
-				echo '</div>';
-
-				echo '<div class="column-content '. $userClass .'"" style="float:right;width:12%;text-align:center;">';
-				echo $modecheck[$show]['owner']['name'];  // display the owner
-				echo '</div>';
-
-				echo '<div style="clear:both;"></div>';
-				echo '</div>';
-			}
-		}
-
-	} else { // an instance wasn't found in the initial checks, so no folders to check
-		echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-		echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_N .' '. $modecheck['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-		echo '</div>';
-	}
-
-	echo '</div>';
-	echo '<div style="clear:both;"></div>';
-
-	// !TODO fix missing heading properly rather than this messy work-around
-	$folders['ARRNAME'] = 'Core Folders';
-	showDev( $folders );
-	showDev( $modecheck );
-	unset ( $key, $show );
-?>
-
-
-
-
-<?php
-	/** display the folders with elevated permissions ************************************/
-	if ( $showElevated == '1' ) {
-
-		echo '<div class="section-information">';
-		echo '<div class="section-title" style="text-align:center;">'. $elevated['ARRNAME'] .' ('. _FPA_FIRST .' 10)</div>';
-
-		echo '<div class="column-title-container" style="width:99%;margin: 0px auto;clear:both;display:block;">';
-
-		echo '<div class="column-title" style="width:7%;float:left;text-align:center;">'. _FPA_MODE .'</div>';
-		echo '<div class="column-title" style="width:8%;float:left;left;text-align:center;">'. _FPA_WRITABLE .'</div>';
-		echo '<div class="column-title" style="width:58%;float:left;">'. _FPA_FOLDER .'</div>';
-		echo '<div style="clear:both;"></div>';
-		echo '</div>';
-
-
-		// only do mode/permissions checks if an instance was found in the intial checks
-		if ( $instance['instanceFOUND'] == _FPA_Y ) {
-
-			foreach ( $elevated as $key => $show ) {
-
-				if ( $show != $elevated['ARRNAME'] ) {
-
-					// looking for --7 or -7- or -77 (default folder permissions are usually 755)
-					if ( substr( $show['mode'],1 ,1 ) == '7' OR substr( $show['mode'],2 ,1 ) == '7' ) {
-						$modeClass = 'alert';
-						$alertClass = 'alert-text';
-					} else {
-						$modeClass = 'normal';
-						$alertClass = 'normal';
-					}
-
-					// is the folder writable?
-					if ( ( $show['writable'] == _FPA_Y ) ) {
-						$writeClass = 'alert-text';
-					} else {
-						$writeClass = 'warn-text';
-					}
-
-
-					echo '<div style="border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;">';
-
-					echo '<div class="column-content '. $modeClass .'" style="float:left;width:7%;text-align:center;">';
-					echo $show['mode'];  // display the mode
-					echo '</div>';
-
-					echo '<div class="column-content '. $writeClass .'" style="width:8%;float:left;text-align:center;">';
-					echo $show['writable'];  // display if writable
-					echo '</div>';
-
-					echo '<div class="column-content '. $alertClass .'" style="width:58%;float:left;padding-left:5px;">';
-
-						if ( $showProtected <= 2 ) {
-
-							if ( $key == 'None' ) {
-								echo '<span style="color:#008000"><b>'. $key .'</b></span>';
-							} else {
-								echo $key .'/ (';
-							}
-
-						} else {
-							echo '<span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span>';
-						}
-
-					echo '</div>';
-					echo '<div style="clear:both;"></div>';
-					echo '</div>';
-
-				} // endif ARRNAME
-
-			} // end for each
-
-
-		} else { // an instance wasn't found in the initial checks, so no folders to check
-			echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-			echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $elevated['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-			echo '</div>';
-		}
-
-		echo '</div>';
-		echo '<div style="clear:both;"></div>';
-
-		showDev( $elevated );
-		unset ( $key, $show );
-	} // endif showElevated
-?>
-
-
-
-
-<?php
-	// Components
-	if ( $showComponents == '1' ) {
-
-		echo '<div class="section-information">';
-
-		echo '<div class="section-title" style="text-align:center;">'. $component['ARRNAME'] .' :: '. _FPA_SITE .'</div>';
-
-		echo '<div class="column-title-container" style="width:99%;margin: 0px auto;clear:both;display:block;">';
-		echo '<div class="column-title" style="width:22%;float:left;text-align:left;">'. _FPA_TNAM .'</div>';
-		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_VER .'</div>';
-		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_CRE .'</div>';
-		echo '<div class="column-title" style="width:18%;float:left;text-align:center;">'. _FPA_AUTH .'</div>';
-		echo '<div class="column-title" style="width:18%;float:left;text-align:center;">'. _FPA_ADDR .'</div>';
-		echo '<div class="column-title" style="width:5%;float:left;text-align:center;">'. _FPA_EN .'</div>';
-		echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_TYPE .'</div>';
-		echo '<div style="clear:both;"></div>';
-		echo '</div>';
-
-
-		echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		if ( $instance['instanceFOUND'] == _FPA_N ) { // an instance wasn't found in the initial checks, so no folders to check
-			echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-			echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-			echo '</div>';
-		} else
-		// Site components
-		if ( isset ( $component['SITE'])) {
-			foreach ( $component['SITE'] as $key => $show ) {
-				if (isset($exset[0]['name'])) {
-					$extarrkey = recursive_array_search($show['name'], $exset);
-                    if ($extarrkey  !== False) {
-					$extenabled = $exset[$extarrkey]['enabled'];
-				} else { $extenabled = '?' ;}
-				} else { $extenabled = '?' ;}
-				if ($extenabled <> 0 AND $extenabled <> 1 ){
-					$extenabled = '?';
-				}
-				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
-					$typeColor = '404040';
-					echo '<div><div style="float:left;width:22%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:10%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:12%;text-align:center;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;text-align:center;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:18%;text-align:center;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:left;width:5%;text-align:center;color:#'. $typeColor .';">'. $extenabled .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
-
-				} elseif ( $showProtected > 2 ) {
-					$typeColor = '000080';
-					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
-				}
-			}
-		}
-
-		echo '</div></div>';
-
-
-
-
-		echo '<br style="clear:both;" />';
-		echo '<div class="section-title" style="text-align:center;">'. $component['ARRNAME'] .' :: '. _FPA_ADMIN .'</div>';
-
-		echo '<div class="column-title-container" style="width:99%;margin: 0px auto;clear:both;display:block;">';
-		echo '<div class="column-title" style="width:22%;float:left;text-align:left;">'. _FPA_TNAM .'</div>';
-		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_VER .'</div>';
-		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_CRE .'</div>';
-		echo '<div class="column-title" style="width:18%;float:left;text-align:center;">'. _FPA_AUTH .'</div>';
-		echo '<div class="column-title" style="width:18%;float:left;text-align:center;">'. _FPA_ADDR .'</div>';
-		echo '<div class="column-title" style="width:5%;float:left;text-align:center;">'. _FPA_EN .'</div>';
-		echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_TYPE .'</div>';
-		echo '<div style="clear:both;"></div>';
-		echo '</div>';
-
-		echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
-	if ( $instance['instanceFOUND'] == _FPA_N ) { // an instance wasn't found in the initial checks, so no folders to check
-			echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-			echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-			echo '</div>';
-		} else
-		// Admin components
-		if ( isset ( $component['ADMIN'])) {
-			foreach ( $component['ADMIN'] as $key => $show ) {
-				if (isset($exset[0]['name'])) {
-					$extarrkey = recursive_array_search($show['name'], $exset);
-                    if ($extarrkey  !== False) {
-					$extenabled = $exset[$extarrkey]['enabled'];
-				} else { $extenabled = '?' ;}
-				} else { $extenabled = '?' ;}
-				if ($extenabled <> 0 AND $extenabled <> 1 ){
-					$extenabled = '?';
-				}
-				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
-					$typeColor = '404040';
-					echo '<div><div style="float:left;width:22%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:10%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:12%;text-align:center;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;text-align:center;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:18%;text-align:center;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:left;width:5%;text-align:center;color:#'. $typeColor .';">'. $extenabled .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
-
-				} elseif ( $showProtected > 2 ) {
-					$typeColor = '000080';
-					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
-
-				}
-			}
-		}
-
-		echo '</div></div>';
-
-
-
-		echo '<br style="clear:both;" />';
-		echo '</div></div>';
-		// end content left block
-
-
-	echo '<div style="clear:both;"></div>';
-
-	showDev( $component );
-	unset ( $key, $show );
-	echo '</div>'; // end half-section container
-
-	echo '<div style="clear:both;"></div>';
-
-	} // end showComponents
-?>
-
-
-
-<?php
-	//Modules
-	if ( $showModules == '1' ) {
-
-		echo '<div class="section-information">';
-
-		echo '<div class="section-title" style="text-align:center;">'. $module['ARRNAME'] .' :: '. _FPA_SITE .'</div>';
-
-		echo '<div class="column-title-container" style="width:99%;margin: 0px auto;clear:both;display:block;">';
-		echo '<div class="column-title" style="width:22%;float:left;text-align:left;">'. _FPA_TNAM .'</div>';
-		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_VER .'</div>';
-		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_CRE .'</div>';
-		echo '<div class="column-title" style="width:18%;float:left;text-align:center;">'. _FPA_AUTH .'</div>';
-		echo '<div class="column-title" style="width:18%;float:left;text-align:center;">'. _FPA_ADDR .'</div>';
-		echo '<div class="column-title" style="width:5%;float:left;text-align:center;">'. _FPA_EN .'</div>';
-		echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_TYPE .'</div>';
-		echo '<div style="clear:both;"></div>';
-		echo '</div>';
-
-
-		echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		if ( $instance['instanceFOUND'] == _FPA_N ) { // an instance wasn't found in the initial checks, so no folders to check
-			echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-			echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-			echo '</div>';
-		} else
-		// Site modules
-		if ( isset ( $module['SITE'])) {
-			foreach ( $module['SITE'] as $key => $show ) {
-				if (isset($exset[0]['name'])) {
-					$extarrkey = recursive_array_search($show['name'], $exset);
-                    if ($extarrkey  !== False) {
-					$extenabled = $exset[$extarrkey]['enabled'];
-				} else { $extenabled = '?' ;}
-				} else { $extenabled = '?' ;}
-				if ($extenabled <> 0 AND $extenabled <> 1 ){
-					$extenabled = '?';
-				}
-				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
-					$typeColor = '404040';
-					echo '<div><div style="float:left;width:22%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:10%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:12%;text-align:center;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;text-align:center;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:18%;text-align:center;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:left;width:5%;text-align:center;color:#'. $typeColor .';">'. $extenabled .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
-
-				} elseif ( $showProtected > 2 ) {
-					$typeColor = '000080';
-					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
-
-				}
-			}
-		}
-
-		echo '</div></div>';
-
-
-
-
-		echo '<br style="clear:both;" />';
-		echo '<div class="section-title" style="text-align:center;">'. $module['ARRNAME'] .' :: '. _FPA_ADMIN .'</div>';
-
-		echo '<div class="column-title-container" style="width:99%;margin: 0px auto;clear:both;display:block;">';
-		echo '<div class="column-title" style="width:22%;float:left;text-align:left;">'. _FPA_TNAM .'</div>';
-		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_VER .'</div>';
-		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_CRE .'</div>';
-		echo '<div class="column-title" style="width:18%;float:left;text-align:center;">'. _FPA_AUTH .'</div>';
-		echo '<div class="column-title" style="width:18%;float:left;text-align:center;">'. _FPA_ADDR .'</div>';
-		echo '<div class="column-title" style="width:5%;float:left;text-align:center;">'. _FPA_EN .'</div>';
-		echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_TYPE .'</div>';
-		echo '<div style="clear:both;"></div>';
-		echo '</div>';
-
-		echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
-		if ( $instance['instanceFOUND'] == _FPA_N ) { // an instance wasn't found in the initial checks, so no folders to check
-			echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-			echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-			echo '</div>';
-		} else
-		// Admin modules
-		if ( isset ( $module['ADMIN'])) {
-			foreach ( $module['ADMIN'] as $key => $show ) {
-				if (isset($exset[0]['name'])) {
-					$extarrkey = recursive_array_search($show['name'], $exset);
-                    if ($extarrkey  !== False) {
-					$extenabled = $exset[$extarrkey]['enabled'];
-				} else { $extenabled = '?' ;}
-				} else { $extenabled = '?' ;}
-				if ($extenabled <> 0 AND $extenabled <> 1 ){
-					$extenabled = '?';
-				}
-				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
-					$typeColor = '404040';
-					echo '<div><div style="float:left;width:22%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:10%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:12%;text-align:center;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;text-align:center;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:18%;text-align:center;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:left;width:5%;text-align:center;color:#'. $typeColor .';">'. $extenabled .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
-
-				} elseif ( $showProtected > 2 ) {
-					$typeColor = '000080';
-					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
-
-				}
-			}
-		}
-
-		echo '</div></div>';
-
-
-
-		echo '<br style="clear:both;" />';
-		echo '</div></div>';
-		// end content left block
-
-
-	echo '<div style="clear:both;"></div>';
-
-	showDev( $module );
-	unset ( $key, $show );
-	echo '</div>'; // end half-section container
-
-	echo '<div style="clear:both;"></div>';
-
-	} // end showModules
-?>
-
-
-
-
-<?php
-	//Libraries
-	if ( $showLibraries == '1' ) {
-
-		echo '<div class="section-information">';
-
-		echo '<div class="section-title" style="text-align:center;">'. $library['ARRNAME'] .' :: </div>';
-
-		echo '<div class="column-title-container" style="width:99%;margin: 0px auto;clear:both;display:block;">';
-		echo '<div class="column-title" style="width:22%;float:left;text-align:left;">'. _FPA_TNAM .'</div>';
-		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_VER .'</div>';
-		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_CRE .'</div>';
-		echo '<div class="column-title" style="width:18%;float:left;text-align:center;">'. _FPA_AUTH .'</div>';
-		echo '<div class="column-title" style="width:18%;float:left;text-align:center;">'. _FPA_ADDR .'</div>';
-		echo '<div class="column-title" style="width:5%;float:left;text-align:center;">'. _FPA_EN .'</div>';
-		echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_TYPE .'</div>';
-		echo '<div style="clear:both;"></div>';
-		echo '</div>';
-
-
-		echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		if ( $instance['instanceFOUND'] == _FPA_N ) { // an instance wasn't found in the initial checks, so no folders to check
-			echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-			echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-			echo '</div>';
-		} else
-		// Site libraries
-		if ( isset ( $library['SITE'])) {
-			foreach ( $library['SITE'] as $key => $show ) {
-				if (isset($exset[0]['name'])) {
-					$extarrkey = recursive_array_search($show['name'], $exset);
-                    if ($extarrkey  !== False) {
-					$extenabled = $exset[$extarrkey]['enabled'];
-				} else { $extenabled = '?' ;}
-				} else { $extenabled = '?' ;}
-				if ($extenabled <> 0 AND $extenabled <> 1 ){
-					$extenabled = '?';
-				}
-				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
-					$typeColor = '404040';
-					echo '<div><div style="float:left;width:22%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:10%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:12%;text-align:center;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;text-align:center;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:18%;text-align:center;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:left;width:5%;text-align:center;color:#'. $typeColor .';">'. $extenabled .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
-
-				} elseif ( $showProtected > 2 ) {
-					$typeColor = '000080';
-					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
-
-				}
-			}
-		}
-
-		echo '</div></div>';
-
-
-		echo '<br style="clear:both;" />';
-		echo '</div></div>';
-		// end content left block
-
-
-	echo '<div style="clear:both;"></div>';
-
-	showDev( $library );
-	unset ( $key, $show );
-	echo '</div>'; // end half-section container
-
-	echo '<div style="clear:both;"></div>';
-
-	} // end showLibraries
-?>
-
-
-
-<?php
-	//Plugins
-	if ( $showPlugins == '1' ) {
-
-		echo '<div class="section-information">';
-
-		echo '<div class="section-title" style="text-align:center;">'. $plugin['ARRNAME'] .' :: </div>';
-
-		echo '<div class="column-title-container" style="width:99%;margin: 0px auto;clear:both;display:block;">';
-		echo '<div class="column-title" style="width:22%;float:left;text-align:left;">'. _FPA_TNAM .'</div>';
-		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_VER .'</div>';
-		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_CRE .'</div>';
-		echo '<div class="column-title" style="width:18%;float:left;text-align:center;">'. _FPA_AUTH .'</div>';
-		echo '<div class="column-title" style="width:18%;float:left;text-align:center;">'. _FPA_ADDR .'</div>';
-		echo '<div class="column-title" style="width:5%;float:left;text-align:center;">'. _FPA_EN .'</div>';
-		echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_TYPE .'</div>';
-		echo '<div style="clear:both;"></div>';
-		echo '</div>';
-
-
-		echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
-
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		if ( $instance['instanceFOUND'] == _FPA_N ) { // an instance wasn't found in the initial checks, so no folders to check
-			echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-			echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-			echo '</div>';
-		} else
-		// Site Plugins
-		if ( isset ( $plugin['SITE'])) {
-			foreach ( $plugin['SITE'] as $key => $show ) {
-				if (isset($exset[0]['name'])) {
-					$extarrkey = recursive_array_search($show['name'], $exset);
-                    if ($extarrkey  !== False) {
-					$extenabled = $exset[$extarrkey]['enabled'];
-				} else { $extenabled = '?' ;}
-				} else { $extenabled = '?' ;}
-				if ($extenabled <> 0 AND $extenabled <> 1 ){
-					$extenabled = '?';
-				}
-				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
-					$typeColor = '404040';
-					echo '<div><div style="float:left;width:22%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:10%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:12%;text-align:center;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;text-align:center;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:18%;text-align:center;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:left;width:5%;text-align:center;color:#'. $typeColor .';">'. $extenabled .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
-
-				} elseif ( $showProtected > 2 ) {
-					$typeColor = '000080';
-					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
-
-				}
-			}
-		}
-		echo '</div></div>';
-
-
-		echo '<br style="clear:both;" />';
-		echo '</div></div>';
-		// end content left block
-
-
-	echo '<div style="clear:both;"></div>';
-
-	showDev( $plugin );
-	unset ( $key, $show );
-	echo '</div>'; // end half-section container
-
-	echo '<div style="clear:both;"></div>';
-
-	} // end showPlugins
-?>
-
-
-
-
-<?php
-		// Templates
-		echo '<div class="section-information">';
-
-		echo '<div class="section-title" style="text-align:center;">'. $template['ARRNAME'] .' :: '. _FPA_SITE .'</div>';
-
-		echo '<div class="column-title-container" style="width:99%;margin: 0px auto;clear:both;display:block;">';
-		echo '<div class="column-title" style="width:22%;float:left;text-align:left;">'. _FPA_TNAM .'</div>';
-		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_VER .'</div>';
-		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_CRE .'</div>';
-		echo '<div class="column-title" style="width:18%;float:left;text-align:center;">'. _FPA_AUTH .'</div>';
-		echo '<div class="column-title" style="width:18%;float:left;text-align:center;">'. _FPA_ADDR .'</div>';
-		echo '<div class="column-title" style="width:5%;float:left;text-align:center;">'. _FPA_EN .'</div>';
-		echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_TYPE .'</div>';
-		echo '<div style="clear:both;"></div>';
-		echo '</div>';
-
-
-		echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
-
-
-		echo '<div class="mini-content-box-small" style="">';
-		if ( $instance['instanceFOUND'] == _FPA_N ) { // an instance wasn't found in the initial checks, so no folders to check
-			echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-			echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-			echo '</div>';
-		} else
-		// Site templates
-		if ( isset ( $template['SITE'])) {
-			foreach ( $template['SITE'] as $key => $show ) {
-				if (isset($exset[0]['name'])) {
-					$extarrkey = recursive_array_search($show['name'], $exset);
-                    if ($extarrkey  !== False) {
-					$extenabled = $exset[$extarrkey]['enabled'];
-				} else { $extenabled = '?' ;}
-				} else { $extenabled = '?' ;}
-				if ($extenabled <> 0 AND $extenabled <> 1 ){
-					$extenabled = '?';
-				}
-				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
-					$typeColor = '404040';
-					echo '<div><div style="float:left;width:22%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:10%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:12%;text-align:center;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;text-align:center;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:18%;text-align:center;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:left;width:5%;text-align:center;color:#'. $typeColor .';">'. $extenabled .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
-
-				} elseif ( $showProtected > 2 ) {
-					$typeColor = '000080';
-					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
-
-				}
-			}
-		}
-		echo '</div></div>';
-
-
-
-
-		echo '<br style="clear:both;" />';
-		echo '<div class="section-title" style="text-align:center;">'. $template['ARRNAME'] .' :: '. _FPA_ADMIN .'</div>';
-
-		echo '<div class="column-title-container" style="width:99%;margin: 0px auto;clear:both;display:block;">';
-		echo '<div class="column-title" style="width:22%;float:left;text-align:left;">'. _FPA_TNAM .'</div>';
-		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_VER .'</div>';
-		echo '<div class="column-title" style="width:10%;float:left;text-align:center;">'. _FPA_CRE .'</div>';
-		echo '<div class="column-title" style="width:18%;float:left;text-align:center;">'. _FPA_AUTH .'</div>';
-		echo '<div class="column-title" style="width:18%;float:left;text-align:center;">'. _FPA_ADDR .'</div>';
-		echo '<div class="column-title" style="width:5%;float:left;text-align:center;">'. _FPA_EN .'</div>';
-		echo '<div class="column-title" style="width:10%;float:right;text-align:center;">'. _FPA_TYPE .'</div>';
-		echo '<div style="clear:both;"></div>';
-		echo '</div>';
-
-		echo '<div class="" style="width:99%;margin: 0px auto;clear:both;margin-bottom:10px;">';
-		if ( $instance['instanceFOUND'] == _FPA_N ) { // an instance wasn't found in the initial checks, so no folders to check
-			echo '<div style="text-align:center;border-bottom:1px dotted #C0C0C0;width:99%;margin: 0px auto;padding-top:1px;padding-bottom:1px;clear:both;font-size: 11px;">';
-			echo '<div class="warn" style=" margin-top:10px;margin-bottom:10px;">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $component['ARRNAME'] .' '. _FPA_TESTP .'</div>';
-			echo '</div>';
-		} else
-		// Admin templates
-		if ( isset ( $template['ADMIN'])) {
-			foreach ( $template['ADMIN'] as $key => $show ) {
-				if (isset($exset[0]['name'])) {
-					$extarrkey = recursive_array_search($show['name'], $exset);
-                    if ($extarrkey  !== False) {
-					$extenabled = $exset[$extarrkey]['enabled'];
-				} else { $extenabled = '?' ;}
-				} else { $extenabled = '?' ;}
-				if ($extenabled <> 0 AND $extenabled <> 1 ){
-					$extenabled = '?';
-				}
-				if ( $show['type'] == _FPA_3PD OR $showCoreEx == 1 AND $showProtected <= 2) {
-					$typeColor = '404040';
-					echo '<div><div style="float:left;width:22%;color:#'. $typeColor .';">'. $show['name'] .'</div><div style="float:left;width:10%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:12%;text-align:center;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;text-align:center;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:18%;text-align:center;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:left;width:5%;text-align:center;color:#'. $typeColor .';">'. $extenabled .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
-
-				} elseif ( $showProtected > 2 ) {
-					$typeColor = '000080';
-					echo '<div><div style="float:left;width:20%;color:#'. $typeColor .';"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></div><div style="float:left;width:15%;text-align:center;color:#'. $typeColor .';">'. $show['version'] .'</div><div style="float:left;width:15%;color:#'. $typeColor .';">'. $show['creationDate'] .'</div><div style="float:left;width:18%;color:#'. $typeColor .';">'. $show['author'] .'</div><div style="float:left;width:20%;color:#'. $typeColor .';">'. $show['authorUrl'] .'</div><div style="float:right;width:10%;color:#'. $typeColor .';text-align:center;">'. $show['type'] .'</div><br style="clear:both" /></div>';
-				}
-			}
-		}
-		echo '</div></div>';
-		echo '<br style="clear:both;" />';
-		echo '</div></div>';
-		// end content left block
-
-
-	echo '<div style="clear:both;"></div>';
-
-	showDev( $template );
-	unset ( $key, $show );
-	echo '</div>'; // end half-section container
-
-	echo '<div style="clear:both;"></div>';
-	// end show templates
-?>
-
-
-<?php
-	showDev( $fpa );
-
-	if ( defined( '_FPA_DEV' ) ) {
-
-		echo '<div class="dev-mode-information">';
-		echo '<span class="dev-mode-title">'. _RES .' Memory Statistics : </span> (requires PHP4.3.2 & PHP5.2.0)<br />';
-		echo '<div style="margin-left: 10px;">';
-
-			function convert($size) {
-				$unit=array('b','kb','mb','gb','tb','pb');
-				return @round($size/pow(1024,($i=floor(log($size,1024)))),2).' '.$unit[$i];
-			}
-
-				if( function_exists('memory_get_usage') ) {
-					echo 'Currently Allocated Memory: '. convert( memory_get_usage() ) .'<br />'; // currently allocated memory
-				} else {
-					echo _PHP_VERLOW .', memory_get_usage '. _FPA_DNE .'<br />';
-				}
-
-
-				if( function_exists('memory_get_peak_usage') ) {
-					echo 'Total Peak Memory: '. convert( memory_get_peak_usage(true) ); // total peak memory usage
-				} else {
-					echo _PHP_VERLOW .', memory_get_peak_usage '. _FPA_DNE .'<br />';
-				}
-
-		echo '<p style="font-weight:bold;"><em>total runtime : '. mt_end() .' '. _FPA_SECONDS .'</em></p>';
-		echo '</div>';
-		echo '</div>';
-	}
-
-
-
-
-
-
-
-		echo '<div class="snapshot-information" style="text-align:center;color:#4D8000!important;padding-top:10px;">';
-		echo '<span class="header-title">'. _FPA_LEGEND .'</span>';
-		echo '<div style="width:85%;margin:0 auto;margin-top:10px;">';
-		// LEGENDS
-		echo '<div class="half-section-container" style="clear:both;width:100%;">';
-		echo '<div class="ok-hilite" style="text-align:center;width:21%;float:left;margin-left:10px;margin-right:10px;">'. _FPA_GOOD .'</div>';
-		echo '<div class="warn" style="text-align:center;width:21%;float:left;margin-left:10px;margin-right:10px;">'. _FPA_WARNINGS .'</div>';
-		echo '<div class="alert" style="text-align:center;width:21%;float:left;margin-left:10px;margin-right:10px;">'. _FPA_ALERTS .'</div>';
-		echo '<div class="protected" style="text-align:center;width:21%;float:left;margin-left:10px;margin-right:10px;">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</div>';
-		echo '</div>';
-		echo '<div style="clear:both;"><br /></div>';
-
-
-		// SELECTIONS
-		echo '<div style="font-weight:bold;width:25%;float:left;text-align:center;">Developer-Mode<br />';
-			if ( defined ( '_FPA_DEV' ) ) {
-				echo '<div class="normal-note">'. _FPA_EN .'</div>';
-			} else {
-				echo '<div class="normal-note">'. _FPA_DI .' (<i style="color:#808080;">'. _FPA_DEF .'</i> )</div>';
-			}
-		echo '</div>';
-
-		echo '<div style="font-weight:bold;width:25%;float:left;text-align:center;">'. _FPA_INFOPRI .'<br />';
-			if ( $showProtected == 1 ) {
-				echo '<div class="normal-note"><span class="ok">'. _FPA_PRIVNON .'</span></div>';
-			} elseif ( $showProtected == 2 ) {
-				echo '<div class="normal-note"><span class="warn-text">'. _FPA_PRIVPAR .'</span> (<i style="color:#808080;">'. _FPA_DEF .'</i> )</div>';
-			} elseif ( $showProtected >= 3 ) {
-				echo '<div class="normal-note"><span class="alert-text">'. _FPA_PRIVSTR .'</span></div>';
-			}
-		echo '</div>';
-
-		echo '<div style="font-weight:bold;width:25%;float:left;text-align:center;">'. _FPA_ELEVPERM_TITLE .'<br />';
-			if ( $showElevated == 1 ) {
-				echo '<div class="normal-note">'. _FPA_SHOW .'</div>';
-			} else {
-				echo '<div class="normal-note">'. _FPA_HIDE .' (<i style="color:#808080;">'. _FPA_DEF .'</i> )</div>';
-			}
-		echo '</div>';
-
-		echo '<div style="font-weight:bold;width:25%;float:left;text-align:center;">'. _FPA_DBTBL_TITLE .'<br />';
-			if ( $showTables == '1' ) {
-				echo '<div class="normal-note">'. _FPA_SHOW .'</div>';
-			} else {
-				echo '<div class="normal-note">'. _FPA_HIDE .' (<i style="color:#808080;">'. _FPA_DEF .'</i> )</div>';
-			}
-		echo '</div>';
-
-		echo '<br style="clear:both;" />';
-
-		echo '<div style="font-weight:bold;width:25%;float:left;text-align:center;">Diagnostic-Mode<br />';
-			if ( defined ( '_FPA_DIAG' ) ) {
-				echo '<div class="normal-note">'. _FPA_EN .'</div>';
-			} else {
-				echo '<div class="normal-note">'. _FPA_DI .' (<i style="color:#808080;">'. _FPA_DEF .'</i> )</div>';
-			}
-		echo '</div>';
-
-		echo '<div style="font-weight:bold;width:25%;float:left;text-align:center;">'. _FPA_EXTCOM_TITLE .'<br />';
-			if ( $showComponents == '1' ) {
-				echo '<div class="normal-note">'. _FPA_SHOW .'</div>';
-			} else {
-				echo '<div class="normal-note">'. _FPA_HIDE .' (<i style="color:#808080;">'. _FPA_DEF .'</i> )</div>';
-			}
-		echo '</div>';
-
-		echo '<div style="font-weight:bold;width:25%;float:left;text-align:center;">'. _FPA_EXTMOD_TITLE .'<br />';
-			if ( $showModules == '1' ) {
-				echo '<div class="normal-note">'. _FPA_SHOW .'</div>';
-			} else {
-				echo '<div class="normal-note">'. _FPA_HIDE .' (<i style="color:#808080;">'. _FPA_DEF .'</i> )</div>';
-			}
-		echo '</div>';
-
-		echo '<div style="font-weight:bold;width:25%;float:left;text-align:center;">'. _FPA_EXTPLG_TITLE .'<br />';
-			if ( $showPlugins == '1' ) {
-				echo '<div class="normal-note">'. _FPA_SHOW .'</div>';
-			} else {
-				echo '<div class="normal-note">'. _FPA_HIDE .' (<i style="color:#808080;">'. _FPA_DEF .'</i> )</div>';
-			}
-		echo '</div>';
-
-		echo '</div>';
-		echo '<div style="clear:both;"><br /></div>';
-
-		echo '<div style="text-align:center!important;"><a style="color:#4D8000!important;" href="'. _RES_FPALINK .''. _RES_LANG .'" target="_github">'. _RES_FPALATEST .' '. _RES .'</a></div>';
-		echo "<p></p>";
-		echo '<div style="text-align:center!important;"><a style="color:#4D8000!important;" href="'. _RES_FPALINK2 .''. _RES_LANG .'" target="_github">'. _RES_FPALATEST2 .' '. _RES .'</a></div>';
-		echo "<br></br><p>FPA " . _RES_VERSION . " " . _COPYRIGHT_STMT . " "  . _LICENSE_FOOTER . " "  . _LICENSE_LINK . "</p>";
-		echo '</div>';
-
-?>
 
 
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
@@ -7483,11 +7710,73 @@ function recursive_array_search($needle,$haystack) {
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
         <script>
-            // activate popovers & tooltips - on hover
+
+            /**
+             * activate BS popovers, tooltips (on hover) and toasts
+             * requires : jQuery & popper
+             * @RussW 23/05/2020
+             *
+             */
             $(function () {
                 $('[data-toggle="popover"]').popover();
                 $('[data-toggle="tooltip"]').tooltip();
-            })
+                $('.toast').toast('show');
+
+                var offset = 64;
+                $('.dropdown-menu a.dropdown-item').click(function(event) {
+                    event.preventDefault();
+                    $($(this).attr('href'))[0].scrollIntoView();
+                    scrollBy(0, -offset);
+                });
+            });
+
+
+            /**
+             * post output functions
+             * 1. hide the FPA options panel/form
+             * 2. count post output characters, if over 20k post a message to split forum posts
+             * 3. add an event listener to copy post output to clipboard when button clicked
+             *
+             * only executes child functions if doIT = 1
+             * @RussW 23/05/2020
+             *
+             */
+            function doPostActions() {
+                var doIT = '<?php echo @$_POST['doIT']; ?>';
+
+                if ( doIT == '1' ) {
+
+                    // hide the options panel/form and change button text (overrides toggleFPA)
+                    var eleOptions  = document.getElementById('fpaOptions');
+                    var textButton  = document.getElementById('fpaButton');
+                    eleOptions.style.display = 'none';
+                    textButton.innerHTML     = '<i class="fas fa-chevron-circle-right"></i> Open the <strong><?php echo _RES; ?></strong>';
+
+
+                    // count and display post characters
+                    var maxCharCount = '19995';
+                    var eleCount     = document.getElementById('postOUTPUT');
+                    var countMessage = '<?php echo _FPA_INS_8; ?>';
+                    if ( eleCount.value.length > maxCharCount ) {
+                        document.getElementById('postCharCount').innerHTML = '<div class="alert alert-warning text-white 1bg-white small my-1 p-3"><i class="fas fa-exclamation-triangle fa-2x d-block mb-2 text-center"></i>' + countMessage + '</div><div class="text-right mb-2"><span class="xsmall text-muted">Post Length:</span> <span class="badge badge-pill badge-warning">' + document.getElementById('postOUTPUT').value.length + '</span></div>';
+                    } else {
+                        document.getElementById('postCharCount').innerHTML = '<div class="text-right mb-2"><span class="xsmall text-muted">Post Length:</span> <span class="badge badge-pill badge-light">' + document.getElementById('postOUTPUT').value.length + '</span></div>';
+                    }
+
+
+                    // copy post output to clipboard
+                    function copyPost() {
+                        var copyText = document.querySelector('#postOUTPUT');
+                        copyText.select();
+                        copyText.setSelectionRange(0, 99999); /*for mobile devices*/
+                        document.execCommand('copy');
+                    }
+                    document.querySelector('#copyPOST').addEventListener('click', copyPost);
+
+                } // doIT = 1
+            }
+            doPostActions();
+
         </script>
 
     </body>

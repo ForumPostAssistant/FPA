@@ -2709,7 +2709,7 @@
                             <?php } ?>
                             <a class="dropdown-item py-1" href="#templates">Templates</a>
                             <div class="dropdown-divider mb-0"></div>
-                            <a class="dropdown-item py-2 bg-danger text-white lead" href="fpa-en.php?act=delete"><i class="fas fa-times-circle"></i> Delete FPA</a>
+                            <a class="dropdown-item py-2 bg-danger text-white lead" href="fpa-en.php?act=delete"><i class="fas fa-trash-alt"></i> Delete FPA</a>
                         </div>
                     </li>
                     <!-- TODO: if not latest FPA, show download -->
@@ -2764,7 +2764,7 @@
                     <!-- fpa security warning -->
                     <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Security Notice" data-content="Delete the FPA script now">
                         <a class="btn btn-danger mr-1" href="fpa-en.php?act=delete" role="button" aria-label="Delete FPA now">
-                            <i class="fas fa-times-circle lead"></i>
+                            <i class="fas fa-trash-alt lead"></i>
                         </a>
                     </li>
                 </ul>

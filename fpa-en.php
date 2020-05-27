@@ -312,6 +312,12 @@
     define ( '_FPA_DASHBOARD_CONFIDENCE_NOTE', 'An initial <em>basic confidence audit</em> has been performed to determine if the minimum requirements and best practices have been met to ensure the successful operation of the latest version of Joomla! and it\'s standard functions.');
     define ( '_FPA_DISCOVERY_REPORT', 'Discovery Report' );
     define ( '_FPA_PERMOWN', 'Permissions & Ownership' );
+    define ( '_FPA_CNF_A', 'Joomla! should run without any problems' );
+    define ( '_FPA_CNF_B', 'Joomla! should run but some features may have minor problems' );
+    define ( '_FPA_CNF_C', 'Joomla! might run but some features will have problems' );
+    define ( '_FPA_CNF_D', 'Joomla! might run but many features will have problems' );
+    define ( '_FPA_CNF_E', 'Joomla! probably will not run or will have many problems' );
+    define ( '_FPA_CNF_F', 'Joomla! probably will not run and will have many problems' );
     define ( '_FPA_JDISCLAIMER', 'Forum Post Assistant (FPA) is not affiliated with or endorsed by The Joomla! Project<sup>&trade;</sup>. Use of the Joomla!<sup>&reg;</sup> name, symbol, logo, and related trademarks is licensed by Open Source Matters, Inc.' );
 	/** END LANGUAGE STRINGS *****************************************************************/
 ?>
@@ -3667,37 +3673,37 @@
                                     } elseif ($confidenceScore >= 0 AND $confidenceScore <= 25) {
                                         $confidenceRating  = 'F';
                                         $confidenceColor   = 'danger';
-                                        $confidenceMessage = 'Joomla! is very unlikely to run or will observe major problems';
+                                        $confidenceMessage = _FPA_CNF_F;
 
                                     } elseif ($confidenceScore <= 40) {
                                         $confidenceRating  = 'E';
                                         $confidenceColor   = 'warning';
-                                        $confidenceMessage = 'Joomla! is unlikely to run or will observe many problems';
+                                        $confidenceMessage = _FPA_CNF_E;
 
                                     } elseif ($confidenceScore <= 60) {
                                         $confidenceRating  = 'D';
                                         $confidenceColor   = 'warning';
-                                        $confidenceMessage = 'Joomla! is likely to run but is very likely to observe many problems';
+                                        $confidenceMessage = _FPA_CNF_D;
 
                                     } elseif ($confidenceScore <= 75) {
                                         $confidenceRating  = 'C';
                                         $confidenceColor   = 'info';
-                                        $confidenceMessage = 'Joomla! is likely to run but some features are likely to observe problems';
+                                        $confidenceMessage = _FPA_CNF_C;
 
                                     } elseif ($confidenceScore <= 90) {
                                         $confidenceRating  = 'B';
                                         $confidenceColor   = 'primary';
-                                        $confidenceMessage = 'Joomla! is very likely to run but some features may observe minor problems';
+                                        $confidenceMessage = _FPA_CNF_B;
 
                                     } elseif ($confidenceScore < 100) {
                                         $confidenceRating  = 'A';
                                         $confidenceColor   = 'success';
-                                        $confidenceMessage = 'Joomla! should run and should not observe any problems';
+                                        $confidenceMessage = _FPA_CNF_A;
 
                                     } elseif ($confidenceScore == 100) {
                                         $confidenceRating  = 'A+';
                                         $confidenceColor   = 'success';
-                                        $confidenceMessage = 'Joomla! should run and should not observe any problems';
+                                        $confidenceMessage = _FPA_CNF_A;
 
                                     } else { // catch-all
                                         $confidenceRating  = '<i class="fas fa-question-circle text-light"></i>';

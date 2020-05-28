@@ -35,6 +35,11 @@
      # define ( '_FPA_DEV', TRUE );      // developer-mode, displays raw array data
      # define ( '_FPA_DIAG', TRUE );     // diagnostic-mode, turns on PHP logging errors, display errors and logs error to a file.
 
+    /** DISABLE LIVE CHECK FEATURES **********************************************************/
+      define ( '_LIVE_CHECK_FPA', TRUE );    // enable live latest FPA version check
+      define ( '_LIVE_CHECK_JOOMLA', TRUE ); // enable live latest Joomla! version check
+      define ( '_LIVE_CHECK_VEL', TRUE );    // enable live VEL check
+
 	/** SET THE JOOMLA! PARENT FLAG AND CONSTANTS ********************************************/
 	define ( '_VALID_MOS', 1 );         // for J!1.0
 	define ( '_JEXEC', 1 );             // for J!1.5, J!1.6, J!1.7, J!2.5, J!3.0
@@ -320,10 +325,9 @@
     define ( '_FPA_CNF_F', 'Joomla! probably will not run and will have many problems' );
     define ( '_FPA_JDISCLAIMER', 'Forum Post Assistant (FPA) is not affiliated with or endorsed by The Joomla! Project<sup>&trade;</sup>. Use of the Joomla!<sup>&reg;</sup> name, symbol, logo, and related trademarks is licensed by Open Source Matters, Inc.' );
 	/** END LANGUAGE STRINGS *****************************************************************/
-?>
 
 
-<?php
+
     /**
      * delete script
      *
@@ -368,17 +372,16 @@
         exit;
 
     } // end delete script
-?>
 
 
-<?php
+
+
 	// setup the default runtime parameters and collect the POST data changes, if any
 	if ( @$_POST['showProtected'] ) {
 		$showProtected  = @$_POST['showProtected'];
 
 	} else {
 		$showProtected = 2; // default (limited privacy masking)
-
 	}
 
 	if ( @$_POST['showElevated'] == 0 AND  @$_POST['doIT'] == 1   ) {
@@ -386,7 +389,6 @@
 
 	} else {
 		$showElevated = 1; // default 1(show) changed default to 1 Phil 4-20-12
-
 	}
 
 	if ( @$_POST['showTables'] == 0 AND  @$_POST['doIT'] == 1   ) {
@@ -394,7 +396,6 @@
 
 	} else {
 		$showTables = 1;
-
 	}
 
 	if ( @$_POST['showComponents'] == 0 AND  @$_POST['doIT'] == 1   ) {
@@ -402,7 +403,6 @@
 
 	} else {
 		$showComponents = 1; // default 0 (hide) changed default to 1 Phil 4-20-12
-
 	}
 
 	if ( @$_POST['showModules'] == 0 AND  @$_POST['doIT'] == 1   ) {
@@ -410,32 +410,29 @@
 
 	} else {
 		$showModules = 1; // default 0 (hide) changed default to 1 Phil 4-20-12
-
 	}
-
 
 	if ( @$_POST['showLibraries'] == 0 AND  @$_POST['doIT'] == 1  ) {
 		$showLibraries  = 0;
 
 	} else {
 		$showLibraries = 1;
-
 	}
-
 
 	if ( @$_POST['showPlugins'] == 0 AND  @$_POST['doIT'] == 1  ) {
 		$showPlugins  = 0;
 
 	} else {
 		$showPlugins = 1; // default 0(hide) changed default to 1 Phil 4-20-12
-
 	}
 
 	if ( @$_POST['showCoreEx'] == 0 AND  @$_POST['doIT'] == 1 ) {
-		$showCoreEx  = 0;
+        $showCoreEx  = 0;
+
 	} else {
 		$showCoreEx = 1;
 	}
+
 
 
 	/** TIMER-POPS ***************************************************************************/
@@ -465,7 +462,6 @@
 
 
 	// build the initial arrays used throughout fpa/bra
-
 	$fpa['ARRNAME']         = _RES;
 	$fpa['diagLOG']         = 'fpa-Diag.log';
 	$snapshot['ARRNAME']        = _FPA_SNAP_TITLE;
@@ -525,11 +521,9 @@
 	$plugin['ARRNAME']          = _FPA_EXTPLG_TITLE;
 	$template['ARRNAME']        = _FPA_TMPL_TITLE;
 	$library['ARRNAME']         = _FPA_EXTLIB_TITLE;
-?>
 
 
 
-<?php
 	// build the developer-mode function to display the raw arrays
 	function showDev( &$section ) {
 		if ( defined( '_FPA_DEV' ) ) {
@@ -550,11 +544,9 @@
 			echo '</div></div>';
 		} // end if _FPA_DEV defined
 	} // end developer-mode function
-?>
 
 
 
-<?php
 	/** DETERMINE SOME SETTINGS BEFORE FPA MIGHT PLAY WITH THEM ******************************/
 	$phpenv['phpERRORDISPLAY']  = ini_get( 'display_errors' );
 	$phpenv['phpERRORREPORT']   = ini_get( 'error_reporting' );
@@ -574,13 +566,14 @@
 
 
 
-	/** DETERMINE IF THERE IS A KNOWN ERROR ALREADY *******************************************
-	** here we try and determine if there is an existing php error log file, if there is we
-	** then look to see how old it is, if it's less than one day old, lets see if what the last
-	** error this and try and auto-enter that as the problem description
-	*****************************************************************************************/
-
-	/** is there an existing php error-log file? *********************************************/
+	/**
+     * DETERMINE IF THERE IS A KNOWN ERROR ALREADY
+     *
+	 * here we try and determine if there is an existing php error log file, if there is we
+	 * then look to see how old it is, if it's less than one day old, lets see if what the last
+	 * error this and try and auto-enter that as the problem description
+	 */
+	// is there an existing php error-log file?
 	if ( file_exists( $phpenv['phpERRLOGFILE'] ) ) {
 		// when was the file last modified?
 		$phpenv['phpLASTERRDATE'] = @date ("dS F Y H:i:s.", filemtime( $phpenv['phpERRLOGFILE'] ));
@@ -593,2021 +586,2044 @@
 		// get the current time in seconds
 		$now_time = time();
 
-			/** if the file was modified less than one day ago, grab the last error entry
-			** Changed this section to get rid of the "Strict Standards: Only variables should be passed by reference"
-			** error  Phil - 9-20-12 */
+        /**
+         * if the file was modified less than one day ago, grab the last error entry
+         * Changed this section to get rid of the "Strict Standards: Only variables should be passed by reference" error
+         * Phil - 9-20-12
+         *
+         */
 		if ( $now_time - $file_time < $age ) {
-			/*  !FIXME memory allocation error on large php_error file - RussW
-			** replaced these two lines with code below - Phil 09-23-12
-			**  $lines = file( $phpenv['phpERRLOGFILE'] );
-			**  $phpenv['phpLASTERR'] = array_pop( $lines );
-
-	*********************************************
-		** Begin the fix for the memory allocation error on large php_error file
-		** Solution is to read the file line by line; not reading the whole file in memory.
-		** I just open a kind of a pointer to it, then seek it char by char.
-		** This is a more efficient way to work with large files.   - Phil 09-23-12  */
-	$line = '';
-
-	$f = fopen(($phpenv['phpERRLOGFILE']), 'r');
-	$cursor = -1;
-
-	fseek($f, $cursor, SEEK_END);
-	$char = fgetc($f);
-
-	/**
-	* Trim trailing newline chars of the file
-	*/
-	while ($char === "\n" || $char === "\r") {
-		fseek($f, $cursor--, SEEK_END);
-		$char = fgetc($f);
-		}
-
-	/**
-	* Read until the start of file or first newline char
-	*/
-	while ($char !== false && $char !== "\n" && $char !== "\r") {
-	/**
-	* Prepend the new char
-	*/
-		$line = $char . $line;
-		fseek($f, $cursor--, SEEK_END);
-		$char = fgetc($f);
-		}
-
-	// echo $line;
-	$phpenv['phpLASTERR'] = $line;
-
-		}
-			}
-	// ************** End Fix for memory allocation error when reading php_error file
-?>
-
-<?php
-	/** SEEING A WHITE SCREEN WHILST RUNNING FPA? OR SOMEONE HELPING YOU SENT YOU HERE? *******
-	** uncomment _FPA_DIAG above and re-run FPA
-	**
-	** display_errors, enables php errors to be displayed on the screen
-	** error_reporting, sets the level of errors to report, "-1" is all errors
-	** log_errors, enables errors to be logged to a file, fpa_error.log in the "/" folder
-	*****************************************************************************************/
-/*
-	if ( defined( '_FPA_DEV' ) OR defined( '_FPA_DIAG' ) ) {
-		// these can only have inline styling because it is outputed before the html styling
-		echo '<div class="alert alert-warning text-white text-center p-0 m-0">';
-
-		// display developer-mode notice
-		if ( defined( '_FPA_DEV' ) ) {
-			ini_set( 'display_errors', 'Off' ); // default-display
-
-			echo '<h2 class="text-white m-0 p-0">'. _FPA_DEVENA .'</h2>';
-		} // end developer-mode display
-
-		// display diagnostic-mode notice
-		if ( defined( '_FPA_DIAG' ) ) {
-			ini_set( 'display_errors', 1 );
-
-			ini_set ( 'error_reporting', '-1' );
-			ini_set( 'error_log', $fpa['diagLOG'] );
-
-			echo '<div style="text-shadow: 1px 1px 1px #FFF;float:left; text-align:center; width:'. $divwidth .'; background-color:#CAFFD8; border:1px solid #4D8000; color:#404040; font-size:10px; font-family:arial; padding:5px;-moz-box-shadow: 3px 3px 3px #C0C0c0;-webkit-box-shadow: 3px 3px 3px #C0C0c0;box-shadow: 3px 3px 3px #C0C0c0;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;">';
-			echo '<strong style="color:#4D8000;">'. _FPA_DIAENA .'</strong><br />';
-			echo _FPA_DIADSC .' '. $fpa['diagLOG'] .'.';
-			echo '</div>';
-
-
-				if ( file_exists( $fpa['diagLOG'] ) ) {
-					echo '<br style="clear:both;" /><div style="margin-top:10px;text-align:left;text-shadow: 1px 1px 1px #FFF; width:740px; background-color:#FFFFCC; border:1px solid #800000; color:#404040; font-size:10px; font-family:arial; padding:5px;-moz-box-shadow: 3px 3px 3px #C0C0c0;-webkit-box-shadow: 3px 3px 3px #C0C0c0;box-shadow: 3px 3px 3px #C0C0c0;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;">';
-					echo '<strong style="color:#800000;">DIAGNOSTIC MODE ERROR</strong> in '. $fpa['diagLOG'] .'<br />';
-
-					$fpa['fpaLASTERR'] = @array_pop( file( $fpa['diagLOG'] ) );
-					echo $fpa['fpaLASTERR'];
-					echo '</div>';
-
-				} else {
-					echo '<br style="clear:both;" /><div style="margin-top:10px;text-align:left;text-shadow: 1px 1px 1px #FFF; width:740px; background-color:#FFFFCC; border:1px solid #800000; color:#404040; font-size:10px; font-family:arial; padding:5px;-moz-box-shadow: 3px 3px 3px #C0C0c0;-webkit-box-shadow: 3px 3px 3px #C0C0c0;box-shadow: 3px 3px 3px #C0C0c0;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;">';
-					echo '<strong style="color:#800000;">'. _FPA_DIAERR .'</strong> '. _FPA_IN .' '. $fpa['diagLOG'] .'<br />';
-					echo _FPA_NER;
-					echo '</div>';
-				}
-
-		} // end diagnostic-mode display
-
-		echo '</div>';
-
-	} else { // end developer- or diag -mode display
-		ini_set( 'display_errors', 0 ); // default-display
-    }
-*/
-?>
-
-
-
-<?php
-	/** DETERMINE INSTANCE STATUS & VERSIONING ************************************************
-	** here we check for known files to determine if an instance even exists, then we look for
-	** the version and configuration files. some differ between between versions, so we have a
-	** bit of jiggling to do.
-	** to try and avoid "white-screens" fpa no-longer "includes" these files, but merely tries
-	** to open and read them, although this is slower, it improves the reliability of fpa.
-	*****************************************************************************************/
-
-	/** is an instance present? **************************************************************/
-	// this is a two-fold sanity check, we look two pairs of known folders, only one pair need exist
-	// this caters for the potential of missing folders, but is not exhaustive or too time consuming
-	if ( ( file_exists( 'components/' ) AND file_exists( 'modules/' ) ) OR ( file_exists( 'administrator/components/' ) AND file_exists( 'administrator/modules/' ) ) ) {
-		$instance['instanceFOUND'] = _FPA_Y;
-	} else {
-		$instance['instanceFOUND'] = _FPA_N;
-	}
-
-
-
-	/** what version is the instance? ********************************************************/
-	// >= J3.8.0
-	if ( file_exists( 'libraries/src/Version.php' ) ) {
-		$instance['cmsVFILE'] = 'libraries/src/Version.php';
-
-	// >= J3.6.3
-	} elseif ( file_exists( 'libraries/cms/version/version.php' ) AND !file_exists( 'libraries/platform.php' ) ) {
-		$instance['cmsVFILE'] = 'libraries/cms/version/version.php';
-
-	// J2.5 & J3.0 libraries/joomla/platform.php files
-	} elseif ( file_exists( 'libraries/cms/version/version.php' ) AND file_exists( 'libraries/platform.php' ) ) {
-		$instance['cmsVFILE'] = 'libraries/cms/version/version.php';
-
-	// J1.7 includes/version.php & libraries/joomla/platform.php files
-	} elseif ( file_exists( 'includes/version.php' ) AND file_exists( 'libraries/platform.php' ) ) {
-		$instance['cmsVFILE'] = 'includes/version.php';
-
-	// J1.6 libraries/joomla/version.php & joomla.xml files
-	} elseif ( file_exists( 'libraries/joomla/version.php' ) AND file_exists( 'joomla.xml' ) ) {
-		$instance['cmsVFILE'] = 'libraries/joomla/version.php';
-
-	// J1.5 & Nooku Server libraries/joomla/version.php & koowa folder
-	} elseif ( file_exists( 'libraries/joomla/version.php' ) AND file_exists( 'libraries/koowa/koowa.php' ) ) {
-		$instance['cmsVFILE'] = 'libraries/joomla/version.php';
-
-	// J1.5 libraries/joomla/version.php & xmlrpc folder
-	} elseif ( file_exists( 'libraries/joomla/version.php' ) AND file_exists( 'xmlrpc/' ) ) {
-		$instance['cmsVFILE'] = 'libraries/joomla/version.php';
-
-	// J1.0 includes/version.php & mambots folder
-	} elseif ( file_exists( 'includes/version.php' ) AND file_exists( 'mambots/' ) ) {
-		$instance['cmsVFILE'] = 'includes/version.php';
-
-	// fpa could find the required files to determine version(s)
-	} else {
-		$instance['cmsVFILE'] = _FPA_N;
-	}
-
-	/** Detect multiple instances of version file ***************************************/
- 	if ( file_exists( 'libraries/src/Version.php' ) ) {
-		$vFile1 = 1;
-	} else {
-		$vFile1 = 0;}
-  if ( file_exists( 'libraries/cms/version/version.php' ) ) {
-		$vFile2 = 1;
-	} else {
-		$vFile2 = 0;}
-  if ( file_exists( 'includes/version.php' ) ) {
-		$vFile3 = 1;
-	} else {
-		$vFile3 = 0;}
-  if ( file_exists( 'libraries/joomla/version.php' ) ) {
-		$vFile4 = 1;
-	} else {
-		$vFile4 = 0;}
-   $vFileSum = $vFile1 + $vFile2 + $vFile3 + $vFile4;
-
-	/** what version is the framework? (J!1.7 & above) ***************************************/
-	// J1.7 libraries/joomla/platform.php
-	if ( file_exists( 'libraries/platform.php' ) ) {
-		$instance['platformVFILE'] = 'libraries/platform.php';
-
-	// J1.5 Nooku Server libraries/koowa/koowa.php
-	} elseif ( file_exists( 'libraries/koowa/koowa.php' ) ) {
-		$instance['platformVFILE'] = 'libraries/koowa/koowa.php';
-
-	// J3.7
-	} elseif ( file_exists( 'libraries/joomla/platform.php' ) ) {
-		$instance['platformVFILE'] = 'libraries/joomla/platform.php';
-
-	} else {
-		$instance['platformVFILE'] = _FPA_N;
-	}
-
-
-
-	// read the cms version file into $cmsVContent (all versions)
-	if ( $instance['cmsVFILE'] != _FPA_N ) {
-		$cmsVContent = file_get_contents( $instance['cmsVFILE'] );
-			// find the basic cms information
-			preg_match ( '#\$PRODUCT\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsPRODUCT );
-			preg_match ( '#\$RELEASE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELEASE );
-			preg_match ( '#\$(?:DEV_LEVEL|MAINTENANCE)\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVLEVEL );
-			preg_match ( '#\$(?:DEV_STATUS|STATUS)\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVSTATUS );
-			preg_match ( '#\$(?:CODENAME|CODE_NAME)\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsCODENAME );
-			preg_match ( '#\$(?:RELDATE|RELEASE_DATE)\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELDATE );
-
-                        // Joomla 3.5 - 3.9
-                        if (empty($cmsPRODUCT))
-                        {
-                            preg_match ( '#const\s*PRODUCT\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsPRODUCT );
-                            preg_match ( '#const\s*RELEASE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELEASE );
-                            preg_match ( '#const\s*DEV_LEVEL\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVLEVEL );
-                            preg_match ( '#const\s*DEV_STATUS\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVSTATUS );
-                            preg_match ( '#const\s*CODENAME\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsCODENAME );
-                            preg_match ( '#const\s*RELDATE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELDATE );
-                            preg_match ( '#const\s*MAJOR_VERSION\s*=\s*(.*);#', $cmsVContent, $cmsMAJOR_VERSION );
-                        }
-
-                        // Joomla 4
-                        if (empty($cmsRELEASE))
-                        {
-                            preg_match ( '#const\s*PRODUCT\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsPRODUCT );
-                            preg_match ( '#const\s*DEV_STATUS\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVSTATUS );
-                            preg_match ( '#const\s*CODENAME\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsCODENAME );
-                            preg_match ( '#const\s*RELDATE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELDATE );
-                            preg_match ( '#const\s*EXTRA_VERSION\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $EXTRA_VERSION );
-                            preg_match ( '#const\s*MAJOR_VERSION\s*=\s*(.*);#', $cmsVContent, $cmsMAJOR_VERSION );
-                            preg_match ( '#const\s*MINOR_VERSION\s*=\s*(.*);#', $cmsVContent, $cmsMINOR_VERSION );
-                            preg_match ( '#const\s*PATCH_VERSION\s*=\s*(.*);#', $cmsVContent, $cmsPATCH_VERSION );
-                            $cmsRELEASE[1] = $cmsMAJOR_VERSION[1] . '.' . $cmsMINOR_VERSION[1];
-                            if (strlen($EXTRA_VERSION[1]) > 0) {
-                              $cmsDEVLEVEL[1] = $cmsPATCH_VERSION[1]. '-' . $EXTRA_VERSION[1] ;
-                            } else {
-                              $cmsDEVLEVEL[1] = $cmsPATCH_VERSION[1] ;
-                            }
-                        }
-
-                        if (empty($cmsMAJOR_VERSION))
-                        {
-                            $cmsMAJOR_VERSION[1] = '0' ;
-                        }
-
-                        $instance['cmsMAJORVERSION'] = $cmsMAJOR_VERSION[1];
-                        $instance['cmsPRODUCT'] = $cmsPRODUCT[1];
-                        $instance['cmsRELEASE'] = $cmsRELEASE[1];
-                        $instance['cmsDEVLEVEL'] = $cmsDEVLEVEL[1];
-                        $instance['cmsDEVSTATUS'] = $cmsDEVSTATUS[1];
-                        $instance['cmsCODENAME'] = $cmsCODENAME[1];
-                        $instance['cmsRELDATE'] = $cmsRELDATE[1];
-	}
-
-
-
-	// read the platform version file into $platformVContent (J!1.7 & above only)
-	if ( $instance['platformVFILE'] != _FPA_N ) {
-		$platformVContent = file_get_contents( $instance['platformVFILE'] );
-
-			// find the basic platform information
-			if ( $instance['platformVFILE'] == 'libraries/koowa/koowa.php' ) {
-
-				// Nooku platform based
-				preg_match ( '#VERSION.*=\s[\'|\"](.*)[\'|\"];#', $platformVContent, $platformRELEASE );
-				preg_match ( '#VERSION.*=\s[\'|\"].*-(.*)-.*[\'|\"];#', $platformVContent, $platformDEVSTATUS );
-
-                                $instance['platformPRODUCT'] = 'Nooku';
-                                $instance['platformRELEASE'] = $platformRELEASE[1];
-                                $instance['platformDEVSTATUS'] = $platformDEVSTATUS[1];
-			} else {
-
-				// default to the Joomla! platform, as it is most common at the momemt
-				preg_match ( '#PRODUCT\s*=\s*[\'"](.*)[\'"]#', $platformVContent, $platformPRODUCT );
-				preg_match ( '#RELEASE\s*=\s*[\'"](.*)[\'"]#', $platformVContent, $platformRELEASE );
-				preg_match ( '#MAINTENANCE\s*=\s*[\'"](.*)[\'"]#', $platformVContent, $platformDEVLEVEL );
-				preg_match ( '#STATUS\s*=\s*[\'"](.*)[\'"]#', $platformVContent, $platformDEVSTATUS );
-				preg_match ( '#CODE_NAME\s*=\s*[\'"](.*)[\'"]#', $platformVContent, $platformCODENAME );
-				preg_match ( '#RELEASE_DATE\s*=\s*[\'"](.*)[\'"]#', $platformVContent, $platformRELDATE );
-
-                                // Joomla 3.5 - 3.9
-                                if (empty($platformPRODUCT))
-                                {
-                                    preg_match ( '#const\s*PRODUCT\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsPRODUCT );
-                                    preg_match ( '#const\s*RELEASE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELEASE );
-                                    preg_match ( '#const\s*MAINTENANCE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVLEVEL );
-                                    preg_match ( '#const\s*STATUS\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVSTATUS );
-                                    preg_match ( '#const\s*CODE_NAME\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsCODENAME );
-                                    preg_match ( '#const\s*RELEASE_DATE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELDATE );
-                                }
-
-                                $instance['platformPRODUCT'] = $platformPRODUCT[1];
-                                $instance['platformRELEASE'] = $platformRELEASE[1];
-                                $instance['platformDEVLEVEL'] = $platformDEVLEVEL[1];
-                                $instance['platformDEVSTATUS'] = $platformDEVSTATUS[1];
-                                $instance['platformCODENAME'] = $platformCODENAME[1];
-                                $instance['platformRELDATE'] = $platformRELDATE[1];
-			}
-	}
-
-	/** is Joomla! installed/configured? *****************************************************/
-	// determine exactly where the REAL configuration file is, it might not be the one in the "/" folder
-	if ( @$instance['cmsRELEASE'] == '1.0' ) {
-	   if ( file_exists( 'configuration.php' ) ) {
-	       $instance['configPATH'] = 'configuration.php';
-	   }
-	} elseif ( @$instance['cmsRELEASE'] == '1.5' ) {
-	   $instance['configPATH'] = 'configuration.php';
-	} elseif ( @$instance['cmsRELEASE'] >= '1.6' ) {
-	   if ( file_exists( 'defines.php' ) OR file_exists( 'administrator\defines.php' )) {
-	       $instance['definesEXIST'] = _FPA_Y;
-	       // look for a 'defines' override file in the "/" folder.
-	       if ( file_exists( 'defines.php' ) ) {
-	           $cmsOverride = file_get_contents( 'defines.php' );
-	           preg_match ( '#JPATH_CONFIGURATION\s*\S*\s*[\'"](.*)[\'"]#', $cmsOverride, $cmsOVERRIDEPATH );
-	           if ( file_exists( @$cmsOVERRIDEPATH[1] . '\configuration.php' ) ) {
-    	           $instance['configPATH'] = $cmsOVERRIDEPATH[1] . '\configuration.php';
-    	           $instance['configSiteDEFINE'] = _FPA_Y;
-	           } else {
-	               $instance['configPATH'] = 'configuration.php';
-    	           $instance['configSiteDEFINE'] = _FPA_Y;
-	           }
-	       } else {
-	           $instance['configPATH'] = 'configuration.php';
-	           $instance['configSiteDEFINE'] = _FPA_N ;
-	       }
-	       if ( file_exists( 'administrator\defines.php' ) ) {
-	           $cmsAdminOverride = file_get_contents( 'administrator\defines.php' );
-	           preg_match ( '#JPATH_CONFIGURATION\s*\S*\s*[\'"](.*)[\'"]#', $cmsAdminOverride, $cmsADMINOVERRIDEPATH );
-	           if ( file_exists( @$cmsOVERRIDEPATH[1] . '\configuration.php' ) ) {
-	               $instance['configADMINPATH'] = $cmsADMINOVERRIDEPATH[1] . '\configuration.php';
-	               $instance['configAdminDEFINE'] = _FPA_Y;
-	           } else {
-	               $instance['configADMINPATH'] = 'configuration.php';
-	               $instance['configAdminDEFINE'] = _FPA_Y;
-	           }
-	       } else {
-	           $instance['configAdminDEFINE'] = _FPA_N;
-	           $instance['configADMINPATH'] = 'configuration.php';
-	       }
-	       if (( $instance['configPATH'] <> $instance['configADMINPATH'] ) OR ($instance['configSiteDEFINE'] <> $instance['configAdminDEFINE'] )) {
-	           $instance['equalPATH'] = _FPA_N;
-	       } else {
-	           $instance['equalPATH'] = _FPA_Y;
-	       }
-	   } else {
-	       $instance['configPATH'] = 'configuration.php';
-	       $instance['definesEXIST'] = _FPA_N;
-	       $instance['equalPATH'] = _FPA_Y;
-	   }
-	} else {
-	   $instance['configPATH'] = 'configuration.php';
-	}
-
-	// check the configuration file (all versions)
-	if ( file_exists( $instance['configPATH'] ) ) {
-		$instance['instanceCONFIGURED'] = _FPA_Y;
-
-		// determine it's ownership and mode
-		if ( is_writable( $instance['configPATH'] ) ) {
-			$instance['configWRITABLE']	= _FPA_Y;
-
-		} else {
-			$instance['configWRITABLE']	= _FPA_N;
-
-		}
-
-
-		$instance['configMODE'] = substr( sprintf('%o', fileperms( $instance['configPATH'] ) ),-3, 3 );
-
-
-		if ( function_exists( 'posix_getpwuid' ) AND $system['sysSHORTOS'] != 'WIN' ) { // gets the UiD and converts to 'name' on non Windows systems
-			$instance['configOWNER'] = posix_getpwuid( fileowner( $instance['configPATH'] ) );
-			$instance['configGROUP'] = posix_getgrgid( filegroup( $instance['configPATH'] ) );
-
-		} else { // only get the UiD for Windows, not 'name'
-			$instance['configOWNER']['name'] = fileowner( $instance['configPATH'] );
-			$instance['configGROUP']['name'] = filegroup( $instance['configPATH'] );
-		}
-
-
-	/** if present, is the configuration file valid? *****************************************/
-		/** added code to fix the config version mis-match on 2.5 versions of Joomla - 4-8-12 - Phil *****/
-		/** reworked code block to better determine version in 1.7 - 3.0+ versions of Joomla - 8-06-12 - Phil *****/
-		$cmsCContent = file_get_contents( $instance['configPATH'] );
-
-			// >= 3.8.0
-			if ( preg_match ( '#(public)#', $cmsCContent ) AND file_exists( 'libraries/src/Version.php' ) ) {
-				$instance['configVALIDFOR'] = $instance['cmsRELEASE'];
-				$instance['cmsVFILE'] = 'libraries/src/Version.php';
-				$instance['instanceCFGVERMATCH'] = _FPA_Y;
-
-			// >= 3.6.3
-			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] == _FPA_N AND file_exists( 'libraries/cms/version/version.php' ) ) {
-				$instance['configVALIDFOR'] = $instance['cmsRELEASE'];
-				$instance['cmsVFILE'] = 'libraries/cms/version/version.php';
-				$instance['instanceCFGVERMATCH'] = _FPA_Y;
-
-			//for 3.0
-			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] != _FPA_N ) {
-				$instance['configVALIDFOR'] = $instance['cmsRELEASE'];
-				$instance['cmsVFILE'] = 'libraries/cms/version/version.php';
-				$instance['instanceCFGVERMATCH'] = _FPA_Y;
-
-			//for 2.5
-			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND substr( $instance['platformRELEASE'],0,2 ) == '11' ) {
-				$instance['configVALIDFOR'] = $instance['cmsRELEASE'];
-				$instance['cmsVFILE'] = 'libraries/cms/version/version.php';
-				$instance['instanceCFGVERMATCH'] = _FPA_Y;
-
-			//for 1.7
-			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] != _FPA_N  AND $instance['cmsVFILE'] != 'libraries/cms/version/version.php') {
-				$instance['cmsVFILE'] = 'includes/version.php';
-				$instance['configVALIDFOR'] = $instance['cmsRELEASE'];
-				$instance['instanceCFGVERMATCH'] = _FPA_Y;
-
-			//for 1.6
-			} elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] == _FPA_N ) {
-				$instance['configVALIDFOR'] = '1.6';
-				$instance['instanceCFGVERMATCH'] = _FPA_Y;
-
-			// for 1.5
-			} elseif ( preg_match ( '#(var)#', $cmsCContent ) ) {
-				$instance['configVALIDFOR'] = '1.5';
-				$instance['instanceCFGVERMATCH'] = _FPA_Y;
-
-			// for 1.0
-			} elseif ( preg_match ( '#(\$mosConfig_)#', $cmsCContent ) ) {
-				$instance['configVALIDFOR'] = '1.0';
-				$instance['instanceCFGVERMATCH'] = _FPA_Y;
-
-			} else {
-				$instance['configVALIDFOR'] = _FPA_U;
-			}
-
-			// fpa found a configuration.php but couldn't determine the version, is it valid?
-			if ( $instance['configVALIDFOR'] == _FPA_U ) {
-
-				if ( filesize( $instance['configPATH'] ) < 512 ) {
-						$instance['configSIZEVALID'] = _FPA_N;
-				}
-			}
-
-
-			// check if the configuration.php version matches the discovered version
-			if ( $instance['configVALIDFOR'] != _FPA_U AND $instance['cmsVFILE'] != _FPA_N ) {
-
-
-			// set defaults for the configuration's validity and a sanity score of zero
-			$instance['configSANE'] = _FPA_N;
-			$instance['configSANITYSCORE'] = 0;
-
-
-				// !TODO add white-space etc checks
-				// do some configuration.php sanity/validity checks
-				if ( filesize( $instance['configPATH'] ) > 512 ) {
-					$instance['cfgSANITY']['configSIZEVALID'] = _FPA_Y;
-				}
-
-				// !TODO FINISH  white-space etc checks
-				$instance['cfgSANITY']['configNOTDIST'] = _FPA_Y;   // is not the distribution example
-				$instance['cfgSANITY']['configNOWSPACE'] = _FPA_Y;  // no white-space
-				$instance['cfgSANITY']['configOPTAG'] = _FPA_Y;     // has php open tag
-				$instance['cfgSANITY']['configCLTAG'] = _FPA_Y;     // has php close tag
-				$instance['cfgSANITY']['configJCONFIG'] = _FPA_Y;   // has php close tag
-
-				// run through the sanity checks, if sane ( =Yes ) increment the score by 1 (should total 6)
-				foreach ( $instance['cfgSANITY'] as $i => $sanityCHECK ) {
-
-					if ( $instance['cfgSANITY'][$i] == _FPA_Y ) {
-						$instance['configSANITYSCORE'] = $instance['configSANITYSCORE'] +1;
-					}
-				}
-
-				// if the configuration file is sane, set it as valid
-				if ( $instance['configSANITYSCORE'] == '6' ) {
-					$instance['configSANE'] = _FPA_Y;   // configuration appears valid?
-				}
-
-			} else {
-				$instance['instanceCFGVERMATCH'] = _FPA_U;
-			}
-
-
-			// include configuration.php
-			if ( $instance['configVALIDFOR'] != _FPA_U )
-            {
-    			ini_set( 'display_errors', 1 );
-                $includeconfig = require_once($instance['configPATH']);
-                $config = new JConfig();
-                if ( defined( '_FPA_DIAG' ) ) {
-                    ini_set( 'display_errors', 1 );
-                    }
-                    else
-                    {
-                    ini_set( 'display_errors', 0 );
-                    }
-
-					$instance['configERRORREP'] = $config->error_reporting;
-					$instance['configDBTYPE'] = $config->dbtype;
-					$instance['configDBHOST'] = $config->host;
-					$instance['configDBNAME'] = $config->db;
-					$instance['configDBPREF'] = $config->dbprefix;
-					$instance['configDBUSER'] = $config->user;
-					$instance['configDBPASS'] = $config->password;
-
-					switch ($config->offline) {
-					    case true:
-        					$instance['configOFFLINE'] = 'true';
-					        break;
-					    case false:
-        					$instance['configOFFLINE'] = 'false';
-					        break;
-					    default:
-        					$instance['configOFFLINE'] = $config->offline;
-					}
-
-					switch ($config->sef) {
-					    case true:
-        					$instance['configSEF'] = 'true';
-					        break;
-					    case false:
-        					$instance['configSEF'] = 'false';
-					        break;
-					    default:
-        					$instance['configSEF'] = $config->sef;
-					}
-
-					switch ($config->gzip) {
-					    case true:
-        					$instance['configGZIP'] = 'true';
-					        break;
-					    case false:
-        					$instance['configGZIP'] = 'false';
-					        break;
-					    default:
-        					$instance['configGZIP'] = $config->gzip;
-					}
-
-					switch ($config->caching) {
-					    case true:
-        					$instance['configCACHING'] = 'true';
-					        break;
-					    case false:
-        					$instance['configCACHING'] = 'false';
-					        break;
-					    default:
-        					$instance['configCACHING'] = $config->caching;
-					}
-
-					switch ($config->debug) {
-					    case true:
-        					$instance['configSITEDEBUG'] = 'true';
-					        break;
-					    case false:
-        					$instance['configSITEDEBUG'] = 'false';
-					        break;
-					    default:
-        					$instance['configSITEDEBUG'] = $config->debug;
-					}
-
- 					if ( isset($config->shared_session ))
-                    {
-					   switch ($config->shared_session)
-                       {
-					       case true:
-					           $instance['configSHASESS'] = 'true';
-					           break;
-					       case false:
-					           $instance['configSHASESS'] = 'false';
-					           break;
-					       default:
-					           $instance['configSHASESS'] = $config->shared_session;
-					   }
-                    }
-                    else
-                    {
-					   $instance['configSHASESS'] = _FPA_NA;
-					}
-
- 					if ( isset($config->cache_platformprefix ))
-                    {
-					   switch ($config->cache_platformprefix)
-                       {
-					       case true:
-					           $instance['configCACHEPLFPFX'] = 'true';
-					           break;
-					       case false:
-					           $instance['configCACHEPLFPFX'] = 'false';
-					           break;
-					       default:
-					           $instance['configCACHEPLFPFX'] = $config->cache_platformprefix;
-					   }
-                    }
-                    else
-                    {
-					   $instance['configCACHEPLFPFX'] = _FPA_NA;
-					}
-
- 					if ( isset($config->ftp_enable ))
-                    {
-					   switch ($config->ftp_enable)
-                       {
-					       case true:
-					           $instance['configFTP'] = 'true';
-					           break;
-					       case false:
-					           $instance['configFTP'] = 'false';
-					           break;
-					       default:
-					           $instance['configFTP'] = $config->ftp_enable;
-					   }
-                    }
-                    else
-                    {
-					   $instance['configFTP'] = _FPA_NA;
-					}
-
- 					if ( isset($config->debug_lang ))
-                    {
-					   switch ($config->debug_lang)
-                       {
-					       case true:
-					           $instance['configLANGDEBUG'] = 'true';
-					           break;
-					       case false:
-					           $instance['configLANGDEBUG'] = 'false';
-					           break;
-					       default:
-					           $instance['configLANGDEBUG'] = $config->debug_lang;
-					   }
-                    }
-                    else
-                    {
-					   $instance['configLANGDEBUG'] = _FPA_NA;
-					}
-
- 					if ( isset($config->sef_suffix ))
-                    {
-					   switch ($config->sef_suffix)
-                       {
-					       case true:
-					           $instance['configSEFSUFFIX'] = 'true';
-					           break;
-					       case false:
-					           $instance['configSEFSUFFIX'] = 'false';
-					           break;
-					       default:
-					           $instance['configSEFSUFFIX'] = $config->sef_suffix;
-					   }
-                    }
-                    else
-                    {
-					   $instance['configSEFSUFFIX'] = _FPA_NA;
-					}
-
- 					if ( isset($config->sef_rewrite ))
-                    {
-					   switch ($config->sef_rewrite)
-                       {
-					       case true:
-					           $instance['configSEFRWRITE'] = 'true';
-					           break;
-					       case false:
-					           $instance['configSEFRWRITE'] = 'false';
-					           break;
-					       default:
-					           $instance['configSEFRWRITE'] = $config->sef_rewrite;
-					   }
-                    }
-                    else
-                    {
-					   $instance['configSEFRWRITE'] = _FPA_NA;
-					}
-
-					if ( isset($config->proxy_enable ))
-                    {
-					   switch ($config->proxy_enable)
-                       {
-					       case true:
-					           $instance['configPROXY'] = 'true';
-					           break;
-					       case false:
-					           $instance['configPROXY'] = 'false';
-					           break;
-					       default:
-					           $instance['configPROXY'] = $config->proxy_enable;
-					   }
-                    }
-                    else
-                    {
-					   $instance['configPROXY'] = _FPA_NA;
-					}
-
-					if ( isset($config->unicodeslugs ))
-                    {
-					   switch ($config->unicodeslugs)
-                       {
-					       case true:
-					           $instance['configUNICODE'] = 'true';
-					           break;
-					       case false:
-					           $instance['configUNICODE'] = 'false';
-					           break;
-					       default:
-					           $instance['configUNICODE'] = $config->unicodeslugs;
-					   }
-                    }
-                    else
-                    {
-					   $instance['configUNICODE'] = _FPA_NA;
-                    }
-
-					if ( isset($config->force_ssl ))
-                    {
-					   $instance['configSSL'] = $config->force_ssl;
-                    }
-                    else
-                    {
-					   $instance['configSSL'] = _FPA_NA;
-                    }
-
-					if ( isset($config->session_handler ))
-                    {
-					   $instance['configSESSHAND'] = $config->session_handler;
-                    }
-                    else
-                    {
-					   $instance['configSESSHAND'] = _FPA_NA;
-                    }
-
-					if ( isset($config->lifetime ))
-                    {
-					   $instance['configLIFETIME'] = $config->lifetime;
-                    }
-                    else
-                    {
-					   $instance['configLIFETIME'] = _FPA_NA;
-                    }
-
-					if ( isset($config->cachetime ))
-                    {
-					   $instance['configCACHETIME'] = $config->cachetime;
-                    }
-                    else
-                    {
-					   $instance['configCACHETIME'] = _FPA_NA;
-                    }
-
-					if ( isset($config->live_site ))
-                    {
-					   $instance['configLIVESITE'] = $config->live_site;
-                    }
-                    else
-                    {
-					   $instance['configLIVESITE'] = _FPA_NA;
-                    }
-
-					if ( isset($config->cache_handler ))
-                    {
-					   $instance['configCACHEHANDLER'] = $config->cache_handler;
-                    }
-                    else
-                    {
-					   $instance['configCACHEHANDLER'] = _FPA_NA;
-                    }
-
-					if ( isset($config->access ))
-                    {
-					   $instance['configACCESS'] = $config->access;
-                    }
-                    else
-                    {
-					   $instance['configACCESS'] = _FPA_NA;
-                    }
+            /**
+             * !FIXME memory allocation error on large php_error file - RussW
+             * replaced these two lines with code below - Phil 09-23-12
+             *  $lines = file( $phpenv['phpERRLOGFILE'] );
+             *  $phpenv['phpLASTERR'] = array_pop( $lines );
+             *
+             * Begin the fix for the memory allocation error on large php_error file
+             * Solution is to read the file line by line; not reading the whole file in memory.
+             * I just open a kind of a pointer to it, then seek it char by char.
+             * This is a more efficient way to work with large files.   - Phil 09-23-12
+             *
+             */
+            $line = '';
+
+            $f = fopen(($phpenv['phpERRLOGFILE']), 'r');
+            $cursor = -1;
+
+            fseek($f, $cursor, SEEK_END);
+            $char = fgetc($f);
+
+            // Trim trailing newline chars of the file
+            while ($char === "\n" || $char === "\r") {
+                fseek($f, $cursor--, SEEK_END);
+                $char = fgetc($f);
             }
 
-			if ($instance['configDBTYPE'] == 'mysql' and $instance['cmsMAJORVERSION'] == '4') {
-                $instance['configDBTYPE'] = 'pdomysql';
+            // Read until the start of file or first newline char
+            while ($char !== false && $char !== "\n" && $char !== "\r") {
+                // Prepend the new char
+                $line = $char . $line;
+                fseek($f, $cursor--, SEEK_END);
+                $char = fgetc($f);
             }
 
-			// J!1.0 assumed 'mysql' with no variable, so we'll just add it
-			if ($instance['configDBTYPE'] == _FPA_N and $instance['configVALIDFOR'] == '1.0') {
-			 $instance['configDBTYPE'] = 'mysql';
-			}
+            $phpenv['phpLASTERR'] = $line;
+        }
+    } // End Fix for memory allocation error when reading php_error file
 
 
-			// look to see if we are using a remote or local MySQL server
-			if ( strpos($instance['configDBHOST'] , 'localhost' ) === 0  OR strpos($instance['configDBHOST'] , '127.0.0.1' ) === 0 ) {
-  				$database['dbLOCAL'] = _FPA_Y;
 
-			} else {
-  				$database['dbLOCAL'] = _FPA_N;
-			}
-
-			// check if all the DB credentials are complete
-			if ( @$instance['configDBTYPE'] AND $instance['configDBHOST'] AND $instance['configDBNAME'] AND $instance['configDBPREF'] AND $instance['configDBUSER'] AND $instance['configDBPASS'] ) {
-				$instance['configDBCREDOK'] = _FPA_Y;
- 			} else if ( @$instance['configDBTYPE'] AND $instance['configDBHOST'] AND $instance['configDBNAME'] AND $instance['configDBPREF'] AND $instance['configDBUSER'] AND $database['dbLOCAL'] = _FPA_Y ){
-				$instance['configDBCREDOK'] = _FPA_PMISS;
-			} else {
-				$instance['configDBCREDOK'] = _FPA_N;
-			}
-
-
-		// looking for htaccess (Apache and some others) or web.config (IIS)
-		if ( $system['sysSHORTWEB'] != 'MIC' ) {
-
-			// htaccess files
-			if ( file_exists( '.htaccess' ) ) {
-				$instance['configSITEHTWC'] = _FPA_Y;
-
-			} else {
-				$instance['configSITEHTWC'] = _FPA_N;
-			}
-
-			if ( file_exists( 'administrator/.htaccess' ) ) {
-				$instance['configADMINHTWC'] = _FPA_Y;
-
-			} else {
-				$instance['configADMINHTWC'] = _FPA_N;
-
-			}
-
-		} else {
-
-			// web.config file
-			if ( file_exists( 'web.config' ) ) {
-				$instance['configSITEHTWC'] = _FPA_Y;
-				$instance['configADMINHTWC'] = _FPA_NA;
-
-			} else {
-				$instance['configSITEHTWC'] = _FPA_N;
-				$instance['configADMINHTWC'] = _FPA_NA;
-			}
-		}
-
-
-	} else { // no configuration.php found
-		$instance['instanceCONFIGURED'] = _FPA_N;
-		$instance['configVALIDFOR'] = _FPA_U;
-	}
-?>
-
-<?php
-	/** DETERMINE SYSTEM ENVIRONMENT & SETTINGS ***********************************************
-	** here we try to determine the hosting enviroment and configuration
-	** to try and avoid "white-screens" fpa tries to check for function availability before
-	** using any function, but this does mean it has grown in size quite a bit and unfortunately
-	** gets a little messy in places.
-	*****************************************************************************************/
-
-	/** what server and os is the host? ******************************************************/
-	$phpenv['phpVERSION'] = phpversion();
-	$system['sysPLATFUL'] = php_uname('a');
-	$system['sysPLATOS'] = php_uname('s');
-	$system['sysPLATREL'] = php_uname('r');
-	$system['sysPLATFORM'] = php_uname('v');
-	$system['sysPLATNAME'] = php_uname('n');
-	$system['sysPLATTECH'] = php_uname('m');
-	$system['sysSERVNAME'] = $_SERVER['SERVER_NAME'];
-	$system['sysSERVIP'] = gethostbyname($_SERVER['SERVER_NAME']);
-	$system['sysSERVSIG'] = $_SERVER['SERVER_SOFTWARE'];
-	$system['sysENCODING'] = $_SERVER["HTTP_ACCEPT_ENCODING"];
-	$system['sysCURRUSER'] = get_current_user(); // current process user
-	$system['sysSERVIP'] = gethostbyname($_SERVER['SERVER_NAME']);
-
-	// !TESTME for WIN IIS7?
-	// $system['sysSERVIP'] =  $_SERVER['LOCAL_ADDR'];
-
-	if ( $system['sysSHORTOS'] != 'WIN' ) {
-
-		$system['sysEXECUSER'] = @$_ENV['USER']; // user that executed this script
-
-			if ( !@$_ENV['USER'] ) {
-				$system['sysEXECUSER'] = $system['sysCURRUSER'];
-			}
-
-		$system['sysDOCROOT'] = $_SERVER['DOCUMENT_ROOT'];
-
-	} else {
-		$localpath = getenv( 'SCRIPT_NAME' );
-		$absolutepath = str_replace( '\\', '/', realpath( basename( getenv( 'SCRIPT_NAME' ) ) ) );
-		$system['sysDOCROOT'] = substr( $absolutepath, 0, strpos( $absolutepath, $localpath ) );
-		$system['sysEXECUSER'] = $system['sysCURRUSER']; // Windows work-around for not using EXEC User (this limits the cpability of discovering SU Environments though)
-	}
-
-	// looking for the Apache "suExec" Utility
-	if ( function_exists( 'exec' ) AND $system['sysSHORTOS'] != 'WIN' ) { // find the owner of the current process running this script
-		$system['sysWEBOWNER'] = exec("whoami");
-
-	} elseif ( function_exists( 'passthru' ) AND $system['sysSHORTOS'] != 'WIN' ) {
-		$system['sysWEBOWNER'] = passthru("whoami");
-
-	} else {
-		$system['sysWEBOWNER'] = _FPA_NA;  // we'll have to give up if we can't 'exec' or 'passthru' something, this occurs with Windows and some more secure environments
-	}
-
-		// find the system temp directory
-	if ( version_compare( PHP_VERSION, '5.2.1', '>=' ) ) {
-		$system['sysSYSTMPDIR'] = sys_get_temp_dir();
-
-		// is the system /tmp writable to this user?
-		if ( is_writable( sys_get_temp_dir() ) ) {
-			$system['sysTMPDIRWRITABLE'] = _FPA_Y;
-
-		} else {
-			$system['sysTMPDIRWRITABLE'] = _FPA_N;
-		}
-
-	} else {
-		$system['sysSYSTMPDIR'] = _FPA_U;
-		$system['sysTMPDIRWRITABLE'] = _FPA_U;
-	}
-?>
-
-
-
-<?php
-	/** DETERMINE PHP ENVIRONMENT & SETTINGS ***********************************************
-	** here we try to determine the php enviroment and configuration
-	** to try and avoid "white-screens" fpa tries to check for function availability before
-	** using any function, but this does mean it has grown in size quite a bit and unfortunately
-	** gets a little messy in places.
-	*****************************************************************************************/
-
-	/** general php related settings? *****************************************************/
-	if ( version_compare( PHP_VERSION, '5.0', '>=' ) ) {
-		$phpenv['phpSUPPORTSMYSQLI'] = _FPA_Y;
-
-	} elseif ( version_compare( PHP_VERSION, '4.4.9', '<=' ) ) {
-		$phpenv['phpSUPPORTSMYSQLI'] = _FPA_N;
-
-	} else {
-		$phpenv['phpSUPPORTSMYSQLI'] = _FPA_U;
-	}
-
-	if ( version_compare( PHP_VERSION, '7.0', '>=' ) ) {
-		$phpenv['phpSUPPORTSMYSQL'] = _FPA_N;
-
-	} elseif ( version_compare( PHP_VERSION, '5.9.9', '<=' ) ) {
-		$phpenv['phpSUPPORTSMYSQL'] = _FPA_Y;
-
-	} else {
-		$phpenv['phpSUPPORTSMYSQL'] = _FPA_U;
-	}
-
-	// find the current php.ini file
-	if ( version_compare( PHP_VERSION, '5.2.4', '>=' ) ) {
-		$phpenv['phpINIFILE']       = php_ini_loaded_file();
-
-	} else {
-		$phpenv['phpINIFILE']       = _FPA_U;
-	}
-
-	// find the other loaded php.ini file(s)
-	if (version_compare(PHP_VERSION, '4.3.0', '>=')) {
-		$phpenv['phpINIOTHER']      = php_ini_scanned_files();
-
-	} else {
-		$phpenv['phpINIOTHER'] = _FPA_U;
-	}
-
-	// determine the rest of the normal PHP settings
-	$phpenv['phpREGGLOBAL']         = ini_get( 'register_globals' );
-	$phpenv['phpMAGICQUOTES']       = ini_get( 'magic_quotes_gpc' );
-	$phpenv['phpSAFEMODE']          = ini_get( 'safe_mode' );
-	$phpenv['phpMAGICQUOTES']       = ini_get( 'magic_quotes_gpc' );
-	$phpenv['phpSESSIONPATH']       = session_save_path();
-	$phpenv['phpOPENBASE']          = ini_get( 'open_basedir' );
-
-		// is the session_save_path writable?
-	if (is_writable( session_save_path() ) ) {
-			$phpenv['phpSESSIONPATHWRITABLE'] = _FPA_Y;
-
-		} else {
-			$phpenv['phpSESSIONPATHWRITABLE'] = _FPA_N;
-		}
-
-
-	// input and upload related settings
-	$phpenv['phpUPLOADS']           = ini_get( 'file_uploads' );
-	$phpenv['phpMAXUPSIZE']         = ini_get( 'upload_max_filesize' );
-	$phpenv['phpMAXPOSTSIZE']       = ini_get( 'post_max_size' );
-	$phpenv['phpMAXINPUTTIME']      = ini_get( 'max_input_time' );
-	$phpenv['phpMAXEXECTIME']       = ini_get( 'max_execution_time' );
-	$phpenv['phpMEMLIMIT']          = ini_get( 'memory_limit' );
-	$phpenv['phpDISABLED']          = ini_get( 'disable_functions' );
-	$phpenv['phpURLFOPEN']          = ini_get( 'allow_url_fopen' );
-
-	/** API and ownership related settings ***************************************************/
-	$phpenv['phpAPI']               = php_sapi_name();
-
-		// looking for php to be installed as a CGI or CGI/Fast
-		if (substr($phpenv['phpAPI'], 0, 3) == 'cgi') {
-			$phpenv['phpCGI'] = _FPA_Y;
-
-			// looking for the Apache "suExec" utility
-			if ( ( $system['sysCURRUSER'] === $system['sysWEBOWNER'] ) AND ( substr($phpenv['phpAPI'], 0, 3) == 'cgi' ) ) {
-				$phpenv['phpAPACHESUEXEC'] = _FPA_Y;
-				$phpenv['phpOWNERPROB'] = _FPA_N;
-
-			} else {
-				$phpenv['phpAPACHESUEXEC'] = _FPA_N;
-				$phpenv['phpOWNERPROB'] = _FPA_M;
-			}
-
-			// looking for the "phpsuExec" utility
-			if ( ( $system['sysCURRUSER'] === $system['sysEXECUSER'] ) AND ( substr($phpenv['phpAPI'], 0, 3) == 'cgi' ) ) {
-				$phpenv['phpPHPSUEXEC'] = _FPA_Y;
-				$phpenv['phpOWNERPROB'] = _FPA_N;
-
-			} else {
-				$phpenv['phpPHPSUEXEC'] = _FPA_N;
-				$phpenv['phpOWNERPROB'] = _FPA_M;
-			}
-
-		} else {
-			$phpenv['phpCGI'] = _FPA_N;
-			$phpenv['phpAPACHESUEXEC'] = _FPA_N;
-			$phpenv['phpPHPSUEXEC'] = _FPA_N;
-			$phpenv['phpOWNERPROB'] = _FPA_M;
-		}
-
-
-
-		/** WARNING WILL ROBINSON! ****************************************************************
-		** THIS IS A TEST FEATURE AND AS SUCH NOT GUARANTEED TO BE 100% ACCURATE
-		** try and cater for custom "su" environments, like cluster, grid and cloud computing.
-		** this would include weird ownership combinations that allow group access to non-owner files
-		** (like GoDaddy and a couple of grid and cloud providers I know of)
-		*****************************************************************************************
-		** took out this part: AND ( $instance['configWRITABLE'] == _FPA_Y )  as Joomla sets config file
-		** to 444 so is read only permissions. Also changed this section:
-		** ( $system['sysCURRUSER'] != $instance['configOWNER']['name'] from != to ==
-		** If config owner is same as current user then we are probably using a custom "su" enviroment
-		** such as LiteSpeed uses - 4-8-12 - Phil **/
-
-		if ( ( $instance['instanceCONFIGURED'] == _FPA_Y ) AND ( @$phpenv['phpAPI'] == 'litespeed' ) AND ( $system['sysCURRUSER'] == $instance['configOWNER']['name'] ) AND ( ( substr( $instance['configMODE'],0 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],1 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],2 ,1 ) <= '6' ) ) ) {
-		/** changed from maybe to yes - 4-8-12 - Phil **/
-		$phpenv['phpCUSTOMSU'] = _FPA_Y;
-			$phpenv['phpOWNERPROB'] = _FPA_N;
-
-		} elseif( ( $instance['instanceCONFIGURED'] == _FPA_Y ) AND ( $system['sysCURRUSER'] == $instance['configOWNER']['name'] ) AND ( ( substr( $instance['configMODE'],0 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],1 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],2 ,1 ) <= '6' ) ) ) {
-		/** changed from maybe to yes - 4-8-12 - Phil **/
-		$phpenv['phpCUSTOMSU'] = _FPA_Y;
-			$phpenv['phpOWNERPROB'] = _FPA_N;
-
-		} else {
-			$phpenv['phpCUSTOMSU'] = _FPA_N;
-			$phpenv['phpOWNERPROB'] = _FPA_M;
-		}
-
-		/*****************************************************************************************/
-		/** THIS IS A TEST FEATURE AND AS SUCH NOT GUARANTEED TO BE 100% ACCURATE ****************/
-		/*****************************************************************************************/
-
-
-	// get all the PHP loaded extensions and versions
-	foreach ( get_loaded_extensions() as $i => $ext ) {
-		$phpextensions[$ext]    = phpversion($ext);
-	}
-
-	$phpextensions['Zend Engine'] = zend_version();
-
-?>
-
-
-
-
-<?php
-	/** DETERMINE APACHE ENVIRONMENT & SETTINGS ***********************************************
-	** here we try to determine the php enviroment and configuration
-	** to try and avoid "white-screens" fpa tries to check for function availability before
-	** using any function, but this does mean it has grown in size quite a bit and unfortunately
-	** gets a little messy in places.
-	*****************************************************************************************/
-	/** general apache loaded modules? *******************************************************/
-	if ( function_exists( 'apache_get_version' ) ) {  // for Apache module interface
-
-		foreach ( apache_get_modules() as $i => $modules ) {
-		$apachemodules[$i] = ( $modules );  // show the version of loaded extensions
-
-		}
-
-		// include the Apache version
-		$apachemodules[] = apache_get_version();
-
-	} else {  // for Apache cgi interface
-
-		// !TESTME Does this work in cgi or cgi-fcgi
-		/**
-		* BERNARD: commented out
-		* @todo: find out if this is even used on the webpage
-		*/
-		#print_r( get_extension_funcs( "cgi-fcgi" ) );
-	}
-	// !TODO see if there are IIS specific functions/modules
-?>
-
-
-
-<?php
-	/** COMPLETE MODE (PERMISSIONS) CHECKS ON KNOWN FOLDERS ***********************************
-	** test the mode and writability of known folders from the $folders array
-	** to try and avoid "white-screens" fpa tries to check for function availability before
-	** using any function, but this does mean it has grown in size quite a bit and unfortunately
-	** gets a little messy in places.
-	*****************************************************************************************/
-	/** build the mode-set details for each folder *******************************************/
-	if ( $instance['instanceFOUND'] == _FPA_Y ) {
-
-		foreach ( $folders as $i => $show ) {
-
-			if ( $show != $folders['ARRNAME'] ) { // ignore the ARRNAME
-
-				if ( file_exists( $show ) ) {
-					$modecheck[$show]['mode'] = substr( sprintf('%o', fileperms( $show ) ),-3, 3 );
-
-					if ( is_writable( $show ) ) {
-						$modecheck[$show]['writable'] = _FPA_Y;
-
-					} else {
-						$modecheck[$show]['writable'] = _FPA_N;
-					}
-
-
-					if ( function_exists( 'posix_getpwuid' ) AND $system['sysSHORTOS'] != 'WIN' ) {
-						$modecheck[$show]['owner'] = posix_getpwuid( fileowner( $show ) );
-						$modecheck[$show]['group'] = posix_getgrgid( filegroup( $show ) );
-
-					} else { // non-posix compatible hosts
-						$modecheck[$show]['owner']['name'] = fileowner( $show );
-						$modecheck[$show]['group']['name'] = filegroup( $show );
-					}
-
-
-				} else {
-					$modecheck[$show]['mode'] = '---';
-					$modecheck[$show]['writable'] = '-';
-					$modecheck[$show]['owner']['name'] = '-';
-					$modecheck[$show]['group']['name'] = _FPA_DNE;
-				}
-			}
-		}
-
-
-		// !CLEANME this needs to be done a little smarter
-		// here we take the folders array and unset folders that aren't relevant to a specific release
-		function filter_folders( $folders, $instance ) {
-		GLOBAL $folders;
-
-			if ( $instance['cmsRELEASE'] != '1.0' ) {           // ignore the folders for J!1.0
-				unset ( $folders[4] );
-
-			} elseif ( $instance['cmsRELEASE'] == '1.0' ) {     // ignore folders for J1.5 and above
-				unset ( $folders[3] );
-				unset ( $folders[8] );
-				unset ( $folders[9] );
-				unset ( $folders[12] );
-			}
-
-
-			if ( $instance['platformPRODUCT'] != 'Nooku' ) {    // ignore the Nooku sites folder if not Nooku
-				unset ( $folders[14] );
-			}
-
-		}
-
-		// !FIXME need to fix warning in array_filter ( '@' work-around )
-		// new filtered list of folders to check permissions on, based on the installed release
-		@array_filter( $folders, filter_folders( $folders, $instance ) );
-
-	}
-	unset ( $key, $show );
-?>
-
-
-
-<?php
-	/** getDirectory FUNCTION TO RECURSIVELY READ THROUGH LOOKING FOR PERMISSIONS ************
-	** this is used to read the directory structure and return a list of folders with 'elevated'
-	** mode-sets ( -7- or --7 ) ignoring the first position as defaults folders are normally 755.
-	** $dirCount is applied when the folder list is excessive to reduce unnecessary processing
-	** on really sites with 00's or 000's of badly configured folder modes. Limited to displaying
-	** the first 10 only.
-	*****************************************************************************************/
-	if ( $showElevated == '1' ) {
-
-		$dirCount = 0;
-
-		function getDirectory( $path = '.', $level = 0 ) {
-			global $elevated, $dirCount;
-
-			// directories to ignore when listing output. Many hosts
-			$ignore = array( '.', '..' );
-
-			// open the directory to the handle $dh
-			if ( !$dh = @opendir( $path ) )
-			{ # Bernard: if a folder is NOT readable, without this check we get endless loop
-				echo '<div class="alert" style="padding:25px;"><span class="alert-text" style="font-size:x-large;">'._FPA_DIR_UNREADABLE.': <b>'.$path.'</b></span></div>';
-				return FALSE;
-			}
-
-
-
-			// loop through the directory
-			while ( false !== ( $file = readdir( $dh ) ) ) {
-
-				// check that this file is not to be ignored
-				if ( !in_array( $file, $ignore ) ) {
-
-					if ( $dirCount < '10' ) { // 10 or more folder will cancel the processing
-
-						// its a directory, so we need to keep reading down...
-						if ( is_dir( "$path/$file" ) ) {
-
-							$dirName = $path .'/'. $file;
-							$dirMode = substr( sprintf( '%o', fileperms( $dirName ) ),-3, 3 );
-
-								// looking for --7 or -7- or -77 (default folder permissions are usually 755)
-								if ( substr( $dirMode,1 ,1 ) == '7' OR substr( $dirMode,2 ,1 ) == '7' ) {
-									$elevated[''. str_replace( './','', $dirName ) .'']['mode'] = $dirMode;
-
-									if ( is_writable( $dirName ) ) {
-										$elevated[''. str_replace( './','', $dirName ) .'']['writable'] = _FPA_Y;
-
-									} else {  // custom ownership or setUiD/GiD in-effect
-										$elevated[''. str_replace( './','', $dirName ) .'']['writable'] = _FPA_N;
-									}
-									$dirCount++;
-								}
-
-								// re-call this same function but on a new directory.
-								getDirectory ( "$path/$file", ( $level +1 ) );
-
-						}
-					}
-				}
-			}
-			// Close the directory handle
-			closedir( $dh );
-		}
-		/** Fixed Warning: Illegal string offset 'mode' on line 1476
-		** Warning: Illegal string offset 'writable' on line 1477 - Phil 09-20-12*/
-			if (isset( $dirCount) == '0' ) {
-				$elevated['None'] = _FPA_NONE;
-				$elevated['None']['mode'] = '-';
-				$elevated['None']['writable'] = '-';
-			}
-
-		// now call the function to read from the selected folder ( '.' current location of FPA script )
-		getDirectory( '.' );
-		ksort( $elevated );
-
-	} // end showElevated
-?>
-
-
-
-<?php
 	/**
-     * DETERMINE THE DATABASE TYPE AND IF WE CAN CONNECT
+     * DETERMINE INSTANCE STATUS & VERSIONING
+     *
+	 * here we check for known files to determine if an instance even exists, then we look for
+	 * the version and configuration files. some differ between between versions, so we have a
+	 * bit of jiggling to do.
+	 * to try and avoid "white-screens" fpa no-longer "includes" these files, but merely tries
+	 * to open and read them, although this is slower, it improves the reliability of fpa.
+     *
 	 */
-	$dbPrefExist = _FPA_N;
-	$dbPrefLen = @strlen($instance['configDBPREF']);
-	$postgresql = _FPA_N;
-	$confPrefTables = 0;
-	$notconfPrefTables = 0;
-	if ( $instance['instanceCONFIGURED'] == _FPA_Y AND ($instance['configDBCREDOK'] == _FPA_Y OR $instance['configDBCREDOK'] == _FPA_PMISS)) {
-		$database['dbDOCHECKS'] = _FPA_Y;
 
-		// try and connect to the database server and table-space, using the database_host variable in the configuration.php
-		// for J!1.0, it's not in the config, so we have assumed mysql, as mysqli wasn't available during it's support life-time
-		if ( $instance['configDBTYPE'] == 'mysql' ) {
-			if (@function_exists('mysql_connect')) {
-			$dBconn = @mysql_connect( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'] );
-			$database['dbERROR'] = mysql_errno() .':'. mysql_error();
-
-    @mysql_select_db( $instance['configDBNAME'], $dBconn );
-    $sql = "select name,type,enabled from ".$instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template' or type='library'";
-    $result = @mysql_query($sql);
-    if ($result <> false) {
-    if (mysql_num_rows($result) > 0) {
-      for ($exset = array ();
-      $row = mysql_fetch_array($result);
-      $exset[] = $row);
-     }
-
-    $sql = "select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template";
-    $result = @mysql_query($sql);
-    if (mysql_num_rows($result) > 0) {
-      for ($tmpldef = array ();
-      $row = mysql_fetch_array($result);
-      $tmpldef[] = $row);
-     }
-     }
-
-			if ( $dBconn ) {
-				@mysql_select_db( $instance['configDBNAME'], $dBconn );
-				$database['dbERROR'] = @mysql_errno() .':'. @mysql_error();
-
-				// if we can connect, try and collect some details
-				$database['dbHOSTSERV']     = mysql_get_server_info( $dBconn );      // SQL server version
-				$database['dbHOSTINFO']     = mysql_get_host_info( $dBconn );        // connection type to dB
-				$database['dbHOSTPROTO']    = mysql_get_proto_info( $dBconn );       // server protocol type
-				$database['dbHOSTCLIENT']   = mysql_get_client_info();               // client library version
-				$database['dbHOSTDEFCHSET'] = mysql_client_encoding( $dBconn );      // this is the hosts default character-set
-				$database['dbHOSTSTATS']    = explode("  ", mysql_stat( $dBconn ) ); // latest statistics
-
-				// find the database collation
-				$coResult = mysql_query( "SHOW VARIABLES LIKE 'collation_database'" );
-
-				while ( $row = mysql_fetch_row( $coResult ) ) {
-					$database['dbCOLLATION'] =  $row[1];
-				}
-
-				// find the database character-set
-				$csResult = mysql_query( "SHOW VARIABLES LIKE 'character_set_database'" );
-
-				while ( $row = mysql_fetch_array( $csResult ) ) {
-					$database['dbCHARSET'] =  $row[1];
-				}
-
-				// find all the dB tables and calculate the size
-				mysql_select_db($instance['configDBNAME'], $dBconn);
-				$tblResult = mysql_query("SHOW TABLE STATUS");
-
-					$database['dbSIZE'] = 0;
-					$rowCount = 0;
-
-					while ( $row = mysql_fetch_array( $tblResult ) ) {
-						$rowCount++;
-
-						$tables[$row['Name']]['TABLE'] = $row['Name'];
-                        // count tables with/without same prefix as in config
-                        if(substr($row['Name'] , 0 , $dbPrefLen  ) === $instance['configDBPREF'] ) {
-                            $confPrefTables = $confPrefTables + 1 ;
-                        } else {
-                            $notconfPrefTables = $notconfPrefTables + 1 ;
-                        }
-
-						$table_size = ( $row[ 'Data_length' ] + $row[ 'Index_length' ] ) / 1024;
-						$tables[$row['Name']]['SIZE'] = sprintf( '%.2f', $table_size );
-						$database['dbSIZE'] += sprintf( '%.2f', $table_size );
-						$tables[$row['Name']]['SIZE'] = $tables[$row['Name']]['SIZE'] .' KiB';
-
-
-						if ( $showTables == '1' ) {
-							$tables[$row['Name']]['ENGINE']     = $row['Engine'];
-							$tables[$row['Name']]['VERSION']    = $row['Version'];
-							$tables[$row['Name']]['CREATED']    = $row['Create_time'];
-							$tables[$row['Name']]['UPDATED']    = $row['Update_time'];
-							$tables[$row['Name']]['CHECKED']    = $row['Check_time'];
-							$tables[$row['Name']]['COLLATION']  = $row['Collation'];
-							$tables[$row['Name']]['FRAGSIZE']   = sprintf( '%.2f', ( $row['Data_free'] /1024 ) ) .' KiB';
-							$tables[$row['Name']]['MAXGROW']    = sprintf( '%.1f', ( $row['Max_data_length'] /1073741824 ) ) .' GiB';
-							$tables[$row['Name']]['RECORDS']    = $row['Rows'];
-							$tables[$row['Name']]['AVGLEN']     = sprintf( '%.2f', ( $row['Avg_row_length'] /1024 ) ) .' KiB';
-
-						}
-					}
-
-
-				if ( $database['dbSIZE'] > '1024' ) {
-					$database['dbSIZE'] = sprintf('%.2f', ( $database['dbSIZE'] /1024 ) ) .' MiB';
-
-				} else {
-					$database['dbSIZE'] = $database['dbSIZE'] .' KiB';
-				}
-
-			$database['dbTABLECOUNT'] = $rowCount;
-			mysql_close( $dBconn );
-
-			} else {
-				$database['dbERROR'] = mysql_errno() .':'. mysql_error();
-			} // end mysql if $dBconn is good
-			} else {
-				$database['dbHOSTSERV']     = _FPA_U; // SQL server version
-				$database['dbHOSTINFO']     = _FPA_U; // connection type to dB
-				$database['dbHOSTPROTO']    = _FPA_U; // server protocol type
-				$database['dbHOSTCLIENT']   = _FPA_U; // client library version
-				$database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
-				$database['dbHOSTSTATS']    = _FPA_U; // latest statistics
-				$database['dbCOLLATION']    = _FPA_U;
-				$database['dbCHARSET']      = _FPA_U;
-		}
-
-		} elseif ( $instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_Y ) { // mysqli
-			if (function_exists('mysqli_connect')) {
-			$dBconn = @new mysqli( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'], $instance['configDBNAME'] );
-			$database['dbERROR'] = mysqli_connect_errno( $dBconn ) .':'. mysqli_connect_error( $dBconn );
-			$sql = "select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template' or type='library'";
-			$result = @$dBconn->query($sql);
-			if ($result <> false) {
-    			if ($result->num_rows > 0) {
-        			for ($exset = array ();
-        			$row = $result->fetch_assoc();
-        			$exset[] = $row);
-    			}
-			}
-			$sql = "select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template";
-			$result = @$dBconn->query($sql);
-			if ($result <> false) {
-    			if ($result->num_rows > 0) {
-        			for ($tmpldef = array ();
-        			$row = $result->fetch_assoc();
-        			$tmpldef[] = $row);
-    			}
-			}
-			if ( $dBconn ) {
-				$database['dbHOSTSERV']     = @mysqli_get_server_info( $dBconn );       // SQL server version
-				$database['dbHOSTINFO']     = @mysqli_get_host_info( $dBconn );         // connection type to dB
-				$database['dbHOSTPROTO']    = @mysqli_get_proto_info( $dBconn );        // server protocol type
-				$database['dbHOSTCLIENT']   = @mysqli_get_client_info();                // client library version
-				$database['dbHOSTDEFCHSET'] = @mysqli_character_set_name( $dBconn );       // this is the hosts default character-set
-				$database['dbHOSTSTATS']    = explode("  ", @mysqli_stat( $dBconn ) );  // latest statistics
-
-				// find the database collation
-				$coResult = @$dBconn->query( "SHOW VARIABLES LIKE 'collation_database'" );
-
-				while ( $row = @mysqli_fetch_row( $coResult ) ) {
-					$database['dbCOLLATION'] =  $row[1];
-				}
-
-				// find the database character-set
-				$csResult = @$dBconn->query( "SHOW VARIABLES LIKE 'character_set_database'" );
-
-				while ( $row = @mysqli_fetch_array( $csResult ) ) {
-					$database['dbCHARSET']  =  $row[1];
-				}
-
-				// find all the dB tables and calculate the size
-				$tblResult = @$dBconn->query( "SHOW TABLE STATUS" );
-
-					$database['dbSIZE'] = 0;
-					$rowCount           = 0;
-
-					while ( $row = @mysqli_fetch_array( $tblResult ) ) {
-						$rowCount++;
-
-						$tables[$row['Name']]['TABLE']  = $row['Name'];
-
-                        // count tables with/without same prefix as in config
-                        if(substr($row['Name'] , 0 , $dbPrefLen  ) === $instance['configDBPREF'] ) {
-                            $confPrefTables = $confPrefTables + 1 ;
-                        } else {
-                            $notconfPrefTables = $notconfPrefTables + 1 ;
-                        }
-						$table_size = ($row[ 'Data_length' ] + $row[ 'Index_length' ]) / 1024;
-						$tables[$row['Name']]['SIZE'] = sprintf( '%.2f', $table_size );
-						$database['dbSIZE'] += sprintf( '%.2f', $table_size );
-						$tables[$row['Name']]['SIZE'] = $tables[$row['Name']]['SIZE'] .' KiB';
-
-
-						if ( $showTables == '1' ) {
-							$tables[$row['Name']]['ENGINE']     = $row['Engine'];
-							$tables[$row['Name']]['VERSION']    = $row['Version'];
-							$tables[$row['Name']]['CREATED']    = $row['Create_time'];
-							$tables[$row['Name']]['UPDATED']    = $row['Update_time'];
-							$tables[$row['Name']]['CHECKED']    = $row['Check_time'];
-							$tables[$row['Name']]['COLLATION']  = $row['Collation'];
-							$tables[$row['Name']]['FRAGSIZE']   = sprintf( '%.2f', ( $row['Data_free'] /1024 ) ) .' KiB';
-							$tables[$row['Name']]['MAXGROW']    = sprintf( '%.1f', ( $row['Max_data_length'] /1073741824 ) ) .' GiB';
-							$tables[$row['Name']]['RECORDS']    = $row['Rows'];
-							$tables[$row['Name']]['AVGLEN']     = sprintf( '%.2f', ( $row['Avg_row_length'] /1024 ) ) .' KiB';
-						}
-					}
-
-
-				if ( $database['dbSIZE'] > '1024' ) {
-					$database['dbSIZE']     = sprintf( '%.2f', ( $database['dbSIZE'] /1024 ) ) .' MiB';
-
-				} else {
-					$database['dbSIZE']     = $database['dbSIZE'] .' KiB';
-				}
-				$database['dbTABLECOUNT']   = $rowCount;
-
-			} else {
-			// $database['dbERROR'] = mysqli_connect_errno( $dBconn ) .':'. mysqli_connect_error( $dBconn );
-
-			} // end mysqli if $dBconn is good
-
-		} else {
-				$database['dbHOSTSERV']     = _FPA_U; // SQL server version
-				$database['dbHOSTINFO']     = _FPA_U; // connection type to dB
-				$database['dbHOSTPROTO']    = _FPA_U; // server protocol type
-				$database['dbHOSTCLIENT']   = _FPA_U; // client library version
-				$database['dbHOSTDEFCHSET'] = _FPA_U; // hosts default character-set
-				$database['dbHOSTSTATS']    = _FPA_U; // latest statistics
-				$database['dbCOLLATION']    = _FPA_U; // database collation
-				$database['dbCHARSET']      = _FPA_U; // database character-set
-				$database['dbERROR']        = _FPA_MYSQLI_CONN;
-		} // end of dataBase connection routines
-
-
-		} elseif ( $instance['configDBTYPE'] == 'pdomysql')  {
-		  try {
-		  $dBconn = new PDO("mysql:host=".$instance['configDBHOST'].";dbname=".$instance['configDBNAME'], $instance['configDBUSER'], $instance['configDBPASS']);
-
-		  // set the PDO error mode to exception
-		  $dBconn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		  }
-		  catch(PDOException $e)
-		  {
-		  $dBconn = FALSE;
-		  }
-
-		  if ($dBconn) {
-		  $database['dbERROR'] = '0:';
-
-		  try {
-		  $sql = $dBconn->prepare("select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template' or type='library'");
-		  $sql->execute();
-		  $exset = $sql->setFetchMode(PDO::FETCH_ASSOC);
-		  $exset = $sql->fetchAll();
-
-		  $sql = $dBconn->prepare("select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template");
-		  $sql->execute();
-		  $tmpldef = $sql->setFetchMode(PDO::FETCH_ASSOC);
-		  $tmpldef = $sql->fetchAll();
-		  }
-		  catch(PDOException $e)
-		  {
-		  }
-
-			if ( $dBconn ) {
-				$database['dbHOSTSERV']     = $dBconn->getAttribute(constant("PDO::ATTR_SERVER_VERSION" ));       // SQL server version
-				$database['dbHOSTINFO']     = $dBconn->getAttribute(constant("PDO::ATTR_CONNECTION_STATUS" ));         // connection type to dB
-				$database['dbHOSTCLIENT']   = $dBconn->getAttribute(constant("PDO::ATTR_CLIENT_VERSION" ));                // client library version
-				$database['dbHOSTDEFCHSET'] = $dBconn->query("SELECT CHARSET('')")->fetchColumn();      // this is the hosts default character-set
-				$database['dbHOSTSTATS']    = explode("  ", $dBconn->getAttribute(constant("PDO::ATTR_SERVER_INFO" )));  // latest statistics
-			}
-
-				// find the database collation
-				$coResult = $dBconn->query( "SHOW VARIABLES LIKE 'collation_database'" );
-
-				while ( $row =  $coResult->fetch( PDO::FETCH_BOTH ))  {
-					$database['dbCOLLATION'] =  $row[1];
-				}
-
-				// find the database character-set
-				$csResult = $dBconn->query( "SHOW VARIABLES LIKE 'character_set_database'" );
-
-				while ( $row = $csResult->fetch( PDO::FETCH_BOTH )) {
-					$database['dbCHARSET']  =  $row[1];
-				}
-
-				// find all the dB tables and calculate the size
-				$tblResult = $dBconn->query( "SHOW TABLE STATUS" );
-
-					$database['dbSIZE'] = 0;
-					$rowCount           = 0;
-
-					while ( $row =  $tblResult->fetch( PDO::FETCH_BOTH )) {
-						$rowCount++;
-						$tables[$row['Name']]['TABLE']  = $row['Name'];
-
-                        // count tables with/without same prefix as in config
-                        if(substr($row['Name'] , 0 , $dbPrefLen  ) === $instance['configDBPREF'] ) {
-                            $confPrefTables = $confPrefTables + 1 ;
-                        } else {
-                            $notconfPrefTables = $notconfPrefTables + 1 ;
-                        }
-						$table_size = ($row[ 'Data_length' ] + $row[ 'Index_length' ]) / 1024;
-						$tables[$row['Name']]['SIZE'] = sprintf( '%.2f', $table_size );
-						$database['dbSIZE'] += sprintf( '%.2f', $table_size );
-						$tables[$row['Name']]['SIZE'] = $tables[$row['Name']]['SIZE'] .' KiB';
-
-
-						if ( $showTables == '1' ) {
-							$tables[$row['Name']]['ENGINE']     = $row['Engine'];
-							$tables[$row['Name']]['VERSION']    = $row['Version'];
-							$tables[$row['Name']]['CREATED']    = $row['Create_time'];
-							$tables[$row['Name']]['UPDATED']    = $row['Update_time'];
-							$tables[$row['Name']]['CHECKED']    = $row['Check_time'];
-							$tables[$row['Name']]['COLLATION']  = $row['Collation'];
-							$tables[$row['Name']]['FRAGSIZE']   = sprintf( '%.2f', ( $row['Data_free'] /1024 ) ) .' KiB';
-							$tables[$row['Name']]['MAXGROW']    = sprintf( '%.1f', ( $row['Max_data_length'] /1073741824 ) ) .' GiB';
-							$tables[$row['Name']]['RECORDS']    = $row['Rows'];
-							$tables[$row['Name']]['AVGLEN']     = sprintf( '%.2f', ( $row['Avg_row_length'] /1024 ) ) .' KiB';
-						}
-					}
-
-				if ( $database['dbSIZE'] > '1024' ) {
-					$database['dbSIZE']     = sprintf( '%.2f', ( $database['dbSIZE'] /1024 ) ) .' MiB';
-
-				} else {
-					$database['dbSIZE']     = $database['dbSIZE'] .' KiB';
-				}
-				$database['dbTABLECOUNT']   = $rowCount;
-
-		} else {
-				$database['dbHOSTSERV']     = _FPA_U; // SQL server version
-				$database['dbHOSTINFO']     = _FPA_U; // connection type to dB
-				$database['dbHOSTPROTO']    = _FPA_U; // server protocol type
-				$database['dbHOSTCLIENT']   = _FPA_U; // client library version
-				$database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
-				$database['dbHOSTSTATS']    = _FPA_U; // latest statistics
-				$database['dbCOLLATION']    = _FPA_U;
-				$database['dbCHARSET']      = _FPA_U;
-				$database['dbERROR']        = _FPA_ECON;
-		}
-
-		} elseif ( $instance['configDBTYPE'] == 'postgresql')  {
-         if (function_exists('pg_connect')) {
-         $dBconn = @pg_connect("host=".$instance['configDBHOST']." dbname=".$instance['configDBNAME']." user=". $instance['configDBUSER']." password=". $instance['configDBPASS']);
-
-         if ($dBconn) {
-            $database['dbERROR'] = '0:';
-            $postgresql = _FPA_Y;
-
-            $sql = @pg_query($dBconn, "select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template' or type='library'");
-            $exset = @pg_fetch_all($sql);
-
-            $sql = @pg_query($dBconn, "select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template");
-            $tmpldef = @pg_fetch_all($sql);
-
-			if ( $dBconn ) {
-				$database['dbHOSTSERV']     = pg_parameter_status($dBconn, "server_version");       // SQL server version
-				$database['dbHOSTINFO']     = _FPA_U;                                               // connection type to dB
-				$database['dbHOSTCLIENT']   = PGSQL_LIBPQ_VERSION_STR;                              // client library version
-				$database['dbHOSTDEFCHSET'] = pg_parameter_status($dBconn, "server_encoding");      // this is the hosts default character-set
-				$database['dbHOSTSTATS']    = _FPA_U;                                               // latest statistics
-                $database['dbCHARSET']      =  pg_parameter_status($dBconn, "client_encoding");
-                $sql = pg_fetch_array(pg_query($dBconn, "select encoding from pg_database"));
-                $res = $sql[0];
-                $val = pg_fetch_array(pg_query($dBconn, "select collname FROM pg_catalog.pg_collation where collencoding = ". $res));
-                $database['dbCOLLATION'] =  $val[0];
-			}
-
-			$tblResult = pg_query($dBconn," SELECT relname as name, pg_total_relation_size(relid) As size, pg_total_relation_size(relid) - pg_relation_size(relid) as externalsize FROM pg_catalog.pg_statio_user_tables WHERE relname LIKE '" . $instance['configDBPREF'] . "%' ORDER BY relname ASC");
-
-				// find all the dB tables
-					$database['dbSIZE'] = 0;
-					$rowCount           = 0;
-
-					while ( $row =  pg_fetch_array( $tblResult )) {
-						$rowCount++;
-						$tables[$row['name']]['TABLE']  = $row['name'];
-
-                         // count tables with/without same prefix as in config
-                        if(substr($row['name'] , 0 , $dbPrefLen  ) === $instance['configDBPREF'] ) {
-                            $confPrefTables = $confPrefTables + 1 ;
-                        } else {
-                            $notconfPrefTables = $notconfPrefTables + 1 ;
-                        }
-						$cr = pg_fetch_array(pg_query($dBconn," select count(*) from  " . $tables[$row['name']]['TABLE'] ."" )) ;
-						$table_size = ($row[ 'size' ] ) / 1024;
-						$tables[$row['name']]['SIZE'] = sprintf( '%.2f', $table_size );
-						$tables[$row['name']]['SIZE'] = $tables[$row['name']]['SIZE'] .' KiB';
-						$database['dbSIZE'] += sprintf( '%.2f', $table_size );
-
-						if ( $showTables == '1' ) {
-							$tables[$row['name']]['ENGINE']     = _FPA_U;
-							$tables[$row['name']]['VERSION']    = _FPA_U;
-							$tables[$row['name']]['CREATED']    = _FPA_U;
-							$tables[$row['name']]['UPDATED']    = _FPA_U;
-							$tables[$row['name']]['CHECKED']    = _FPA_U;
-							$tables[$row['name']]['COLLATION']  = $database['dbCHARSET'];
-							$tables[$row['name']]['FRAGSIZE']   = _FPA_U;
-							$tables[$row['name']]['MAXGROW']    = _FPA_U;
-							$tables[$row['name']]['RECORDS']    = $cr['count'];
-							$tables[$row['name']]['AVGLEN']     = _FPA_U;
-						}
-					}
-
-				if ( $database['dbSIZE'] > '1024' ) {
-					$database['dbSIZE']     = sprintf( '%.2f', ( $database['dbSIZE'] /1024 ) ) .' MiB';
-
-				} else {
-					$database['dbSIZE']     = $database['dbSIZE'] .' KiB';
-				}
-                   $database['dbTABLECOUNT']   = $rowCount;
-
-		} else {
-				$database['dbHOSTSERV']     = _FPA_U; // SQL server version
-				$database['dbHOSTINFO']     = _FPA_U; // connection type to dB
-				$database['dbHOSTPROTO']    = _FPA_U; // server protocol type
-				$database['dbHOSTCLIENT']   = _FPA_U; // client library version
-				$database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
-				$database['dbHOSTSTATS']    = _FPA_U; // latest statistics
-				$database['dbCOLLATION']    = _FPA_U;
-				$database['dbCHARSET']      = _FPA_U;
-				$database['dbERROR']        = _FPA_ECON;
-		}
-
-		} else {
-				$database['dbHOSTSERV']     = _FPA_U; // SQL server version
-				$database['dbHOSTINFO']     = _FPA_U; // connection type to dB
-				$database['dbHOSTPROTO']    = _FPA_U; // server protocol type
-				$database['dbHOSTCLIENT']   = _FPA_U; // client library version
-				$database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
-				$database['dbHOSTSTATS']    = _FPA_U; // latest statistics
-				$database['dbCOLLATION']    = _FPA_U;
-				$database['dbCHARSET']      = _FPA_U;
-				$database['dbERROR']        = _FPA_DI_PHP_FU;
-		}
-
-		} elseif ( $instance['configDBTYPE'] == 'pgsql')  {
-		  try {
-		  $dBconn = new PDO("pgsql:host=".$instance['configDBHOST'].";dbname=".$instance['configDBNAME'], $instance['configDBUSER'], $instance['configDBPASS']);
-
-		  // set the PDO error mode to exception
-		  $dBconn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		  }
-		  catch(PDOException $e)
-		  {
-		  $dBconn = FALSE;
-		  }
-
-		  if ($dBconn) {
-		  $database['dbERROR'] = '0:';
-		  $postgresql = _FPA_Y;
-		  try {
-		  $sql = $dBconn->prepare("select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template' or type='library'");
-		  $sql->execute();
-		  $exset = $sql->setFetchMode(PDO::FETCH_ASSOC);
-		  $exset = $sql->fetchAll();
-
-		  $sql = $dBconn->prepare("select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template");
-		  $sql->execute();
-		  $tmpldef = $sql->setFetchMode(PDO::FETCH_ASSOC);
-		  $tmpldef = $sql->fetchAll();
-		  }
-		  catch(PDOException $e)
-		  {
-		  }
-
-			if ( $dBconn ) {
-				$database['dbHOSTSERV']     = $dBconn->getAttribute(constant("PDO::ATTR_SERVER_VERSION" ));       // SQL server version
-				$database['dbHOSTINFO']     = $dBconn->getAttribute(constant("PDO::ATTR_CONNECTION_STATUS" ));         // connection type to dB
-				$database['dbHOSTCLIENT']   = $dBconn->getAttribute(constant("PDO::ATTR_CLIENT_VERSION" ));                // client library version
-				$database['dbHOSTSTATS']    = _FPA_U;
-			}
-
-				// find the database collation
-				$coResult = $dBconn->query( "SELECT * FROM information_schema.character_sets");
-
-				while ( $row =  $coResult->fetch( PDO::FETCH_BOTH ))  {
-					$database['dbCOLLATION'] =  $row['character_set_name'];
-					$database['dbCHARSET']  =  $row['character_set_name'];
-					$database['dbHOSTDEFCHSET'] =  $row['character_set_name'];
-				}
-
-				// find all the dB tables and calculate the size
-				$tblResult = $dBconn->query( " SELECT relname as name, pg_total_relation_size(relid) As size, pg_total_relation_size(relid) - pg_relation_size(relid) as externalsize FROM pg_catalog.pg_statio_user_tables WHERE relname LIKE '". $instance['configDBPREF'] . "%' ORDER BY relname ASC");
-
-					$database['dbSIZE'] = 0;
-					$rowCount           = 0;
-
-					while ( $row =  $tblResult->fetch( PDO::FETCH_BOTH )) {
-						$rowCount++;
-						$tables[$row['name']]['TABLE']  = $row['name'];
-
-                        // count tables with/without same prefix as in config
-                        if(substr($row['name'] , 0 , $dbPrefLen  ) === $instance['configDBPREF'] ) {
-                            $confPrefTables = $confPrefTables + 1 ;
-                        } else {
-                            $notconfPrefTables = $notconfPrefTables + 1 ;
-                        }
-                        $crsql = $dBconn->query( " select count(*) from  " . $tables[$row['name']]['TABLE'] ."" );
-						$cr = $crsql->fetch( PDO::FETCH_BOTH );
-						$table_size = ($row[ 'size' ] ) / 1024;
-						$tables[$row['name']]['SIZE'] = sprintf( '%.2f', $table_size );
-						$tables[$row['name']]['SIZE'] = $tables[$row['name']]['SIZE'] .' KiB';
-						$database['dbSIZE'] += sprintf( '%.2f', $table_size );
-
-						if ( $showTables == '1' ) {
-							$tables[$row['name']]['ENGINE']     = _FPA_U;
-							$tables[$row['name']]['VERSION']    = _FPA_U;
-							$tables[$row['name']]['CREATED']    = _FPA_U;
-							$tables[$row['name']]['UPDATED']    = _FPA_U;
-							$tables[$row['name']]['CHECKED']    = _FPA_U;
-							$tables[$row['name']]['COLLATION']  = $database['dbCOLLATION'];
-							$tables[$row['name']]['FRAGSIZE']   = _FPA_U;
-							$tables[$row['name']]['MAXGROW']    = _FPA_U;
-							$tables[$row['name']]['RECORDS']    = $cr['count'];
-							$tables[$row['name']]['AVGLEN']     = _FPA_U;
-						}
-					}
-
-				if ( $database['dbSIZE'] > '1024' ) {
-					$database['dbSIZE']     = sprintf( '%.2f', ( $database['dbSIZE'] /1024 ) ) .' MiB';
-
-				} else {
-					$database['dbSIZE']     = $database['dbSIZE'] .' KiB';
-				}
-				$database['dbTABLECOUNT']   = $rowCount;
-
-		} else {
-				$database['dbHOSTSERV']     = _FPA_U; // SQL server version
-				$database['dbHOSTINFO']     = _FPA_U; // connection type to dB
-				$database['dbHOSTPROTO']    = _FPA_U; // server protocol type
-				$database['dbHOSTCLIENT']   = _FPA_U; // client library version
-				$database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
-				$database['dbHOSTSTATS']    = _FPA_U; // latest statistics
-				$database['dbCOLLATION']    = _FPA_U;
-				$database['dbCHARSET']      = _FPA_U;
-				$database['dbERROR']        = _FPA_ECON;
-		}
-
-
-		} elseif ( $instance['configDBTYPE'] == 'sqlsrv')  {
-				$database['dbHOSTSERV']     = _FPA_U; // SQL server version
-				$database['dbHOSTINFO']     = _FPA_U; // connection type to dB
-				$database['dbHOSTPROTO']    = _FPA_U; // server protocol type
-				$database['dbHOSTCLIENT']   = _FPA_U; // client library version
-				$database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
-				$database['dbHOSTSTATS']    = _FPA_U; // latest statistics
-				$database['dbCOLLATION']    = _FPA_U;
-				$database['dbCHARSET']      = _FPA_U;
-		} else {
-				$database['dbHOSTSERV']     = _FPA_U; // SQL server version
-				$database['dbHOSTINFO']     = _FPA_U; // connection type to dB
-				$database['dbHOSTPROTO']    = _FPA_U; // server protocol type
-				$database['dbHOSTCLIENT']   = _FPA_U; // client library version
-				$database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
-				$database['dbHOSTSTATS']    = _FPA_U; // latest statistics
-				$database['dbCOLLATION']    = _FPA_U;
-				$database['dbCHARSET']      = _FPA_U;
-		}
-
-		if ( isset( $dBconn ) AND $database['dbERROR'] == '0:' ) {
-			$database['dbERROR'] = _FPA_N;
-
-		} elseif ( $database['dbLOCAL'] == _FPA_N AND substr($database['dbERROR'], 0, 4) == '2005' ) { // 2005 = can't access host
-			// if this is a remote host, it might be firewalled or disabled from external or non-internal network access
-			$database['dbERROR']    = $database['dbERROR'] .' ( '. _FPA_DBCONNNOTE .' )';
-		}
-
-	// if no configuration or if configured but dBase credentials aren't valid
-	} else {
-		$database['dbDOCHECKS']     = _FPA_N;
-		$database['dbLOCAL']        = _FPA_U;
-	}
-    if (!@$dBconn AND @$instance['configDBCREDOK'] == _FPA_PMISS ) {
-		$instance['configDBCREDOK'] = _FPA_N;
-		$database['dbDOCHECKS']     = _FPA_N;
-	}
-
-?>
-
-
-
-<?php
-	/** FIND AND ESTABLISH INSTALLED EXTENSIONS ***********************************************
-	** this function recurively looks for installed Components, Modules, Plugins and Templates
-	** it only reads the .xml file to determine installation status and info, some extensions
-	** do not have an associated .xml file and wont be displayed (normally core extensions)
-	**
-	** modified version of the function for the recirsive folder permisisons previously
-	*****************************************************************************************/
-	if ( $instance['instanceFOUND'] == _FPA_Y ) { // fix for IIS *shrug*
-
-		// this is a little funky and passes the extension array name bt variable reference
-		// (&$arrname refers to each seperate array, which is called at the end) this was
-		// depreciated at 5.3 and I couldn't find an alternative, so the fix to a PHP Warning
-		// is to simply re-assign the $arrname back to itself inside the function, so it is
-		//no-longer a reference
-		function getDetails( $path, &$arrname, $loc, $level = 0 ) {
-			global $component, $module, $plugin, $template, $library;
-
-			// fix for PHP5.3 pass-variable-by-reference depreciation
-			$arrname = $arrname;
-			// Directories & files to ignore when listing output.
-			$ignore = array( '.', '..', 'index.htm', 'index.html', '.DS_Store', 'none.xml', 'metadata.xml', 'default.xml', 'form.xml', 'contact.xml', 'edit.xml', 'blog.xml' );
-
-				// open the directory to the handle $dh
-				$dh = @opendir( $path );
-
-				// loop through the directory
-				while( false !== ( $file = @readdir( $dh ) ) ) {
-
-					// check that this file is not to be ignored
-					if( !in_array( $file, $ignore ) ) {
-
-						// its a directory, so we need to keep reading down...
-						if( is_dir( "$path/$file" ) ) {
-
-							getDetails( "$path/$file", $arrname, $loc, ( $level +1 ) );
-							// Re-call this same function but on a new directory.
-							// this is what makes function recursive.
-
-						} else {
-
-							if ( $path == 'components' ) {
-								$cDir = substr( strrchr( $path .'/'. $file, '/' ), 1 );
-
-							} else {
-								$cDir = $path .'/'. $file;
-							}
-
-							if ( preg_match( "/\.xml/i", $file ) ) { // if filename matches .xml in the name
-
-								$content = file_get_contents( $cDir );
-
-								if ( preg_match( '#<(extension|install|mosinstall)#', $content, $isValidFile ) ) {
-									// $arrname[$loc][$cDir] = '';
-
-									$arrname[$loc][$cDir]['author']         = '-';
-									$arrname[$loc][$cDir]['authorUrl']      = '-';
-									$arrname[$loc][$cDir]['version']        = '-';
-									$arrname[$loc][$cDir]['creationDate']   = '-';
-									$arrname[$loc][$cDir]['type']           = '-';
-
-
-								if ( preg_match( '#<name>(.*)</name>#', $content, $name ) ) {
-									$arrname[$loc][$cDir]['name']   = strip_tags( substr( $name[1], 0, 35 ) );
-
-								} else {
-									$arrname[$loc][$cDir]['name']   = _FPA_U .' ('. $cDir . ') ';
-								}
-
-
-								if ( preg_match( '#<author>(.*)</author>#', $content, $author ) ) {
-									$arrname[$loc][$cDir]['author'] = strip_tags( substr( $author[1], 0, 25 ) );
-
-									if ( $author[1] == 'Joomla! Project'
-									OR strtolower( $name[1] ) == 'joomla admin'
-									OR strtolower( $name[1] ) == 'rhuk_milkyway'
-									OR strtolower( $name[1] ) == 'ja_purity'
-									OR strtolower( $name[1] ) == 'khepri'
-									OR strtolower( $name[1] ) == 'bluestork'
-									OR strtolower( $name[1] ) == 'atomic'
-									OR strtolower( $name[1] ) == 'hathor'
-									OR strtolower( $name[1] ) == 'protostar'
-									OR strtolower( $name[1] ) == 'isis'
-									OR strtolower( $name[1] ) == 'beez5'
-									OR strtolower( $name[1] ) == 'beez_20'
-									OR strtolower( $name[1] ) == 'cassiopeia'
-									OR strtolower( $name[1] ) == 'atum'
-									OR strtolower( substr( $name[1], 0, 4 ) ) == 'beez' ) {
-										$arrname[$loc][$cDir]['type'] = _FPA_JCORE;
-
-									} else {
-										$arrname[$loc][$cDir]['type'] = _FPA_3PD;
-									}
-
-								} else {
-									$arrname[$loc][$cDir]['author']     = '-';
-									$arrname[$loc][$cDir]['type']       = '-';
-								}
-
-								if ( preg_match( '#<version>(.*)</version>#', $content, $version ) ) {
-									$arrname[$loc][$cDir]['version'] = substr( $version[1], 0, 13 );
-
-								} else {
-									$arrname[$loc][$path .'/'. $file]['version'] = '-';
-								}
-
-								if ( preg_match( '#<creationDate>(.*)</creationDate>#', $content, $creationDate ) ) {
-									$arrname[$loc][$cDir]['creationDate'] = $creationDate[1];
-
-								} else {
-									$arrname[$loc][$cDir]['creationDate'] = '-';
-								}
-
-								if ( preg_match( '#<authorUrl>(.*)</authorUrl>#', $content, $authorUrl ) ) {
-									$arrname[$loc][$cDir]['authorUrl'] = str_replace( array( 'http://', 'https://' ), '', $authorUrl[1] );
-
-								} else {
-									$arrname[$loc][$cDir]['authorUrl'] = '-';
-								}
-
-						} //isValidFile
-					}
-				}
-			}
-		}
-		@closedir( $dh );
-	}
-
-		// use the same function (above) to search for each extension type and load the results into it's associated array
-		@getDetails( 'components', $component, 'SITE' );
-		@getDetails( 'administrator/components', $component, 'ADMIN' );
-
-		@getDetails( 'modules', $module, 'SITE' );
-		@getDetails( 'administrator/modules', $module, 'ADMIN' );
-
-		// cater for Joomla! 1.0 differences
-		if ( @$instance['cmsRELEASE'] == '1.0' ) {
-			@getDetails( 'mambots', $plugin, 'SITE' );
-		} else {
-			@getDetails( 'plugins', $plugin, 'SITE' );
-		}
-
-		@getDetails( 'templates', $template, 'SITE' );
-		@getDetails( 'administrator/templates', $template, 'ADMIN' );
-		@getDetails( 'libraries', $library, 'SITE' );
-
-	} // end if instanceFOUND
-?>
-
-        <?php
-            function recursive_array_search($needle,$haystack) {
-                foreach($haystack as $key=>$value) {
-                    $current_key=$key;
-                    if($needle===$value OR (is_array($value) && recursive_array_search($needle,$value) !== false)) {
-                        return $current_key;
+    /**
+     * is an instance present?
+     *
+     * this is a two-fold sanity check, we look two pairs of known folders, only one pair need exist
+     * this caters for the potential of missing folders, but is not exhaustive or too time consuming
+     *
+     */
+    if ( ( file_exists( 'components/' ) AND file_exists( 'modules/' ) ) OR ( file_exists( 'administrator/components/' ) AND file_exists( 'administrator/modules/' ) ) ) {
+        $instance['instanceFOUND'] = _FPA_Y;
+
+    } else {
+        $instance['instanceFOUND'] = _FPA_N;
+    }
+
+
+
+    /**
+     * what version is the instance?
+     *
+     */
+    // >= J3.8.0
+    if ( file_exists( 'libraries/src/Version.php' ) ) {
+        $instance['cmsVFILE'] = 'libraries/src/Version.php';
+
+    // >= J3.6.3
+    } elseif ( file_exists( 'libraries/cms/version/version.php' ) AND !file_exists( 'libraries/platform.php' ) ) {
+        $instance['cmsVFILE'] = 'libraries/cms/version/version.php';
+
+    // J2.5 & J3.0 libraries/joomla/platform.php files
+    } elseif ( file_exists( 'libraries/cms/version/version.php' ) AND file_exists( 'libraries/platform.php' ) ) {
+        $instance['cmsVFILE'] = 'libraries/cms/version/version.php';
+
+    // J1.7 includes/version.php & libraries/joomla/platform.php files
+    } elseif ( file_exists( 'includes/version.php' ) AND file_exists( 'libraries/platform.php' ) ) {
+        $instance['cmsVFILE'] = 'includes/version.php';
+
+    // J1.6 libraries/joomla/version.php & joomla.xml files
+    } elseif ( file_exists( 'libraries/joomla/version.php' ) AND file_exists( 'joomla.xml' ) ) {
+        $instance['cmsVFILE'] = 'libraries/joomla/version.php';
+
+    // J1.5 & Nooku Server libraries/joomla/version.php & koowa folder
+    } elseif ( file_exists( 'libraries/joomla/version.php' ) AND file_exists( 'libraries/koowa/koowa.php' ) ) {
+        $instance['cmsVFILE'] = 'libraries/joomla/version.php';
+
+    // J1.5 libraries/joomla/version.php & xmlrpc folder
+    } elseif ( file_exists( 'libraries/joomla/version.php' ) AND file_exists( 'xmlrpc/' ) ) {
+        $instance['cmsVFILE'] = 'libraries/joomla/version.php';
+
+    // J1.0 includes/version.php & mambots folder
+    } elseif ( file_exists( 'includes/version.php' ) AND file_exists( 'mambots/' ) ) {
+        $instance['cmsVFILE'] = 'includes/version.php';
+
+    // fpa could find the required files to determine version(s)
+    } else {
+        $instance['cmsVFILE'] = _FPA_N;
+    }
+
+
+
+    /**
+     * Detect multiple instances of version file
+     *
+     */
+    if ( file_exists( 'libraries/src/Version.php' ) ) {
+        $vFile1 = 1;
+    } else {
+        $vFile1 = 0;}
+    if ( file_exists( 'libraries/cms/version/version.php' ) ) {
+        $vFile2 = 1;
+    } else {
+        $vFile2 = 0;}
+    if ( file_exists( 'includes/version.php' ) ) {
+        $vFile3 = 1;
+    } else {
+        $vFile3 = 0;}
+    if ( file_exists( 'libraries/joomla/version.php' ) ) {
+        $vFile4 = 1;
+    } else {
+        $vFile4 = 0;}
+    $vFileSum = $vFile1 + $vFile2 + $vFile3 + $vFile4;
+
+
+
+    /**
+     * what version is the framework? (J!1.7 & above)
+     *
+     */
+    // J1.7 libraries/joomla/platform.php
+    if ( file_exists( 'libraries/platform.php' ) ) {
+        $instance['platformVFILE'] = 'libraries/platform.php';
+
+    // J1.5 Nooku Server libraries/koowa/koowa.php
+    } elseif ( file_exists( 'libraries/koowa/koowa.php' ) ) {
+        $instance['platformVFILE'] = 'libraries/koowa/koowa.php';
+
+    // J3.7
+    } elseif ( file_exists( 'libraries/joomla/platform.php' ) ) {
+        $instance['platformVFILE'] = 'libraries/joomla/platform.php';
+
+    } else {
+        $instance['platformVFILE'] = _FPA_N;
+    }
+
+
+
+    // read the cms version file into $cmsVContent (all versions)
+    if ( $instance['cmsVFILE'] != _FPA_N ) {
+        $cmsVContent = file_get_contents( $instance['cmsVFILE'] );
+            // find the basic cms information
+            preg_match ( '#\$PRODUCT\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsPRODUCT );
+            preg_match ( '#\$RELEASE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELEASE );
+            preg_match ( '#\$(?:DEV_LEVEL|MAINTENANCE)\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVLEVEL );
+            preg_match ( '#\$(?:DEV_STATUS|STATUS)\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVSTATUS );
+            preg_match ( '#\$(?:CODENAME|CODE_NAME)\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsCODENAME );
+            preg_match ( '#\$(?:RELDATE|RELEASE_DATE)\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELDATE );
+
+                // Joomla 3.5 - 3.9
+                if (empty($cmsPRODUCT))
+                {
+                    preg_match ( '#const\s*PRODUCT\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsPRODUCT );
+                    preg_match ( '#const\s*RELEASE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELEASE );
+                    preg_match ( '#const\s*DEV_LEVEL\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVLEVEL );
+                    preg_match ( '#const\s*DEV_STATUS\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVSTATUS );
+                    preg_match ( '#const\s*CODENAME\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsCODENAME );
+                    preg_match ( '#const\s*RELDATE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELDATE );
+                    preg_match ( '#const\s*MAJOR_VERSION\s*=\s*(.*);#', $cmsVContent, $cmsMAJOR_VERSION );
+                }
+
+                // Joomla 4
+                if (empty($cmsRELEASE))
+                {
+                    preg_match ( '#const\s*PRODUCT\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsPRODUCT );
+                    preg_match ( '#const\s*DEV_STATUS\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVSTATUS );
+                    preg_match ( '#const\s*CODENAME\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsCODENAME );
+                    preg_match ( '#const\s*RELDATE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELDATE );
+                    preg_match ( '#const\s*EXTRA_VERSION\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $EXTRA_VERSION );
+                    preg_match ( '#const\s*MAJOR_VERSION\s*=\s*(.*);#', $cmsVContent, $cmsMAJOR_VERSION );
+                    preg_match ( '#const\s*MINOR_VERSION\s*=\s*(.*);#', $cmsVContent, $cmsMINOR_VERSION );
+                    preg_match ( '#const\s*PATCH_VERSION\s*=\s*(.*);#', $cmsVContent, $cmsPATCH_VERSION );
+                    $cmsRELEASE[1] = $cmsMAJOR_VERSION[1] . '.' . $cmsMINOR_VERSION[1];
+                    if (strlen($EXTRA_VERSION[1]) > 0) {
+                        $cmsDEVLEVEL[1] = $cmsPATCH_VERSION[1]. '-' . $EXTRA_VERSION[1] ;
+                    } else {
+                        $cmsDEVLEVEL[1] = $cmsPATCH_VERSION[1] ;
                     }
                 }
-                return false;
+
+                if (empty($cmsMAJOR_VERSION))
+                {
+                    $cmsMAJOR_VERSION[1] = '0' ;
+                }
+
+                $instance['cmsMAJORVERSION'] = $cmsMAJOR_VERSION[1];
+                $instance['cmsPRODUCT'] = $cmsPRODUCT[1];
+                $instance['cmsRELEASE'] = $cmsRELEASE[1];
+                $instance['cmsDEVLEVEL'] = $cmsDEVLEVEL[1];
+                $instance['cmsDEVSTATUS'] = $cmsDEVSTATUS[1];
+                $instance['cmsCODENAME'] = $cmsCODENAME[1];
+                $instance['cmsRELDATE'] = $cmsRELDATE[1];
+    }
+
+
+
+    // read the platform version file into $platformVContent (J!1.7 & above only)
+    if ( $instance['platformVFILE'] != _FPA_N ) {
+
+        $platformVContent = file_get_contents( $instance['platformVFILE'] );
+
+        // find the basic platform information
+        if ( $instance['platformVFILE'] == 'libraries/koowa/koowa.php' ) {
+
+            // Nooku platform based
+            preg_match ( '#VERSION.*=\s[\'|\"](.*)[\'|\"];#', $platformVContent, $platformRELEASE );
+            preg_match ( '#VERSION.*=\s[\'|\"].*-(.*)-.*[\'|\"];#', $platformVContent, $platformDEVSTATUS );
+
+                $instance['platformPRODUCT'] = 'Nooku';
+                $instance['platformRELEASE'] = $platformRELEASE[1];
+                $instance['platformDEVSTATUS'] = $platformDEVSTATUS[1];
+
+        } else {
+
+            // default to the Joomla! platform, as it is most common at the momemt
+            preg_match ( '#PRODUCT\s*=\s*[\'"](.*)[\'"]#', $platformVContent, $platformPRODUCT );
+            preg_match ( '#RELEASE\s*=\s*[\'"](.*)[\'"]#', $platformVContent, $platformRELEASE );
+            preg_match ( '#MAINTENANCE\s*=\s*[\'"](.*)[\'"]#', $platformVContent, $platformDEVLEVEL );
+            preg_match ( '#STATUS\s*=\s*[\'"](.*)[\'"]#', $platformVContent, $platformDEVSTATUS );
+            preg_match ( '#CODE_NAME\s*=\s*[\'"](.*)[\'"]#', $platformVContent, $platformCODENAME );
+            preg_match ( '#RELEASE_DATE\s*=\s*[\'"](.*)[\'"]#', $platformVContent, $platformRELDATE );
+
+                // Joomla 3.5 - 3.9
+                if (empty($platformPRODUCT))
+                {
+                    preg_match ( '#const\s*PRODUCT\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsPRODUCT );
+                    preg_match ( '#const\s*RELEASE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELEASE );
+                    preg_match ( '#const\s*MAINTENANCE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVLEVEL );
+                    preg_match ( '#const\s*STATUS\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsDEVSTATUS );
+                    preg_match ( '#const\s*CODE_NAME\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsCODENAME );
+                    preg_match ( '#const\s*RELEASE_DATE\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELDATE );
+                }
+
+                $instance['platformPRODUCT'] = $platformPRODUCT[1];
+                $instance['platformRELEASE'] = $platformRELEASE[1];
+                $instance['platformDEVLEVEL'] = $platformDEVLEVEL[1];
+                $instance['platformDEVSTATUS'] = $platformDEVSTATUS[1];
+                $instance['platformCODENAME'] = $platformCODENAME[1];
+                $instance['platformRELDATE'] = $platformRELDATE[1];
+        }
+
+    }
+
+
+
+    /**
+     * is Joomla! installed/configured?
+     *
+     * determine exactly where the REAL configuration file is, it might not be the one in the "/" folder
+     *
+     */
+    if ( @$instance['cmsRELEASE'] == '1.0' ) {
+
+        if ( file_exists( 'configuration.php' ) ) {
+            $instance['configPATH'] = 'configuration.php';
+        }
+
+    } elseif ( @$instance['cmsRELEASE'] == '1.5' ) {
+        $instance['configPATH'] = 'configuration.php';
+
+    } elseif ( @$instance['cmsRELEASE'] >= '1.6' ) {
+
+        if ( file_exists( 'defines.php' ) OR file_exists( 'administrator\defines.php' )) {
+            $instance['definesEXIST'] = _FPA_Y;
+
+            // look for a 'defines' override file in the "/" folder.
+            if ( file_exists( 'defines.php' ) ) {
+
+                $cmsOverride = file_get_contents( 'defines.php' );
+                preg_match ( '#JPATH_CONFIGURATION\s*\S*\s*[\'"](.*)[\'"]#', $cmsOverride, $cmsOVERRIDEPATH );
+
+                if ( file_exists( @$cmsOVERRIDEPATH[1] . '\configuration.php' ) ) {
+                    $instance['configPATH'] = $cmsOVERRIDEPATH[1] . '\configuration.php';
+                    $instance['configSiteDEFINE'] = _FPA_Y;
+                } else {
+                    $instance['configPATH'] = 'configuration.php';
+                    $instance['configSiteDEFINE'] = _FPA_Y;
+                }
+
+            } else {
+                $instance['configPATH'] = 'configuration.php';
+                $instance['configSiteDEFINE'] = _FPA_N ;
             }
-        ?>
+
+            if ( file_exists( 'administrator\defines.php' ) ) {
+
+                $cmsAdminOverride = file_get_contents( 'administrator\defines.php' );
+                preg_match ( '#JPATH_CONFIGURATION\s*\S*\s*[\'"](.*)[\'"]#', $cmsAdminOverride, $cmsADMINOVERRIDEPATH );
+
+                if ( file_exists( @$cmsOVERRIDEPATH[1] . '\configuration.php' ) ) {
+                    $instance['configADMINPATH'] = $cmsADMINOVERRIDEPATH[1] . '\configuration.php';
+                    $instance['configAdminDEFINE'] = _FPA_Y;
+
+                } else {
+                    $instance['configADMINPATH'] = 'configuration.php';
+                    $instance['configAdminDEFINE'] = _FPA_Y;
+                }
+
+            } else {
+                $instance['configAdminDEFINE'] = _FPA_N;
+                $instance['configADMINPATH'] = 'configuration.php';
+            }
+
+            if (( $instance['configPATH'] <> $instance['configADMINPATH'] ) OR ($instance['configSiteDEFINE'] <> $instance['configAdminDEFINE'] )) {
+                $instance['equalPATH'] = _FPA_N;
+
+            } else {
+                $instance['equalPATH'] = _FPA_Y;
+            }
+
+        } else {
+            $instance['configPATH'] = 'configuration.php';
+            $instance['definesEXIST'] = _FPA_N;
+            $instance['equalPATH'] = _FPA_Y;
+        }
+
+    } else {
+        $instance['configPATH'] = 'configuration.php';
+    }
 
 
+    // check the configuration file (all versions)
+    if ( file_exists( $instance['configPATH'] ) ) {
+        $instance['instanceCONFIGURED'] = _FPA_Y;
+
+        // determine it's ownership and mode
+        if ( is_writable( $instance['configPATH'] ) ) {
+            $instance['configWRITABLE']	= _FPA_Y;
+
+        } else {
+            $instance['configWRITABLE']	= _FPA_N;
+        }
+
+        $instance['configMODE'] = substr( sprintf('%o', fileperms( $instance['configPATH'] ) ),-3, 3 );
+
+        if ( function_exists( 'posix_getpwuid' ) AND $system['sysSHORTOS'] != 'WIN' ) { // gets the UiD and converts to 'name' on non Windows systems
+            $instance['configOWNER'] = posix_getpwuid( fileowner( $instance['configPATH'] ) );
+            $instance['configGROUP'] = posix_getgrgid( filegroup( $instance['configPATH'] ) );
+
+        } else { // only get the UiD for Windows, not 'name'
+            $instance['configOWNER']['name'] = fileowner( $instance['configPATH'] );
+            $instance['configGROUP']['name'] = filegroup( $instance['configPATH'] );
+        }
+
+
+
+        /**
+         * if present, is the configuration file valid?
+         *
+         * added code to fix the config version mis-match on 2.5 versions of Joomla - 4-8-12 - Phil
+         * reworked code block to better determine version in 1.7 - 3.0+ versions of Joomla - 8-06-12 - Phil
+         *
+         */
+        $cmsCContent = file_get_contents( $instance['configPATH'] );
+
+        // >= 3.8.0
+        if ( preg_match ( '#(public)#', $cmsCContent ) AND file_exists( 'libraries/src/Version.php' ) ) {
+            $instance['configVALIDFOR'] = $instance['cmsRELEASE'];
+            $instance['cmsVFILE'] = 'libraries/src/Version.php';
+            $instance['instanceCFGVERMATCH'] = _FPA_Y;
+
+        // >= 3.6.3
+        } elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] == _FPA_N AND file_exists( 'libraries/cms/version/version.php' ) ) {
+            $instance['configVALIDFOR'] = $instance['cmsRELEASE'];
+            $instance['cmsVFILE'] = 'libraries/cms/version/version.php';
+            $instance['instanceCFGVERMATCH'] = _FPA_Y;
+
+        //for 3.0
+        } elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] != _FPA_N ) {
+            $instance['configVALIDFOR'] = $instance['cmsRELEASE'];
+            $instance['cmsVFILE'] = 'libraries/cms/version/version.php';
+            $instance['instanceCFGVERMATCH'] = _FPA_Y;
+
+        //for 2.5
+        } elseif ( preg_match ( '#(public)#', $cmsCContent ) AND substr( $instance['platformRELEASE'],0,2 ) == '11' ) {
+            $instance['configVALIDFOR'] = $instance['cmsRELEASE'];
+            $instance['cmsVFILE'] = 'libraries/cms/version/version.php';
+            $instance['instanceCFGVERMATCH'] = _FPA_Y;
+
+        //for 1.7
+        } elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] != _FPA_N  AND $instance['cmsVFILE'] != 'libraries/cms/version/version.php') {
+            $instance['cmsVFILE'] = 'includes/version.php';
+            $instance['configVALIDFOR'] = $instance['cmsRELEASE'];
+            $instance['instanceCFGVERMATCH'] = _FPA_Y;
+
+        //for 1.6
+        } elseif ( preg_match ( '#(public)#', $cmsCContent ) AND $instance['platformVFILE'] == _FPA_N ) {
+            $instance['configVALIDFOR'] = '1.6';
+            $instance['instanceCFGVERMATCH'] = _FPA_Y;
+
+        // for 1.5
+        } elseif ( preg_match ( '#(var)#', $cmsCContent ) ) {
+            $instance['configVALIDFOR'] = '1.5';
+            $instance['instanceCFGVERMATCH'] = _FPA_Y;
+
+        // for 1.0
+        } elseif ( preg_match ( '#(\$mosConfig_)#', $cmsCContent ) ) {
+            $instance['configVALIDFOR'] = '1.0';
+            $instance['instanceCFGVERMATCH'] = _FPA_Y;
+
+        } else {
+            $instance['configVALIDFOR'] = _FPA_U;
+        }
+
+
+        // fpa found a configuration.php but couldn't determine the version, is it valid?
+        if ( $instance['configVALIDFOR'] == _FPA_U ) {
+
+            if ( filesize( $instance['configPATH'] ) < 512 ) {
+                    $instance['configSIZEVALID'] = _FPA_N;
+            }
+        }
+
+
+        // check if the configuration.php version matches the discovered version
+        if ( $instance['configVALIDFOR'] != _FPA_U AND $instance['cmsVFILE'] != _FPA_N ) {
+
+            // set defaults for the configuration's validity and a sanity score of zero
+            $instance['configSANE'] = _FPA_N;
+            $instance['configSANITYSCORE'] = 0;
+
+
+            // !TODO add white-space etc checks
+            // do some configuration.php sanity/validity checks
+            if ( filesize( $instance['configPATH'] ) > 512 ) {
+                $instance['cfgSANITY']['configSIZEVALID'] = _FPA_Y;
+            }
+
+            // !TODO FINISH  white-space etc checks
+            $instance['cfgSANITY']['configNOTDIST']  = _FPA_Y;   // is not the distribution example
+            $instance['cfgSANITY']['configNOWSPACE'] = _FPA_Y;  // no white-space
+            $instance['cfgSANITY']['configOPTAG']    = _FPA_Y;     // has php open tag
+            $instance['cfgSANITY']['configCLTAG']    = _FPA_Y;     // has php close tag
+            $instance['cfgSANITY']['configJCONFIG']  = _FPA_Y;   // has php close tag
+
+            // run through the sanity checks, if sane ( =Yes ) increment the score by 1 (should total 6)
+            foreach ( $instance['cfgSANITY'] as $i => $sanityCHECK ) {
+
+                if ( $instance['cfgSANITY'][$i] == _FPA_Y ) {
+                    $instance['configSANITYSCORE'] = $instance['configSANITYSCORE'] +1;
+                }
+
+            }
+
+            // if the configuration file is sane, set it as valid
+            if ( $instance['configSANITYSCORE'] == '6' ) {
+                $instance['configSANE'] = _FPA_Y;   // configuration appears valid?
+            }
+
+        } else {
+            $instance['instanceCFGVERMATCH'] = _FPA_U;
+        }
+
+
+
+        /**
+         * include configuration.php
+         *
+         */
+        if ( $instance['configVALIDFOR'] != _FPA_U ) {
+            ini_set( 'display_errors', 1 );
+            $includeconfig = require_once($instance['configPATH']);
+            $config = new JConfig();
+
+            if ( defined( '_FPA_DIAG' ) ) {
+                ini_set( 'display_errors', 1 );
+
+            } else {
+                ini_set( 'display_errors', 0 );
+            }
+
+            $instance['configERRORREP'] = $config->error_reporting;
+            $instance['configDBTYPE'] = $config->dbtype;
+            $instance['configDBHOST'] = $config->host;
+            $instance['configDBNAME'] = $config->db;
+            $instance['configDBPREF'] = $config->dbprefix;
+            $instance['configDBUSER'] = $config->user;
+            $instance['configDBPASS'] = $config->password;
+
+            switch ($config->offline) {
+                case true:
+                    $instance['configOFFLINE'] = 'true';
+                    break;
+                case false:
+                    $instance['configOFFLINE'] = 'false';
+                    break;
+                default:
+                    $instance['configOFFLINE'] = $config->offline;
+            }
+
+            switch ($config->sef) {
+                case true:
+                    $instance['configSEF'] = 'true';
+                    break;
+                case false:
+                    $instance['configSEF'] = 'false';
+                    break;
+                default:
+                    $instance['configSEF'] = $config->sef;
+            }
+
+            switch ($config->gzip) {
+                case true:
+                    $instance['configGZIP'] = 'true';
+                    break;
+                case false:
+                    $instance['configGZIP'] = 'false';
+                    break;
+                default:
+                    $instance['configGZIP'] = $config->gzip;
+            }
+
+            switch ($config->caching) {
+                case true:
+                    $instance['configCACHING'] = 'true';
+                    break;
+                case false:
+                    $instance['configCACHING'] = 'false';
+                    break;
+                default:
+                    $instance['configCACHING'] = $config->caching;
+            }
+
+            switch ($config->debug) {
+                case true:
+                    $instance['configSITEDEBUG'] = 'true';
+                    break;
+                case false:
+                    $instance['configSITEDEBUG'] = 'false';
+                    break;
+                default:
+                    $instance['configSITEDEBUG'] = $config->debug;
+            }
+
+            if ( isset($config->shared_session ))
+            {
+                switch ($config->shared_session)
+                {
+                    case true:
+                        $instance['configSHASESS'] = 'true';
+                        break;
+                    case false:
+                        $instance['configSHASESS'] = 'false';
+                        break;
+                    default:
+                        $instance['configSHASESS'] = $config->shared_session;
+                }
+            }
+            else
+            {
+                $instance['configSHASESS'] = _FPA_NA;
+            }
+
+            if ( isset($config->cache_platformprefix ))
+            {
+                switch ($config->cache_platformprefix)
+                {
+                    case true:
+                        $instance['configCACHEPLFPFX'] = 'true';
+                        break;
+                    case false:
+                        $instance['configCACHEPLFPFX'] = 'false';
+                        break;
+                    default:
+                        $instance['configCACHEPLFPFX'] = $config->cache_platformprefix;
+                }
+            }
+            else
+            {
+                $instance['configCACHEPLFPFX'] = _FPA_NA;
+            }
+
+            if ( isset($config->ftp_enable ))
+            {
+                switch ($config->ftp_enable)
+                {
+                    case true:
+                        $instance['configFTP'] = 'true';
+                        break;
+                    case false:
+                        $instance['configFTP'] = 'false';
+                        break;
+                    default:
+                        $instance['configFTP'] = $config->ftp_enable;
+                }
+            }
+            else
+            {
+                $instance['configFTP'] = _FPA_NA;
+            }
+
+            if ( isset($config->debug_lang ))
+            {
+                switch ($config->debug_lang)
+                {
+                    case true:
+                        $instance['configLANGDEBUG'] = 'true';
+                        break;
+                    case false:
+                        $instance['configLANGDEBUG'] = 'false';
+                        break;
+                    default:
+                        $instance['configLANGDEBUG'] = $config->debug_lang;
+                }
+            }
+            else
+            {
+                $instance['configLANGDEBUG'] = _FPA_NA;
+            }
+
+            if ( isset($config->sef_suffix ))
+            {
+                switch ($config->sef_suffix)
+                {
+                    case true:
+                        $instance['configSEFSUFFIX'] = 'true';
+                        break;
+                    case false:
+                        $instance['configSEFSUFFIX'] = 'false';
+                        break;
+                    default:
+                        $instance['configSEFSUFFIX'] = $config->sef_suffix;
+                }
+            }
+            else
+            {
+                $instance['configSEFSUFFIX'] = _FPA_NA;
+            }
+
+            if ( isset($config->sef_rewrite ))
+            {
+                switch ($config->sef_rewrite)
+                {
+                    case true:
+                        $instance['configSEFRWRITE'] = 'true';
+                        break;
+                    case false:
+                        $instance['configSEFRWRITE'] = 'false';
+                        break;
+                    default:
+                        $instance['configSEFRWRITE'] = $config->sef_rewrite;
+                }
+            }
+            else
+            {
+                $instance['configSEFRWRITE'] = _FPA_NA;
+            }
+
+            if ( isset($config->proxy_enable ))
+            {
+                switch ($config->proxy_enable)
+                {
+                    case true:
+                        $instance['configPROXY'] = 'true';
+                        break;
+                    case false:
+                        $instance['configPROXY'] = 'false';
+                        break;
+                    default:
+                        $instance['configPROXY'] = $config->proxy_enable;
+                }
+            }
+            else
+            {
+                $instance['configPROXY'] = _FPA_NA;
+            }
+
+            if ( isset($config->unicodeslugs ))
+            {
+                switch ($config->unicodeslugs)
+                {
+                    case true:
+                        $instance['configUNICODE'] = 'true';
+                        break;
+                    case false:
+                        $instance['configUNICODE'] = 'false';
+                        break;
+                    default:
+                        $instance['configUNICODE'] = $config->unicodeslugs;
+                }
+            }
+            else
+            {
+                $instance['configUNICODE'] = _FPA_NA;
+            }
+
+            if ( isset($config->force_ssl ))
+            {
+                $instance['configSSL'] = $config->force_ssl;
+            }
+            else
+            {
+                $instance['configSSL'] = _FPA_NA;
+            }
+
+            if ( isset($config->session_handler ))
+            {
+                $instance['configSESSHAND'] = $config->session_handler;
+            }
+            else
+            {
+                $instance['configSESSHAND'] = _FPA_NA;
+            }
+
+            if ( isset($config->lifetime ))
+            {
+                $instance['configLIFETIME'] = $config->lifetime;
+            }
+            else
+            {
+                $instance['configLIFETIME'] = _FPA_NA;
+            }
+
+            if ( isset($config->cachetime ))
+            {
+                $instance['configCACHETIME'] = $config->cachetime;
+            }
+            else
+            {
+                $instance['configCACHETIME'] = _FPA_NA;
+            }
+
+            if ( isset($config->live_site ))
+            {
+                $instance['configLIVESITE'] = $config->live_site;
+            }
+            else
+            {
+                $instance['configLIVESITE'] = _FPA_NA;
+            }
+
+            if ( isset($config->cache_handler ))
+            {
+                $instance['configCACHEHANDLER'] = $config->cache_handler;
+            }
+            else
+            {
+                $instance['configCACHEHANDLER'] = _FPA_NA;
+            }
+
+            if ( isset($config->access ))
+            {
+                $instance['configACCESS'] = $config->access;
+            }
+            else
+            {
+                $instance['configACCESS'] = _FPA_NA;
+            }
+
+        }
+
+        if ($instance['configDBTYPE'] == 'mysql' and $instance['cmsMAJORVERSION'] == '4') {
+            $instance['configDBTYPE'] = 'pdomysql';
+        }
+
+        // J!1.0 assumed 'mysql' with no variable, so we'll just add it
+        if ($instance['configDBTYPE'] == _FPA_N and $instance['configVALIDFOR'] == '1.0') {
+            $instance['configDBTYPE'] = 'mysql';
+        }
+
+        // look to see if we are using a remote or local MySQL server
+        if ( strpos($instance['configDBHOST'] , 'localhost' ) === 0  OR strpos($instance['configDBHOST'] , '127.0.0.1' ) === 0 ) {
+            $database['dbLOCAL'] = _FPA_Y;
+
+        } else {
+            $database['dbLOCAL'] = _FPA_N;
+        }
+
+        // check if all the DB credentials are complete
+        if ( @$instance['configDBTYPE'] AND $instance['configDBHOST'] AND $instance['configDBNAME'] AND $instance['configDBPREF'] AND $instance['configDBUSER'] AND $instance['configDBPASS'] ) {
+            $instance['configDBCREDOK'] = _FPA_Y;
+
+        } else if ( @$instance['configDBTYPE'] AND $instance['configDBHOST'] AND $instance['configDBNAME'] AND $instance['configDBPREF'] AND $instance['configDBUSER'] AND $database['dbLOCAL'] = _FPA_Y ){
+            $instance['configDBCREDOK'] = _FPA_PMISS;
+
+        } else {
+            $instance['configDBCREDOK'] = _FPA_N;
+        }
+
+        // looking for htaccess (Apache and some others) or web.config (IIS)
+        if ( $system['sysSHORTWEB'] != 'MIC' ) {
+
+            // htaccess files
+            if ( file_exists( '.htaccess' ) ) {
+                $instance['configSITEHTWC'] = _FPA_Y;
+
+            } else {
+                $instance['configSITEHTWC'] = _FPA_N;
+            }
+
+            if ( file_exists( 'administrator/.htaccess' ) ) {
+                $instance['configADMINHTWC'] = _FPA_Y;
+
+            } else {
+                $instance['configADMINHTWC'] = _FPA_N;
+
+            }
+
+        } else {
+
+            // web.config file
+            if ( file_exists( 'web.config' ) ) {
+                $instance['configSITEHTWC'] = _FPA_Y;
+                $instance['configADMINHTWC'] = _FPA_NA;
+
+            } else {
+                $instance['configSITEHTWC'] = _FPA_N;
+                $instance['configADMINHTWC'] = _FPA_NA;
+            }
+        }
+
+    } else { // no configuration.php found
+
+		$instance['instanceCONFIGURED'] = _FPA_N;
+        $instance['configVALIDFOR'] = _FPA_U;
+
+	}
+
+
+
+    /**
+     * DETERMINE SYSTEM ENVIRONMENT & SETTINGS
+     *
+     * here we try to determine the hosting enviroment and configuration
+     * to try and avoid "white-screens" fpa tries to check for function availability before
+     * using any function, but this does mean it has grown in size quite a bit and unfortunately
+     * gets a little messy in places.
+     *
+     */
+
+    // what server and os is the host?
+    $phpenv['phpVERSION'] = phpversion();
+    $system['sysPLATFUL'] = php_uname('a');
+    $system['sysPLATOS'] = php_uname('s');
+    $system['sysPLATREL'] = php_uname('r');
+    $system['sysPLATFORM'] = php_uname('v');
+    $system['sysPLATNAME'] = php_uname('n');
+    $system['sysPLATTECH'] = php_uname('m');
+    $system['sysSERVNAME'] = $_SERVER['SERVER_NAME'];
+    $system['sysSERVIP'] = gethostbyname($_SERVER['SERVER_NAME']);
+    $system['sysSERVSIG'] = $_SERVER['SERVER_SOFTWARE'];
+    $system['sysENCODING'] = $_SERVER["HTTP_ACCEPT_ENCODING"];
+    $system['sysCURRUSER'] = get_current_user(); // current process user
+    $system['sysSERVIP'] = gethostbyname($_SERVER['SERVER_NAME']);
+
+    // !TESTME for WIN IIS7?
+    // $system['sysSERVIP'] =  $_SERVER['LOCAL_ADDR'];
+
+    if ( $system['sysSHORTOS'] != 'WIN' ) {
+
+        $system['sysEXECUSER'] = @$_ENV['USER']; // user that executed this script
+
+            if ( !@$_ENV['USER'] ) {
+                $system['sysEXECUSER'] = $system['sysCURRUSER'];
+            }
+
+        $system['sysDOCROOT'] = $_SERVER['DOCUMENT_ROOT'];
+
+    } else {
+        $localpath = getenv( 'SCRIPT_NAME' );
+        $absolutepath = str_replace( '\\', '/', realpath( basename( getenv( 'SCRIPT_NAME' ) ) ) );
+        $system['sysDOCROOT'] = substr( $absolutepath, 0, strpos( $absolutepath, $localpath ) );
+        $system['sysEXECUSER'] = $system['sysCURRUSER']; // Windows work-around for not using EXEC User (this limits the cpability of discovering SU Environments though)
+    }
+
+    // looking for the Apache "suExec" Utility
+    if ( function_exists( 'exec' ) AND $system['sysSHORTOS'] != 'WIN' ) { // find the owner of the current process running this script
+        $system['sysWEBOWNER'] = exec("whoami");
+
+    } elseif ( function_exists( 'passthru' ) AND $system['sysSHORTOS'] != 'WIN' ) {
+        $system['sysWEBOWNER'] = passthru("whoami");
+
+    } else {
+        $system['sysWEBOWNER'] = _FPA_NA;  // we'll have to give up if we can't 'exec' or 'passthru' something, this occurs with Windows and some more secure environments
+    }
+
+    // find the system temp directory
+    if ( version_compare( PHP_VERSION, '5.2.1', '>=' ) ) {
+        $system['sysSYSTMPDIR'] = sys_get_temp_dir();
+
+        // is the system /tmp writable to this user?
+        if ( is_writable( sys_get_temp_dir() ) ) {
+            $system['sysTMPDIRWRITABLE'] = _FPA_Y;
+
+        } else {
+            $system['sysTMPDIRWRITABLE'] = _FPA_N;
+        }
+
+    } else {
+        $system['sysSYSTMPDIR'] = _FPA_U;
+        $system['sysTMPDIRWRITABLE'] = _FPA_U;
+    }
+
+
+
+    /**
+     * DETERMINE PHP ENVIRONMENT & SETTINGS
+     *
+     * here we try to determine the php enviroment and configuration
+     * to try and avoid "white-screens" fpa tries to check for function availability before
+     * using any function, but this does mean it has grown in size quite a bit and unfortunately
+     * gets a little messy in places.
+     *
+     */
+
+    // general php related settings?
+    if ( version_compare( PHP_VERSION, '5.0', '>=' ) ) {
+        $phpenv['phpSUPPORTSMYSQLI'] = _FPA_Y;
+
+    } elseif ( version_compare( PHP_VERSION, '4.4.9', '<=' ) ) {
+        $phpenv['phpSUPPORTSMYSQLI'] = _FPA_N;
+
+    } else {
+        $phpenv['phpSUPPORTSMYSQLI'] = _FPA_U;
+    }
+
+    if ( version_compare( PHP_VERSION, '7.0', '>=' ) ) {
+        $phpenv['phpSUPPORTSMYSQL'] = _FPA_N;
+
+    } elseif ( version_compare( PHP_VERSION, '5.9.9', '<=' ) ) {
+        $phpenv['phpSUPPORTSMYSQL'] = _FPA_Y;
+
+    } else {
+        $phpenv['phpSUPPORTSMYSQL'] = _FPA_U;
+    }
+
+    // find the current php.ini file
+    if ( version_compare( PHP_VERSION, '5.2.4', '>=' ) ) {
+        $phpenv['phpINIFILE']       = php_ini_loaded_file();
+
+    } else {
+        $phpenv['phpINIFILE']       = _FPA_U;
+    }
+
+    // find the other loaded php.ini file(s)
+    if (version_compare(PHP_VERSION, '4.3.0', '>=')) {
+        $phpenv['phpINIOTHER']      = php_ini_scanned_files();
+
+    } else {
+        $phpenv['phpINIOTHER'] = _FPA_U;
+    }
+
+    // determine the rest of the normal PHP settings
+    $phpenv['phpREGGLOBAL']         = ini_get( 'register_globals' );
+    $phpenv['phpMAGICQUOTES']       = ini_get( 'magic_quotes_gpc' );
+    $phpenv['phpSAFEMODE']          = ini_get( 'safe_mode' );
+    $phpenv['phpMAGICQUOTES']       = ini_get( 'magic_quotes_gpc' );
+    $phpenv['phpSESSIONPATH']       = session_save_path();
+    $phpenv['phpOPENBASE']          = ini_get( 'open_basedir' );
+
+    // is the session_save_path writable?
+    if (is_writable( session_save_path() ) ) {
+            $phpenv['phpSESSIONPATHWRITABLE'] = _FPA_Y;
+
+        } else {
+            $phpenv['phpSESSIONPATHWRITABLE'] = _FPA_N;
+        }
+
+
+    // input and upload related settings
+    $phpenv['phpUPLOADS']           = ini_get( 'file_uploads' );
+    $phpenv['phpMAXUPSIZE']         = ini_get( 'upload_max_filesize' );
+    $phpenv['phpMAXPOSTSIZE']       = ini_get( 'post_max_size' );
+    $phpenv['phpMAXINPUTTIME']      = ini_get( 'max_input_time' );
+    $phpenv['phpMAXEXECTIME']       = ini_get( 'max_execution_time' );
+    $phpenv['phpMEMLIMIT']          = ini_get( 'memory_limit' );
+    $phpenv['phpDISABLED']          = ini_get( 'disable_functions' );
+    $phpenv['phpURLFOPEN']          = ini_get( 'allow_url_fopen' );
+
+    // API and ownership related settings
+    $phpenv['phpAPI']               = php_sapi_name();
+
+    // looking for php to be installed as a CGI or CGI/Fast
+    if (substr($phpenv['phpAPI'], 0, 3) == 'cgi') {
+        $phpenv['phpCGI'] = _FPA_Y;
+
+        // looking for the Apache "suExec" utility
+        if ( ( $system['sysCURRUSER'] === $system['sysWEBOWNER'] ) AND ( substr($phpenv['phpAPI'], 0, 3) == 'cgi' ) ) {
+            $phpenv['phpAPACHESUEXEC'] = _FPA_Y;
+            $phpenv['phpOWNERPROB'] = _FPA_N;
+
+        } else {
+            $phpenv['phpAPACHESUEXEC'] = _FPA_N;
+            $phpenv['phpOWNERPROB'] = _FPA_M;
+        }
+
+        // looking for the "phpsuExec" utility
+        if ( ( $system['sysCURRUSER'] === $system['sysEXECUSER'] ) AND ( substr($phpenv['phpAPI'], 0, 3) == 'cgi' ) ) {
+            $phpenv['phpPHPSUEXEC'] = _FPA_Y;
+            $phpenv['phpOWNERPROB'] = _FPA_N;
+
+        } else {
+            $phpenv['phpPHPSUEXEC'] = _FPA_N;
+            $phpenv['phpOWNERPROB'] = _FPA_M;
+        }
+
+    } else {
+        $phpenv['phpCGI'] = _FPA_N;
+        $phpenv['phpAPACHESUEXEC'] = _FPA_N;
+        $phpenv['phpPHPSUEXEC'] = _FPA_N;
+        $phpenv['phpOWNERPROB'] = _FPA_M;
+    }
+
+
+
+    /**
+     * WARNING WILL ROBINSON! ****************************************************************
+     * THIS IS A TEST FEATURE AND AS SUCH NOT GUARANTEED TO BE 100% ACCURATE
+     * try and cater for custom "su" environments, like cluster, grid and cloud computing.
+     * this would include weird ownership combinations that allow group access to non-owner files
+     * (like GoDaddy and a couple of grid and cloud providers I know of)
+     *
+     * took out this part: AND ( $instance['configWRITABLE'] == _FPA_Y )  as Joomla sets config file
+     * to 444 so is read only permissions. Also changed this section:
+     * ( $system['sysCURRUSER'] != $instance['configOWNER']['name'] from != to ==
+     * If config owner is same as current user then we are probably using a custom "su" enviroment
+     * such as LiteSpeed uses - 4-8-12 - Phil
+     *
+     */
+
+    if ( ( $instance['instanceCONFIGURED'] == _FPA_Y ) AND ( @$phpenv['phpAPI'] == 'litespeed' ) AND ( $system['sysCURRUSER'] == $instance['configOWNER']['name'] ) AND ( ( substr( $instance['configMODE'],0 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],1 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],2 ,1 ) <= '6' ) ) ) {
+        /** changed from maybe to yes - 4-8-12 - Phil **/
+        $phpenv['phpCUSTOMSU'] = _FPA_Y;
+        $phpenv['phpOWNERPROB'] = _FPA_N;
+
+    } elseif( ( $instance['instanceCONFIGURED'] == _FPA_Y ) AND ( $system['sysCURRUSER'] == $instance['configOWNER']['name'] ) AND ( ( substr( $instance['configMODE'],0 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],1 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],2 ,1 ) <= '6' ) ) ) {
+        /** changed from maybe to yes - 4-8-12 - Phil **/
+        $phpenv['phpCUSTOMSU'] = _FPA_Y;
+        $phpenv['phpOWNERPROB'] = _FPA_N;
+
+    } else {
+        $phpenv['phpCUSTOMSU'] = _FPA_N;
+        $phpenv['phpOWNERPROB'] = _FPA_M;
+    }
+    /*****************************************************************************************/
+    /** THIS IS A TEST FEATURE AND AS SUCH NOT GUARANTEED TO BE 100% ACCURATE ****************/
+    /*****************************************************************************************/
+
+
+    // get all the PHP loaded extensions and versions
+    foreach ( get_loaded_extensions() as $i => $ext ) {
+        $phpextensions[$ext]    = phpversion($ext);
+    }
+
+    $phpextensions['Zend Engine'] = zend_version();
+
+
+
+    /**
+     * DETERMINE APACHE ENVIRONMENT & SETTINGS ***********************************************
+     * here we try to determine the php enviroment and configuration
+     * to try and avoid "white-screens" fpa tries to check for function availability before
+     * using any function, but this does mean it has grown in size quite a bit and unfortunately
+     * gets a little messy in places.
+     */
+
+    // general apache loaded modules?
+    if ( function_exists( 'apache_get_version' ) ) {  // for Apache module interface
+
+        foreach ( apache_get_modules() as $i => $modules ) {
+
+            $apachemodules[$i] = ( $modules );  // show the version of loaded extensions
+
+        }
+
+        // include the Apache version
+        $apachemodules[] = apache_get_version();
+
+    } else {  // for Apache cgi interface
+
+        // !TESTME Does this work in cgi or cgi-fcgi
+        /**
+        * BERNARD: commented out
+        * @todo: find out if this is even used on the webpage
+        */
+        #print_r( get_extension_funcs( "cgi-fcgi" ) );
+    }
+    // !TODO see if there are IIS specific functions/modules
+
+
+
+    /**
+     * COMPLETE MODE (PERMISSIONS) CHECKS ON KNOWN FOLDERS
+     *
+     * test the mode and writability of known folders from the $folders array
+     * to try and avoid "white-screens" fpa tries to check for function availability before
+     * using any function, but this does mean it has grown in size quite a bit and unfortunately
+     * gets a little messy in places.
+     *
+     */
+
+    // build the mode-set details for each folder
+    if ( $instance['instanceFOUND'] == _FPA_Y ) {
+
+        foreach ( $folders as $i => $show ) {
+
+            if ( $show != $folders['ARRNAME'] ) { // ignore the ARRNAME
+
+                if ( file_exists( $show ) ) {
+                    $modecheck[$show]['mode'] = substr( sprintf('%o', fileperms( $show ) ),-3, 3 );
+
+                    if ( is_writable( $show ) ) {
+                        $modecheck[$show]['writable'] = _FPA_Y;
+
+                    } else {
+                        $modecheck[$show]['writable'] = _FPA_N;
+                    }
+
+
+                    if ( function_exists( 'posix_getpwuid' ) AND $system['sysSHORTOS'] != 'WIN' ) {
+                        $modecheck[$show]['owner'] = posix_getpwuid( fileowner( $show ) );
+                        $modecheck[$show]['group'] = posix_getgrgid( filegroup( $show ) );
+
+                    } else { // non-posix compatible hosts
+                        $modecheck[$show]['owner']['name'] = fileowner( $show );
+                        $modecheck[$show]['group']['name'] = filegroup( $show );
+                    }
+
+                } else {
+                    $modecheck[$show]['mode'] = '---';
+                    $modecheck[$show]['writable'] = '-';
+                    $modecheck[$show]['owner']['name'] = '-';
+                    $modecheck[$show]['group']['name'] = _FPA_DNE;
+                }
+
+            }
+
+        }
+
+
+
+        // !CLEANME this needs to be done a little smarter
+        // here we take the folders array and unset folders that aren't relevant to a specific release
+        function filter_folders( $folders, $instance ) {
+            GLOBAL $folders;
+
+            if ( $instance['cmsRELEASE'] != '1.0' ) {           // ignore the folders for J!1.0
+                unset ( $folders[4] );
+
+            } elseif ( $instance['cmsRELEASE'] == '1.0' ) {     // ignore folders for J1.5 and above
+                unset ( $folders[3] );
+                unset ( $folders[8] );
+                unset ( $folders[9] );
+                unset ( $folders[12] );
+            }
+
+            if ( $instance['platformPRODUCT'] != 'Nooku' ) {    // ignore the Nooku sites folder if not Nooku
+                unset ( $folders[14] );
+            }
+        }
+
+        // !FIXME need to fix warning in array_filter ( '@' work-around )
+        // new filtered list of folders to check permissions on, based on the installed release
+        @array_filter( $folders, filter_folders( $folders, $instance ) );
+
+    }
+    unset ( $key, $show );
+
+
+
+    /**
+     * getDirectory FUNCTION TO RECURSIVELY READ THROUGH LOOKING FOR PERMISSIONS
+     *
+     * this is used to read the directory structure and return a list of folders with 'elevated'
+     * mode-sets ( -7- or --7 ) ignoring the first position as defaults folders are normally 755.
+     * $dirCount is applied when the folder list is excessive to reduce unnecessary processing
+     * on really sites with 00's or 000's of badly configured folder modes. Limited to displaying
+     * the first 10 only.
+     */
+    if ( $showElevated == '1' ) {
+
+        $dirCount = 0;
+
+        function getDirectory( $path = '.', $level = 0 ) {
+            global $elevated, $dirCount;
+
+            // directories to ignore when listing output. Many hosts
+            $ignore = array( '.', '..' );
+
+            // open the directory to the handle $dh
+            if ( !$dh = @opendir( $path ) ) {
+                // Bernard: if a folder is NOT readable, without this check we get endless loop
+                echo '<div class="alert" style="padding:25px;"><span class="alert-text" style="font-size:x-large;">'._FPA_DIR_UNREADABLE.': <b>'.$path.'</b></span></div>';
+                return FALSE;
+            }
+
+
+            // loop through the directory
+            while ( false !== ( $file = readdir( $dh ) ) ) {
+
+                // check that this file is not to be ignored
+                if ( !in_array( $file, $ignore ) ) {
+
+                    if ( $dirCount < '10' ) { // 10 or more folder will cancel the processing
+
+                        // its a directory, so we need to keep reading down...
+                        if ( is_dir( "$path/$file" ) ) {
+
+                            $dirName = $path .'/'. $file;
+                            $dirMode = substr( sprintf( '%o', fileperms( $dirName ) ),-3, 3 );
+
+                                // looking for --7 or -7- or -77 (default folder permissions are usually 755)
+                                if ( substr( $dirMode,1 ,1 ) == '7' OR substr( $dirMode,2 ,1 ) == '7' ) {
+                                    $elevated[''. str_replace( './','', $dirName ) .'']['mode'] = $dirMode;
+
+                                    if ( is_writable( $dirName ) ) {
+                                        $elevated[''. str_replace( './','', $dirName ) .'']['writable'] = _FPA_Y;
+
+                                    } else {  // custom ownership or setUiD/GiD in-effect
+                                        $elevated[''. str_replace( './','', $dirName ) .'']['writable'] = _FPA_N;
+                                    }
+                                    $dirCount++;
+                                }
+
+                                // re-call this same function but on a new directory.
+                                getDirectory ( "$path/$file", ( $level +1 ) );
+
+                        }
+
+                    }
+
+                }
+
+            }
+            // Close the directory handle
+            closedir( $dh );
+        }
+
+        // Fixed Warning: Illegal string offset 'mode' on line 1476
+        // Warning: Illegal string offset 'writable' on line 1477 - Phil 09-20-12
+        if (isset( $dirCount) == '0' ) {
+            $elevated['None'] = _FPA_NONE;
+            $elevated['None']['mode'] = '-';
+            $elevated['None']['writable'] = '-';
+        }
+
+        // now call the function to read from the selected folder ( '.' current location of FPA script )
+        getDirectory( '.' );
+        ksort( $elevated );
+
+    } // end showElevated
+
+
+
+    /**
+     * DETERMINE THE DATABASE TYPE AND IF WE CAN CONNECT
+     *
+     */
+    $dbPrefExist = _FPA_N;
+    $dbPrefLen = @strlen($instance['configDBPREF']);
+    $postgresql = _FPA_N;
+    $confPrefTables = 0;
+    $notconfPrefTables = 0;
+
+    if ( $instance['instanceCONFIGURED'] == _FPA_Y AND ($instance['configDBCREDOK'] == _FPA_Y OR $instance['configDBCREDOK'] == _FPA_PMISS)) {
+        $database['dbDOCHECKS'] = _FPA_Y;
+
+        // try and connect to the database server and table-space, using the database_host variable in the configuration.php
+        // for J!1.0, it's not in the config, so we have assumed mysql, as mysqli wasn't available during it's support life-time
+        if ( $instance['configDBTYPE'] == 'mysql' ) {
+
+            if (@function_exists('mysql_connect')) {
+                $dBconn = @mysql_connect( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'] );
+                $database['dbERROR'] = mysql_errno() .':'. mysql_error();
+
+                @mysql_select_db( $instance['configDBNAME'], $dBconn );
+                $sql    = "select name,type,enabled from ".$instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template' or type='library'";
+                $result = @mysql_query($sql);
+
+                if ($result <> false) {
+                    if (mysql_num_rows($result) > 0) {
+
+                        for ($exset = array ();
+                        $row = mysql_fetch_array($result);
+                        $exset[] = $row);
+                    }
+                    $sql = "select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template";
+                    $result = @mysql_query($sql);
+
+                    if (mysql_num_rows($result) > 0) {
+
+                        for ($tmpldef = array ();
+                        $row = mysql_fetch_array($result);
+                        $tmpldef[] = $row);
+                    }
+                }
+
+            if ( $dBconn ) {
+                @mysql_select_db( $instance['configDBNAME'], $dBconn );
+                $database['dbERROR'] = @mysql_errno() .':'. @mysql_error();
+
+                // if we can connect, try and collect some details
+                $database['dbHOSTSERV']     = mysql_get_server_info( $dBconn );      // SQL server version
+                $database['dbHOSTINFO']     = mysql_get_host_info( $dBconn );        // connection type to dB
+                $database['dbHOSTPROTO']    = mysql_get_proto_info( $dBconn );       // server protocol type
+                $database['dbHOSTCLIENT']   = mysql_get_client_info();               // client library version
+                $database['dbHOSTDEFCHSET'] = mysql_client_encoding( $dBconn );      // this is the hosts default character-set
+                $database['dbHOSTSTATS']    = explode("  ", mysql_stat( $dBconn ) ); // latest statistics
+
+                // find the database collation
+                $coResult = mysql_query( "SHOW VARIABLES LIKE 'collation_database'" );
+
+                while ( $row = mysql_fetch_row( $coResult ) ) {
+                    $database['dbCOLLATION'] =  $row[1];
+                }
+
+                // find the database character-set
+                $csResult = mysql_query( "SHOW VARIABLES LIKE 'character_set_database'" );
+
+                while ( $row = mysql_fetch_array( $csResult ) ) {
+                    $database['dbCHARSET'] =  $row[1];
+                }
+
+                // find all the dB tables and calculate the size
+                mysql_select_db($instance['configDBNAME'], $dBconn);
+                $tblResult = mysql_query("SHOW TABLE STATUS");
+
+                $database['dbSIZE'] = 0;
+                $rowCount = 0;
+
+                while ( $row = mysql_fetch_array( $tblResult ) ) {
+                    $rowCount++;
+
+                    $tables[$row['Name']]['TABLE'] = $row['Name'];
+
+                    // count tables with/without same prefix as in config
+                    if(substr($row['Name'] , 0 , $dbPrefLen  ) === $instance['configDBPREF'] ) {
+                        $confPrefTables = $confPrefTables + 1 ;
+
+                    } else {
+                        $notconfPrefTables = $notconfPrefTables + 1 ;
+                    }
+
+                    $table_size = ( $row[ 'Data_length' ] + $row[ 'Index_length' ] ) / 1024;
+                    $tables[$row['Name']]['SIZE'] = sprintf( '%.2f', $table_size );
+                    $database['dbSIZE'] += sprintf( '%.2f', $table_size );
+                    $tables[$row['Name']]['SIZE'] = $tables[$row['Name']]['SIZE'] .' KiB';
+
+                    if ( $showTables == '1' ) {
+                        $tables[$row['Name']]['ENGINE']     = $row['Engine'];
+                        $tables[$row['Name']]['VERSION']    = $row['Version'];
+                        $tables[$row['Name']]['CREATED']    = $row['Create_time'];
+                        $tables[$row['Name']]['UPDATED']    = $row['Update_time'];
+                        $tables[$row['Name']]['CHECKED']    = $row['Check_time'];
+                        $tables[$row['Name']]['COLLATION']  = $row['Collation'];
+                        $tables[$row['Name']]['FRAGSIZE']   = sprintf( '%.2f', ( $row['Data_free'] /1024 ) ) .' KiB';
+                        $tables[$row['Name']]['MAXGROW']    = sprintf( '%.1f', ( $row['Max_data_length'] /1073741824 ) ) .' GiB';
+                        $tables[$row['Name']]['RECORDS']    = $row['Rows'];
+                        $tables[$row['Name']]['AVGLEN']     = sprintf( '%.2f', ( $row['Avg_row_length'] /1024 ) ) .' KiB';
+
+                    }
+                }
+
+
+                if ( $database['dbSIZE'] > '1024' ) {
+                    $database['dbSIZE'] = sprintf('%.2f', ( $database['dbSIZE'] /1024 ) ) .' MiB';
+
+                } else {
+                    $database['dbSIZE'] = $database['dbSIZE'] .' KiB';
+                }
+
+                $database['dbTABLECOUNT'] = $rowCount;
+                mysql_close( $dBconn );
+
+            } else {
+                $database['dbERROR'] = mysql_errno() .':'. mysql_error();
+            } // end mysql if $dBconn is good
+
+        } else {
+            $database['dbHOSTSERV']     = _FPA_U; // SQL server version
+            $database['dbHOSTINFO']     = _FPA_U; // connection type to dB
+            $database['dbHOSTPROTO']    = _FPA_U; // server protocol type
+            $database['dbHOSTCLIENT']   = _FPA_U; // client library version
+            $database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
+            $database['dbHOSTSTATS']    = _FPA_U; // latest statistics
+            $database['dbCOLLATION']    = _FPA_U;
+            $database['dbCHARSET']      = _FPA_U;
+        }
+
+    } elseif ( $instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_Y ) { // mysqli
+
+        if (function_exists('mysqli_connect')) {
+            $dBconn              = @new mysqli( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'], $instance['configDBNAME'] );
+            $database['dbERROR'] = mysqli_connect_errno( $dBconn ) .':'. mysqli_connect_error( $dBconn );
+            $sql                 = "select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template' or type='library'";
+            $result              = @$dBconn->query($sql);
+
+            if ($result <> false) {
+
+                if ($result->num_rows > 0) {
+                    for ($exset = array ();
+                    $row = $result->fetch_assoc();
+                    $exset[] = $row);
+                }
+
+            }
+            $sql = "select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template";
+            $result = @$dBconn->query($sql);
+
+            if ($result <> false) {
+
+                if ($result->num_rows > 0) {
+                    for ($tmpldef = array ();
+                    $row = $result->fetch_assoc();
+                    $tmpldef[] = $row);
+                }
+
+            }
+
+            if ( $dBconn ) {
+                $database['dbHOSTSERV']     = @mysqli_get_server_info( $dBconn );       // SQL server version
+                $database['dbHOSTINFO']     = @mysqli_get_host_info( $dBconn );         // connection type to dB
+                $database['dbHOSTPROTO']    = @mysqli_get_proto_info( $dBconn );        // server protocol type
+                $database['dbHOSTCLIENT']   = @mysqli_get_client_info();                // client library version
+                $database['dbHOSTDEFCHSET'] = @mysqli_character_set_name( $dBconn );       // this is the hosts default character-set
+                $database['dbHOSTSTATS']    = explode("  ", @mysqli_stat( $dBconn ) );  // latest statistics
+
+                // find the database collation
+                $coResult = @$dBconn->query( "SHOW VARIABLES LIKE 'collation_database'" );
+
+                while ( $row = @mysqli_fetch_row( $coResult ) ) {
+                    $database['dbCOLLATION'] =  $row[1];
+                }
+
+                // find the database character-set
+                $csResult = @$dBconn->query( "SHOW VARIABLES LIKE 'character_set_database'" );
+
+                while ( $row = @mysqli_fetch_array( $csResult ) ) {
+                    $database['dbCHARSET']  =  $row[1];
+                }
+
+                // find all the dB tables and calculate the size
+                $tblResult = @$dBconn->query( "SHOW TABLE STATUS" );
+
+                $database['dbSIZE'] = 0;
+                $rowCount           = 0;
+
+                while ( $row = @mysqli_fetch_array( $tblResult ) ) {
+                    $rowCount++;
+
+                    $tables[$row['Name']]['TABLE']  = $row['Name'];
+
+                    // count tables with/without same prefix as in config
+                    if(substr($row['Name'] , 0 , $dbPrefLen  ) === $instance['configDBPREF'] ) {
+                        $confPrefTables = $confPrefTables + 1 ;
+
+                    } else {
+                        $notconfPrefTables = $notconfPrefTables + 1 ;
+                    }
+                    $table_size = ($row[ 'Data_length' ] + $row[ 'Index_length' ]) / 1024;
+                    $tables[$row['Name']]['SIZE'] = sprintf( '%.2f', $table_size );
+                    $database['dbSIZE'] += sprintf( '%.2f', $table_size );
+                    $tables[$row['Name']]['SIZE'] = $tables[$row['Name']]['SIZE'] .' KiB';
+
+
+                    if ( $showTables == '1' ) {
+                        $tables[$row['Name']]['ENGINE']     = $row['Engine'];
+                        $tables[$row['Name']]['VERSION']    = $row['Version'];
+                        $tables[$row['Name']]['CREATED']    = $row['Create_time'];
+                        $tables[$row['Name']]['UPDATED']    = $row['Update_time'];
+                        $tables[$row['Name']]['CHECKED']    = $row['Check_time'];
+                        $tables[$row['Name']]['COLLATION']  = $row['Collation'];
+                        $tables[$row['Name']]['FRAGSIZE']   = sprintf( '%.2f', ( $row['Data_free'] /1024 ) ) .' KiB';
+                        $tables[$row['Name']]['MAXGROW']    = sprintf( '%.1f', ( $row['Max_data_length'] /1073741824 ) ) .' GiB';
+                        $tables[$row['Name']]['RECORDS']    = $row['Rows'];
+                        $tables[$row['Name']]['AVGLEN']     = sprintf( '%.2f', ( $row['Avg_row_length'] /1024 ) ) .' KiB';
+                    }
+                }
+
+
+                if ( $database['dbSIZE'] > '1024' ) {
+                    $database['dbSIZE']     = sprintf( '%.2f', ( $database['dbSIZE'] /1024 ) ) .' MiB';
+
+                } else {
+                    $database['dbSIZE']     = $database['dbSIZE'] .' KiB';
+                }
+                $database['dbTABLECOUNT']   = $rowCount;
+
+            } else {
+            // $database['dbERROR'] = mysqli_connect_errno( $dBconn ) .':'. mysqli_connect_error( $dBconn );
+            } // end mysqli if $dBconn is good
+
+        } else {
+            $database['dbHOSTSERV']     = _FPA_U; // SQL server version
+            $database['dbHOSTINFO']     = _FPA_U; // connection type to dB
+            $database['dbHOSTPROTO']    = _FPA_U; // server protocol type
+            $database['dbHOSTCLIENT']   = _FPA_U; // client library version
+            $database['dbHOSTDEFCHSET'] = _FPA_U; // hosts default character-set
+            $database['dbHOSTSTATS']    = _FPA_U; // latest statistics
+            $database['dbCOLLATION']    = _FPA_U; // database collation
+            $database['dbCHARSET']      = _FPA_U; // database character-set
+            $database['dbERROR']        = _FPA_MYSQLI_CONN;
+        } // end of dataBase connection routines
+
+
+        } elseif ( $instance['configDBTYPE'] == 'pdomysql')  {
+
+            try {
+                $dBconn = new PDO("mysql:host=".$instance['configDBHOST'].";dbname=".$instance['configDBNAME'], $instance['configDBUSER'], $instance['configDBPASS']);
+
+                // set the PDO error mode to exception
+                $dBconn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            } catch(PDOException $e) {
+                $dBconn = FALSE;
+            }
+
+            if ($dBconn) {
+                $database['dbERROR'] = '0:';
+
+                try {
+                    $sql = $dBconn->prepare("select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template' or type='library'");
+                    $sql->execute();
+                    $exset = $sql->setFetchMode(PDO::FETCH_ASSOC);
+                    $exset = $sql->fetchAll();
+
+                    $sql = $dBconn->prepare("select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template");
+                    $sql->execute();
+                    $tmpldef = $sql->setFetchMode(PDO::FETCH_ASSOC);
+                    $tmpldef = $sql->fetchAll();
+
+                } catch(PDOException $e) {
+                    //
+                }
+
+                if ( $dBconn ) {
+                    $database['dbHOSTSERV']     = $dBconn->getAttribute(constant("PDO::ATTR_SERVER_VERSION" ));       // SQL server version
+                    $database['dbHOSTINFO']     = $dBconn->getAttribute(constant("PDO::ATTR_CONNECTION_STATUS" ));         // connection type to dB
+                    $database['dbHOSTCLIENT']   = $dBconn->getAttribute(constant("PDO::ATTR_CLIENT_VERSION" ));                // client library version
+                    $database['dbHOSTDEFCHSET'] = $dBconn->query("SELECT CHARSET('')")->fetchColumn();      // this is the hosts default character-set
+                    $database['dbHOSTSTATS']    = explode("  ", $dBconn->getAttribute(constant("PDO::ATTR_SERVER_INFO" )));  // latest statistics
+                }
+
+                // find the database collation
+                $coResult = $dBconn->query( "SHOW VARIABLES LIKE 'collation_database'" );
+
+                while ( $row =  $coResult->fetch( PDO::FETCH_BOTH ))  {
+                    $database['dbCOLLATION'] =  $row[1];
+                }
+
+                // find the database character-set
+                $csResult = $dBconn->query( "SHOW VARIABLES LIKE 'character_set_database'" );
+
+                while ( $row = $csResult->fetch( PDO::FETCH_BOTH )) {
+                    $database['dbCHARSET']  =  $row[1];
+                }
+
+                // find all the dB tables and calculate the size
+                $tblResult = $dBconn->query( "SHOW TABLE STATUS" );
+
+                $database['dbSIZE'] = 0;
+                $rowCount           = 0;
+
+                while ( $row =  $tblResult->fetch( PDO::FETCH_BOTH )) {
+                    $rowCount++;
+                    $tables[$row['Name']]['TABLE']  = $row['Name'];
+
+                    // count tables with/without same prefix as in config
+                    if(substr($row['Name'] , 0 , $dbPrefLen  ) === $instance['configDBPREF'] ) {
+                        $confPrefTables = $confPrefTables + 1 ;
+
+                    } else {
+                        $notconfPrefTables = $notconfPrefTables + 1 ;
+                    }
+                    $table_size = ($row[ 'Data_length' ] + $row[ 'Index_length' ]) / 1024;
+                    $tables[$row['Name']]['SIZE'] = sprintf( '%.2f', $table_size );
+                    $database['dbSIZE'] += sprintf( '%.2f', $table_size );
+                    $tables[$row['Name']]['SIZE'] = $tables[$row['Name']]['SIZE'] .' KiB';
+
+
+                    if ( $showTables == '1' ) {
+                        $tables[$row['Name']]['ENGINE']     = $row['Engine'];
+                        $tables[$row['Name']]['VERSION']    = $row['Version'];
+                        $tables[$row['Name']]['CREATED']    = $row['Create_time'];
+                        $tables[$row['Name']]['UPDATED']    = $row['Update_time'];
+                        $tables[$row['Name']]['CHECKED']    = $row['Check_time'];
+                        $tables[$row['Name']]['COLLATION']  = $row['Collation'];
+                        $tables[$row['Name']]['FRAGSIZE']   = sprintf( '%.2f', ( $row['Data_free'] /1024 ) ) .' KiB';
+                        $tables[$row['Name']]['MAXGROW']    = sprintf( '%.1f', ( $row['Max_data_length'] /1073741824 ) ) .' GiB';
+                        $tables[$row['Name']]['RECORDS']    = $row['Rows'];
+                        $tables[$row['Name']]['AVGLEN']     = sprintf( '%.2f', ( $row['Avg_row_length'] /1024 ) ) .' KiB';
+                    }
+                }
+
+                if ( $database['dbSIZE'] > '1024' ) {
+                    $database['dbSIZE']     = sprintf( '%.2f', ( $database['dbSIZE'] /1024 ) ) .' MiB';
+
+                } else {
+                    $database['dbSIZE']     = $database['dbSIZE'] .' KiB';
+                }
+                $database['dbTABLECOUNT']   = $rowCount;
+
+            } else {
+                $database['dbHOSTSERV']     = _FPA_U; // SQL server version
+                $database['dbHOSTINFO']     = _FPA_U; // connection type to dB
+                $database['dbHOSTPROTO']    = _FPA_U; // server protocol type
+                $database['dbHOSTCLIENT']   = _FPA_U; // client library version
+                $database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
+                $database['dbHOSTSTATS']    = _FPA_U; // latest statistics
+                $database['dbCOLLATION']    = _FPA_U;
+                $database['dbCHARSET']      = _FPA_U;
+                $database['dbERROR']        = _FPA_ECON;
+            }
+
+        } elseif ( $instance['configDBTYPE'] == 'postgresql')  {
+
+            if (function_exists('pg_connect')) {
+                $dBconn = @pg_connect("host=".$instance['configDBHOST']." dbname=".$instance['configDBNAME']." user=". $instance['configDBUSER']." password=". $instance['configDBPASS']);
+
+                if ($dBconn) {
+                    $database['dbERROR'] = '0:';
+                    $postgresql = _FPA_Y;
+
+                    $sql = @pg_query($dBconn, "select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template' or type='library'");
+                    $exset = @pg_fetch_all($sql);
+
+                    $sql = @pg_query($dBconn, "select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template");
+                    $tmpldef = @pg_fetch_all($sql);
+
+                    if ( $dBconn ) {
+                        $database['dbHOSTSERV']     = pg_parameter_status($dBconn, "server_version");       // SQL server version
+                        $database['dbHOSTINFO']     = _FPA_U;                                               // connection type to dB
+                        $database['dbHOSTCLIENT']   = PGSQL_LIBPQ_VERSION_STR;                              // client library version
+                        $database['dbHOSTDEFCHSET'] = pg_parameter_status($dBconn, "server_encoding");      // this is the hosts default character-set
+                        $database['dbHOSTSTATS']    = _FPA_U;                                               // latest statistics
+                        $database['dbCHARSET']      =  pg_parameter_status($dBconn, "client_encoding");
+                        $sql = pg_fetch_array(pg_query($dBconn, "select encoding from pg_database"));
+                        $res = $sql[0];
+                        $val = pg_fetch_array(pg_query($dBconn, "select collname FROM pg_catalog.pg_collation where collencoding = ". $res));
+                        $database['dbCOLLATION'] =  $val[0];
+                    }
+                    $tblResult = pg_query($dBconn," SELECT relname as name, pg_total_relation_size(relid) As size, pg_total_relation_size(relid) - pg_relation_size(relid) as externalsize FROM pg_catalog.pg_statio_user_tables WHERE relname LIKE '" . $instance['configDBPREF'] . "%' ORDER BY relname ASC");
+
+                    // find all the dB tables
+                    $database['dbSIZE'] = 0;
+                    $rowCount           = 0;
+
+                    while ( $row =  pg_fetch_array( $tblResult )) {
+                        $rowCount++;
+                        $tables[$row['name']]['TABLE']  = $row['name'];
+
+                        // count tables with/without same prefix as in config
+                        if(substr($row['name'] , 0 , $dbPrefLen  ) === $instance['configDBPREF'] ) {
+                            $confPrefTables = $confPrefTables + 1 ;
+
+                        } else {
+                            $notconfPrefTables = $notconfPrefTables + 1 ;
+                        }
+                        $cr = pg_fetch_array(pg_query($dBconn," select count(*) from  " . $tables[$row['name']]['TABLE'] ."" )) ;
+                        $table_size = ($row[ 'size' ] ) / 1024;
+                        $tables[$row['name']]['SIZE'] = sprintf( '%.2f', $table_size );
+                        $tables[$row['name']]['SIZE'] = $tables[$row['name']]['SIZE'] .' KiB';
+                        $database['dbSIZE'] += sprintf( '%.2f', $table_size );
+
+                        if ( $showTables == '1' ) {
+                            $tables[$row['name']]['ENGINE']     = _FPA_U;
+                            $tables[$row['name']]['VERSION']    = _FPA_U;
+                            $tables[$row['name']]['CREATED']    = _FPA_U;
+                            $tables[$row['name']]['UPDATED']    = _FPA_U;
+                            $tables[$row['name']]['CHECKED']    = _FPA_U;
+                            $tables[$row['name']]['COLLATION']  = $database['dbCHARSET'];
+                            $tables[$row['name']]['FRAGSIZE']   = _FPA_U;
+                            $tables[$row['name']]['MAXGROW']    = _FPA_U;
+                            $tables[$row['name']]['RECORDS']    = $cr['count'];
+                            $tables[$row['name']]['AVGLEN']     = _FPA_U;
+                        }
+                    }
+
+                    if ( $database['dbSIZE'] > '1024' ) {
+                        $database['dbSIZE']     = sprintf( '%.2f', ( $database['dbSIZE'] /1024 ) ) .' MiB';
+
+                    } else {
+                        $database['dbSIZE']     = $database['dbSIZE'] .' KiB';
+                    }
+                    $database['dbTABLECOUNT']   = $rowCount;
+
+                } else {
+                    $database['dbHOSTSERV']     = _FPA_U; // SQL server version
+                    $database['dbHOSTINFO']     = _FPA_U; // connection type to dB
+                    $database['dbHOSTPROTO']    = _FPA_U; // server protocol type
+                    $database['dbHOSTCLIENT']   = _FPA_U; // client library version
+                    $database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
+                    $database['dbHOSTSTATS']    = _FPA_U; // latest statistics
+                    $database['dbCOLLATION']    = _FPA_U;
+                    $database['dbCHARSET']      = _FPA_U;
+                    $database['dbERROR']        = _FPA_ECON;
+                }
+
+            } else {
+                $database['dbHOSTSERV']     = _FPA_U; // SQL server version
+                $database['dbHOSTINFO']     = _FPA_U; // connection type to dB
+                $database['dbHOSTPROTO']    = _FPA_U; // server protocol type
+                $database['dbHOSTCLIENT']   = _FPA_U; // client library version
+                $database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
+                $database['dbHOSTSTATS']    = _FPA_U; // latest statistics
+                $database['dbCOLLATION']    = _FPA_U;
+                $database['dbCHARSET']      = _FPA_U;
+                $database['dbERROR']        = _FPA_DI_PHP_FU;
+            }
+
+        } elseif ( $instance['configDBTYPE'] == 'pgsql')  {
+
+            try {
+                $dBconn = new PDO("pgsql:host=".$instance['configDBHOST'].";dbname=".$instance['configDBNAME'], $instance['configDBUSER'], $instance['configDBPASS']);
+
+                // set the PDO error mode to exception
+                $dBconn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            } catch(PDOException $e) {
+                $dBconn = FALSE;
+            }
+
+            if ($dBconn) {
+                $database['dbERROR'] = '0:';
+                $postgresql = _FPA_Y;
+
+                try {
+                    $sql = $dBconn->prepare("select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template' or type='library'");
+                    $sql->execute();
+                    $exset = $sql->setFetchMode(PDO::FETCH_ASSOC);
+                    $exset = $sql->fetchAll();
+
+                    $sql = $dBconn->prepare("select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template");
+                    $sql->execute();
+                    $tmpldef = $sql->setFetchMode(PDO::FETCH_ASSOC);
+                    $tmpldef = $sql->fetchAll();
+                } catch(PDOException $e) {
+                    //
+                }
+
+                if ( $dBconn ) {
+                    $database['dbHOSTSERV']     = $dBconn->getAttribute(constant("PDO::ATTR_SERVER_VERSION" ));       // SQL server version
+                    $database['dbHOSTINFO']     = $dBconn->getAttribute(constant("PDO::ATTR_CONNECTION_STATUS" ));         // connection type to dB
+                    $database['dbHOSTCLIENT']   = $dBconn->getAttribute(constant("PDO::ATTR_CLIENT_VERSION" ));                // client library version
+                    $database['dbHOSTSTATS']    = _FPA_U;
+                }
+
+                // find the database collation
+                $coResult = $dBconn->query( "SELECT * FROM information_schema.character_sets");
+
+                while ( $row =  $coResult->fetch( PDO::FETCH_BOTH ))  {
+                    $database['dbCOLLATION'] =  $row['character_set_name'];
+                    $database['dbCHARSET']  =  $row['character_set_name'];
+                    $database['dbHOSTDEFCHSET'] =  $row['character_set_name'];
+                }
+
+                // find all the dB tables and calculate the size
+                $tblResult = $dBconn->query( " SELECT relname as name, pg_total_relation_size(relid) As size, pg_total_relation_size(relid) - pg_relation_size(relid) as externalsize FROM pg_catalog.pg_statio_user_tables WHERE relname LIKE '". $instance['configDBPREF'] . "%' ORDER BY relname ASC");
+
+                $database['dbSIZE'] = 0;
+                $rowCount           = 0;
+
+                while ( $row =  $tblResult->fetch( PDO::FETCH_BOTH )) {
+                    $rowCount++;
+                    $tables[$row['name']]['TABLE']  = $row['name'];
+
+                    // count tables with/without same prefix as in config
+                    if(substr($row['name'] , 0 , $dbPrefLen  ) === $instance['configDBPREF'] ) {
+                        $confPrefTables = $confPrefTables + 1 ;
+                    } else {
+                        $notconfPrefTables = $notconfPrefTables + 1 ;
+                    }
+
+                    $crsql                        = $dBconn->query( " select count(*) from  " . $tables[$row['name']]['TABLE'] ."" );
+                    $cr                           = $crsql->fetch( PDO::FETCH_BOTH );
+                    $table_size                   = ($row[ 'size' ] ) / 1024;
+                    $tables[$row['name']]['SIZE'] = sprintf( '%.2f', $table_size );
+                    $tables[$row['name']]['SIZE'] = $tables[$row['name']]['SIZE'] .' KiB';
+                    $database['dbSIZE'] += sprintf( '%.2f', $table_size );
+
+                    if ( $showTables == '1' ) {
+                        $tables[$row['name']]['ENGINE']     = _FPA_U;
+                        $tables[$row['name']]['VERSION']    = _FPA_U;
+                        $tables[$row['name']]['CREATED']    = _FPA_U;
+                        $tables[$row['name']]['UPDATED']    = _FPA_U;
+                        $tables[$row['name']]['CHECKED']    = _FPA_U;
+                        $tables[$row['name']]['COLLATION']  = $database['dbCOLLATION'];
+                        $tables[$row['name']]['FRAGSIZE']   = _FPA_U;
+                        $tables[$row['name']]['MAXGROW']    = _FPA_U;
+                        $tables[$row['name']]['RECORDS']    = $cr['count'];
+                        $tables[$row['name']]['AVGLEN']     = _FPA_U;
+                    }
+                }
+
+                if ( $database['dbSIZE'] > '1024' ) {
+                    $database['dbSIZE']     = sprintf( '%.2f', ( $database['dbSIZE'] /1024 ) ) .' MiB';
+
+                } else {
+                    $database['dbSIZE']     = $database['dbSIZE'] .' KiB';
+                }
+                $database['dbTABLECOUNT']   = $rowCount;
+
+            } else {
+                $database['dbHOSTSERV']     = _FPA_U; // SQL server version
+                $database['dbHOSTINFO']     = _FPA_U; // connection type to dB
+                $database['dbHOSTPROTO']    = _FPA_U; // server protocol type
+                $database['dbHOSTCLIENT']   = _FPA_U; // client library version
+                $database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
+                $database['dbHOSTSTATS']    = _FPA_U; // latest statistics
+                $database['dbCOLLATION']    = _FPA_U;
+                $database['dbCHARSET']      = _FPA_U;
+                $database['dbERROR']        = _FPA_ECON;
+            }
+
+
+        } elseif ( $instance['configDBTYPE'] == 'sqlsrv')  {
+            $database['dbHOSTSERV']     = _FPA_U; // SQL server version
+            $database['dbHOSTINFO']     = _FPA_U; // connection type to dB
+            $database['dbHOSTPROTO']    = _FPA_U; // server protocol type
+            $database['dbHOSTCLIENT']   = _FPA_U; // client library version
+            $database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
+            $database['dbHOSTSTATS']    = _FPA_U; // latest statistics
+            $database['dbCOLLATION']    = _FPA_U;
+            $database['dbCHARSET']      = _FPA_U;
+        } else {
+            $database['dbHOSTSERV']     = _FPA_U; // SQL server version
+            $database['dbHOSTINFO']     = _FPA_U; // connection type to dB
+            $database['dbHOSTPROTO']    = _FPA_U; // server protocol type
+            $database['dbHOSTCLIENT']   = _FPA_U; // client library version
+            $database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
+            $database['dbHOSTSTATS']    = _FPA_U; // latest statistics
+            $database['dbCOLLATION']    = _FPA_U;
+            $database['dbCHARSET']      = _FPA_U;
+        }
+
+        if ( isset( $dBconn ) AND $database['dbERROR'] == '0:' ) {
+            $database['dbERROR'] = _FPA_N;
+
+        } elseif ( $database['dbLOCAL'] == _FPA_N AND substr($database['dbERROR'], 0, 4) == '2005' ) { // 2005 = can't access host
+            // if this is a remote host, it might be firewalled or disabled from external or non-internal network access
+            $database['dbERROR']    = $database['dbERROR'] .' ( '. _FPA_DBCONNNOTE .' )';
+        }
+
+
+    } else { // if no configuration or if configured but dBase credentials aren't valid
+        $database['dbDOCHECKS']     = _FPA_N;
+        $database['dbLOCAL']        = _FPA_U;
+    }
+
+    if (!@$dBconn AND @$instance['configDBCREDOK'] == _FPA_PMISS ) {
+        $instance['configDBCREDOK'] = _FPA_N;
+        $database['dbDOCHECKS']     = _FPA_N;
+    }
+
+
+
+    /**
+     * FIND AND ESTABLISH INSTALLED EXTENSIONS
+     *
+     * this function recurively looks for installed Components, Modules, Plugins and Templates
+     * it only reads the .xml file to determine installation status and info, some extensions
+     * do not have an associated .xml file and wont be displayed (normally core extensions)
+     *
+     * modified version of the function for the recirsive folder permisisons previously
+     */
+    if ( $instance['instanceFOUND'] == _FPA_Y ) { // fix for IIS *shrug*
+
+        // this is a little funky and passes the extension array name bt variable reference
+        // (&$arrname refers to each seperate array, which is called at the end) this was
+        // depreciated at 5.3 and I couldn't find an alternative, so the fix to a PHP Warning
+        // is to simply re-assign the $arrname back to itself inside the function, so it is
+        // no-longer a reference
+        function getDetails( $path, &$arrname, $loc, $level = 0 ) {
+            global $component, $module, $plugin, $template, $library;
+
+            // fix for PHP5.3 pass-variable-by-reference depreciation
+            $arrname = $arrname;
+            // Directories & files to ignore when listing output.
+            $ignore = array( '.', '..', 'index.htm', 'index.html', '.DS_Store', 'none.xml', 'metadata.xml', 'default.xml', 'form.xml', 'contact.xml', 'edit.xml', 'blog.xml' );
+
+            // open the directory to the handle $dh
+            $dh = @opendir( $path );
+
+            // loop through the directory
+            while ( false !== ( $file = @readdir( $dh ) ) ) {
+
+                // check that this file is not to be ignored
+                if( !in_array( $file, $ignore ) ) {
+
+                    // its a directory, so we need to keep reading down...
+                    if( is_dir( "$path/$file" ) ) {
+
+                        getDetails( "$path/$file", $arrname, $loc, ( $level +1 ) );
+                        // Re-call this same function but on a new directory.
+                        // this is what makes function recursive.
+
+                    } else {
+
+                        if ( $path == 'components' ) {
+                            $cDir = substr( strrchr( $path .'/'. $file, '/' ), 1 );
+
+                        } else {
+                            $cDir = $path .'/'. $file;
+                        }
+
+                        if ( preg_match( "/\.xml/i", $file ) ) { // if filename matches .xml in the name
+
+                            $content = file_get_contents( $cDir );
+
+                            if ( preg_match( '#<(extension|install|mosinstall)#', $content, $isValidFile ) ) {
+                                // $arrname[$loc][$cDir] = '';
+
+                                $arrname[$loc][$cDir]['author']         = '-';
+                                $arrname[$loc][$cDir]['authorUrl']      = '-';
+                                $arrname[$loc][$cDir]['version']        = '-';
+                                $arrname[$loc][$cDir]['creationDate']   = '-';
+                                $arrname[$loc][$cDir]['type']           = '-';
+
+
+                                if ( preg_match( '#<name>(.*)</name>#', $content, $name ) ) {
+                                    $arrname[$loc][$cDir]['name']   = strip_tags( substr( $name[1], 0, 35 ) );
+
+                                } else {
+                                    $arrname[$loc][$cDir]['name']   = _FPA_U .' ('. $cDir . ') ';
+                                }
+
+
+                                if ( preg_match( '#<author>(.*)</author>#', $content, $author ) ) {
+                                    $arrname[$loc][$cDir]['author'] = strip_tags( substr( $author[1], 0, 25 ) );
+
+                                    if ( $author[1] == 'Joomla! Project'
+                                    OR strtolower( $name[1] ) == 'joomla admin'
+                                    OR strtolower( $name[1] ) == 'rhuk_milkyway'
+                                    OR strtolower( $name[1] ) == 'ja_purity'
+                                    OR strtolower( $name[1] ) == 'khepri'
+                                    OR strtolower( $name[1] ) == 'bluestork'
+                                    OR strtolower( $name[1] ) == 'atomic'
+                                    OR strtolower( $name[1] ) == 'hathor'
+                                    OR strtolower( $name[1] ) == 'protostar'
+                                    OR strtolower( $name[1] ) == 'isis'
+                                    OR strtolower( $name[1] ) == 'beez5'
+                                    OR strtolower( $name[1] ) == 'beez_20'
+                                    OR strtolower( $name[1] ) == 'cassiopeia'
+                                    OR strtolower( $name[1] ) == 'atum'
+                                    OR strtolower( substr( $name[1], 0, 4 ) ) == 'beez' ) {
+                                        $arrname[$loc][$cDir]['type'] = _FPA_JCORE;
+
+                                    } else {
+                                        $arrname[$loc][$cDir]['type'] = _FPA_3PD;
+                                    }
+
+                                } else {
+                                    $arrname[$loc][$cDir]['author']     = '-';
+                                    $arrname[$loc][$cDir]['type']       = '-';
+                                }
+
+                                if ( preg_match( '#<version>(.*)</version>#', $content, $version ) ) {
+                                    $arrname[$loc][$cDir]['version'] = substr( $version[1], 0, 13 );
+
+                                } else {
+                                    $arrname[$loc][$path .'/'. $file]['version'] = '-';
+                                }
+
+                                if ( preg_match( '#<creationDate>(.*)</creationDate>#', $content, $creationDate ) ) {
+                                    $arrname[$loc][$cDir]['creationDate'] = $creationDate[1];
+
+                                } else {
+                                    $arrname[$loc][$cDir]['creationDate'] = '-';
+                                }
+
+                                if ( preg_match( '#<authorUrl>(.*)</authorUrl>#', $content, $authorUrl ) ) {
+                                    $arrname[$loc][$cDir]['authorUrl'] = str_replace( array( 'http://', 'https://' ), '', $authorUrl[1] );
+
+                                } else {
+                                    $arrname[$loc][$cDir]['authorUrl'] = '-';
+                                }
+
+                            } //isValidFile
+
+                        }
+
+                    }
+                }
+
+            } // while
+
+            @closedir( $dh );
+        }
+
+
+        // use the same function (above) to search for each extension type and load the results into it's associated array
+        @getDetails( 'components', $component, 'SITE' );
+        @getDetails( 'administrator/components', $component, 'ADMIN' );
+
+        @getDetails( 'modules', $module, 'SITE' );
+        @getDetails( 'administrator/modules', $module, 'ADMIN' );
+
+        // cater for Joomla! 1.0 differences
+        if ( @$instance['cmsRELEASE'] == '1.0' ) {
+            @getDetails( 'mambots', $plugin, 'SITE' );
+        } else {
+            @getDetails( 'plugins', $plugin, 'SITE' );
+        }
+
+        @getDetails( 'templates', $template, 'SITE' );
+        @getDetails( 'administrator/templates', $template, 'ADMIN' );
+        @getDetails( 'libraries', $library, 'SITE' );
+
+    } // end if instanceFOUND
+
+
+
+    function recursive_array_search($needle,$haystack) {
+        foreach ($haystack as $key=>$value) {
+            $current_key=$key;
+
+            if($needle===$value OR (is_array($value) && recursive_array_search($needle,$value) !== false)) {
+                return $current_key;
+            }
+
+        }
+        return false;
+    }
+?>
 <!DOCTYPE html>
 <html lang="en-gb" dir="ltr" vocab="http://schema.org/">
     <head>
@@ -2831,7 +2847,6 @@
                 ini_set( 'display_errors', 0 ); // default-display
             }
         ?>
-
 
 
         <?php

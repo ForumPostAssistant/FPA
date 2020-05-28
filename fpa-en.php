@@ -38,7 +38,7 @@
     /** DISABLE LIVE CHECK FEATURES **********************************************************/
       define ( '_LIVE_CHECK_FPA', TRUE );    // enable live latest FPA version check
       define ( '_LIVE_CHECK_JOOMLA', TRUE ); // enable live latest Joomla! version check
-      define ( '_LIVE_CHECK_VEL', TRUE );    // enable live VEL check
+     # define ( '_LIVE_CHECK_VEL', TRUE );    // enable live VEL check
 
 	/** SET THE JOOMLA! PARENT FLAG AND CONSTANTS ********************************************/
 	define ( '_VALID_MOS', 1 );         // for J!1.0
@@ -323,6 +323,11 @@
     define ( '_FPA_CNF_D', 'Joomla! might run but many features will have problems' );
     define ( '_FPA_CNF_E', 'Joomla! probably will not run or will have many problems' );
     define ( '_FPA_CNF_F', 'Joomla! probably will not run and will have many problems' );
+
+    define ( '_VER_CHECK_ATOLD', 'is out of date' );
+    define ( '_VER_CHECK_ATCUR', 'is up to date' );
+    define ( '_VER_CHECK_ATDEV', 'is a development version' );
+
     define ( '_FPA_JDISCLAIMER', 'Forum Post Assistant (FPA) is not affiliated with or endorsed by The Joomla! Project<sup>&trade;</sup>. Use of the Joomla!<sup>&reg;</sup> name, symbol, logo, and related trademarks is licensed by Open Source Matters, Inc.' );
 	/** END LANGUAGE STRINGS *****************************************************************/
 
@@ -2623,6 +2628,164 @@
         }
         return false;
     }
+
+
+
+    /**
+     * check for cURL availability
+     *
+     * so we can do any enabled version LiveChecks
+     * - check if not in php diabled_functions
+     * - check there is a cURL module loaded
+     * - check the cURL function is available
+     * - check if doIT != 1
+     * added @RussW - 27/05/2020
+     *
+     */
+    $canDOLIVE = '0';
+    if ( stristr($phpenv['phpDISABLED'], 'curl') === FALSE AND extension_loaded('curl') AND function_exists('curl_version') AND @$_POST['doIT'] != '1' ) {
+        $canDOLIVE = '1';
+    }
+
+    /**
+     * LiveCheck - FPA
+     * comment out _LIVE_CHECK_FPA in settings to disable
+     *
+     * checks this FPA version against the latest release on Github using cURL
+     * - don't run if cURL disabled or not available
+     * - don't run if $doIT = 1 (running FPA)
+     * added - @RussW 28/05/2020
+     *
+     */
+    if ( defined( '_LIVE_CHECK_FPA' ) AND $canDOLIVE == '1' ) {
+
+        function doFPALIVE() {
+
+            $gitcURL     = 'https://api.github.com/repos/ForumPostAssistant/FPA/releases/latest';  // fpa github json latest release URL
+            $ch          = curl_init( $gitcURL );  // init cURL
+            $gitcURLOPT  = array ( CURLOPT_USERAGENT => $_SERVER['HTTP_USER_AGENT'],
+                                   CURLOPT_TIMEOUT => 5,
+                                   CURLOPT_CONNECTTIMEOUT => 5,
+                                   CURLOPT_RETURNTRANSFER => true,
+                                   CURLOPT_HTTPHEADER => array('Content-type: application/json'),
+                                  );
+            curl_setopt_array( $ch, $gitcURLOPT );
+
+            $gitcURLJSON  = curl_exec($ch); // get json result string
+
+            if ($gitcURLJSON ===  FALSE) {
+                $fpaVersionCheck = '';
+
+            } else {
+                $gitcURLARRAY   = json_decode($gitcURLJSON);  // decode json in to an array
+                $thisFPAVER     = substr(_RES_VERSION, 0, 5);
+                $thisFPAVER     = substr('1.4.0 (midden)', 0, 5);
+
+                if (substr($gitcURLARRAY->tag_name, 0, 1) == 'v') {
+                    $latestFPAVER   = ltrim($gitcURLARRAY->tag_name, 'v');  // trim the "v" (version) from the latest release tag
+
+                } else {
+                    $latestFPAVER   = $gitcURLARRAY->tag_name;
+                }
+
+                if (version_compare($thisFPAVER, $latestFPAVER) < 0) {
+                    $fpaVersionCheckStatus   = 'warning';
+                    $fpaVersionCheckIcon     = 'exclamation';
+                    $fpaVersionCheckMessage  = _VER_CHECK_ATOLD.' ('. $thisFPAVER.')';
+                    $fpaVersionCheckDownload = $gitcURLARRAY->html_url;
+
+                } elseif (version_compare($thisFPAVER, $latestFPAVER) > 0) {
+                    $fpaVersionCheckStatus   = 'info';
+                    $fpaVersionCheckIcon     = 'question';
+                    $fpaVersionCheckMessage  = _VER_CHECK_ATDEV.' ('. $thisFPAVER.')';
+                    $fpaVersionCheckDownload = '';
+
+                } else {
+                    $fpaVersionCheckStatus   = 'success';
+                    $fpaVersionCheckIcon     = 'check';
+                    $fpaVersionCheckMessage  = _VER_CHECK_ATCUR.' ('. $thisFPAVER.')';
+                    $fpaVersionCheckDownload = '';
+                }
+
+            }
+
+            echo '<div class="w-100 p-2 bg-white small border border-'. $fpaVersionCheckStatus .' text-'. $fpaVersionCheckStatus .'">';
+            echo '<i class="fas fa-'. $fpaVersionCheckIcon .'-circle fa-fw"></i>&nbsp;';
+            echo 'FPA '.$fpaVersionCheckMessage;
+
+            if ( !empty($fpaVersionCheckDownload) ) {
+                echo '<a class="mt-1 py-1 badge badge-'. $fpaVersionCheckStatus .' d-block w-75 mx-auto" href="'. $fpaVersionCheckDownload .'" rel="noreferrer noopener" target=_blank">Download Latest FPA (v'.$latestFPAVER.')</a>';
+            }
+            echo '</div>';
+
+        } // function
+
+    } // end FPA LiveCheck
+
+    /**
+     * LiveCheck - Joomla!
+     * comment out _LIVE_CHECK_JOOMLA in settings to disable
+     *
+     * checks found instance version against the latest release on update.joomla.org using cURL
+     * - don't run if cURL disabled or not available
+     * - don't run if simpleXML not available
+     * - don't run if Joomla! instance not found
+     * - don't run if $doIT = 1 (running FPA)
+     * added - @RussW 28/05/2020
+     *
+     */
+    if ( defined( '_LIVE_CHECK_JOOMLA') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) {
+
+        if ( extension_loaded('simplexml') ) {
+
+            function doJOOMLALIVE($thisJVER) {
+
+                $jupdateURL  = 'https://update.joomla.org/core/list.xml';
+                $jupdateXML  = simpleXML_load_file( $jupdateURL, 'SimpleXMLElement', LIBXML_NOCDATA );
+
+
+                if ($jupdateXML ===  FALSE) {
+                    $joomlaVersionCheck = '';
+
+                } else {
+                    $latestJATTR  = $jupdateXML->extension[count($jupdateXML->extension) -1];
+                    $latestJVER   = $latestJATTR->attributes()->version->__toString();
+                    //$thisJVER     = '3.9.18';
+
+                    if (version_compare($thisJVER, $latestJVER) < 0) {
+                        $joomlaVersionCheckStatus   = 'warning';
+                        $joomlaVersionCheckIcon     = 'exclamation';
+                        $joomlaVersionCheckMessage  = _VER_CHECK_ATOLD.' ('. $thisJVER.')';
+                        $joomlaVersionCheckDownload = 'https://downloads.joomla.org/';
+
+                    } elseif (version_compare($thisJVER, $latestJVER) > 0) {
+                        $joomlaVersionCheckStatus   = 'info';
+                        $joomlaVersionCheckIcon     = 'question';
+                        $joomlaVersionCheckMessage  = _VER_CHECK_ATDEV.' ('. $thisJVER.')';
+                        $joomlaVersionCheckDownload = '';
+
+                    } else {
+                        $joomlaVersionCheckStatus   = 'success';
+                        $joomlaVersionCheckIcon     = 'check';
+                        $joomlaVersionCheckMessage  = _VER_CHECK_ATCUR.' ('. $thisJVER.')';
+                        $joomlaVersionCheckDownload = '';
+                    }
+
+                    echo '<div class="w-100 p-2 bg-white small border border-'. $joomlaVersionCheckStatus .' text-'. $joomlaVersionCheckStatus .'">';
+                    echo '<i class="fas fa-'. $joomlaVersionCheckIcon .'-circle fa-fw"></i>&nbsp;';
+                    echo 'Joomla! '.$joomlaVersionCheckMessage;
+
+                    if ( !empty($joomlaVersionCheckDownload) ) {
+                        echo '<a class="mt-1 py-1 badge badge-'. $joomlaVersionCheckStatus .' d-block w-75 mx-auto" href="'. $joomlaVersionCheckDownload .'" rel="noreferrer noopener" target=_blank">Download Latest Joomla! (v'.$latestJVER.')</a>';
+                    }
+                    echo '</div>';
+
+                }
+            } // function
+
+        } // if simpleXML
+
+    } // end Joomla! LiveCheck
 ?>
 <!DOCTYPE html>
 <html lang="en-gb" dir="ltr" vocab="http://schema.org/">
@@ -2642,13 +2805,8 @@
         <!-- fontawesome icon css -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
 
-        <!-- custom styling -->
+        <!-- custom BS4 styling @RussW 23/05/2020 -->
         <style media="screen" >
-            /**
-             * Facelift custom styling
-             * @RussW 23/05/2020
-             *
-             */
             html { position: relative; min-height: 100%; }
             body { font-size: 0.98rem; color: #868ba1 !important; line-height: 1.3 !important; margin-top: 68px; scroll-behavior: smooth; }
             .small { letter-spacing: -0.25px; line-height: 1.1; font-size: 0.9rem; }
@@ -2678,14 +2836,13 @@
             @media (min-width: 1440px) { .container { max-width: 1240px; } }
         </style>
 
-
-		<script>
+        <script>
             /**
-             * toggle show/hide FPA options panel/form
-             * is overriden when doIT = 1 to hide panel/form and only show post output
-             * @RussW 23/05/2020
-             *
-             */
+                * toggle show/hide FPA options panel/form
+                * is overriden when doIT = 1 to hide panel/form and only show post output
+                * @RussW 23/05/2020
+                *
+                */
             function toggleFPA(showHideDiv, switchTextDiv) {
                 var ele = document.getElementById(showHideDiv);
                 var text = document.getElementById(switchTextDiv);
@@ -2697,7 +2854,7 @@
                     text.innerHTML    = '<i class="fas fa-chevron-circle-down"></i> Close the <strong><?php echo _RES; ?></strong>';
                 }
             }
-		</script>
+        </script>
 
     </head>
     <body data-spy="scroll" data-target=".navbar" data-offset="68">
@@ -2847,6 +3004,7 @@
                 ini_set( 'display_errors', 0 ); // default-display
             }
         ?>
+
 
 
         <?php
@@ -3412,8 +3570,51 @@
                             </div>
 
                         </div><!-- /.row-->
+                        <?php showDev( $snapshot ); ?>
 
-                    <?php showDev( $snapshot ); ?>
+
+                        <?php
+                        /**
+                         * if enabled, display live update information
+                         * added @RussW 28/05/2020
+                         *
+                         */
+                        ?>
+                        <?php if ( (defined( '_LIVE_CHECK_FPA' ) OR defined( '_LIVE_CHECK_JOOMLA' )) AND $canDOLIVE == '1' ) { ?>
+
+                            <?php
+                                if ( defined( '_LIVE_CHECK_FPA' ) AND (defined( '_LIVE_CHECK_JOOMLA' ) AND $instance['instanceFOUND'] == _FPA_Y)) {
+                                    $rowCol = '2';
+                                } else {
+                                    $rowCol = '1';
+                                }
+                            ?>
+
+                            <div class="row row-cols-1 row-cols-lg-<?php echo $rowCol; ?>">
+
+                                <?php if ( defined( '_LIVE_CHECK_FPA' ) ) { ?>
+                                    <div class="col text-center mb-2 d-flex align-self-stretch">
+
+                                        <?php doFPALIVE(); ?>
+
+                                    </div>
+                                <?php } // end FPA ?>
+
+                                <?php if ( defined( '_LIVE_CHECK_JOOMLA' ) AND $instance['instanceFOUND'] == _FPA_Y AND extension_loaded('simplexml') ) { ?>
+                                    <div class="col text-center mb-2 d-flex align-self-stretch">
+
+                                        <?php
+                                            $thisJVER = @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'];
+                                            doJOOMLALIVE($thisJVER);
+                                        ?>
+
+                                    </div>
+                                <?php } // end Joomla! ?>
+
+                            </div><!--/.row-->
+
+                        <?php } // end FPA & Joomla! LiveChecks ?>
+
                     </div><!--/.col-->
                     <div class="col-md-4 col-lg-4">
                         <?php

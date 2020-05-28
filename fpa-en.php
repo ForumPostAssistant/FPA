@@ -23,9 +23,11 @@
     /**
      * attempt to GZip the page output for performance
      * added @RussW 27/05/2020
+     * added testing for zlib otherwise conflicts with gzip
+     * updated @RussW 29/05/2020
      *
      */
-    if ( substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') ) {
+    if ( ini_get( 'zlib.output_compression' ) != '1' AND substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') ) {
         ob_start('ob_gzhandler');
     } else {
         ob_start();
@@ -2714,7 +2716,7 @@
             echo 'FPA '.$fpaVersionCheckMessage;
 
             if ( !empty($fpaVersionCheckDownload) ) {
-                echo '<a class="mt-1 py-1 badge badge-'. $fpaVersionCheckStatus .' d-block w-75 mx-auto" href="'. $fpaVersionCheckDownload .'" rel="noreferrer noopener" target=_blank">Download Latest FPA (v'.$latestFPAVER.')</a>';
+                echo '<a class="mt-1 py-1 badge badge-'. $fpaVersionCheckStatus .' d-block w-75 mx-auto" href="'. $fpaVersionCheckDownload .'" rel="noreferrer noopener" target="_blank">Download Latest FPA (v'.$latestFPAVER.')</a>';
             }
             echo '</div>';
 
@@ -2728,7 +2730,7 @@
      *
      * checks found instance version against the latest release on update.joomla.org using cURL
      * - don't run if cURL disabled or not available
-     * - don't run if simpleXML not available
+     * - don't run if simpleXML or XML not available
      * - don't run if Joomla! instance not found
      * - don't run if $doIT = 1 (running FPA)
      * added - @RussW 28/05/2020
@@ -2736,7 +2738,8 @@
      */
     if ( defined( '_LIVE_CHECK_JOOMLA') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) {
 
-        if ( extension_loaded('simplexml') ) {
+        // TODO: check why not working on litespeed server although simpleXML is available
+        if ( extension_loaded('simplexml') AND ini_get( 'allow_url_fopen' ) == '1' ) {
 
             function doJOOMLALIVE($thisJVER) {
 
@@ -2776,7 +2779,7 @@
                     echo 'Joomla! '.$joomlaVersionCheckMessage;
 
                     if ( !empty($joomlaVersionCheckDownload) ) {
-                        echo '<a class="mt-1 py-1 badge badge-'. $joomlaVersionCheckStatus .' d-block w-75 mx-auto" href="'. $joomlaVersionCheckDownload .'" rel="noreferrer noopener" target=_blank">Download Latest Joomla! (v'.$latestJVER.')</a>';
+                        echo '<a class="mt-1 py-1 badge badge-'. $joomlaVersionCheckStatus .' d-block w-75 mx-auto" href="'. $joomlaVersionCheckDownload .'" rel="noreferrer noopener" target="_blank">Download Latest Joomla! (v'.$latestJVER.')</a>';
                     }
                     echo '</div>';
 
@@ -2787,12 +2790,11 @@
 
     } // end Joomla! LiveCheck
 ?>
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en-gb" dir="ltr" vocab="http://schema.org/">
     <head>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="robots" content="noindex, nofollow, noodp, nocache, noarchive" />
 
 		<title><?php echo _RES .' : v'. _RES_VERSION .' - '. _RES_LANG; ?></title>
@@ -3865,7 +3867,7 @@
                         <div class="mx-lg-3">
                             <div class="bg-white shadow text-center">
                                 <div class="m-2 float-right" data-toggle="popover" data-trigger="hover" data-placement="top" data-fallbackPlacement="flip" data-title="Confidence Audit Help" data-content="Click the icon to review the basic audit tests and results that determine this rating">
-                                    <i class="fas fa-question-circle fa-lg text-<?php echo $helpIconColor; ?>" data-toggle="collapse" data-target="#confidenceHelp" aria-expanded="false" aria-controls="confidenceHelp" role="button"aria-label="View confidence results"></i>
+                                    <i class="fas fa-question-circle fa-lg text-<?php echo $helpIconColor; ?>" data-toggle="collapse" data-target="#confidenceHelp" aria-expanded="false" aria-controls="confidenceHelp" role="button" aria-label="View confidence results"></i>
                                 </div>
                                 <h5 class="text-center border-bottom p-2"><?php echo _FPA_DASHBOARD_CONFIDENCE_TITLE; ?></h5>
 

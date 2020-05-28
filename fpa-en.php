@@ -2679,7 +2679,7 @@
             } else {
                 $gitcURLARRAY   = json_decode($gitcURLJSON);  // decode json in to an array
                 $thisFPAVER     = substr(_RES_VERSION, 0, 5);
-                $thisFPAVER     = substr('1.4.0 (midden)', 0, 5);
+                //$thisFPAVER     = substr('1.4.0 (midden)', 0, 5);
 
                 if (substr($gitcURLARRAY->tag_name, 0, 1) == 'v') {
                     $latestFPAVER   = ltrim($gitcURLARRAY->tag_name, 'v');  // trim the "v" (version) from the latest release tag

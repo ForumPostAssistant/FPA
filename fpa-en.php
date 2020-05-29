@@ -109,7 +109,7 @@
     // @RussW updated 23/05/2020
     define ( '_FPA_DELNOTE_LN2', '<p class="small">Due to the highly sensitive nature of the information displayed by the FPA script, it should be removed from the server immediately after use. If the script is left on the site, it can be used to gather enough information to hack your site.</p>' );
     // @RussW updated 23/05/2020
-    define ( '_FPA_DELNOTE_LN3', '<p>After use, <a class="text-danger" href="fpa-en.php?act=delete">Click Here</a>  to delete this script.</p>' );
+    define ( '_FPA_DELNOTE_LN3', '<p>After use, <a class="text-danger" href="'.$_SERVER["PHP_SELF"].'?act=delete">Click Here</a>  to delete this script.</p>' );
     // dev/diag-mode content
 	define ( '_FPA_DEVMI', 'developer-mode-information' );
     define ( '_FPA_ELAPSE', 'elapse-runtime' );
@@ -352,18 +352,18 @@
         $extra = ''; // add index (or other) page if desired
 
         // try to set script to 777 to make sure we have permission to delete
-        chmod('fpa-en.php', 0777);  // octal; correct value of mode
+        chmod($_SERVER['PHP_SELF'], 0777);  // octal; correct value of mode
 
         // Delete the file.
-        unlink('fpa-en.php');
+        unlink($_SERVER['PHP_SELF']);
 
         // Message and link to home page of site.
         $page= ('"http://$host$uri/');
-        $filename = 'fpa-en.php';
+        $filename = $_SERVER['PHP_SELF'];
 
         // Something went wrong and the script was not deleted so it must be removed manually so we tell the user to do so - PhilD 8-07-12
         if (file_exists($filename)) {
-            chmod('fpa-en.php', 0644);  // octal; correct value of mode
+            chmod($_SERVER['PHP_SELF'], 0644);  // octal; correct value of mode
 
             echo '<div id="deleteMessage" style="padding:20px;border:1px solid #e99002;background-color:#fff8ee;margin:0 auto;margin-top:50px;margin-bottom:20px;max-width:70%;position:relative;z-index:9999;top:10%;font-family:sans-serif, arial;" align="center">';
             echo '<h1 style="color:#e99002;font-size:44px;">SOMETHING WENT WRONG!</h1>';
@@ -2889,7 +2889,7 @@
         <header>
             <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow">
 
-                <a class="navbar-brand mr-0 mr-md-2 text-primary py-2 lead font-weight-bolder" href="fpa-en.php" aria-label="<?php echo _RES; ?>">
+                <a class="navbar-brand mr-0 mr-md-2 text-primary py-2 lead font-weight-bolder" href="<?php echo $_SERVER['PHP_SELF']; ?>" aria-label="<?php echo _RES; ?>">
                     <span class="d-inline-block d-sm-none" aria-hidden="true">FPA</span>
                     <span class="d-none d-sm-inline-block"><?php echo _RES; ?></span>
                     <span class="ml-1 small text-muted"><?php echo 'v'. _RES_VERSION; ?></span>
@@ -2915,12 +2915,12 @@
                             <?php } ?>
                             <a class="dropdown-item py-1" href="#templates">Templates</a>
                             <div class="dropdown-divider mb-0"></div>
-                            <a class="dropdown-item py-2 bg-danger text-white lead" href="fpa-en.php?act=delete"><i class="fas fa-trash-alt"></i> Delete FPA</a>
+                            <a class="dropdown-item py-2 bg-danger text-white lead" href="<?php echo $_SERVER['PHP_SELF']; ?>?act=delete"><i class="fas fa-trash-alt"></i> Delete FPA</a>
                         </div>
                     </li>
 
                     <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Basic Discovry Report" data-content="Run the basic (on-screen) FPA Discovery report">
-                        <a class="btn btn-outline-primary mr-1" href="fpa-en.php" role="button" aria-label="<?php echo _RES_FPALATEST2; ?>">
+                        <a class="btn btn-outline-primary mr-1" href="<?php echo $_SERVER['PHP_SELF']; ?>" role="button" aria-label="<?php echo _RES_FPALATEST2; ?>">
                             <i class="fas fa-chalkboard fa-fw lead"></i>
                         </a>
                     </li>
@@ -2965,7 +2965,7 @@
                     -->
 
                     <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Security Notice" data-content="Delete the FPA script now">
-                        <a class="btn btn-danger mr-1" href="fpa-en.php?act=delete" role="button" aria-label="Delete FPA now">
+                        <a class="btn btn-danger mr-1" href="<?php echo $_SERVER['PHP_SELF']; ?>?act=delete" role="button" aria-label="Delete FPA now">
                             <i class="fas fa-trash-alt fa-fw lead"></i>
                         </a>
                     </li>

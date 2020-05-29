@@ -34,13 +34,13 @@
     }
 
     /** SET THE FPA DEFAULTS *****************************************************************/
-     # define ( '_FPA_DEV', TRUE );      // developer-mode, displays raw array data
-     # define ( '_FPA_DIAG', TRUE );     // diagnostic-mode, turns on PHP logging errors, display errors and logs error to a file.
+     #define ( '_FPA_DEV', TRUE );      // developer-mode, displays raw array data
+     #define ( '_FPA_DIAG', TRUE );     // diagnostic-mode, turns on PHP logging errors, display errors and logs error to a file.
 
     /** DISABLE LIVE CHECK FEATURES **********************************************************/
       define ( '_LIVE_CHECK_FPA', TRUE );    // enable live latest FPA version check
       define ( '_LIVE_CHECK_JOOMLA', TRUE ); // enable live latest Joomla! version check
-     # define ( '_LIVE_CHECK_VEL', TRUE );    // enable live VEL check
+      #define ( '_LIVE_CHECK_VEL', TRUE );    // enable live VEL check
 
 	/** SET THE JOOMLA! PARENT FLAG AND CONSTANTS ********************************************/
 	define ( '_VALID_MOS', 1 );         // for J!1.0
@@ -72,8 +72,9 @@
 	define ( '_PHP_DISERR', 'Display PHP Errors Enabled' );
 	define ( '_PHP_ERRREP', 'PHP Error Reporting Enabled' );
 	define ( '_PHP_LOGERR', 'PHP Errors Being Logged To File' );
-	// section titles & developer-mode array names
-	define ( '_FPA_SNAP_TITLE', 'Environment Support Snapshot' );
+    // section titles & developer-mode array names
+    // updated @RussW 29/05/2020
+	define ( '_FPA_SNAP_TITLE', 'Environment Snapshot' );
 	define ( '_FPA_INST_TITLE', 'Application Instance' );
 	define ( '_FPA_SYS_TITLE', 'System Environment' );
 	define ( '_FPA_PHP_TITLE', 'PHP Environment' );
@@ -2640,12 +2641,11 @@
      * - check if not in php diabled_functions
      * - check there is a cURL module loaded
      * - check the cURL function is available
-     * - check if doIT != 1
      * added @RussW - 27/05/2020
      *
      */
     $canDOLIVE = '0';
-    if ( stristr($phpenv['phpDISABLED'], 'curl') === FALSE AND extension_loaded('curl') AND function_exists('curl_version') AND @$_POST['doIT'] != '1' ) {
+    if ( stristr($phpenv['phpDISABLED'], 'curl') === FALSE AND extension_loaded('curl') AND function_exists('curl_version') ) {
         $canDOLIVE = '1';
     }
 
@@ -2655,7 +2655,6 @@
      *
      * checks this FPA version against the latest release on Github using cURL
      * - don't run if cURL disabled or not available
-     * - don't run if $doIT = 1 (running FPA)
      * added - @RussW 28/05/2020
      *
      */
@@ -2732,7 +2731,6 @@
      * - don't run if cURL disabled or not available
      * - don't run if simpleXML or XML not available
      * - don't run if Joomla! instance not found
-     * - don't run if $doIT = 1 (running FPA)
      * added - @RussW 28/05/2020
      *
      */
@@ -2745,7 +2743,6 @@
 
                 $jupdateURL  = 'https://update.joomla.org/core/list.xml';
                 $jupdateXML  = simpleXML_load_file( $jupdateURL, 'SimpleXMLElement', LIBXML_NOCDATA );
-
 
                 if ($jupdateXML ===  FALSE) {
                     $joomlaVersionCheck = '';
@@ -2784,11 +2781,39 @@
                     echo '</div>';
 
                 }
+
             } // function
 
         } // if simpleXML
 
     } // end Joomla! LiveCheck
+
+    /**
+     * LiveCheck - VEL
+     * comment out _LIVE_CHECK_VEL in settings to disable
+     *
+     * checks if instance found and if extensions (versions) are found on  vel.joomla.org using cURL
+     * - don't run if cURL disabled or not available
+     * - don't run if simpleXML or XML not available
+     * - don't run if Joomla! instance not found
+     * - don't run if $doIT = 1 (running FPA)
+     *
+     * should always be below audit/test routines as it will disable the following options
+     * - disable $showElevated, $showTables, $showCoreEx
+     * added - @RussW 29/05/2020
+     *
+     */
+    if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y AND @$_POST['doVEL'] == 1 ) {
+
+        // disable FPA options to reduce run-time, clutter and load
+        $showElevated  = 0;
+        $showTables    = 0;
+        $showCoreEx    = 0;
+
+        //echo 'DID VEL';
+
+    } // end VEL LiveCheck
+
 ?>
 <!doctype html>
 <html lang="en-gb" dir="ltr" vocab="http://schema.org/">
@@ -2884,68 +2909,64 @@
                             <?php if ( $showTables == '1' ) { ?>
                                 <a class="dropdown-item py-1" href="#database-tables">Database</a>
                             <?php } ?>
-                            <a class="dropdown-item py-1" href="#folder-checks">Permissions</a>
+                                <a class="dropdown-item py-1" href="#folder-checks">Permissions</a>
                             <?php if ( $showComponents == '1' OR $showModules == '1' OR $showLibraries == '1' OR $showPlugins == '1' ) { ?>
-                            <a class="dropdown-item py-1" href="#extensions">Extensions</a>
+                                <a class="dropdown-item py-1" href="#extensions">Extensions</a>
                             <?php } ?>
                             <a class="dropdown-item py-1" href="#templates">Templates</a>
                             <div class="dropdown-divider mb-0"></div>
                             <a class="dropdown-item py-2 bg-danger text-white lead" href="fpa-en.php?act=delete"><i class="fas fa-trash-alt"></i> Delete FPA</a>
                         </div>
                     </li>
-                    <!-- TODO: if not latest FPA, show download -->
+
+                    <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Basic Discovry Report" data-content="Run the basic (on-screen) FPA Discovery report">
+                        <a class="btn btn-outline-primary mr-1" href="fpa-en.php" role="button" aria-label="<?php echo _RES_FPALATEST2; ?>">
+                            <i class="fas fa-chalkboard fa-fw lead"></i>
+                        </a>
+                    </li>
+
+                    <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
+                        <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Vulnerable Extension List" data-content="Run a vulnerable extension check">
+                            <form class="m-0 ml-auto p-0" method="post" name="navForm" id="navForm">
+                                <input type="hidden" name="doVEL" value="1" />
+                                <button class="btn btn-outline-warning mr-1" type="submit" aria-label="Run a Vulnerable Extension Check">
+                                    <i class="fas fa-radiation fa-fw lead"></i>
+                                </button>
+                            </form>
+                        </li>
+                    <?php } // doVEL ?>
+
                     <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Download FPA" data-content="<?php echo _RES_FPALATEST2; ?>">
-                        <a class="btn btn-outline-warning mr-1" href="<?php echo _RES_FPALINK2; ?>" rel="noreferrer noopener" target="_blank" role="button" aria-label="<?php echo _RES_FPALATEST2; ?>">
-                            <i class="fas fa-cloud-download-alt lead"></i>
+                        <a class="btn btn-outline-info mr-1" href="<?php echo _RES_FPALINK2; ?>" rel="noreferrer noopener" target="_blank" role="button" aria-label="<?php echo _RES_FPALATEST2; ?>">
+                            <i class="fas fa-cloud-download-alt fa-fw lead"></i>
                         </a>
                     </li>
-                    <!-- TODO: else, show ok
-                    <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="Your FPA script is up to date">
-                        <a class="btn btn-outline-success" href="#" role="button" aria-label="Your FPA script is up to date">
-                            <i class="fas fa-thumbs-up lead"></i>
-                        </a>
-                    </li>
-                    -->
-                    <!-- docs & errata info
-                    <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="View the FPA guided tour">
+
+                    <!-- Guided FPA Tour
+                    <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Guided Tour" data-content="View the FPA guided tour and learn how to reead and use the FPA">
                         <a class="btn btn-outline-primary mr-1" href="#" role="button" aria-label="View the FPA guided tour">
                             <i class="fas fa-shoe-prints lead"></i>
                         </a>
                     </li>
                     -->
+
                     <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Documentation" data-content="Visit the FPA documentation site on Github">
                         <a class="1nav-link btn btn-outline-info mr-1" href="https://forumpostassistant.github.io/docs/" rel="noreferrer noopener" target="_blank" role="button" aria-label="Visit the FPA documentation site on Github">
                             <i class="fas fa-book-reader lead"></i>
                         </a>
                     </li>
-                    <!-- Help & info
-                    <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="View FPA help information">
-                        <a class="btn btn-outline-primary mr-1" href="#" role="button" data-toggle="collapse" data-target="#fpaHelp" aria-controls="fpaHelp" aria-expanded="false" aria-label="View FPA help information">
-                            <i class="fas fa-question-circle lead"></i>
-                        </a>
-                    </li>
-                    <li class="nav-item py-2 border-right mr-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="View FPA copyright, credits and errata information">
-                        <a class="btn btn-outline-primary mr-2" href="#" role="button" data-toggle="collapse" data-target="#fpaCopyrightCredits" aria-controls="fpaCopyrightCredits" aria-expanded="false" aria-label="View FPA copyright, credits and errata information">
-                            <i class="fas fa-info-circle lead"></i>
-                        </a>
-                    </li>
-                    -->
-                    <!-- fpa info & notices
-                    <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="The current FPA information privacy level is <?php echo @$privacyLevel; ?>">
-                        <a class="btn btn-info mr-1" href="#" role="button" aria-label="The current FPA information privacy level is <?php echo @$privacyLevel; ?>">
-                            <i class="fas fa-user-shield lead"></i>
-                        </a>
-                    </li>
+
+                    <!-- print fpa
                     <li class="nav-item py-2 border-right d-none d-md-inline-block mr-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="Print the current FPA audit report">
                         <a class="btn btn-info lead mr-2" href="#" role="button" aria-label="Print the current FPA audit report">
                             <i class="fas fa-print lead"></i>
                         </a>
                     </li>
                     -->
-                    <!-- fpa security warning -->
+
                     <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Security Notice" data-content="Delete the FPA script now">
                         <a class="btn btn-danger mr-1" href="fpa-en.php?act=delete" role="button" aria-label="Delete FPA now">
-                            <i class="fas fa-trash-alt lead"></i>
+                            <i class="fas fa-trash-alt fa-fw lead"></i>
                         </a>
                     </li>
                 </ul>
@@ -3020,7 +3041,7 @@
         <section class="bg-light pt-2" id="fpa-dashboard">
             <div class="container pt-4 pb-3">
 
-                <h1 class="font-weight-light border-bottom"><?php echo _FPA_DASHBOARD; ?></h1>
+                <h1 class="font-weight-light border-bottom"><i class="fas fa-dice-d6 fa-sm text-muted"></i> <?php echo _FPA_SNAP_TITLE; ?></h1>
                 <p class="text-dark text-justify mb-lg-5"><?php echo _FPA_DASHBOARD_CONFIDENCE_NOTE; ?></p>
 
                 <div class="row">
@@ -3995,14 +4016,14 @@
                                             <div class="form-group row mt-3">
                                                 <label for="probDSC" class="col-md-4 col-form-label small"><?php echo _FPA_PROB_DSC; ?>:</label>
                                                 <div class="col-md-8">
-                                                    <input class="form-control form-control-sm bg-light" type="text" name="probDSC" />
+                                                    <input class="form-control form-control-sm bg-light" type="text" name="probDSC" id="probDSC" />
                                                 </div>
                                             </div>
 
                                             <div class="form-group row">
                                                 <label for="probMSG1" class="col-md-4 col-form-label small"><?php echo _FPA_PROB_MSG; ?>:</label>
                                                 <div class="col-md-8">
-                                                    <input class="form-control form-control-sm bg-light" type="text" name="probMSG1" />
+                                                    <input class="form-control form-control-sm bg-light" type="text" name="probMSG1" id="probMSG1" />
                                                 </div>
                                             </div>
 
@@ -4010,13 +4031,13 @@
                                                 <?php if ( isset($phpenv['phpLASTERR']) ) { ?>
                                                     <label for="probMSG2" class="col-md-4 col-form-label small text-warning"><?php echo _FPA_LAST .' '. _FPA_ER; ?>:</label>
                                                     <div class="col-md-8">
-                                                        <input class="form-control form-control-sm bg-light text-warning" type="text" name="probMSG2" value="<?php echo $phpenv['phpLASTERR']; ?>" aria-describedby="lastErrorHelp" />
+                                                        <input class="form-control form-control-sm bg-light text-warning" type="text" name="probMSG2" id="probMSG2" value="<?php echo $phpenv['phpLASTERR']; ?>" aria-describedby="lastErrorHelp" />
                                                         <small id="lastErrorHelp" class="form-text text-muted text-right xsmall">auto-completed from your php error log</small>
                                                     </div>
                                                 <?php } else { ?>
                                                     <label for="probMSG2" class="col-md-4 col-form-label small"><?php echo _FPA_PROB_MSG; ?>:</label>
                                                     <div class="col-md-8">
-                                                        <input class="form-control form-control-sm bg-light" type="text" name="probMSG2" />
+                                                        <input class="form-control form-control-sm bg-light" type="text" name="probMSG2" id="probMSG2" />
                                                     </div>
                                                 <?php } ?>
                                             </div>
@@ -4024,7 +4045,7 @@
                                             <div class="form-group row">
                                                 <label for="probACT" class="col-md-4 col-form-label small"><?php echo _FPA_PROB_ACT; ?>:</label>
                                                 <div class="col-md-8">
-                                                    <textarea class="form-control form-control-sm bg-light" name="probACT" rows="2"></textarea>
+                                                    <textarea class="form-control form-control-sm bg-light" name="probACT" id="probACT" rows="2"></textarea>
                                                 </div>
                                             </div>
 
@@ -4198,8 +4219,8 @@
                                             <!-- // !TODO make this more robust across multiple server configs -->
                                             <div class="form-check pt-3">
                                                 <input class="form-check-input" type="checkbox" name="increasePOPS" id="showIncreasePOPSCheck" value="1" <?php echo $selectPOPS; ?> aria-describedby="popsHelp" />
-                                                <label class="form-check-label mt-1" for="showElevatedCheck">PHP &quot;<span class="text-warning"><?php echo _FPA_OUTMEM; ?></span>&quot; <?php echo _FPA_OR; ?> &quot;<span class="text-warning"><?php echo _FPA_OUTTIM; ?></span>&quot; <?php echo _FPA_ERRS; ?>?</label>
-                                                <small id="pospHelp" class="form-text text-muted xsmall"><?php echo _FPA_INCPOPS; ?></small>
+                                                <label class="form-check-label mt-1" for="showIncreasePOPSCheck">PHP &quot;<span class="text-warning"><?php echo _FPA_OUTMEM; ?></span>&quot; <?php echo _FPA_OR; ?> &quot;<span class="text-warning"><?php echo _FPA_OUTTIM; ?></span>&quot; <?php echo _FPA_ERRS; ?>?</label>
+                                                <small id="popsHelp" class="form-text text-muted xsmall"><?php echo _FPA_INCPOPS; ?></small>
                                             </div>
 
                                         </div>
@@ -4985,1154 +5006,1073 @@
             /**
              * fpa instance discovery information section
              *
+             * dont show if doVEL = 1
+             * added @RussW 29/05/2020
+             *
              */
             ?>
-            <section class="py-3" id="instance-discovery">
-                <div class="container mt-5">
+            <?php if ( @$_POST['doVEL'] != 1 ) { ?>
 
-                    <h1 class="font-weight-light border-bottom mb-4"><?php echo _FPA_DISCOVERY_REPORT; ?></h1>
+                <section class="py-3" id="instance-discovery">
+                    <div class="container mt-5">
 
-	                <div class="row row-cols-1 row-cols-lg-2 application-discovery">
-                        <div class="col mb-4 d-flex align-self-stretch">
+                        <h1 class="font-weight-light border-bottom mb-4"><i class="fas fa-chalkboard fa-sm text-muted"></i> <?php echo _FPA_DISCOVERY_REPORT; ?></h1>
 
-                            <div class="card border shadow w-100">
-                                <div class="card-header bg-info text-white">
-                                    <?php echo $instance['ARRNAME']; ?> :: Discovery
-                                </div>
-                                <div class="card-body">
-
-                                    <div class="row row-cols-2 row-cols-md-4">
-
-                                        <div class="col text-center my-2 d-flex align-self-stretch">
-
-                                            <div class="bg-white small w-100 border">
-                                                <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">CMS <?php echo _FPA_F; ?></div>
-
-                                                <?php if ( $instance['instanceFOUND'] == _FPA_Y AND $instance['platformVFILE'] != _FPA_N) { ?>
-
-                                                    <div class="xsmall mb-1"><?php echo @$instance['cmsPRODUCT']; ?></div>
-                                                    <div class="font-weight-bolder mb-1"><?php echo @$instance['cmsRELEASE'] .'.'. @$instance['cmsDEVLEVEL']; ?></div>
-
-                                                    <?php
-                                                        if ( strtolower( @$instance['cmsDEVSTATUS'] ) == 'stable' ) {
-                                                            $statusClass = 'success';
-
-                                                        } elseif ( strtolower( substr( @$instance['cmsDEVSTATUS'],0, 4 ) ) == 'alph' OR strtolower( substr( @$instance['cmsDEVSTATUS'],0, 4 ) ) == 'beta' ) {
-                                                            $statusClass = 'danger';
-
-                                                        } elseif ( strtolower( substr( @$instance['cmsDEVSTATUS'],0, 2 ) ) == 'rc' ) {
-                                                            $statusClass = 'warning';
-
-                                                        } else {
-                                                            $statusClass = 'warning';
-                                                        }
-                                                    ?>
-                                                    <div class="badge badge-<?php echo $statusClass; ?> text-uppercase w-100"><?php echo @$instance['cmsDEVSTATUS']; ?></div>
-
-                                                    <?php
-                                                        // warning if more than one instance of version.php found
-                                                        if ($vFileSum > 1) {
-                                                            echo '<div class="bg-danger text-white xsmall py-1">' . _FPA_MVFWF . '</div>';
-                                                        }
-                                                    ?>
-
-                                                <?php } else { ?>
-                                                    <div class="border border-warning text-warning small mx-auto w-75"><?php echo @$instance['instanceFOUND']; ?></div>
-                                                <?php } // instanceFOUND ?>
-
-                                            </div>
-
-                                        </div><!--/.col-->
-                                        <div class="col text-center my-2 d-flex align-self-stretch">
-
-                                           <div class="bg-white small w-100 border">
-                                                <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_PLATFORM; ?></div>
-
-                                                <?php if ( $instance['instanceFOUND'] == _FPA_Y ) { ?>
-
-                                                    <div class="xsmall mb-1"><?php echo @$instance['platformPRODUCT']; ?></div>
-                                                    <div class="font-weight-bolder mb-1"><?php echo @$instance['platformRELEASE'] .'.'. @$instance['platformDEVLEVEL']; ?></div>
-
-                                                    <?php
-                                                        if ( strtolower( @$instance['platformDEVSTATUS'] ) == 'stable' ) {
-                                                            $statusClass = 'success';
-
-                                                        } elseif ( strtolower( substr( @$instance['platformDEVSTATUS'],0, 4 ) ) == 'alph' OR strtolower( substr( @$instance['cmsDEVSTATUS'],0, 4 ) ) == 'beta' ) {
-                                                            $statusClass = 'danger';
-
-                                                        } elseif ( strtolower( substr( @$instance['platformDEVSTATUS'],0, 2 ) ) == 'rc' ) {
-                                                            $statusClass = 'warning';
-
-                                                        } else {
-                                                            $statusClass = 'warning';
-                                                        }
-                                                    ?>
-                                                    <div class="badge badge-<?php echo $statusClass; ?> text-uppercase w-100"><?php echo @$instance['platformDEVSTATUS']; ?></div>
-
-                                                    <?php
-                                                        // warning if more than one instance of version.php found
-                                                        if ($vFileSum > 1) {
-                                                            echo '<div class="bg-danger text-white xsmall py-1">' . _FPA_MVFWF . '</div>';
-                                                        }
-                                                    ?>
-
-                                                <?php } else { ?>
-                                                    <div class="border border-warning text-warning small mx-auto w-75"><?php echo @$instance['instanceFOUND']; ?></div>
-                                                <?php } // instanceFOUND ?>
-
-                                            </div>
-
-                                        </div><!--/.col-->
-                                        <div class="col text-center my-2 d-flex align-self-stretch">
-
-                                            <div class="bg-white small w-100 border">
-                                                <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_E; ?></div>
-
-                                                    <?php
-                                                        if ( $instance['instanceCONFIGURED'] == _FPA_Y ) {
-                                                            $statusClass = 'success';
-
-                                                        } else {
-                                                            $statusClass = 'warning';
-                                                        }
-                                                    ?>
-                                                    <div class="border border-<?php echo $statusClass; ?> text-<?php echo $statusClass; ?> small mx-auto w-75 mb-1"><?php echo @$instance['instanceCONFIGURED']; ?></div>
-                                            </div>
-
-                                        </div><!--/.col-->
-                                        <div class="col text-center my-2 d-flex align-self-stretch">
-
-                                            <div class="bg-white small w-100 border">
-                                                <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_VER; ?></div>
-
-                                                    <?php
-                                                        if ( @$instance['instanceCFGVERMATCH'] == _FPA_Y ) {
-                                                            echo '<div class="font-weight-bolder mb-1">'. $instance['configVALIDFOR'] .'</div>';
-                                                            echo '<div class="border border-success text-success xsmall mx-auto w-75 mb-1">'. _FPA_YMATCH .' CMS</div>';
-
-                                                        } elseif ( @$instance['instanceCFGVERMATCH'] == _FPA_N ) {
-                                                            echo '<div class="font-weight-bolder mb-1">'. $instance['configVALIDFOR'] .'</div>';
-                                                            echo '<div class="border border-success text-success xsmall mx-auto w-75">'. _FPA_NMATCH .' CMS</div>';
-
-                                                        } elseif ( @$instance['configVALIDFOR'] == _FPA_U ) {
-                                                            echo '<div class="border border-warning text-warning small mx-auto w-75">'. $instance['configVALIDFOR'] .'</div>';
-                                                        }
-                                                    ?>
-
-                                            </div>
-
-                                        </div><!--/.col-->
-
-                                        <?php if ( $instance['instanceCONFIGURED'] != _FPA_N AND $instance['instanceFOUND'] != _FPA_N ) { ?>
-
-                                            <div class="col text-center my-2 d-flex align-self-stretch">
-
-                                                <div class="bg-white small w-100 border">
-                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_VALID; ?></div>
-
-                                                        <?php
-                                            				if ( @$instance['configSANE'] == _FPA_Y AND @$instance['configSIZEVALID'] != _FPA_N ) {
-                                                                $saneClass = 'success';
-                                                                $configVALID = _FPA_Y;
-
-                                                            } elseif ( @$instance['configVALIDFOR'] == _FPA_U ) {
-                                                                $saneClass = 'warning';
-                                                                $configVALID = _FPA_N;
-                                                            }
-                                                        ?>
-                                                        <div class="border border-<?php echo $saneClass; ?> text-<?php echo $saneClass; ?> small mx-auto w-75 mb-1"><?php echo $configVALID; ?></div>
-
-                                                </div>
-
-                                            </div><!--/.col-->
-                                            <div class="col text-center my-2 d-flex align-self-stretch">
-
-                                                <div class="bg-white small w-100 border">
-                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_MODE; ?></div>
-
-                                                        <?php
-                                                            // looking for --7 or -7- or -77 (default folder permissions are usually 755)
-                                                            if ( substr( $instance['configMODE'],0 ,1 ) == '7' OR substr( $instance['configMODE'],1 ,1 ) == '7' OR substr( $instance['configMODE'],2 ,1 ) == '7' ) {
-                                                                $modeClass = 'border border-danger text-danger';
-
-                                                            } elseif ( substr( $instance['configMODE'],1 ,1 ) >= '5' OR substr( $instance['configMODE'],2 ,1 ) >= '5' ) {
-                                                                $modeClass = 'border border-warning text-warning';
-
-                                                            } elseif ( $instance['configMODE'] == _FPA_N ) {
-                                                                $modeClass = 'border border-warning text-warning';
-
-                                                            } else {
-                                                                $modeClass = 'font-weight-bolder';
-                                                            }
-
-                                                        ?>
-                                                        <div class="<?php echo $modeClass; ?> small mx-auto w-75 mb-1"><?php echo $instance['configMODE']; ?></div>
-
-                                                        <?php
-                                                            // is the file writable?
-                                                            if ( ( $instance['configWRITABLE'] == _FPA_Y ) AND ( substr( $instance['configMODE'],0 ,1 ) == '7' OR substr( $instance['configMODE'],1 ,1 ) == '7' OR substr( $instance['configMODE'],2 ,1 ) == '7' ) ) {
-                                                                $writeClass = 'border border-danger text-danger';
-                                                                $canWrite = 'Writable';
-
-                                                            } elseif ( ( $instance['configWRITABLE'] == _FPA_Y ) AND ( substr( $instance['configMODE'],0 ,1 ) <= '6' ) ) {
-                                                                $writeClass = 'border border-success text-success';
-                                                                $canWrite = _FPA_WRITABLE;
-
-                                                            } elseif ( ( $instance['configWRITABLE'] != _FPA_Y ) ) {
-                                                                $writeClass = 'border border-warning text-warning';
-                                                                $canWrite = _FPA_RO;
-
-                                                            }
-                                                        ?>
-                                                        <div class="<?php echo $writeClass; ?> xsmall mx-auto w-75 mb-1"><?php echo $canWrite; ?></div>
-
-                                                </div>
-
-                                            </div><!--/.col-->
-                                            <div class="col text-center my-2 d-flex align-self-stretch">
-
-                                                <div class="bg-white small w-100 border">
-                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_OWNER; ?></div>
-
-                                                    <?php
-                                                        if ( $showProtected == 1 ) {
-                                                            echo $instance['configOWNER']['name'];
-
-                                                        } else {
-                                                            echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
-                                                        }
-                                                    ?>
-
-                                                </div>
-
-                                            </div><!--/.col-->
-                                            <div class="col text-center my-2 d-flex align-self-stretch">
-
-                                                <div class="bg-white small w-100 border">
-                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_GROUP; ?></div>
-
-                                                    <?php
-                                                        if ( $showProtected == 1 ) {
-                                                            echo $instance['configGROUP']['name'];
-
-                                                        } else {
-                                                            echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
-                                                        }
-                                                    ?>
-
-                                                </div>
-
-                                            </div><!--/.col-->
-
-                                        <?php } else { ?>
-
-                                            <div class="col-12 col-md-12 text-center my-2">
-                                                <p class="border border-warning text-warning p-2 mb-0 xsmall">
-                                                    <?php
-                                                        if ( $instance['instanceFOUND'] != _FPA_Y ) {
-                                                            echo _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $instance['ARRNAME'].' '. _FPA_TESTP .'<br />';
-                                                        }
-
-                                                        if ( $instance['instanceCONFIGURED'] == _FPA_Y ) {
-                                                            echo _FPA_BUT .' '. _FPA_CFG .' '. _FPA_F;
-                                                        }
-                                                    ?>
-                                                </p>
-                                            </div><!--/.col-12-->
-
-                                        <?php } // instance found & configured ?>
-
-                                    </div><!--./row-->
-
-                                </div>
-                            </div><!--/.card (discovery)-->
-
-                        </div><!--/.col-->
-                        <div class="col mb-4 d-flex align-self-stretch">
-
-                            <div class="card border shadow w-100">
-                                <div class="card-header bg-info text-white">
-                                    <?php echo $instance['ARRNAME']; ?> :: Configuration
-                                </div>
-                                <div class="card-body">
-
-                                    <div class="row row-cols-2 row-cols-md-4">
-
-                                        <?php if ( $instance['instanceCONFIGURED'] == _FPA_Y AND $instance['configVALIDFOR'] != _FPA_U ) { ?>
-
-                                            <div class="col text-center my-2 d-flex align-self-stretch">
-
-                                                <div class="bg-white small w-100 border">
-                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">Offline?</div>
-                                                    <?php
-                                                        if ( $instance['configOFFLINE'] == 'false' ) {
-                                                            $offlineStatus = _FPA_N;
-                                                            $offlineClass  = 'border border-info text-info';
-
-                                                        } elseif ( $instance['configOFFLINE'] == 'true' ) {
-                                                                $offlineStatus = _FPA_Y;
-                                                                $offlineClass  = 'border border-warning text-warning';
-                                                        } else {
-                                                            $offlineStatus = _FPA_U;
-                                                            $offlineClass  = 'border border-danger text-danger';
-                                                        }
-                                                    ?>
-                                                    <div class="<?php echo $offlineClass; ?> mx-auto w-75 mb-1"><?php echo $offlineStatus; ?></div>
-                                                </div>
-
-                                            </div><!--/.col-->
-                                            <div class="col text-center my-2 d-flex align-self-stretch">
-
-                                                <div class="bg-white small w-100 border">
-                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">SEF URL's</div>
-                                                    <?php
-                                                        if ( $instance['configSEF'] == 'true' ) {
-                                                            $sefClass  = 'info';
-
-                                                        } else {
-                                                            $sefClass  = 'warning';
-                                                        }
-                                                    ?>
-                                                    <div class="xsmall w-100 mb-1 text-left px-1 mb-1 ">
-                                                        <?php echo _FPA_EN; ?>: <span class="text-<?php echo $sefClass; ?> text-capitalize float-right"><?php echo $instance['configSEF']; ?></span>
-                                                    </div>
-
-                                                    <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1 ">
-                                                        Suffix: <span class="float-right text-capitalize"><?php echo $instance['configSEFSUFFIX']; ?></span>
-                                                    </div>
-
-                                                    <?php
-                                                        if ( ($instance['configSEFRWRITE'] == '1' OR $instance['configSEFRWRITE'] == 'true' ) AND $instance['configSITEHTWC'] != _FPA_Y ) {
-                                                            $rewriteTitleClass = 'danger';
-                                                            $rewriteClass      = 'danger';
-
-                                                            if ($system['sysSHORTWEB'] != 'MIC') {
-                                                                $htwcMissing = '.htaccess missing';
-                                                            } else {
-                                                                $htwcMissing = 'web.config missing';
-                                                            }
-
-                                                        } else {
-                                                            $rewriteTitleClass = 'default';
-                                                            $rewriteClass      = 'info';
-                                                            $htwcMissing       = '';
-                                                        }
-                                                    ?>
-                                                    <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1 text-<?php echo $rewriteTitleClass; ?>">
-                                                        Rewrite: <span class="text-<?php echo $rewriteClass; ?> text-capitalize float-right"><?php echo $instance['configSEFRWRITE']; ?></span>
-                                                        <?php
-                                                            if ( !empty($htwcMissing) ) {
-                                                                echo '<span class="xsmall text-'.$rewriteClass.' float-right">'. $htwcMissing .'</span>';
-                                                            }
-                                                        ?>
-                                                    </div>
-
-                                                </div>
-
-                                            </div><!--/.col-->
-                                            <div class="col text-center my-2 d-flex align-self-stretch">
-
-                                                <div class="bg-white small w-100 border">
-                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">Compression</div>
-                                                    <?php
-                                                        if ( $instance['configGZIP'] == 'true' ) {
-                                                            $gzipClass  = 'info';
-
-                                                        } else {
-                                                            $gzipClass  = 'default';
-                                                        }
-                                                    ?>
-                                                    <div class="xsmall w-100 mb-1 text-left px-1 mb-1 ">
-                                                        GZip: <span class="text-<?php echo $gzipClass; ?> text-capitalize float-right"><?php echo $instance['configGZIP']; ?></span>
-                                                    </div>
-
-                                                    <?php
-                                                        if ( $instance['configCACHING'] == 'true' ) {
-                                                            $cacheClass  = 'info';
-
-                                                        } else {
-                                                            $cacheClass  = 'default';
-                                                        }
-                                                    ?>
-                                                    <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1 ">
-                                                        Cache: <span class="text-<?php echo $cacheClass; ?> text-capitalize float-right"><?php echo $instance['configCACHING']; ?></span>
-                                                    </div>
-
-                                                </div>
-
-                                            </div><!--/.col-->
-                                            <div class="col text-center my-2 d-flex align-self-stretch">
-
-                                                <div class="bg-white small w-100 border">
-                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">Debugging</div>
-
-                                                    <?php
-                                                        if ( $instance['configERRORREP'] == 'none' ) {
-                                                            $debugClass  = 'info';
-
-                                                        } else {
-                                                            $debugClass  = 'warning';
-                                                        }
-                                                    ?>
-                                                    <div class="xsmall w-100 mb-1 text-left px-1 mb-1">
-                                                        Error Rep: <span class="text-<?php echo $debugClass; ?> float-right text-capitalize"><?php echo substr($instance['configERRORREP'], 0, 5); ?></span>
-                                                    </div>
-
-                                                    <?php
-                                                        if ( $instance['configSITEDEBUG'] == 'true' ) {
-                                                            $debugClass  = 'warning';
-
-                                                        } else {
-                                                            $debugClass  = 'info';
-                                                        }
-                                                    ?>
-                                                    <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
-                                                        Site Debug: <span class="text-<?php echo $debugClass; ?> text-capitalize float-right"><?php echo $instance['configSITEDEBUG']; ?></span>
-                                                    </div>
-
-                                                    <?php
-                                                        if ( $instance['configLANGDEBUG'] == 'true' ) {
-                                                            $debugClass  = 'warning';
-
-                                                        } else {
-                                                            $debugClass  = 'info';
-                                                        }
-                                                    ?>
-                                                    <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
-                                                        Lang Debug: <span class="text-<?php echo $debugClass; ?> text-capitalize float-right"><?php echo $instance['configLANGDEBUG']; ?></span>
-                                                    </div>
-
-                                                </div>
-
-                                            </div><!--/.col-->
-                                            <div class="col text-center my-2 d-flex align-self-stretch">
-
-                                               <div class="bg-white small w-100 border">
-                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_DB; ?></div>
-
-                                                    <div class="xsmall w-100 mb-1 text-left px-1 mb-1">
-                                                        Type: <span class=" float-right text-capitalize"><?php echo substr(@$instance['configDBTYPE'], 0, 5); ?></span>
-                                                    </div>
-
-                                                    <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
-                                                        Version: <span class=" float-right text-capitalize"><?php echo substr(@$database['dbHOSTSERV'], 0, 5); ?></span>
-                                                    </div>
-
-                                                    <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
-                                                        CharSet: <span class=" float-right"><?php echo substr(@$database['dbCHARSET'], 0, 5); ?></span>
-                                                    </div>
-
-                                                </div>
-
-                                            </div><!--/.col-->
-                                            <div class="col text-center my-2 d-flex align-self-stretch">
-
-                                                <div class="bg-white small w-100 border">
-                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">DB <?php echo _FPA_CRED; ?></div>
-                                                    <?php
-                                                        if ( $instance['configDBCREDOK'] == _FPA_Y ) {
-                                                            $credStatus = _FPA_YACOMP;
-                                                            $credClass  = 'border border-success text-success';
-
-                                                        } else {
-                                                            $credStatus = _FPA_NACOMP;
-                                                            $credClass  = 'border border-warning text-warning';
-                                                        }
-                                                    ?>
-                                                    <div class="<?php echo $credClass; ?> mx-auto w-75 mb-1 xsmall"><?php echo $credStatus; ?></div>
-                                                </div>
-
-                                            </div><!--/.col-->
-                                            <div class="col text-center my-2 d-flex align-self-stretch">
-
-                                                <div class="bg-white small w-100 border">
-                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_SEC; ?></div>
-
-                                                    <?php
-                                                        if ( $instance['configSSL'] == '1' ) {
-                                                            $sslClass  = 'info';
-
-                                                        } else {
-                                                            $sslClass  = 'warning';
-                                                        }
-                                                    ?>
-                                                    <div class="xsmall w-100 mb-1 text-left px-1 mb-1">
-                                                        SSL: <span class="text-<?php echo $sslClass; ?> float-right text-capitalize"><?php echo @$instance['configSSL']; ?></span>
-                                                    </div>
-
-                                                    <?php
-                                                        if ( $instance['configACCESS'] == '1' ) {
-                                                            $accessClass   = 'info';
-                                                            $accessStatus  = 'Public';
-
-                                                        } elseif ( $instance['configACCESS'] == '2' ) {
-                                                            $accessClass   = 'info';
-                                                            $accessStatus  = 'Registered';
-
-                                                        } elseif ( $instance['configACCESS'] == '2' ) {
-                                                            $accessClass   = 'info';
-                                                            $accessStatus  = 'Special';
-
-                                                        } else {
-                                                            $accessClass  = 'warning';
-                                                            $accessStatus  = _FPA_U;
-                                                        }
-                                                    ?>
-                                                    <div class="xsmall border-top w-100 mb-1 text-left px-1 mb-1">
-                                                        Access: <span class="text-<?php echo $accessClass; ?> float-right text-capitalize"><?php echo $accessStatus; ?></span>
-                                                    </div>
-
-                                                </div>
-
-                                            </div><!--/.col-->
-                                            <div class="col text-center my-2 d-flex align-self-stretch">
-
-                                                <div class="bg-white small w-100 border">
-                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_FEAT; ?></div>
-
-                                                    <?php
-                                                        if ( $instance['configFTP'] == '1' ) {
-                                                            $ftpClass  = 'warning';
-
-                                                        } else {
-                                                            $ftpClass  = 'info';
-                                                        }
-                                                    ?>
-                                                    <div class="xsmall w-100 mb-1 text-left px-1 mb-1">
-                                                        FTP: <span class="text-<?php echo $ftpClass; ?> float-right text-capitalize"><?php echo @$instance['configFTP']; ?></span>
-                                                    </div>
-
-                                                    <div class="xsmall border-top w-100 mb-1 text-left px-1 mb-1">
-                                                        Unicode Slug: <span class="float-right text-capitalize"><?php echo $instance['configUNICODE']; ?></span>
-                                                    </div>
-
-                                                </div>
-
-                                            </div><!--/.col-->
-
-                                        <?php } else { ?>
-
-                                            <div class="col-12 col-md-12 text-center my-2">
-                                                <p class="border border-warning text-warning p-2 mb-0 xsmall">
-                                                    <?php echo _FPA_CFG .' '. _FPA_NF .' '. _FPA_OR .' '. _FPA_NVALID .', '. _FPA_NO .' '. $instance['ARRNAME'].' '. _FPA_TESTP .'<br />';?>
-                                                </p>
-                                            </div><!--/.col-12-->
-
-                                        <?php } // instance found & configured ?>
-
-                                    </div><!--./row-->
-
-                                </div>
-                            </div><!--/.card (configuration)-->
-
-                        </div><!--/.col-->
-                    </div><!--./row application-discovery-->
-                    <?php showDev( $instance ); ?>
-
-	                <div class="row row-cols-1 row-cols-lg-2 hosting-discovery">
-                        <div class="col mb-4 d-flex align-self-stretch">
-
-                            <div class="card border shadow w-100">
-                                <div class="card-header bg-info text-white"><?php echo $phpenv['ARRNAME'] .' :: '. _FPA_DISC; ?></div>
-                                <div class="card-body">
-
-                                    <table class="table table-striped table-bordered table-sm">
-                                        <tbody>
-                                            <tr class="flex-fill">
-                                                <td class="text-capitalize w-50">PHP <?php echo _FPA_VER; ?></td>
-                                                <td>
-                                                    <?php echo $phpenv['phpVERSION']; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">PHP API</td>
-                                                <td>
-                                                    <?php
-                                                        if ( $phpenv['phpAPI'] == 'apache2handler' ) {
-                                                            $status = 'warning';
-
-                                                        } else {
-                                                            $status = 'success';
-
-                                                        }
-                                                        echo '<span class="text-'. $status.'">'. $phpenv['phpAPI'] .'</span>';
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">Display Errors</td>
-                                                <td>
-                                                    <?php echo $phpenv['phpERRORDISPLAY']; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">Error Report Level</td>
-                                                <td>
-                                                    <?php echo $phpenv['phpERRORREPORT']; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">MySQL <?php echo _FPA_SUP; ?></td>
-                                                <td>
-                                                    <?php echo $phpenv['phpSUPPORTSMYSQL']; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">MySQLi <?php echo _FPA_SUP; ?></td>
-                                                <td>
-                                                    <?php echo $phpenv['phpSUPPORTSMYSQLI']; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">Magic Quotes</td>
-                                                <td>
-                                                    <?php echo $phpenv['phpMAGICQUOTES'] ? 'true' : 'false'; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">Safe Mode</td>
-                                                <td>
-                                                    <?php echo $phpenv['phpSAFEMODE'] ? 'true' : 'false'; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">Memory Limit</td>
-                                                <td>
-                                                    <?php
-                                                        echo $phpenv['phpMEMLIMIT'];
-                                                        if ( @$_POST['increasePOPS'] == 1 ) { // the user set the increasePOPS setting for memory or time out errors
-                                                            echo '&nbsp;<i class="text-warning">('. _FPA_UINC .' '. $fpa['ORIGphpMEMLIMIT'] .')</i>';
-                                                        }
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">PHP Uploads Enabled</td>
-                                                <td>
-                                                    <?php echo $phpenv['phpUPLOADS']; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">Max. Upload Size</td>
-                                                <td>
-                                                    <?php echo $phpenv['phpMAXUPSIZE']; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">Max. Post Size</td>
-                                                <td>
-                                                    <?php echo $phpenv['phpMAXPOSTSIZE']; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">Max. Input Time</td>
-                                                <td>
-                                                    <?php echo $phpenv['phpMAXINPUTTIME']; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">Max. Execution Time</td>
-                                                <td>
-                                                    <?php
-                                                        echo $phpenv['phpMAXEXECTIME'];
-                                                        if ( @$_POST['increasePOPS'] == 1 ) { // the user set the increasePOPS setting for memory or time out errors
-                                                            echo '&nbsp;<i class="text-warning">('. _FPA_UINC .' '. $fpa['ORIGphpMAXEXECTIME'] .')</i>';
-                                                        }
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">Register Globals</td>
-                                                <td>
-                                                    <?php echo $phpenv['phpREGGLOBAL'] ? 'true' : 'false'; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">Allow URL fopen</td>
-                                                <td>
-                                                    <?php echo $phpenv['phpURLFOPEN']; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">Open Base Path</td>
-                                                <td>
-                                                    <?php echo $phpenv['phpOPENBASE']; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">Disabled Functions</td>
-                                                <td class="xsmall">
-                                                    <?php echo str_replace (',', ', ', $phpenv['phpDISABLED']); ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">Session Path</td>
-                                                <td class="xsmall">
-                                                    <?php
-                                                        if ( $showProtected == 1 ) {
-                                                            echo $phpenv['phpSESSIONPATH'] .'<br />';
-                                                        } else {
-                                                            echo '<span class="protected">'. _FPA_HIDDEN .'</span><br />';
-                                                        }
-
-                                                        if ( $phpenv['phpSESSIONPATHWRITABLE'] == _FPA_Y ) {
-                                                            $wColor = 'success';
-
-                                                        } elseif ( $phpenv['phpSESSIONPATHWRITABLE'] == _FPA_N ) {
-                                                            $wColor = 'danger';
-
-                                                        } else {
-                                                            $phpenv['phpSESSIONPATHWRITABLE'] = _FPA_U;
-                                                        }
-                                                        echo _FPA_WRITABLE.': <span class="text-'. $wColor .'">'. $phpenv['phpSESSIONPATHWRITABLE'] .'</span>';
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">System php.ini</td>
-                                                <td class="xsmall">
-                                                    <?php
-                                                        echo $phpenv['phpINIFILE'] .'<br />';
-                                                        echo 'Multiple ini files:&nbsp;';
-                                                        echo $phpenv['phpINIOTHER'] ? 'true' : 'false';
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="2">
-                                                    Last Known PHP Error<br />
-                                                    <?php
-                                                        if ( $phpenv['phpLASTERR'] ) {
-                                                            echo '<span class="text-danger xsmall">'. $phpenv['phpLASTERR'] .'</span>';
-
-                                                        } else {
-                                                            echo '<span class="text-success">None</span>';
-                                                        }
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-
-                                <?php showDev( $phpenv ); ?>
-                                </div>
-                            </div><!--/.card (php)-->
-
-                        </div><!--/.col-->
-                        <div class="col mb-4 d-flex align-self-stretch">
-
-                            <div class="card border shadow w-100">
-                                <div class="card-header bg-info text-white"><?php echo $system['ARRNAME'] .' :: '. _FPA_DISC; ?></div>
-                                <div class="card-body">
-
-                                    <table class="table table-striped table-bordered table-sm mb-5">
-                                        <tbody>
-                                            <tr class="flex-fill">
-                                                <td class="text-capitalize w-50"><?php echo _FPA_PLATFORM; ?></td>
-                                                <td>
-                                                    <?php echo  $system['sysPLATOS']; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">Kernel <?php echo _FPA_VER; ?></td>
-                                                <td>
-                                                    <?php echo  $system['sysPLATREL']; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize"><?php echo _FPA_TEC; ?></td>
-                                                <td>
-                                                    <?php echo  $system['sysPLATTECH']; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize"><?php echo _FPA_HNAME; ?></td>
-                                                <td>
-                                                    <?php
-                                                        if ( $showProtected == 1 ) {
-                                                            echo $system['sysPLATNAME'];
-
-                                                        } else {
-                                                            echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
-                                                        }
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">Total Disk Space</td>
-                                                <td>
-                                                    <?php
-                                                        if (function_exists('disk_total_space')) {
-                                                            $total_space = sprintf('%.2f', disk_total_space('./') / 1073741824);
-                                                            echo $total_space . ' GiB';
-
-                                                        } else {
-                                                            echo _FPA_U;
-                                                        }
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">Free Disk Space</td>
-                                                <td>
-                                                    <?php
-                                                        if (function_exists('disk_free_space')) {
-                                                            $free_space = sprintf('%.2f', disk_free_space('./') / 1073741824);
-                                                            if (function_exists('disk_total_space')) {
-                                                                $percent_free = $free_space ? round($free_space / $total_space, 2) * 100 : 0;
-
-                                                                if ($percent_free <= '5') {
-                                                                    $status = 'text-warning';
-                                                                } else {
-                                                                    $status = '';
-                                                                }
-
-                                                                echo $free_space .' GiB (<span class="'. $status .' xsmall">'. $percent_free .'%</span>)';
-                                                                $system['sysFREESPACE'] = $free_space . ' GiB';
-
-                                                            } else {
-                                                                echo $free_space . ' GiB';
-                                                            }
-
-                                                        } else {
-                                                            echo _FPA_U;
-                                                        }
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize"><?php echo _FPA_SERV; ?> Name</td>
-                                                <td>
-                                                    <?php
-                                                        if ( $showProtected == 1 ) {
-                                                            echo $system['sysSERVNAME'];
-
-                                                        } else {
-                                                            echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
-                                                        }
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize"><?php echo _FPA_SERV; ?> IP Address</td>
-                                                <td>
-                                                    <?php
-                                                        if ( $showProtected == 1 ) {
-                                                            echo $system['sysSERVIP'];
-
-                                                        } else {
-                                                            echo '<span class="protected">'. _FPA_HIDDEN .'</span>&nbsp;';
-                                                        }
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize"><?php echo _FPA_SERV; ?> Signature</td>
-                                                <td>
-                                                    <?php echo $system['sysSERVSIG']; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize"><?php echo _FPA_SERV; ?> Encoding</td>
-                                                <td>
-                                                    <?php echo str_replace(',', ', ', $system['sysENCODING']); ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">Executing <?php echo _FPA_USR; ?></td>
-                                                <td>
-                                                    <?php echo $system['sysEXECUSER']; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize"><?php echo _FPA_SERV .' '. _FPA_USR; ?></td>
-                                                <td>
-                                                    <?php echo $system['sysWEBOWNER']; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize"><?php echo _FPA_SERV .' '.  _FPA_DROOT; ?></td>
-                                                <td>
-                                                    <?php
-                                                        if ( $showProtected == 1 ) {
-                                                            echo '<span class="xsmall">'. $system['sysDOCROOT'] .'</span>';
-
-                                                        } else {
-                                                            echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
-                                                        }
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize"><?php echo _FPA_SERV; ?> /Tmp Directory</td>
-                                                <td class="xsmall">
-                                                    <?php
-                                                        if ( $showProtected == 1 ) {
-                                                            echo $system['sysSYSTMPDIR'] .'<br />';
-
-                                                        } else {
-                                                            echo '<span class="protected">'. _FPA_HIDDEN .'</span><br />';
-                                                        }
-
-                                                        if ( $system['sysTMPDIRWRITABLE'] == _FPA_Y ) {
-                                                            $wColor = 'success';
-
-                                                        } elseif ( $system['sysTMPDIRWRITABLE'] == _FPA_N ) {
-                                                            $wColor = 'danger';
-
-                                                        } else {
-                                                            $system['sysTMPDIRWRITABLE'] = _FPA_U;
-                                                        }
-                                                        echo _FPA_WRITABLE.': <span class="text-'. $wColor .'">'. $system['sysTMPDIRWRITABLE'] .'</span>';
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-
-                                    <?php
-                                    /**
-                                     * permisison & ownership checks
-                                     *
-                                     * very basic checks for PHP API and process/executing user & current user
-                                     * designed to replace the old 'funky' and generally inaccurate suExec routines
-                                     *
-                                     * if not 'cgi' then is very likely to have issues unless there is a custom cloud
-                                     * solution in place
-                                     *
-                                     * however, if not cgi but the current & process user match, it's likely to be a
-                                     * custom/cloud solution and might be ok
-                                     *
-                                     * if is 'cgi' then the process and current should match with no issues. however,
-                                     * some cloud solutions 'fuzz' this method and users don't always have to match
-                                     * @RussW added 24/05/2020
-                                     *
-                                     */
-                                    ?>
-                                    <table class="table table-striped table-bordered 1table-sm">
-                                        <thead>
-                                            <tr>
-                                                <td colspan="3" class="bg-info text-white">Switch  <?php echo  _FPA_USR .' '.  _FPA_CFG; ?></td>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td class="text-center">Server suExec</td>
-                                                <td class="text-center">PHP suExec</td>
-                                                <td class="text-center">Ownership</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-center lead">
-                                                    <?php
-                                                        if ($phpenv['phpAPACHESUEXEC'] == _FPA_Y OR substr($phpenv['phpAPI'], 0, 4) == 'lite') {
-                                                            $sColor = 'success';
-                                                            $phpenv['phpAPACHESUEXEC'] = _FPA_Y;
-
-                                                        } elseif ($phpenv['phpAPACHESUEXEC'] == _FPA_N) {
-                                                            $sColor = 'warning';
-
-                                                        } else {
-                                                            $phpenv['phpAPACHESUEXEC'] = _FPA_U;
-                                                            $sColor = '';
-                                                        }
-                                                        echo '<span class="badge badge-pill badge-'. $sColor .'">'. $phpenv['phpAPACHESUEXEC'] .'</span>';
-                                                    ?>
-                                                </td>
-                                                <td class="text-center lead">
-                                                    <?php
-                                                        if ($phpenv['phpPHPSUEXEC'] == _FPA_Y) {
-                                                            $sColor = 'success';
-
-                                                        } elseif ($phpenv['phpPHPSUEXEC'] == _FPA_N) {
-                                                            $sColor = 'warning';
-
-                                                        } else {
-                                                            $phpenv['phpPHPSUEXEC'] = _FPA_U;
-                                                            $sColor = '';
-                                                        }
-                                                        echo '<span class="badge badge-pill badge-'. $sColor .'">'. $phpenv['phpPHPSUEXEC'] .'</span>';
-                                                    ?>
-                                                </td>
-                                                <td class="text-center xsmall">
-                                                    <span class="text-muted">Current User:</span> <?php echo  $system['sysCURRUSER']; ?><br />
-                                                    <span class="text-muted">Process User:</span> <?php echo  $system['sysEXECUSER']; ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="3">
-                                                    <?php
-                                                        if ($phpenv['phpAPACHESUEXEC'] != _FPA_Y AND $phpenv['phpPHPSUEXEC'] != _FPA_Y) {
-                                                                // not handlers installed
-                                                                $suColor = 'danger';
-                                                                $suStatus = _FPA_Y;
-                                                                $suMSG    = 'No user process permission or ownership management utilites available. Without a custom management utility you will have problems with file permissions and ownership';
-
-                                                        } elseif (stristr($phpenv['phpAPI'], 'cgi') === FALSE) { // NOT cgi
-
-                                                            if (($system['sysCURRUSER'] == $system['sysEXECUSER'])) {
-                                                                // not cgi but has Apache suExec and the users match
-                                                                $suColor = 'warning';
-                                                                $suStatus = _FPA_M;
-                                                                $suMSG    = 'Depending on any custom effective perrmissions, extension & template installations and file & image uploads might work.';
-
-                                                            } elseif ($phpenv['phpAPACHESUEXEC'] == _FPA_Y AND ($system['sysCURRUSER'] != $system['sysEXECUSER'])) {
-                                                                $suColor = 'warning';
-                                                                $suStatus = _FPA_Y;
-                                                                $suMSG    = 'Extension & template installations and file & image uploads are very unlikely to work.';
-
-                                                            } else {
-                                                                $suColor  = 'warning';
-                                                                $suStatus = _FPA_U;
-                                                                $suMSG    = 'Unable to determine effective perrmissions or ownership information.';
-                                                            }
-
-                                                        } else { // is php cgi
-
-                                                            if ($system['sysCURRUSER'] == $system['sysEXECUSER']) {
-                                                                // is cgi and users match
-                                                                $suColor  = 'success';
-                                                                $suStatus = _FPA_N;
-                                                                $suMSG    = 'Extension & template installations and file & image uploads should not have any problems.';
-
-                                                            } elseif ($system['sysCURRUSER'] != $system['sysEXECUSER']) {
-                                                                    // is cgi and users dont match (weird)
-                                                                    $suColor  = 'warning';
-                                                                    $suStatus = _FPA_M;
-                                                                    $suMSG    = 'Extension & template installations and file & image uploads might have some problems.';
-
-                                                            } else {
-                                                                $suColor  = 'dark';
-                                                                $suStatus = _FPA_U;
-                                                                $suMSG    = 'Unable to determine effective perrmissions or ownership information.';
-                                                            }
-                                                        }
-                                                    ?>
-
-                                                    <?php echo _FPA_PERMOWN; ?> Problems&nbsp;:&nbsp;<span class="badge badge-<?php echo $suColor; ?>"><?php echo $suStatus; ?></span>&nbsp;<span class="badge badge-light"><?php echo $phpenv['phpAPI']; ?></span>
-                                                    <p class="my-1"><?php echo $suMSG; ?></p>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-
-                                <?php showDev( $system ); ?>
-                                </div>
-                            </div><!--/.card (system)-->
-
-                        </div><!--/.col-->
-                    </div><!--./row hosting-discovery-->
-
-                    <div class="row row-cols-12 php-extensions">
-                        <div class="col mb-4 d-flex align-self-stretch">
-
-                            <div class="card border shadow w-100">
-                                <div class="card-header bg-info text-white"><?php echo $phpextensions['ARRNAME'] .' :: '. _FPA_DISC; ?></div>
-                                <div class="card-body">
-
-                                    <div class="row row-cols-2 row-cols-xs-3 row-cols-sm-4 row-cols-lg-6">
-
-                                        <?php
-                                            foreach ( $phpextensions as $key => $show ) {
-                                                if ( $show != $phpextensions['ARRNAME'] ) {
-
-                                                    if ( $key == 'exif' ) {
-                                                        $pieces = explode( " $", $show );
-                                                        $show = $pieces[0];
-                                                    }
-
-                                                    // find and highlight the requirements and mark them as present or missing
-                                                    if ( $key == 'libxml' OR $key == 'xml' OR $key == 'zip' OR $key == 'openssl' OR $key == 'zlib' OR $key == 'curl' OR $key == 'iconv' OR $key == 'mbstring' OR $key == 'mysql' OR $key == 'mysqli' OR $key == 'pdo_mysql' OR $key == 'mcrypt' OR $key == 'sodium' OR $key == 'suhosin' OR $key == 'cgi' OR $key == 'cgi-fcgi' ) {
-                                                        $status = 'success';
-                                                        $border = 'success';
-                                                        $weight = 'bolder';
-
-                                                    } elseif ( $key == 'apache2handler') {
-                                                        $status = 'warning';
-                                                        $border = 'warning';
-                                                        $weight = 'bold';
-
-                                                    } else {
-                                                        $status = 'dark';
-                                                        $border = 'default';
-                                                        $weight = 'normal';
-                                                    }
-
-                                                    if (empty($show)) {
-                                                        $show = '-';
-                                                    }
-
-                                                    echo '<div class="col d-flex align-self-stretch">';
-                                                    echo '<div class="bg-light border border-'.$border.' text-center small mb-2 w-100">';
-                                                    echo '<div class="text-'.$status.' font-weight-'.$weight.' px-1 py-2">'. $key .'</div>';
-                                                    echo '<div class="bg-white text-truncate px-1 py-2">'.$show.'</div>';
-                                                    echo '</div>';
-                                                    echo '</div>';
-
-                                                } // dont show if ARRNAME
-
-                                                    // look for recommended extensions that aren't installed
-                                                    if ( !in_array( $key, $phpreq ) ) {
-                                                        unset ( $phpreq[$key] );
-                                                    }
-
-                                            } //foreach $phpextensions
-                                        ?>
-                                    </div><!--row-->
-
-                                    <?php
-                                        if ( version_compare( $instance['cmsRELEASE'], '3.8', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
-                                            unset($phpreq['mcrypt']);
-                                        }
-
-                                        if (version_compare( $phpenv['phpVERSION'], '7.0.0', '>=' ))   {
-                                            unset($phpreq['mysql']);
-                                        }
-
-                                        if ( $phpreq ) {
-                                            echo '<h6 class="mt-3">'. _FPA_POTME .':</h6>';
-                                            echo '<div class="row row-cols-2 row-cols-xs-3 row-cols-sm-4 row-cols-lg-6">';
-
-                                            foreach ( $phpreq as $missingkey => $missing ) {
-                                                echo '<div class="col">';
-                                                echo '<div class="border border-warning text-warning text-center xsmall p-2 mb-2">'. $missingkey .'</div>';
-                                                echo '</div>';
-                                            }
-
-                                            echo '</div>';
-                                        }
-                                    ?>
-
-                                <?php showDev( $phpextensions ); ?>
-                                <?php showDev( $phpreq ); ?>
-                                </div>
-                            </div><!--/.card (php extensions)-->
-
-                        </div><!--/.col-->
-                    </div><!--row (php extensions)-->
-
-                    <?php if ( $phpenv['phpAPI'] == 'apache2handler' ) { ?>
-
-                        <div class="row row-cols-12 apache-modules">
+                        <div class="row row-cols-1 row-cols-lg-2 application-discovery">
                             <div class="col mb-4 d-flex align-self-stretch">
 
                                 <div class="card border shadow w-100">
-                                    <div class="card-header bg-info text-white"><?php echo $apachemodules['ARRNAME'] .' :: '. _FPA_DISC; ?></div>
+                                    <div class="card-header bg-info text-white">
+                                        <?php echo $instance['ARRNAME']; ?> :: Discovery
+                                    </div>
+                                    <div class="card-body">
+
+                                        <div class="row row-cols-2 row-cols-md-4">
+
+                                            <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                <div class="bg-white small w-100 border">
+                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">CMS <?php echo _FPA_F; ?></div>
+
+                                                    <?php if ( $instance['instanceFOUND'] == _FPA_Y AND $instance['platformVFILE'] != _FPA_N) { ?>
+
+                                                        <div class="xsmall mb-1"><?php echo @$instance['cmsPRODUCT']; ?></div>
+                                                        <div class="font-weight-bolder mb-1"><?php echo @$instance['cmsRELEASE'] .'.'. @$instance['cmsDEVLEVEL']; ?></div>
+
+                                                        <?php
+                                                            if ( strtolower( @$instance['cmsDEVSTATUS'] ) == 'stable' ) {
+                                                                $statusClass = 'success';
+
+                                                            } elseif ( strtolower( substr( @$instance['cmsDEVSTATUS'],0, 4 ) ) == 'alph' OR strtolower( substr( @$instance['cmsDEVSTATUS'],0, 4 ) ) == 'beta' ) {
+                                                                $statusClass = 'danger';
+
+                                                            } elseif ( strtolower( substr( @$instance['cmsDEVSTATUS'],0, 2 ) ) == 'rc' ) {
+                                                                $statusClass = 'warning';
+
+                                                            } else {
+                                                                $statusClass = 'warning';
+                                                            }
+                                                        ?>
+                                                        <div class="badge badge-<?php echo $statusClass; ?> text-uppercase w-100"><?php echo @$instance['cmsDEVSTATUS']; ?></div>
+
+                                                        <?php
+                                                            // warning if more than one instance of version.php found
+                                                            if ($vFileSum > 1) {
+                                                                echo '<div class="bg-danger text-white xsmall py-1">' . _FPA_MVFWF . '</div>';
+                                                            }
+                                                        ?>
+
+                                                    <?php } else { ?>
+                                                        <div class="border border-warning text-warning small mx-auto w-75"><?php echo @$instance['instanceFOUND']; ?></div>
+                                                    <?php } // instanceFOUND ?>
+
+                                                </div>
+
+                                            </div><!--/.col-->
+                                            <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                            <div class="bg-white small w-100 border">
+                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_PLATFORM; ?></div>
+
+                                                    <?php if ( $instance['instanceFOUND'] == _FPA_Y ) { ?>
+
+                                                        <div class="xsmall mb-1"><?php echo @$instance['platformPRODUCT']; ?></div>
+                                                        <div class="font-weight-bolder mb-1"><?php echo @$instance['platformRELEASE'] .'.'. @$instance['platformDEVLEVEL']; ?></div>
+
+                                                        <?php
+                                                            if ( strtolower( @$instance['platformDEVSTATUS'] ) == 'stable' ) {
+                                                                $statusClass = 'success';
+
+                                                            } elseif ( strtolower( substr( @$instance['platformDEVSTATUS'],0, 4 ) ) == 'alph' OR strtolower( substr( @$instance['cmsDEVSTATUS'],0, 4 ) ) == 'beta' ) {
+                                                                $statusClass = 'danger';
+
+                                                            } elseif ( strtolower( substr( @$instance['platformDEVSTATUS'],0, 2 ) ) == 'rc' ) {
+                                                                $statusClass = 'warning';
+
+                                                            } else {
+                                                                $statusClass = 'warning';
+                                                            }
+                                                        ?>
+                                                        <div class="badge badge-<?php echo $statusClass; ?> text-uppercase w-100"><?php echo @$instance['platformDEVSTATUS']; ?></div>
+
+                                                        <?php
+                                                            // warning if more than one instance of version.php found
+                                                            if ($vFileSum > 1) {
+                                                                echo '<div class="bg-danger text-white xsmall py-1">' . _FPA_MVFWF . '</div>';
+                                                            }
+                                                        ?>
+
+                                                    <?php } else { ?>
+                                                        <div class="border border-warning text-warning small mx-auto w-75"><?php echo @$instance['instanceFOUND']; ?></div>
+                                                    <?php } // instanceFOUND ?>
+
+                                                </div>
+
+                                            </div><!--/.col-->
+                                            <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                <div class="bg-white small w-100 border">
+                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_E; ?></div>
+
+                                                        <?php
+                                                            if ( $instance['instanceCONFIGURED'] == _FPA_Y ) {
+                                                                $statusClass = 'success';
+
+                                                            } else {
+                                                                $statusClass = 'warning';
+                                                            }
+                                                        ?>
+                                                        <div class="border border-<?php echo $statusClass; ?> text-<?php echo $statusClass; ?> small mx-auto w-75 mb-1"><?php echo @$instance['instanceCONFIGURED']; ?></div>
+                                                </div>
+
+                                            </div><!--/.col-->
+                                            <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                <div class="bg-white small w-100 border">
+                                                    <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_VER; ?></div>
+
+                                                        <?php
+                                                            if ( @$instance['instanceCFGVERMATCH'] == _FPA_Y ) {
+                                                                echo '<div class="font-weight-bolder mb-1">'. $instance['configVALIDFOR'] .'</div>';
+                                                                echo '<div class="border border-success text-success xsmall mx-auto w-75 mb-1">'. _FPA_YMATCH .' CMS</div>';
+
+                                                            } elseif ( @$instance['instanceCFGVERMATCH'] == _FPA_N ) {
+                                                                echo '<div class="font-weight-bolder mb-1">'. $instance['configVALIDFOR'] .'</div>';
+                                                                echo '<div class="border border-success text-success xsmall mx-auto w-75">'. _FPA_NMATCH .' CMS</div>';
+
+                                                            } elseif ( @$instance['configVALIDFOR'] == _FPA_U ) {
+                                                                echo '<div class="border border-warning text-warning small mx-auto w-75">'. $instance['configVALIDFOR'] .'</div>';
+                                                            }
+                                                        ?>
+
+                                                </div>
+
+                                            </div><!--/.col-->
+
+                                            <?php if ( $instance['instanceCONFIGURED'] != _FPA_N AND $instance['instanceFOUND'] != _FPA_N ) { ?>
+
+                                                <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                    <div class="bg-white small w-100 border">
+                                                        <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_VALID; ?></div>
+
+                                                            <?php
+                                                                if ( @$instance['configSANE'] == _FPA_Y AND @$instance['configSIZEVALID'] != _FPA_N ) {
+                                                                    $saneClass = 'success';
+                                                                    $configVALID = _FPA_Y;
+
+                                                                } elseif ( @$instance['configVALIDFOR'] == _FPA_U ) {
+                                                                    $saneClass = 'warning';
+                                                                    $configVALID = _FPA_N;
+                                                                }
+                                                            ?>
+                                                            <div class="border border-<?php echo $saneClass; ?> text-<?php echo $saneClass; ?> small mx-auto w-75 mb-1"><?php echo $configVALID; ?></div>
+
+                                                    </div>
+
+                                                </div><!--/.col-->
+                                                <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                    <div class="bg-white small w-100 border">
+                                                        <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_MODE; ?></div>
+
+                                                            <?php
+                                                                // looking for --7 or -7- or -77 (default folder permissions are usually 755)
+                                                                if ( substr( $instance['configMODE'],0 ,1 ) == '7' OR substr( $instance['configMODE'],1 ,1 ) == '7' OR substr( $instance['configMODE'],2 ,1 ) == '7' ) {
+                                                                    $modeClass = 'border border-danger text-danger';
+
+                                                                } elseif ( substr( $instance['configMODE'],1 ,1 ) >= '5' OR substr( $instance['configMODE'],2 ,1 ) >= '5' ) {
+                                                                    $modeClass = 'border border-warning text-warning';
+
+                                                                } elseif ( $instance['configMODE'] == _FPA_N ) {
+                                                                    $modeClass = 'border border-warning text-warning';
+
+                                                                } else {
+                                                                    $modeClass = 'font-weight-bolder';
+                                                                }
+
+                                                            ?>
+                                                            <div class="<?php echo $modeClass; ?> small mx-auto w-75 mb-1"><?php echo $instance['configMODE']; ?></div>
+
+                                                            <?php
+                                                                // is the file writable?
+                                                                if ( ( $instance['configWRITABLE'] == _FPA_Y ) AND ( substr( $instance['configMODE'],0 ,1 ) == '7' OR substr( $instance['configMODE'],1 ,1 ) == '7' OR substr( $instance['configMODE'],2 ,1 ) == '7' ) ) {
+                                                                    $writeClass = 'border border-danger text-danger';
+                                                                    $canWrite = 'Writable';
+
+                                                                } elseif ( ( $instance['configWRITABLE'] == _FPA_Y ) AND ( substr( $instance['configMODE'],0 ,1 ) <= '6' ) ) {
+                                                                    $writeClass = 'border border-success text-success';
+                                                                    $canWrite = _FPA_WRITABLE;
+
+                                                                } elseif ( ( $instance['configWRITABLE'] != _FPA_Y ) ) {
+                                                                    $writeClass = 'border border-warning text-warning';
+                                                                    $canWrite = _FPA_RO;
+
+                                                                }
+                                                            ?>
+                                                            <div class="<?php echo $writeClass; ?> xsmall mx-auto w-75 mb-1"><?php echo $canWrite; ?></div>
+
+                                                    </div>
+
+                                                </div><!--/.col-->
+                                                <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                    <div class="bg-white small w-100 border">
+                                                        <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_OWNER; ?></div>
+
+                                                        <?php
+                                                            if ( $showProtected == 1 ) {
+                                                                echo $instance['configOWNER']['name'];
+
+                                                            } else {
+                                                                echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
+                                                            }
+                                                        ?>
+
+                                                    </div>
+
+                                                </div><!--/.col-->
+                                                <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                    <div class="bg-white small w-100 border">
+                                                        <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_GROUP; ?></div>
+
+                                                        <?php
+                                                            if ( $showProtected == 1 ) {
+                                                                echo $instance['configGROUP']['name'];
+
+                                                            } else {
+                                                                echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
+                                                            }
+                                                        ?>
+
+                                                    </div>
+
+                                                </div><!--/.col-->
+
+                                            <?php } else { ?>
+
+                                                <div class="col-12 col-md-12 text-center my-2">
+                                                    <p class="border border-warning text-warning p-2 mb-0 xsmall">
+                                                        <?php
+                                                            if ( $instance['instanceFOUND'] != _FPA_Y ) {
+                                                                echo _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $instance['ARRNAME'].' '. _FPA_TESTP .'<br />';
+                                                            }
+
+                                                            if ( $instance['instanceCONFIGURED'] == _FPA_Y ) {
+                                                                echo _FPA_BUT .' '. _FPA_CFG .' '. _FPA_F;
+                                                            }
+                                                        ?>
+                                                    </p>
+                                                </div><!--/.col-12-->
+
+                                            <?php } // instance found & configured ?>
+
+                                        </div><!--./row-->
+
+                                    </div>
+                                </div><!--/.card (discovery)-->
+
+                            </div><!--/.col-->
+                            <div class="col mb-4 d-flex align-self-stretch">
+
+                                <div class="card border shadow w-100">
+                                    <div class="card-header bg-info text-white">
+                                        <?php echo $instance['ARRNAME']; ?> :: Configuration
+                                    </div>
+                                    <div class="card-body">
+
+                                        <div class="row row-cols-2 row-cols-md-4">
+
+                                            <?php if ( $instance['instanceCONFIGURED'] == _FPA_Y AND $instance['configVALIDFOR'] != _FPA_U ) { ?>
+
+                                                <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                    <div class="bg-white small w-100 border">
+                                                        <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">Offline?</div>
+                                                        <?php
+                                                            if ( $instance['configOFFLINE'] == 'false' ) {
+                                                                $offlineStatus = _FPA_N;
+                                                                $offlineClass  = 'border border-info text-info';
+
+                                                            } elseif ( $instance['configOFFLINE'] == 'true' ) {
+                                                                    $offlineStatus = _FPA_Y;
+                                                                    $offlineClass  = 'border border-warning text-warning';
+                                                            } else {
+                                                                $offlineStatus = _FPA_U;
+                                                                $offlineClass  = 'border border-danger text-danger';
+                                                            }
+                                                        ?>
+                                                        <div class="<?php echo $offlineClass; ?> mx-auto w-75 mb-1"><?php echo $offlineStatus; ?></div>
+                                                    </div>
+
+                                                </div><!--/.col-->
+                                                <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                    <div class="bg-white small w-100 border">
+                                                        <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">SEF URL's</div>
+                                                        <?php
+                                                            if ( $instance['configSEF'] == 'true' ) {
+                                                                $sefClass  = 'info';
+
+                                                            } else {
+                                                                $sefClass  = 'warning';
+                                                            }
+                                                        ?>
+                                                        <div class="xsmall w-100 mb-1 text-left px-1 mb-1 ">
+                                                            <?php echo _FPA_EN; ?>: <span class="text-<?php echo $sefClass; ?> text-capitalize float-right"><?php echo $instance['configSEF']; ?></span>
+                                                        </div>
+
+                                                        <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1 ">
+                                                            Suffix: <span class="float-right text-capitalize"><?php echo $instance['configSEFSUFFIX']; ?></span>
+                                                        </div>
+
+                                                        <?php
+                                                            if ( ($instance['configSEFRWRITE'] == '1' OR $instance['configSEFRWRITE'] == 'true' ) AND $instance['configSITEHTWC'] != _FPA_Y ) {
+                                                                $rewriteTitleClass = 'danger';
+                                                                $rewriteClass      = 'danger';
+
+                                                                if ($system['sysSHORTWEB'] != 'MIC') {
+                                                                    $htwcMissing = '.htaccess missing';
+                                                                } else {
+                                                                    $htwcMissing = 'web.config missing';
+                                                                }
+
+                                                            } else {
+                                                                $rewriteTitleClass = 'default';
+                                                                $rewriteClass      = 'info';
+                                                                $htwcMissing       = '';
+                                                            }
+                                                        ?>
+                                                        <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1 text-<?php echo $rewriteTitleClass; ?>">
+                                                            Rewrite: <span class="text-<?php echo $rewriteClass; ?> text-capitalize float-right"><?php echo $instance['configSEFRWRITE']; ?></span>
+                                                            <?php
+                                                                if ( !empty($htwcMissing) ) {
+                                                                    echo '<span class="xsmall text-'.$rewriteClass.' float-right">'. $htwcMissing .'</span>';
+                                                                }
+                                                            ?>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div><!--/.col-->
+                                                <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                    <div class="bg-white small w-100 border">
+                                                        <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">Compression</div>
+                                                        <?php
+                                                            if ( $instance['configGZIP'] == 'true' ) {
+                                                                $gzipClass  = 'info';
+
+                                                            } else {
+                                                                $gzipClass  = 'default';
+                                                            }
+                                                        ?>
+                                                        <div class="xsmall w-100 mb-1 text-left px-1 mb-1 ">
+                                                            GZip: <span class="text-<?php echo $gzipClass; ?> text-capitalize float-right"><?php echo $instance['configGZIP']; ?></span>
+                                                        </div>
+
+                                                        <?php
+                                                            if ( $instance['configCACHING'] == 'true' ) {
+                                                                $cacheClass  = 'info';
+
+                                                            } else {
+                                                                $cacheClass  = 'default';
+                                                            }
+                                                        ?>
+                                                        <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1 ">
+                                                            Cache: <span class="text-<?php echo $cacheClass; ?> text-capitalize float-right"><?php echo $instance['configCACHING']; ?></span>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div><!--/.col-->
+                                                <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                    <div class="bg-white small w-100 border">
+                                                        <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">Debugging</div>
+
+                                                        <?php
+                                                            if ( $instance['configERRORREP'] == 'none' ) {
+                                                                $debugClass  = 'info';
+
+                                                            } else {
+                                                                $debugClass  = 'warning';
+                                                            }
+                                                        ?>
+                                                        <div class="xsmall w-100 mb-1 text-left px-1 mb-1">
+                                                            Error Rep: <span class="text-<?php echo $debugClass; ?> float-right text-capitalize"><?php echo substr($instance['configERRORREP'], 0, 5); ?></span>
+                                                        </div>
+
+                                                        <?php
+                                                            if ( $instance['configSITEDEBUG'] == 'true' ) {
+                                                                $debugClass  = 'warning';
+
+                                                            } else {
+                                                                $debugClass  = 'info';
+                                                            }
+                                                        ?>
+                                                        <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
+                                                            Site Debug: <span class="text-<?php echo $debugClass; ?> text-capitalize float-right"><?php echo $instance['configSITEDEBUG']; ?></span>
+                                                        </div>
+
+                                                        <?php
+                                                            if ( $instance['configLANGDEBUG'] == 'true' ) {
+                                                                $debugClass  = 'warning';
+
+                                                            } else {
+                                                                $debugClass  = 'info';
+                                                            }
+                                                        ?>
+                                                        <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
+                                                            Lang Debug: <span class="text-<?php echo $debugClass; ?> text-capitalize float-right"><?php echo $instance['configLANGDEBUG']; ?></span>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div><!--/.col-->
+                                                <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                <div class="bg-white small w-100 border">
+                                                        <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_DB; ?></div>
+
+                                                        <div class="xsmall w-100 mb-1 text-left px-1 mb-1">
+                                                            Type: <span class=" float-right text-capitalize"><?php echo substr(@$instance['configDBTYPE'], 0, 5); ?></span>
+                                                        </div>
+
+                                                        <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
+                                                            Version: <span class=" float-right text-capitalize"><?php echo substr(@$database['dbHOSTSERV'], 0, 5); ?></span>
+                                                        </div>
+
+                                                        <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
+                                                            CharSet: <span class=" float-right"><?php echo substr(@$database['dbCHARSET'], 0, 5); ?></span>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div><!--/.col-->
+                                                <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                    <div class="bg-white small w-100 border">
+                                                        <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">DB <?php echo _FPA_CRED; ?></div>
+                                                        <?php
+                                                            if ( $instance['configDBCREDOK'] == _FPA_Y ) {
+                                                                $credStatus = _FPA_YACOMP;
+                                                                $credClass  = 'border border-success text-success';
+
+                                                            } else {
+                                                                $credStatus = _FPA_NACOMP;
+                                                                $credClass  = 'border border-warning text-warning';
+                                                            }
+                                                        ?>
+                                                        <div class="<?php echo $credClass; ?> mx-auto w-75 mb-1 xsmall"><?php echo $credStatus; ?></div>
+                                                    </div>
+
+                                                </div><!--/.col-->
+                                                <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                    <div class="bg-white small w-100 border">
+                                                        <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_SEC; ?></div>
+
+                                                        <?php
+                                                            if ( $instance['configSSL'] == '1' ) {
+                                                                $sslClass  = 'info';
+
+                                                            } else {
+                                                                $sslClass  = 'warning';
+                                                            }
+                                                        ?>
+                                                        <div class="xsmall w-100 mb-1 text-left px-1 mb-1">
+                                                            SSL: <span class="text-<?php echo $sslClass; ?> float-right text-capitalize"><?php echo @$instance['configSSL']; ?></span>
+                                                        </div>
+
+                                                        <?php
+                                                            if ( $instance['configACCESS'] == '1' ) {
+                                                                $accessClass   = 'info';
+                                                                $accessStatus  = 'Public';
+
+                                                            } elseif ( $instance['configACCESS'] == '2' ) {
+                                                                $accessClass   = 'info';
+                                                                $accessStatus  = 'Registered';
+
+                                                            } elseif ( $instance['configACCESS'] == '2' ) {
+                                                                $accessClass   = 'info';
+                                                                $accessStatus  = 'Special';
+
+                                                            } else {
+                                                                $accessClass  = 'warning';
+                                                                $accessStatus  = _FPA_U;
+                                                            }
+                                                        ?>
+                                                        <div class="xsmall border-top w-100 mb-1 text-left px-1 mb-1">
+                                                            Access: <span class="text-<?php echo $accessClass; ?> float-right text-capitalize"><?php echo $accessStatus; ?></span>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div><!--/.col-->
+                                                <div class="col text-center my-2 d-flex align-self-stretch">
+
+                                                    <div class="bg-white small w-100 border">
+                                                        <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_FEAT; ?></div>
+
+                                                        <?php
+                                                            if ( $instance['configFTP'] == '1' ) {
+                                                                $ftpClass  = 'warning';
+
+                                                            } else {
+                                                                $ftpClass  = 'info';
+                                                            }
+                                                        ?>
+                                                        <div class="xsmall w-100 mb-1 text-left px-1 mb-1">
+                                                            FTP: <span class="text-<?php echo $ftpClass; ?> float-right text-capitalize"><?php echo @$instance['configFTP']; ?></span>
+                                                        </div>
+
+                                                        <div class="xsmall border-top w-100 mb-1 text-left px-1 mb-1">
+                                                            Unicode Slug: <span class="float-right text-capitalize"><?php echo $instance['configUNICODE']; ?></span>
+                                                        </div>
+
+                                                    </div>
+
+                                                </div><!--/.col-->
+
+                                            <?php } else { ?>
+
+                                                <div class="col-12 col-md-12 text-center my-2">
+                                                    <p class="border border-warning text-warning p-2 mb-0 xsmall">
+                                                        <?php echo _FPA_CFG .' '. _FPA_NF .' '. _FPA_OR .' '. _FPA_NVALID .', '. _FPA_NO .' '. $instance['ARRNAME'].' '. _FPA_TESTP .'<br />';?>
+                                                    </p>
+                                                </div><!--/.col-12-->
+
+                                            <?php } // instance found & configured ?>
+
+                                        </div><!--./row-->
+
+                                    </div>
+                                </div><!--/.card (configuration)-->
+
+                            </div><!--/.col-->
+                        </div><!--./row application-discovery-->
+                        <?php showDev( $instance ); ?>
+
+                        <div class="row row-cols-1 row-cols-lg-2 hosting-discovery">
+                            <div class="col mb-4 d-flex align-self-stretch">
+
+                                <div class="card border shadow w-100">
+                                    <div class="card-header bg-info text-white"><?php echo $phpenv['ARRNAME'] .' :: '. _FPA_DISC; ?></div>
+                                    <div class="card-body">
+
+                                        <table class="table table-striped table-bordered table-sm">
+                                            <tbody>
+                                                <tr class="flex-fill">
+                                                    <td class="text-capitalize w-50">PHP <?php echo _FPA_VER; ?></td>
+                                                    <td>
+                                                        <?php echo $phpenv['phpVERSION']; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">PHP API</td>
+                                                    <td>
+                                                        <?php
+                                                            if ( $phpenv['phpAPI'] == 'apache2handler' ) {
+                                                                $status = 'warning';
+
+                                                            } else {
+                                                                $status = 'success';
+
+                                                            }
+                                                            echo '<span class="text-'. $status.'">'. $phpenv['phpAPI'] .'</span>';
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">Display Errors</td>
+                                                    <td>
+                                                        <?php echo $phpenv['phpERRORDISPLAY']; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">Error Report Level</td>
+                                                    <td>
+                                                        <?php echo $phpenv['phpERRORREPORT']; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">MySQL <?php echo _FPA_SUP; ?></td>
+                                                    <td>
+                                                        <?php echo $phpenv['phpSUPPORTSMYSQL']; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">MySQLi <?php echo _FPA_SUP; ?></td>
+                                                    <td>
+                                                        <?php echo $phpenv['phpSUPPORTSMYSQLI']; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">Magic Quotes</td>
+                                                    <td>
+                                                        <?php echo $phpenv['phpMAGICQUOTES'] ? 'true' : 'false'; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">Safe Mode</td>
+                                                    <td>
+                                                        <?php echo $phpenv['phpSAFEMODE'] ? 'true' : 'false'; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">Memory Limit</td>
+                                                    <td>
+                                                        <?php
+                                                            echo $phpenv['phpMEMLIMIT'];
+                                                            if ( @$_POST['increasePOPS'] == 1 ) { // the user set the increasePOPS setting for memory or time out errors
+                                                                echo '&nbsp;<i class="text-warning">('. _FPA_UINC .' '. $fpa['ORIGphpMEMLIMIT'] .')</i>';
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">PHP Uploads Enabled</td>
+                                                    <td>
+                                                        <?php echo $phpenv['phpUPLOADS']; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">Max. Upload Size</td>
+                                                    <td>
+                                                        <?php echo $phpenv['phpMAXUPSIZE']; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">Max. Post Size</td>
+                                                    <td>
+                                                        <?php echo $phpenv['phpMAXPOSTSIZE']; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">Max. Input Time</td>
+                                                    <td>
+                                                        <?php echo $phpenv['phpMAXINPUTTIME']; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">Max. Execution Time</td>
+                                                    <td>
+                                                        <?php
+                                                            echo $phpenv['phpMAXEXECTIME'];
+                                                            if ( @$_POST['increasePOPS'] == 1 ) { // the user set the increasePOPS setting for memory or time out errors
+                                                                echo '&nbsp;<i class="text-warning">('. _FPA_UINC .' '. $fpa['ORIGphpMAXEXECTIME'] .')</i>';
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">Register Globals</td>
+                                                    <td>
+                                                        <?php echo $phpenv['phpREGGLOBAL'] ? 'true' : 'false'; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">Allow URL fopen</td>
+                                                    <td>
+                                                        <?php echo $phpenv['phpURLFOPEN']; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">Open Base Path</td>
+                                                    <td>
+                                                        <?php echo $phpenv['phpOPENBASE']; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">Disabled Functions</td>
+                                                    <td class="xsmall">
+                                                        <?php echo str_replace (',', ', ', $phpenv['phpDISABLED']); ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">Session Path</td>
+                                                    <td class="xsmall">
+                                                        <?php
+                                                            if ( $showProtected == 1 ) {
+                                                                echo $phpenv['phpSESSIONPATH'] .'<br />';
+                                                            } else {
+                                                                echo '<span class="protected">'. _FPA_HIDDEN .'</span><br />';
+                                                            }
+
+                                                            if ( $phpenv['phpSESSIONPATHWRITABLE'] == _FPA_Y ) {
+                                                                $wColor = 'success';
+
+                                                            } elseif ( $phpenv['phpSESSIONPATHWRITABLE'] == _FPA_N ) {
+                                                                $wColor = 'danger';
+
+                                                            } else {
+                                                                $phpenv['phpSESSIONPATHWRITABLE'] = _FPA_U;
+                                                            }
+                                                            echo _FPA_WRITABLE.': <span class="text-'. $wColor .'">'. $phpenv['phpSESSIONPATHWRITABLE'] .'</span>';
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">System php.ini</td>
+                                                    <td class="xsmall">
+                                                        <?php
+                                                            echo $phpenv['phpINIFILE'] .'<br />';
+                                                            echo 'Multiple ini files:&nbsp;';
+                                                            echo $phpenv['phpINIOTHER'] ? 'true' : 'false';
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        Last Known PHP Error<br />
+                                                        <?php
+                                                            if ( $phpenv['phpLASTERR'] ) {
+                                                                echo '<span class="text-danger xsmall">'. $phpenv['phpLASTERR'] .'</span>';
+
+                                                            } else {
+                                                                echo '<span class="text-success">None</span>';
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                    <?php showDev( $phpenv ); ?>
+                                    </div>
+                                </div><!--/.card (php)-->
+
+                            </div><!--/.col-->
+                            <div class="col mb-4 d-flex align-self-stretch">
+
+                                <div class="card border shadow w-100">
+                                    <div class="card-header bg-info text-white"><?php echo $system['ARRNAME'] .' :: '. _FPA_DISC; ?></div>
+                                    <div class="card-body">
+
+                                        <table class="table table-striped table-bordered table-sm mb-5">
+                                            <tbody>
+                                                <tr class="flex-fill">
+                                                    <td class="text-capitalize w-50"><?php echo _FPA_PLATFORM; ?></td>
+                                                    <td>
+                                                        <?php echo  $system['sysPLATOS']; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">Kernel <?php echo _FPA_VER; ?></td>
+                                                    <td>
+                                                        <?php echo  $system['sysPLATREL']; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo _FPA_TEC; ?></td>
+                                                    <td>
+                                                        <?php echo  $system['sysPLATTECH']; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo _FPA_HNAME; ?></td>
+                                                    <td>
+                                                        <?php
+                                                            if ( $showProtected == 1 ) {
+                                                                echo $system['sysPLATNAME'];
+
+                                                            } else {
+                                                                echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">Total Disk Space</td>
+                                                    <td>
+                                                        <?php
+                                                            if (function_exists('disk_total_space')) {
+                                                                $total_space = sprintf('%.2f', disk_total_space('./') / 1073741824);
+                                                                echo $total_space . ' GiB';
+
+                                                            } else {
+                                                                echo _FPA_U;
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">Free Disk Space</td>
+                                                    <td>
+                                                        <?php
+                                                            if (function_exists('disk_free_space')) {
+                                                                $free_space = sprintf('%.2f', disk_free_space('./') / 1073741824);
+                                                                if (function_exists('disk_total_space')) {
+                                                                    $percent_free = $free_space ? round($free_space / $total_space, 2) * 100 : 0;
+
+                                                                    if ($percent_free <= '5') {
+                                                                        $status = 'text-warning';
+                                                                    } else {
+                                                                        $status = '';
+                                                                    }
+
+                                                                    echo $free_space .' GiB (<span class="'. $status .' xsmall">'. $percent_free .'%</span>)';
+                                                                    $system['sysFREESPACE'] = $free_space . ' GiB';
+
+                                                                } else {
+                                                                    echo $free_space . ' GiB';
+                                                                }
+
+                                                            } else {
+                                                                echo _FPA_U;
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo _FPA_SERV; ?> Name</td>
+                                                    <td>
+                                                        <?php
+                                                            if ( $showProtected == 1 ) {
+                                                                echo $system['sysSERVNAME'];
+
+                                                            } else {
+                                                                echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo _FPA_SERV; ?> IP Address</td>
+                                                    <td>
+                                                        <?php
+                                                            if ( $showProtected == 1 ) {
+                                                                echo $system['sysSERVIP'];
+
+                                                            } else {
+                                                                echo '<span class="protected">'. _FPA_HIDDEN .'</span>&nbsp;';
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo _FPA_SERV; ?> Signature</td>
+                                                    <td>
+                                                        <?php echo $system['sysSERVSIG']; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo _FPA_SERV; ?> Encoding</td>
+                                                    <td>
+                                                        <?php echo str_replace(',', ', ', $system['sysENCODING']); ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">Executing <?php echo _FPA_USR; ?></td>
+                                                    <td>
+                                                        <?php echo $system['sysEXECUSER']; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo _FPA_SERV .' '. _FPA_USR; ?></td>
+                                                    <td>
+                                                        <?php echo $system['sysWEBOWNER']; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo _FPA_SERV .' '.  _FPA_DROOT; ?></td>
+                                                    <td>
+                                                        <?php
+                                                            if ( $showProtected == 1 ) {
+                                                                echo '<span class="xsmall">'. $system['sysDOCROOT'] .'</span>';
+
+                                                            } else {
+                                                                echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo _FPA_SERV; ?> /Tmp Directory</td>
+                                                    <td class="xsmall">
+                                                        <?php
+                                                            if ( $showProtected == 1 ) {
+                                                                echo $system['sysSYSTMPDIR'] .'<br />';
+
+                                                            } else {
+                                                                echo '<span class="protected">'. _FPA_HIDDEN .'</span><br />';
+                                                            }
+
+                                                            if ( $system['sysTMPDIRWRITABLE'] == _FPA_Y ) {
+                                                                $wColor = 'success';
+
+                                                            } elseif ( $system['sysTMPDIRWRITABLE'] == _FPA_N ) {
+                                                                $wColor = 'danger';
+
+                                                            } else {
+                                                                $system['sysTMPDIRWRITABLE'] = _FPA_U;
+                                                            }
+                                                            echo _FPA_WRITABLE.': <span class="text-'. $wColor .'">'. $system['sysTMPDIRWRITABLE'] .'</span>';
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <?php
+                                        /**
+                                         * permisison & ownership checks
+                                         *
+                                         * very basic checks for PHP API and process/executing user & current user
+                                         * designed to replace the old 'funky' and generally inaccurate suExec routines
+                                         *
+                                         * if not 'cgi' then is very likely to have issues unless there is a custom cloud
+                                         * solution in place
+                                         *
+                                         * however, if not cgi but the current & process user match, it's likely to be a
+                                         * custom/cloud solution and might be ok
+                                         *
+                                         * if is 'cgi' then the process and current should match with no issues. however,
+                                         * some cloud solutions 'fuzz' this method and users don't always have to match
+                                         * @RussW added 24/05/2020
+                                         *
+                                         */
+                                        ?>
+                                        <table class="table table-striped table-bordered 1table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <td colspan="3" class="bg-info text-white">Switch  <?php echo  _FPA_USR .' '.  _FPA_CFG; ?></td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center">Server suExec</td>
+                                                    <td class="text-center">PHP suExec</td>
+                                                    <td class="text-center">Ownership</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center lead">
+                                                        <?php
+                                                            if ($phpenv['phpAPACHESUEXEC'] == _FPA_Y OR substr($phpenv['phpAPI'], 0, 4) == 'lite') {
+                                                                $sColor = 'success';
+                                                                $phpenv['phpAPACHESUEXEC'] = _FPA_Y;
+
+                                                            } elseif ($phpenv['phpAPACHESUEXEC'] == _FPA_N) {
+                                                                $sColor = 'warning';
+
+                                                            } else {
+                                                                $phpenv['phpAPACHESUEXEC'] = _FPA_U;
+                                                                $sColor = '';
+                                                            }
+                                                            echo '<span class="badge badge-pill badge-'. $sColor .'">'. $phpenv['phpAPACHESUEXEC'] .'</span>';
+                                                        ?>
+                                                    </td>
+                                                    <td class="text-center lead">
+                                                        <?php
+                                                            if ($phpenv['phpPHPSUEXEC'] == _FPA_Y) {
+                                                                $sColor = 'success';
+
+                                                            } elseif ($phpenv['phpPHPSUEXEC'] == _FPA_N) {
+                                                                $sColor = 'warning';
+
+                                                            } else {
+                                                                $phpenv['phpPHPSUEXEC'] = _FPA_U;
+                                                                $sColor = '';
+                                                            }
+                                                            echo '<span class="badge badge-pill badge-'. $sColor .'">'. $phpenv['phpPHPSUEXEC'] .'</span>';
+                                                        ?>
+                                                    </td>
+                                                    <td class="text-center xsmall">
+                                                        <span class="text-muted">Current User:</span> <?php echo  $system['sysCURRUSER']; ?><br />
+                                                        <span class="text-muted">Process User:</span> <?php echo  $system['sysEXECUSER']; ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="3">
+                                                        <?php
+                                                            if ($phpenv['phpAPACHESUEXEC'] != _FPA_Y AND $phpenv['phpPHPSUEXEC'] != _FPA_Y) {
+                                                                    // not handlers installed
+                                                                    $suColor = 'danger';
+                                                                    $suStatus = _FPA_Y;
+                                                                    $suMSG    = 'No user process permission or ownership management utilites available. Without a custom management utility you will have problems with file permissions and ownership';
+
+                                                            } elseif (stristr($phpenv['phpAPI'], 'cgi') === FALSE) { // NOT cgi
+
+                                                                if (($system['sysCURRUSER'] == $system['sysEXECUSER'])) {
+                                                                    // not cgi but has Apache suExec and the users match
+                                                                    $suColor = 'warning';
+                                                                    $suStatus = _FPA_M;
+                                                                    $suMSG    = 'Depending on any custom effective perrmissions, extension & template installations and file & image uploads might work.';
+
+                                                                } elseif ($phpenv['phpAPACHESUEXEC'] == _FPA_Y AND ($system['sysCURRUSER'] != $system['sysEXECUSER'])) {
+                                                                    $suColor = 'warning';
+                                                                    $suStatus = _FPA_Y;
+                                                                    $suMSG    = 'Extension & template installations and file & image uploads are very unlikely to work.';
+
+                                                                } else {
+                                                                    $suColor  = 'warning';
+                                                                    $suStatus = _FPA_U;
+                                                                    $suMSG    = 'Unable to determine effective perrmissions or ownership information.';
+                                                                }
+
+                                                            } else { // is php cgi
+
+                                                                if ($system['sysCURRUSER'] == $system['sysEXECUSER']) {
+                                                                    // is cgi and users match
+                                                                    $suColor  = 'success';
+                                                                    $suStatus = _FPA_N;
+                                                                    $suMSG    = 'Extension & template installations and file & image uploads should not have any problems.';
+
+                                                                } elseif ($system['sysCURRUSER'] != $system['sysEXECUSER']) {
+                                                                        // is cgi and users dont match (weird)
+                                                                        $suColor  = 'warning';
+                                                                        $suStatus = _FPA_M;
+                                                                        $suMSG    = 'Extension & template installations and file & image uploads might have some problems.';
+
+                                                                } else {
+                                                                    $suColor  = 'dark';
+                                                                    $suStatus = _FPA_U;
+                                                                    $suMSG    = 'Unable to determine effective perrmissions or ownership information.';
+                                                                }
+                                                            }
+                                                        ?>
+
+                                                        <?php echo _FPA_PERMOWN; ?> Problems&nbsp;:&nbsp;<span class="badge badge-<?php echo $suColor; ?>"><?php echo $suStatus; ?></span>&nbsp;<span class="badge badge-light"><?php echo $phpenv['phpAPI']; ?></span>
+                                                        <p class="my-1"><?php echo $suMSG; ?></p>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                    <?php showDev( $system ); ?>
+                                    </div>
+                                </div><!--/.card (system)-->
+
+                            </div><!--/.col-->
+                        </div><!--./row hosting-discovery-->
+
+                        <div class="row row-cols-12 php-extensions">
+                            <div class="col mb-4 d-flex align-self-stretch">
+
+                                <div class="card border shadow w-100">
+                                    <div class="card-header bg-info text-white"><?php echo $phpextensions['ARRNAME'] .' :: '. _FPA_DISC; ?></div>
                                     <div class="card-body">
 
                                         <div class="row row-cols-2 row-cols-xs-3 row-cols-sm-4 row-cols-lg-6">
 
                                             <?php
-                                                foreach ( $apachemodules as $key => $show ) {
+                                                foreach ( $phpextensions as $key => $show ) {
+                                                    if ( $show != $phpextensions['ARRNAME'] ) {
 
-                                                    if ( $show != $apachemodules['ARRNAME'] ) {
+                                                        if ( $key == 'exif' ) {
+                                                            $pieces = explode( " $", $show );
+                                                            $show = $pieces[0];
+                                                        }
 
                                                         // find and highlight the requirements and mark them as present or missing
-                                                        if ( $show == 'mod_rewrite' OR $show == 'mod_cgi' OR $show == 'mod_cgid' OR $show == 'mod_expires' OR $show == 'mod_deflate' OR $show == 'mod_auth'  ) {
+                                                        if ( $key == 'libxml' OR $key == 'xml' OR $key == 'zip' OR $key == 'openssl' OR $key == 'zlib' OR $key == 'curl' OR $key == 'iconv' OR $key == 'mbstring' OR $key == 'mysql' OR $key == 'mysqli' OR $key == 'pdo_mysql' OR $key == 'mcrypt' OR $key == 'sodium' OR $key == 'suhosin' OR $key == 'cgi' OR $key == 'cgi-fcgi' ) {
                                                             $status = 'success';
                                                             $border = 'success';
                                                             $weight = 'bolder';
 
-                                                        } elseif ( $show == 'mod_php4' OR $show == 'mod_php5' ) {
+                                                        } elseif ( $key == 'apache2handler') {
                                                             $status = 'warning';
                                                             $border = 'warning';
                                                             $weight = 'bold';
@@ -6142,30 +6082,43 @@
                                                             $border = 'default';
                                                             $weight = 'normal';
                                                         }
+
+                                                        if (empty($show)) {
+                                                            $show = '-';
+                                                        }
+
                                                         echo '<div class="col d-flex align-self-stretch">';
                                                         echo '<div class="bg-light border border-'.$border.' text-center small mb-2 w-100">';
-                                                        echo '<div class="text-'.$status.' font-weight-'.$weight.' px-1 py-2">'. $show .'</div>';
+                                                        echo '<div class="text-'.$status.' font-weight-'.$weight.' px-1 py-2">'. $key .'</div>';
+                                                        echo '<div class="bg-white text-truncate px-1 py-2">'.$show.'</div>';
                                                         echo '</div>';
                                                         echo '</div>';
 
                                                     } // dont show if ARRNAME
 
-                                                        // look for recommended modules that aren't installed
-                                                        if ( !in_array( $show, $apachereq ) ) {
-                                                            unset ( $apachereq['ARRNAME'] );
-                                                            unset ( $apachereq[$show] );
+                                                        // look for recommended extensions that aren't installed
+                                                        if ( !in_array( $key, $phpreq ) ) {
+                                                            unset ( $phpreq[$key] );
                                                         }
 
-                                                } //foreach $apachemodules
+                                                } //foreach $phpextensions
                                             ?>
                                         </div><!--row-->
 
                                         <?php
-                                            if ( $apachereq ) {
-                                                echo '<h6 class="mt-3">'. _FPA_POTMM .':</h6>';
+                                            if ( version_compare( $instance['cmsRELEASE'], '3.8', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
+                                                unset($phpreq['mcrypt']);
+                                            }
+
+                                            if (version_compare( $phpenv['phpVERSION'], '7.0.0', '>=' ))   {
+                                                unset($phpreq['mysql']);
+                                            }
+
+                                            if ( $phpreq ) {
+                                                echo '<h6 class="mt-3">'. _FPA_POTME .':</h6>';
                                                 echo '<div class="row row-cols-2 row-cols-xs-3 row-cols-sm-4 row-cols-lg-6">';
 
-                                                foreach ( $apachereq as $missingkey => $missing ) {
+                                                foreach ( $phpreq as $missingkey => $missing ) {
                                                     echo '<div class="col">';
                                                     echo '<div class="border border-warning text-warning text-center xsmall p-2 mb-2">'. $missingkey .'</div>';
                                                     echo '</div>';
@@ -6173,329 +6126,262 @@
 
                                                 echo '</div>';
                                             }
-
-                                            unset ( $key, $show );
                                         ?>
 
-                                    <?php showDev( $apachemodules ); ?>
-                                    <?php $apachereq['ARRNAME'] = 'Potential Missing Apache Modules'; ?>
-                                    <?php showDev( $apachereq ); ?>
+                                    <?php showDev( $phpextensions ); ?>
+                                    <?php showDev( $phpreq ); ?>
                                     </div>
-                                </div><!--/.card (apache modules)-->
+                                </div><!--/.card (php extensions)-->
 
                             </div><!--/.col-->
-                        </div><!--row (apache modules)-->
+                        </div><!--row (php extensions)-->
 
-                    <?php } // end apache-modules ?>
+                        <?php if ( $phpenv['phpAPI'] == 'apache2handler' ) { ?>
 
-	                <div class="row row-cols-1 row-cols-lg-2 database-discovery">
-                        <div class="col mb-4 d-flex align-self-stretch">
+                            <div class="row row-cols-12 apache-modules">
+                                <div class="col mb-4 d-flex align-self-stretch">
 
-                            <div class="card border shadow w-100">
-                                <div class="card-header bg-info text-white"><?php echo $database['ARRNAME'] .' :: '. _FPA_DISC; ?></div>
-                                <div class="card-body">
+                                    <div class="card border shadow w-100">
+                                        <div class="card-header bg-info text-white"><?php echo $apachemodules['ARRNAME'] .' :: '. _FPA_DISC; ?></div>
+                                        <div class="card-body">
 
-                                    <table class="table table-striped table-bordered table-sm">
-                                        <tbody>
-                                            <tr class="flex-fill">
-                                                <td class="text-capitalize w-50"><?php echo @$instance['configDBTYPE'] .' '. _FPA_VER; ?></td>
-                                                <td>
-                                                    <?php
-                                                        if ( @$database['dbHOSTSERV'] ) {
-                                                            echo  _FPA_SERV .': '. $database['dbHOSTSERV'];
+                                            <div class="row row-cols-2 row-cols-xs-3 row-cols-sm-4 row-cols-lg-6">
 
-                                                        } else {
-                                                            echo _FPA_SERV .': <span class="text-warning">'. _FPA_U .'</span>';
-                                                        }
+                                                <?php
+                                                    foreach ( $apachemodules as $key => $show ) {
 
-                                                        if ( @$database['dbHOSTCLIENT'] ) {
-                                                            echo '<br />'. _FPA_CLNT .': '. substr ($database['dbHOSTCLIENT'], 0, 30) .'...';
+                                                        if ( $show != $apachemodules['ARRNAME'] ) {
 
-                                                        } else {
-                                                            echo _FPA_CLNT .': <span class="text-warning">'. _FPA_U .'</span>';
-                                                        }
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize"><?php echo @$instance['configDBTYPE'] .' '. _FPA_HNAME; ?></td>
-                                                <td>
-                                                    <?php
-                                                        if ( $showProtected == 1 ) {
+                                                            // find and highlight the requirements and mark them as present or missing
+                                                            if ( $show == 'mod_rewrite' OR $show == 'mod_cgi' OR $show == 'mod_cgid' OR $show == 'mod_expires' OR $show == 'mod_deflate' OR $show == 'mod_auth'  ) {
+                                                                $status = 'success';
+                                                                $border = 'success';
+                                                                $weight = 'bolder';
 
-                                                            if ( $instance['configDBHOST'] ) {
-                                                                echo $instance['configDBHOST'];
+                                                            } elseif ( $show == 'mod_php4' OR $show == 'mod_php5' ) {
+                                                                $status = 'warning';
+                                                                $border = 'warning';
+                                                                $weight = 'bold';
 
                                                             } else {
-                                                                echo '<span class="text-danger">'. _FPA_NC .'</span>';
+                                                                $status = 'dark';
+                                                                $border = 'default';
+                                                                $weight = 'normal';
+                                                            }
+                                                            echo '<div class="col d-flex align-self-stretch">';
+                                                            echo '<div class="bg-light border border-'.$border.' text-center small mb-2 w-100">';
+                                                            echo '<div class="text-'.$status.' font-weight-'.$weight.' px-1 py-2">'. $show .'</div>';
+                                                            echo '</div>';
+                                                            echo '</div>';
+
+                                                        } // dont show if ARRNAME
+
+                                                            // look for recommended modules that aren't installed
+                                                            if ( !in_array( $show, $apachereq ) ) {
+                                                                unset ( $apachereq['ARRNAME'] );
+                                                                unset ( $apachereq[$show] );
                                                             }
 
-                                                        } else {
-                                                            echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
-                                                        }
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize"><?php echo  _FPA_CONT; ?></td>
-                                                <td>
-                                                    <?php
-                                                        if ( $database['dbLOCAL'] == _FPA_Y ) {
-                                                            echo '('. _FPA_LOCAL .') '. @$database['dbHOSTINFO'];
+                                                    } //foreach $apachemodules
+                                                ?>
+                                            </div><!--row-->
 
-                                                        } elseif ( $database['dbLOCAL'] == _FPA_N AND @$database['dbHOSTINFO'] ) {
+                                            <?php
+                                                if ( $apachereq ) {
+                                                    echo '<h6 class="mt-3">'. _FPA_POTMM .':</h6>';
+                                                    echo '<div class="row row-cols-2 row-cols-xs-3 row-cols-sm-4 row-cols-lg-6">';
 
-                                                            if ( $showProtected <= 2 ) {
-                                                                echo '('. _FPA_REMOTE .') '. $database['dbHOSTINFO'];
+                                                    foreach ( $apachereq as $missingkey => $missing ) {
+                                                        echo '<div class="col">';
+                                                        echo '<div class="border border-warning text-warning text-center xsmall p-2 mb-2">'. $missingkey .'</div>';
+                                                        echo '</div>';
+                                                    }
+
+                                                    echo '</div>';
+                                                }
+
+                                                unset ( $key, $show );
+                                            ?>
+
+                                        <?php showDev( $apachemodules ); ?>
+                                        <?php $apachereq['ARRNAME'] = 'Potential Missing Apache Modules'; ?>
+                                        <?php showDev( $apachereq ); ?>
+                                        </div>
+                                    </div><!--/.card (apache modules)-->
+
+                                </div><!--/.col-->
+                            </div><!--row (apache modules)-->
+
+                        <?php } // end apache-modules ?>
+
+                        <div class="row row-cols-1 row-cols-lg-2 database-discovery">
+                            <div class="col mb-4 d-flex align-self-stretch">
+
+                                <div class="card border shadow w-100">
+                                    <div class="card-header bg-info text-white"><?php echo $database['ARRNAME'] .' :: '. _FPA_DISC; ?></div>
+                                    <div class="card-body">
+
+                                        <table class="table table-striped table-bordered table-sm">
+                                            <tbody>
+                                                <tr class="flex-fill">
+                                                    <td class="text-capitalize w-50"><?php echo @$instance['configDBTYPE'] .' '. _FPA_VER; ?></td>
+                                                    <td>
+                                                        <?php
+                                                            if ( @$database['dbHOSTSERV'] ) {
+                                                                echo  _FPA_SERV .': '. $database['dbHOSTSERV'];
+
+                                                            } else {
+                                                                echo _FPA_SERV .': <span class="text-warning">'. _FPA_U .'</span>';
+                                                            }
+
+                                                            if ( @$database['dbHOSTCLIENT'] ) {
+                                                                echo '<br />'. _FPA_CLNT .': '. substr ($database['dbHOSTCLIENT'], 0, 30) .'...';
+
+                                                            } else {
+                                                                echo _FPA_CLNT .': <span class="text-warning">'. _FPA_U .'</span>';
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo @$instance['configDBTYPE'] .' '. _FPA_HNAME; ?></td>
+                                                    <td>
+                                                        <?php
+                                                            if ( $showProtected == 1 ) {
+
+                                                                if ( $instance['configDBHOST'] ) {
+                                                                    echo $instance['configDBHOST'];
+
+                                                                } else {
+                                                                    echo '<span class="text-danger">'. _FPA_NC .'</span>';
+                                                                }
 
                                                             } else {
                                                                 echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
                                                             }
-
-                                                        } elseif ( $database['dbLOCAL'] == _FPA_N AND !@$database['dbHOSTINFO'] ) {
-                                                            echo '('. _FPA_REMOTE .') <span class="text-warning"> '. _FPA_U .'</span>';
-
-                                                        } else {
-                                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
-                                                        }
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize">PHP <?php echo _FPA_SUP; ?></td>
-                                                <td>
-                                                    <?php
-                                                        if ( @$instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_N ) {
-                                                            echo '<span class="text-danger">'. $instance['configDBTYPE'] .' '. _FPA_IS .' '. _FPA_NSUP .' '. _FPA_BY .' PHP '. $phpenv['phpVERSION'] .'</span>';
-
-                                                        } elseif (  @$instance['configDBTYPE'] == 'mysql' AND $phpenv['phpSUPPORTSMYSQL'] == _FPA_N ) {
-                                                            echo '<span class="text-danger">'. $instance['configDBTYPE'] .' '. _FPA_IS .' '. _FPA_NSUP .' '. _FPA_BY .' PHP '. $phpenv['phpVERSION'] .'</span>';
-
-                                                        } elseif ( ( @$instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_Y ) OR ( @$instance['configDBTYPE'] == 'mysql' AND $phpenv['phpSUPPORTSMYSQL'] == _FPA_Y ) OR @$instance['configDBTYPE'] == 'pdomysql' OR @$instance['configDBTYPE'] == 'postgresql'OR @$instance['configDBTYPE'] == 'pgsql') {
-                                                            echo '<span class="text-success">'. $instance['configDBTYPE'] .' '. _FPA_IS .' '. _FPA_YSUP .' '. _FPA_BY .' PHP '. $phpenv['phpVERSION'] .'</span>';
-
-                                                        } else {
-                                                            echo '<span class="text-warning">PHP '. $phpenv['phpVERSION'] .' '. _FPA_SUP .' '. _FPA_IS .' '. _FPA_U .'</span>';
-                                                        }
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize"><?php echo  _FPA_CON .' '. _FPA_TO .' '. @$instance['configDBTYPE']; ?></td>
-                                                <td>
-                                                    <?php
-                                                        if ( $database['dbDOCHECKS'] == _FPA_N ) {
-                                                            echo '<span class="text-warning">'. _FPA_NOA .', '. _FPA_NC .'</span>';
-
-                                                        } elseif ( @$database['dbERROR'] == _FPA_N ) {
-                                                            echo '<span class="text-success">'. _FPA_Y .', '. _FPA_YCON .'</span>';
-
-                                                        } elseif ( @$database['dbERROR'] != _FPA_N ) {
-                                                            echo '<span class="text-danger">'. _FPA_N .', '. _FPA_ER .'</span>';
-                                                        }
-                                                    ?>
-                                                </td>
-                                            </tr>
-
-                                            <?php if ( @$database['dbERROR'] AND @$database['dbERROR'] != _FPA_N ) { ?>
-                                                <tr>
-                                                    <td class="text-capitalize text-danger"><?php echo _FPA_ECON; ?></td>
-                                                    <td>
-                                                        <?php
-                                                            echo '<span class="text-danger">'. $database['dbERROR'] .'</span>';
                                                         ?>
                                                     </td>
                                                 </tr>
-                                            <?php } // dbERROR ?>
-
-                                            <tr>
-                                                <td class="text-capitalize"><?php echo @$instance['configDBTYPE'] .' '. _FPA_CHARS; ?></td>
-                                                <td>
-                                                    <?php
-                                                        if ( @$database['dbCHARSET'] ) {
-                                                            echo $database['dbCHARSET'];
-
-                                                        } else {
-                                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
-                                                        }
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize"><?php echo _FPA_DEF .' '. _FPA_CHARS; ?></td>
-                                                <td>
-                                                    <?php
-                                                        if ( @$database['dbHOSTDEFCHSET'] ) {
-                                                            echo $database['dbHOSTDEFCHSET'];
-
-                                                        } else {
-                                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
-                                                        }
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize"><?php echo _FPA_DB .' '. _FPA_TCOL; ?></td>
-                                                <td>
-                                                    <?php
-                                                        if ( @$database['dbCOLLATION'] ) {
-                                                            echo $database['dbCOLLATION'];
-
-                                                        } elseif ( @$database['dbERROR'] != _FPA_N ) {
-                                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
-
-                                                        } else {
-                                                            echo '<span class="text-warning">'. _FPA_NC .'</span>';
-                                                        }
-                                                    ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="text-capitalize"><?php echo _FPA_DB .' '. _FPA_TSIZ; ?></td>
-                                                <td>
-                                                    <?php
-                                                        if ( @$database['dbSIZE'] ) {
-                                                            echo $database['dbSIZE'];
-
-                                                        } else {
-                                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
-                                                        }
-                                                    ?>
-                                                </td>
-                                            </tr>
-
-                                            <?php if ( @$instance['configDBCREDOK'] != _FPA_Y AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                                 <tr>
-                                                    <td class="text-capitalize text-warning"><?php echo _FPA_MISSINGCRED; ?></td>
-                                                    <td class="xsmall">
+                                                    <td class="text-capitalize"><?php echo  _FPA_CONT; ?></td>
+                                                    <td>
                                                         <?php
-                                                            if ( @$instance['configDBTYPE'] == '' ) {
-                                                                echo _FPA_CONT .': <span class="text-warning">'. _FPA_NF .'</span><br />';
-                                                            }
-                                                            if ( @$instance['configDBHOST'] == '' ) {
-                                                                echo _FPA_DB.' '. _FPA_HNAME .': <span class="text-warning">'. _FPA_NF .'</span><br />';
-                                                            }
-                                                            if ( @$instance['configDBNAME'] == '' ) {
-                                                                echo _FPA_DB .' Name: <span class="text-warning">'. _FPA_NF .'</span><br />';
-                                                            }
-                                                            if ( @$instance['configDBPREF'] == '' ) {
-                                                                echo _FPA_TBL .' Prefix: <span class="text-warning">'. _FPA_NF .'</span><br />';
-                                                            }
-                                                            if ( @$instance['configDBUSER'] == '' ) {
-                                                                echo _FPA_DB .' '. _FPA_USER .': <span class="text-warning">'. _FPA_NF .'</span><br />';
-                                                            }
-                                                            if ( @$instance['configDBPASS'] == '' ) {
-                                                                echo _FPA_DB .' '. _FPA_PASS .': <span class="text-warning">'. _FPA_NF .'</span><br />';
+                                                            if ( $database['dbLOCAL'] == _FPA_Y ) {
+                                                                echo '('. _FPA_LOCAL .') '. @$database['dbHOSTINFO'];
+
+                                                            } elseif ( $database['dbLOCAL'] == _FPA_N AND @$database['dbHOSTINFO'] ) {
+
+                                                                if ( $showProtected <= 2 ) {
+                                                                    echo '('. _FPA_REMOTE .') '. $database['dbHOSTINFO'];
+
+                                                                } else {
+                                                                    echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
+                                                                }
+
+                                                            } elseif ( $database['dbLOCAL'] == _FPA_N AND !@$database['dbHOSTINFO'] ) {
+                                                                echo '('. _FPA_REMOTE .') <span class="text-warning"> '. _FPA_U .'</span>';
+
+                                                            } else {
+                                                                echo '<span class="text-warning">'. _FPA_U .'</span>';
                                                             }
                                                         ?>
                                                     </td>
                                                 </tr>
-                                            <?php } // credentialsMissing ?>
-                                        </tbody>
-                                    </table>
-
-                                </div>
-                            </div><!--/.card (discovery)-->
-
-                        </div><!--/.col-->
-                        <div class="col mb-4 d-flex align-self-stretch">
-
-                            <div class="card border shadow w-100">
-                                <div class="card-header bg-info text-white"><?php echo $database['ARRNAME'] .' :: '. _FPA_PERF; ?></div>
-                                <div class="card-body">
-
-                                    <table class="table table-striped table-bordered table-sm">
-                                        <tbody>
-                                            <?php if ( $database['dbDOCHECKS'] == _FPA_Y AND @$database['dbERROR'] == _FPA_N AND $instance['configDBTYPE'] <> 'postgresql' AND $instance['configDBTYPE'] <> 'pgsql' AND $instance['instanceFOUND'] == _FPA_Y) { ?>
-
-                                                <?php $pieces = explode( ':', $database['dbHOSTSTATS'][0] ); ?>
-                                                <tr class="flex-fill">
-                                                    <td class="text-capitalize w-50"><?php echo $pieces[0]; ?></td>
+                                                <tr>
+                                                    <td class="text-capitalize">PHP <?php echo _FPA_SUP; ?></td>
                                                     <td>
                                                         <?php
-                                                            /**
-                                                             * convert uptime from seconds to days, hours, minutes
-                                                             *
-                                                             * @param $seconds
-                                                             * @return $days $hours $minutes
-                                                             */
-                                                            function uptimeToWords($seconds) {
-                                                                $days = intval(intval($seconds) / (3600*24));
-                                                                $hours = (intval($seconds) / 3600) % 24;
-                                                                $minutes = (intval($seconds) / 60) % 60;
+                                                            if ( @$instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_N ) {
+                                                                echo '<span class="text-danger">'. $instance['configDBTYPE'] .' '. _FPA_IS .' '. _FPA_NSUP .' '. _FPA_BY .' PHP '. $phpenv['phpVERSION'] .'</span>';
 
-                                                                $days = $days ? $days . 'd ' : '';
-                                                                $hours = $hours ? $hours . 'h ' : '';
-                                                                $minutes = $minutes ? $minutes . 'm ' : '';
+                                                            } elseif (  @$instance['configDBTYPE'] == 'mysql' AND $phpenv['phpSUPPORTSMYSQL'] == _FPA_N ) {
+                                                                echo '<span class="text-danger">'. $instance['configDBTYPE'] .' '. _FPA_IS .' '. _FPA_NSUP .' '. _FPA_BY .' PHP '. $phpenv['phpVERSION'] .'</span>';
 
-                                                                return $days .' '. $hours .' '. $minutes;
+                                                            } elseif ( ( @$instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_Y ) OR ( @$instance['configDBTYPE'] == 'mysql' AND $phpenv['phpSUPPORTSMYSQL'] == _FPA_Y ) OR @$instance['configDBTYPE'] == 'pdomysql' OR @$instance['configDBTYPE'] == 'postgresql'OR @$instance['configDBTYPE'] == 'pgsql') {
+                                                                echo '<span class="text-success">'. $instance['configDBTYPE'] .' '. _FPA_IS .' '. _FPA_YSUP .' '. _FPA_BY .' PHP '. $phpenv['phpVERSION'] .'</span>';
+
+                                                            } else {
+                                                                echo '<span class="text-warning">PHP '. $phpenv['phpVERSION'] .' '. _FPA_SUP .' '. _FPA_IS .' '. _FPA_U .'</span>';
                                                             }
-                                                            echo uptimeToWords($pieces[1]);
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo  _FPA_CON .' '. _FPA_TO .' '. @$instance['configDBTYPE']; ?></td>
+                                                    <td>
+                                                        <?php
+                                                            if ( $database['dbDOCHECKS'] == _FPA_N ) {
+                                                                echo '<span class="text-warning">'. _FPA_NOA .', '. _FPA_NC .'</span>';
+
+                                                            } elseif ( @$database['dbERROR'] == _FPA_N ) {
+                                                                echo '<span class="text-success">'. _FPA_Y .', '. _FPA_YCON .'</span>';
+
+                                                            } elseif ( @$database['dbERROR'] != _FPA_N ) {
+                                                                echo '<span class="text-danger">'. _FPA_N .', '. _FPA_ER .'</span>';
+                                                            }
                                                         ?>
                                                     </td>
                                                 </tr>
 
-                                                <?php $pieces = explode( ':', $database['dbHOSTSTATS'][1] ); ?>
-                                                <tr>
-                                                    <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
-                                                    <td>
-                                                        <?php echo $pieces[1]; ?>
-                                                    </td>
-                                                </tr>
+                                                <?php if ( @$database['dbERROR'] AND @$database['dbERROR'] != _FPA_N ) { ?>
+                                                    <tr>
+                                                        <td class="text-capitalize text-danger"><?php echo _FPA_ECON; ?></td>
+                                                        <td>
+                                                            <?php
+                                                                echo '<span class="text-danger">'. $database['dbERROR'] .'</span>';
+                                                            ?>
+                                                        </td>
+                                                    </tr>
+                                                <?php } // dbERROR ?>
 
-                                                <?php $pieces = explode( ':', $database['dbHOSTSTATS'][2] ); ?>
                                                 <tr>
-                                                    <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
-                                                    <td>
-                                                        <?php echo $pieces[1]; ?>
-                                                    </td>
-                                                </tr>
-
-                                                <?php $pieces = explode( ':', $database['dbHOSTSTATS'][3] ); ?>
-                                                <tr>
-                                                    <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
-                                                    <td>
-                                                        <?php echo $pieces[1]; ?>
-                                                    </td>
-                                                </tr>
-
-                                                <?php $pieces = explode( ':', $database['dbHOSTSTATS'][4] ); ?>
-                                                <tr>
-                                                    <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
-                                                    <td>
-                                                        <?php echo $pieces[1]; ?>
-                                                    </td>
-                                                </tr>
-
-                                                <?php $pieces = explode( ':', $database['dbHOSTSTATS'][5] ); ?>
-                                                <tr>
-                                                    <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
-                                                    <td>
-                                                        <?php echo $pieces[1]; ?>
-                                                    </td>
-                                                </tr>
-
-                                                <?php $pieces = explode( ':', $database['dbHOSTSTATS'][6] ); ?>
-                                                <tr>
-                                                    <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
-                                                    <td>
-                                                        <?php echo $pieces[1]; ?>
-                                                    </td>
-                                                </tr>
-
-                                                <?php $pieces = explode( ':', $database['dbHOSTSTATS'][7] ); ?>
-                                                <tr>
-                                                    <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
-                                                    <td>
-                                                        <?php echo $pieces[1]; ?>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-capitalize">No. Tables</td>
+                                                    <td class="text-capitalize"><?php echo @$instance['configDBTYPE'] .' '. _FPA_CHARS; ?></td>
                                                     <td>
                                                         <?php
-                                                            if ( $database['dbTABLECOUNT'] ) {
-                                                                echo $database['dbTABLECOUNT'] .' tables';
+                                                            if ( @$database['dbCHARSET'] ) {
+                                                                echo $database['dbCHARSET'];
+
+                                                            } else {
+                                                                echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo _FPA_DEF .' '. _FPA_CHARS; ?></td>
+                                                    <td>
+                                                        <?php
+                                                            if ( @$database['dbHOSTDEFCHSET'] ) {
+                                                                echo $database['dbHOSTDEFCHSET'];
+
+                                                            } else {
+                                                                echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo _FPA_DB .' '. _FPA_TCOL; ?></td>
+                                                    <td>
+                                                        <?php
+                                                            if ( @$database['dbCOLLATION'] ) {
+                                                                echo $database['dbCOLLATION'];
+
+                                                            } elseif ( @$database['dbERROR'] != _FPA_N ) {
+                                                                echo '<span class="text-warning">'. _FPA_U .'</span>';
+
+                                                            } else {
+                                                                echo '<span class="text-warning">'. _FPA_NC .'</span>';
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize"><?php echo _FPA_DB .' '. _FPA_TSIZ; ?></td>
+                                                    <td>
+                                                        <?php
+                                                            if ( @$database['dbSIZE'] ) {
+                                                                echo $database['dbSIZE'];
 
                                                             } else {
                                                                 echo '<span class="text-warning">'. _FPA_U .'</span>';
@@ -6504,37 +6390,179 @@
                                                     </td>
                                                 </tr>
 
-                                            <?php } else { ?>
+                                                <?php if ( @$instance['configDBCREDOK'] != _FPA_Y AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
+                                                    <tr>
+                                                        <td class="text-capitalize text-warning"><?php echo _FPA_MISSINGCRED; ?></td>
+                                                        <td class="xsmall">
+                                                            <?php
+                                                                if ( @$instance['configDBTYPE'] == '' ) {
+                                                                    echo _FPA_CONT .': <span class="text-warning">'. _FPA_NF .'</span><br />';
+                                                                }
+                                                                if ( @$instance['configDBHOST'] == '' ) {
+                                                                    echo _FPA_DB.' '. _FPA_HNAME .': <span class="text-warning">'. _FPA_NF .'</span><br />';
+                                                                }
+                                                                if ( @$instance['configDBNAME'] == '' ) {
+                                                                    echo _FPA_DB .' Name: <span class="text-warning">'. _FPA_NF .'</span><br />';
+                                                                }
+                                                                if ( @$instance['configDBPREF'] == '' ) {
+                                                                    echo _FPA_TBL .' Prefix: <span class="text-warning">'. _FPA_NF .'</span><br />';
+                                                                }
+                                                                if ( @$instance['configDBUSER'] == '' ) {
+                                                                    echo _FPA_DB .' '. _FPA_USER .': <span class="text-warning">'. _FPA_NF .'</span><br />';
+                                                                }
+                                                                if ( @$instance['configDBPASS'] == '' ) {
+                                                                    echo _FPA_DB .' '. _FPA_PASS .': <span class="text-warning">'. _FPA_NF .'</span><br />';
+                                                                }
+                                                            ?>
+                                                        </td>
+                                                    </tr>
+                                                <?php } // credentialsMissing ?>
+                                            </tbody>
+                                        </table>
 
-                                                <tr>
-                                                    <td class="text-center">
-                                                        <?php
-                                                            if (@$instance['configDBTYPE'] == 'postgresql' or @$instance['configDBTYPE'] == 'pgsql'){
-                                                                echo _FPA_NIMPLY . ' ' . _FPA_PGSQL;
+                                    </div>
+                                </div><!--/.card (discovery)-->
 
-                                                            } elseif ( @$instance['configDBTYPE'] == 'sqlsrv' ) {
-                                                                echo '<span class="text-warning">'.  _FPA_MSSQL_SUPP .'</span>';
+                            </div><!--/.col-->
+                            <div class="col mb-4 d-flex align-self-stretch">
 
-                                                            } else {
-                                                                echo '<span class="text-warning">'. _FPA_NCON .'<br />'. _FPA_NO .' '. $database['ARRNAME'] .' '. _FPA_PERF .' '. _FPA_TESTP .'</span>';
-                                                            }
-                                                        ?>
-                                                    </td>
-                                                </tr>
+                                <div class="card border shadow w-100">
+                                    <div class="card-header bg-info text-white"><?php echo $database['ARRNAME'] .' :: '. _FPA_PERF; ?></div>
+                                    <div class="card-body">
 
-                                            <?php } ?>
-                                        </tbody>
-                                    </table>
+                                        <table class="table table-striped table-bordered table-sm">
+                                            <tbody>
+                                                <?php if ( $database['dbDOCHECKS'] == _FPA_Y AND @$database['dbERROR'] == _FPA_N AND $instance['configDBTYPE'] <> 'postgresql' AND $instance['configDBTYPE'] <> 'pgsql' AND $instance['instanceFOUND'] == _FPA_Y) { ?>
 
-                                </div>
-                            </div><!--/.card (performance)-->
+                                                    <?php $pieces = explode( ':', $database['dbHOSTSTATS'][0] ); ?>
+                                                    <tr class="flex-fill">
+                                                        <td class="text-capitalize w-50"><?php echo $pieces[0]; ?></td>
+                                                        <td>
+                                                            <?php
+                                                                /**
+                                                                 * convert uptime from seconds to days, hours, minutes
+                                                                 *
+                                                                 * @param $seconds
+                                                                 * @return $days $hours $minutes
+                                                                 */
+                                                                function uptimeToWords($seconds) {
+                                                                    $days = intval(intval($seconds) / (3600*24));
+                                                                    $hours = (intval($seconds) / 3600) % 24;
+                                                                    $minutes = (intval($seconds) / 60) % 60;
 
-                        </div><!--/.col-->
-                    </div><!--./row (database-discovery)-->
+                                                                    $days = $days ? $days . 'd ' : '';
+                                                                    $hours = $hours ? $hours . 'h ' : '';
+                                                                    $minutes = $minutes ? $minutes . 'm ' : '';
 
-                <?php showDev( $database ); ?>
-                </div><!--/.container-->
-            </section><!--#instance-discovery-->
+                                                                    return $days .' '. $hours .' '. $minutes;
+                                                                }
+                                                                echo uptimeToWords($pieces[1]);
+                                                            ?>
+                                                        </td>
+                                                    </tr>
+
+                                                    <?php $pieces = explode( ':', $database['dbHOSTSTATS'][1] ); ?>
+                                                    <tr>
+                                                        <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
+                                                        <td>
+                                                            <?php echo $pieces[1]; ?>
+                                                        </td>
+                                                    </tr>
+
+                                                    <?php $pieces = explode( ':', $database['dbHOSTSTATS'][2] ); ?>
+                                                    <tr>
+                                                        <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
+                                                        <td>
+                                                            <?php echo $pieces[1]; ?>
+                                                        </td>
+                                                    </tr>
+
+                                                    <?php $pieces = explode( ':', $database['dbHOSTSTATS'][3] ); ?>
+                                                    <tr>
+                                                        <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
+                                                        <td>
+                                                            <?php echo $pieces[1]; ?>
+                                                        </td>
+                                                    </tr>
+
+                                                    <?php $pieces = explode( ':', $database['dbHOSTSTATS'][4] ); ?>
+                                                    <tr>
+                                                        <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
+                                                        <td>
+                                                            <?php echo $pieces[1]; ?>
+                                                        </td>
+                                                    </tr>
+
+                                                    <?php $pieces = explode( ':', $database['dbHOSTSTATS'][5] ); ?>
+                                                    <tr>
+                                                        <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
+                                                        <td>
+                                                            <?php echo $pieces[1]; ?>
+                                                        </td>
+                                                    </tr>
+
+                                                    <?php $pieces = explode( ':', $database['dbHOSTSTATS'][6] ); ?>
+                                                    <tr>
+                                                        <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
+                                                        <td>
+                                                            <?php echo $pieces[1]; ?>
+                                                        </td>
+                                                    </tr>
+
+                                                    <?php $pieces = explode( ':', $database['dbHOSTSTATS'][7] ); ?>
+                                                    <tr>
+                                                        <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
+                                                        <td>
+                                                            <?php echo $pieces[1]; ?>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-capitalize">No. Tables</td>
+                                                        <td>
+                                                            <?php
+                                                                if ( $database['dbTABLECOUNT'] ) {
+                                                                    echo $database['dbTABLECOUNT'] .' tables';
+
+                                                                } else {
+                                                                    echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                                }
+                                                            ?>
+                                                        </td>
+                                                    </tr>
+
+                                                <?php } else { ?>
+
+                                                    <tr>
+                                                        <td class="text-center">
+                                                            <?php
+                                                                if (@$instance['configDBTYPE'] == 'postgresql' or @$instance['configDBTYPE'] == 'pgsql'){
+                                                                    echo _FPA_NIMPLY . ' ' . _FPA_PGSQL;
+
+                                                                } elseif ( @$instance['configDBTYPE'] == 'sqlsrv' ) {
+                                                                    echo '<span class="text-warning">'.  _FPA_MSSQL_SUPP .'</span>';
+
+                                                                } else {
+                                                                    echo '<span class="text-warning">'. _FPA_NCON .'<br />'. _FPA_NO .' '. $database['ARRNAME'] .' '. _FPA_PERF .' '. _FPA_TESTP .'</span>';
+                                                                }
+                                                            ?>
+                                                        </td>
+                                                    </tr>
+
+                                                <?php } ?>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div><!--/.card (performance)-->
+
+                            </div><!--/.col-->
+                        </div><!--./row (database-discovery)-->
+
+                    <?php showDev( $database ); ?>
+                    </div><!--/.container-->
+                </section><!--#instance-discovery-->
+
+            <?php } // dont show if doVEL = 1 ?>
 
 
 
@@ -6681,182 +6709,20 @@
             /**
              * instance known directory & elevated permisisons list (optional)
              *
+             * dont show if doVEL = 1
+             * added @RussW 29/05/2020
+             *
              */
             ?>
-            <section class="py-3" id="folder-checks">
+            <?php if ( @$_POST['doVEL'] != 1 ) { ?>
 
-                <div class="container mt-5">
-
-                    <h1 class="h2 border-bottom mb-4"><?php echo $folders['ARRNAME'] .' '. $modecheck['ARRNAME']; ?></h1>
-
-                    <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
-
-                    <div class="table-responsive-md">
-
-                        <table class="table table-striped table-bordered table-sm">
-                            <thead>
-                                <tr class="bg-info text-white xsmall">
-                                    <th class="py-2"><?php echo _FPA_FOLDER; ?></th>
-                                    <th class="py-2 text-center"><?php echo _FPA_MODE; ?></th>
-                                    <th class="py-2 text-center"><?php echo _FPA_WRITABLE; ?></th>
-                                    <th class="py-2 text-center d-none d-md-table-cell"><?php echo _FPA_OWNER; ?></th>
-                                    <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_GROUP; ?></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            <?php
-                                if ( $instance['instanceFOUND'] == _FPA_Y ) {
-
-                                    foreach ( $folders as $i => $show ) {
-
-                                        if ( $show != 'Core Folders' ) {
-
-                                            echo '<tr>';
-
-                                            /**
-                                             * modeset checks
-                                             *
-                                             * looking for --7 or -7- or -77 (default folder permissions are usually 755)
-                                             *
-                                             */
-                                            if ( substr( $modecheck[$show]['mode'],1 ,1 ) == '7' OR substr( $modecheck[$show]['mode'],2 ,1 ) == '7' ) {
-                                                $modeClass  = 'white bg-danger';
-                                                $alertClass = 'danger';
-                                                $userClass  = 'default';
-                                                $groupClass = 'default';
-
-                                            } elseif ( $modecheck[$show]['mode'] == '755' ) {
-                                                $modeClass  = 'success';
-                                                $alertClass = 'success';
-                                                $userClass  = 'default';
-                                                $groupClass = 'default';
-
-                                            } else if ( substr( $modecheck[$show]['mode'],0 ,1 ) <= '5' AND $modecheck[$show]['mode'] != '---' ) {
-                                                $modeClass  = 'white bg-warning ';
-                                                $alertClass = 'warning';
-                                                $userClass  = 'default';
-                                                $groupClass = 'default';
-
-                                            } else if ( $modecheck[$show]['group']['name'] == _FPA_N ) {
-                                                $modeClass  = 'white bg-warning';
-                                                $alertClass = 'warning';
-                                                $userClass  = 'warning';
-                                                $groupClass = 'warning';
-
-                                            } else {
-                                                $modeClass  = 'default';
-                                                $alertClass = 'default';
-                                                $userClass  = 'default';
-                                                $groupClass = 'default';
-                                            }
-
-                                            /**
-                                             * effective writeable permissions
-                                             *
-                                             * is the folder writable by the executing user
-                                             *
-                                             */
-                                            if ( ( $modecheck[$show]['writable'] != _FPA_Y ) ) {
-                                                $writeClass = 'warning';
-
-                                            } elseif ( ( $modecheck[$show]['writable'] == _FPA_Y ) AND ( substr( $modecheck[$show]['mode'],0 ,1 ) == '7' ) ) {
-                                                $writeClass = 'success';
-
-                                            } elseif ( $modecheck[$show]['writable'] == _FPA_N ) {
-                                                $writeClass = 'danger';
-
-                                            } else {
-                                                $writeClass = 'muted';
-                                            }
-
-                                            /**
-                                             * users effective rights on folder
-                                             *
-                                             * does the folder exist? if so,
-                                             * does the folder actual owner equal the effective (executing) owner? if not,
-                                             * does the folder actual user group equal the effective (executing) user group?
-                                             */
-                                            // is the 'executing' owner the same as the folder owner? and is the users groupID the same as the folders groupID?
-                                            if ( ( $modecheck[$show]['owner']['name'] != $system['sysEXECUSER'] ) AND ( $modecheck[$show]['group']['name'] != _FPA_DNE ) ) {
-                                                $userClass  = 'warning';
-                                                $groupClass = 'default';
-
-                                            } elseif ( isset( $modecheck[$show]['group']['gid'] ) AND isset( $modecheck[$show]['owner']['gid'] ) ) {
-
-                                                if ( $modecheck[$show]['group']['gid'] != $modecheck[$show]['owner']['gid'] ) {
-                                                    $userClass  = 'default';
-                                                    $groupClass = 'warning';
-                                                }
-
-                                            } elseif ( $modecheck[$show]['group']['name'] == _FPA_DNE ) {
-                                                $modeClass  = 'warning';
-                                                $alertClass = 'warning';
-                                                $writeClass = 'warning';
-                                                $userClass  = 'warning';
-                                                $groupClass = 'warning';
-                                            }
-
-                                            echo '<td class="text-'.$alertClass.'">';
-                                            echo $show;
-                                                if ($modecheck[$show]['group']['name'] == _FPA_DNE) {
-                                                    echo ' <span class="xsmall">('. _FPA_DNE .')</span>';
-                                                }
-                                            echo '</td>';
-                                            echo '<td class="text-'.$modeClass.' text-center">'. $modecheck[$show]['mode'] .'</td>';
-                                            echo '<td class="text-'.$writeClass.' text-center">';
-                                                // change writable status to visual icon cues instead of text
-                                                if ($modecheck[$show]['writable'] == _FPA_Y) {
-                                                    echo '<i class="fas fa-check-circle fa-lg"></i>';
-
-                                                } elseif ($modecheck[$show]['writable'] == _FPA_N) {
-                                                    echo '<i class="fas fa-times-circle fa-lg"></i>';
-
-                                                } elseif ($modecheck[$show]['writable'] == '-') {
-                                                    echo '<i class="fas fa-minus-circle fa-lg text-muted"></i>';
-
-                                                } else {
-                                                    echo $modecheck[$show]['writable'];
-                                                }
-                                            echo '</td>';
-                                            echo '<td class="'.$userClass.' xsmall text-center d-none d-md-table-cell">'. $modecheck[$show]['owner']['name'] .'</td>';
-                                            echo '<td class="'.$groupClass.' xsmall text-center d-none d-lg-table-cell">';
-                                                if ($modecheck[$show]['group']['name'] == _FPA_DNE) {
-                                                    echo '-';
-
-                                                } else {
-                                                    echo $modecheck[$show]['group']['name'];
-                                                }
-                                            echo '</td>';
-
-                                            echo '</tr>';
-
-                                        } // endif , dont show array name
-
-                                    } // end foreach
-
-                                } else { // an instance wasn't found in the initial checks, so no folders to check
-                                    echo '<tr class="table-warning text-center p-3">';
-                                    echo '<td class="lead" colspan="5">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_N .' '. $modecheck['ARRNAME'] .' '. _FPA_TESTP .'</td>';
-                                    echo '</tr>';
-                                }
-
-                            ?>
-                            </tbody>
-                        </table>
-
-                    </div><!--/.table-responsive permissions-->
-
-                    <?php showDev( $folders ); ?>
-                    <?php showDev( $modecheck ); ?>
-                    <?php unset ( $key, $show ); ?>
-                </div><!--/.container-->
-
-
-                <?php if ( $showElevated == '1' ) { ?>
+                <section class="py-3" id="folder-checks">
 
                     <div class="container mt-5">
 
-                        <h1 class="h2 border-bottom mb-4"><?php echo $elevated['ARRNAME'] .' <span class="small text-muted">('. _FPA_FIRST .' 10)</span>'; ?></h1>
+                        <h1 class="h2 border-bottom mb-4"><?php echo $folders['ARRNAME'] .' '. $modecheck['ARRNAME']; ?></h1>
+
+                        <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
 
                         <div class="table-responsive-md">
 
@@ -6865,17 +6731,18 @@
                                     <tr class="bg-info text-white xsmall">
                                         <th class="py-2"><?php echo _FPA_FOLDER; ?></th>
                                         <th class="py-2 text-center"><?php echo _FPA_MODE; ?></th>
-                                        <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_WRITABLE; ?></th>
+                                        <th class="py-2 text-center"><?php echo _FPA_WRITABLE; ?></th>
+                                        <th class="py-2 text-center d-none d-md-table-cell"><?php echo _FPA_OWNER; ?></th>
+                                        <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_GROUP; ?></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 <?php
                                     if ( $instance['instanceFOUND'] == _FPA_Y ) {
 
-                                        foreach ( $elevated as $key => $show ) {
+                                        foreach ( $folders as $i => $show ) {
 
-
-                                            if ( $show != $elevated['ARRNAME'] ) {
+                                            if ( $show != 'Core Folders' ) {
 
                                                 echo '<tr>';
 
@@ -6885,13 +6752,35 @@
                                                  * looking for --7 or -7- or -77 (default folder permissions are usually 755)
                                                  *
                                                  */
-                                                if ( substr( $show['mode'],1 ,1 ) == '7' OR substr( $show['mode'],2 ,1 ) == '7' ) {
+                                                if ( substr( $modecheck[$show]['mode'],1 ,1 ) == '7' OR substr( $modecheck[$show]['mode'],2 ,1 ) == '7' ) {
                                                     $modeClass  = 'white bg-danger';
                                                     $alertClass = 'danger';
+                                                    $userClass  = 'default';
+                                                    $groupClass = 'default';
+
+                                                } elseif ( $modecheck[$show]['mode'] == '755' ) {
+                                                    $modeClass  = 'success';
+                                                    $alertClass = 'success';
+                                                    $userClass  = 'default';
+                                                    $groupClass = 'default';
+
+                                                } else if ( substr( $modecheck[$show]['mode'],0 ,1 ) <= '5' AND $modecheck[$show]['mode'] != '---' ) {
+                                                    $modeClass  = 'white bg-warning ';
+                                                    $alertClass = 'warning';
+                                                    $userClass  = 'default';
+                                                    $groupClass = 'default';
+
+                                                } else if ( $modecheck[$show]['group']['name'] == _FPA_N ) {
+                                                    $modeClass  = 'white bg-warning';
+                                                    $alertClass = 'warning';
+                                                    $userClass  = 'warning';
+                                                    $groupClass = 'warning';
 
                                                 } else {
                                                     $modeClass  = 'default';
                                                     $alertClass = 'default';
+                                                    $userClass  = 'default';
+                                                    $groupClass = 'default';
                                                 }
 
                                                 /**
@@ -6900,39 +6789,76 @@
                                                  * is the folder writable by the executing user
                                                  *
                                                  */
-                                                if ( ( $show['writable'] == _FPA_Y ) ) {
+                                                if ( ( $modecheck[$show]['writable'] != _FPA_Y ) ) {
+                                                    $writeClass = 'warning';
+
+                                                } elseif ( ( $modecheck[$show]['writable'] == _FPA_Y ) AND ( substr( $modecheck[$show]['mode'],0 ,1 ) == '7' ) ) {
+                                                    $writeClass = 'success';
+
+                                                } elseif ( $modecheck[$show]['writable'] == _FPA_N ) {
                                                     $writeClass = 'danger';
 
                                                 } else {
-                                                    $writeClass = 'warning';
+                                                    $writeClass = 'muted';
                                                 }
 
-                                                echo '<td class="text-'.$alertClass.'">'. $key .'/</td>';
+                                                /**
+                                                 * users effective rights on folder
+                                                 *
+                                                 * does the folder exist? if so,
+                                                 * does the folder actual owner equal the effective (executing) owner? if not,
+                                                 * does the folder actual user group equal the effective (executing) user group?
+                                                 */
+                                                // is the 'executing' owner the same as the folder owner? and is the users groupID the same as the folders groupID?
+                                                if ( ( $modecheck[$show]['owner']['name'] != $system['sysEXECUSER'] ) AND ( $modecheck[$show]['group']['name'] != _FPA_DNE ) ) {
+                                                    $userClass  = 'warning';
+                                                    $groupClass = 'default';
 
-                                                echo '<td class="text-'.$modeClass.' text-center">'. $show['mode'] .'</td>';
+                                                } elseif ( isset( $modecheck[$show]['group']['gid'] ) AND isset( $modecheck[$show]['owner']['gid'] ) ) {
 
-                                                echo '<td class="text-'.$writeClass.' text-center d-none d-lg-table-cell">';
-
-                                                    if ( substr( $show['mode'],1 ,1 ) == '7' ) {
-                                                        $gIcon  = 'check';
-                                                        $gColor = 'danger';
-                                                    } else {
-                                                        $gIcon  = 'minus';
-                                                        $gColor = 'muted';
-                                                    }
-                                                    if ( substr( $show['mode'],2 ,1 ) == '7' ) {
-                                                        $wIcon  = 'check';
-                                                        $wColor = 'danger';
-                                                    } else {
-                                                        $wIcon  = 'minus';
-                                                        $wColor = 'muted';
+                                                    if ( $modecheck[$show]['group']['gid'] != $modecheck[$show]['owner']['gid'] ) {
+                                                        $userClass  = 'default';
+                                                        $groupClass = 'warning';
                                                     }
 
-                                                    echo '<table class="table table-borderless table-sm m-0"><tbody><tr class=" bg-transparent">';
-                                                    echo '<td class="p-0 xsmall bg-transparent">Group Writable<br /><i class="fas fa-'.$gIcon.'-circle text-'.$gColor.' fa-lg pt-1"></i></td>';
-                                                    echo '<td class="p-0 xsmall bg-transparent">World Writable<br /><i class="fas fa-'.$wIcon.'-circle text-'.$wColor.' fa-lg pt-1"></i></td>';
-                                                    echo '</tr></tbody></table>';
+                                                } elseif ( $modecheck[$show]['group']['name'] == _FPA_DNE ) {
+                                                    $modeClass  = 'warning';
+                                                    $alertClass = 'warning';
+                                                    $writeClass = 'warning';
+                                                    $userClass  = 'warning';
+                                                    $groupClass = 'warning';
+                                                }
 
+                                                echo '<td class="text-'.$alertClass.'">';
+                                                echo $show;
+                                                    if ($modecheck[$show]['group']['name'] == _FPA_DNE) {
+                                                        echo ' <span class="xsmall">('. _FPA_DNE .')</span>';
+                                                    }
+                                                echo '</td>';
+                                                echo '<td class="text-'.$modeClass.' text-center">'. $modecheck[$show]['mode'] .'</td>';
+                                                echo '<td class="text-'.$writeClass.' text-center">';
+                                                    // change writable status to visual icon cues instead of text
+                                                    if ($modecheck[$show]['writable'] == _FPA_Y) {
+                                                        echo '<i class="fas fa-check-circle fa-lg"></i>';
+
+                                                    } elseif ($modecheck[$show]['writable'] == _FPA_N) {
+                                                        echo '<i class="fas fa-times-circle fa-lg"></i>';
+
+                                                    } elseif ($modecheck[$show]['writable'] == '-') {
+                                                        echo '<i class="fas fa-minus-circle fa-lg text-muted"></i>';
+
+                                                    } else {
+                                                        echo $modecheck[$show]['writable'];
+                                                    }
+                                                echo '</td>';
+                                                echo '<td class="'.$userClass.' xsmall text-center d-none d-md-table-cell">'. $modecheck[$show]['owner']['name'] .'</td>';
+                                                echo '<td class="'.$groupClass.' xsmall text-center d-none d-lg-table-cell">';
+                                                    if ($modecheck[$show]['group']['name'] == _FPA_DNE) {
+                                                        echo '-';
+
+                                                    } else {
+                                                        echo $modecheck[$show]['group']['name'];
+                                                    }
                                                 echo '</td>';
 
                                                 echo '</tr>';
@@ -6941,9 +6867,9 @@
 
                                         } // end foreach
 
-                                    } else { // an instance wasn't found in the initial checks, so no elevated permissions to check
+                                    } else { // an instance wasn't found in the initial checks, so no folders to check
                                         echo '<tr class="table-warning text-center p-3">';
-                                        echo '<td class="lead" colspan="3">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $elevated['ARRNAME'] .' '. _FPA_TESTP .' '. _FPA_TESTP .'</td>';
+                                        echo '<td class="lead" colspan="5">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_N .' '. $modecheck['ARRNAME'] .' '. _FPA_TESTP .'</td>';
                                         echo '</tr>';
                                     }
 
@@ -6951,15 +6877,124 @@
                                 </tbody>
                             </table>
 
-                        </div><!--/.table-responsive elevated-->
+                        </div><!--/.table-responsive permissions-->
 
-                        <?php showDev( $elevated ); ?>
+                        <?php showDev( $folders ); ?>
+                        <?php showDev( $modecheck ); ?>
                         <?php unset ( $key, $show ); ?>
                     </div><!--/.container-->
 
-                <?php } // end elevated ?>
 
-            </section><!--/#folder-checks-->
+                    <?php if ( $showElevated == '1' ) { ?>
+
+                        <div class="container mt-5">
+
+                            <h1 class="h2 border-bottom mb-4"><?php echo $elevated['ARRNAME'] .' <span class="small text-muted">('. _FPA_FIRST .' 10)</span>'; ?></h1>
+
+                            <div class="table-responsive-md">
+
+                                <table class="table table-striped table-bordered table-sm">
+                                    <thead>
+                                        <tr class="bg-info text-white xsmall">
+                                            <th class="py-2"><?php echo _FPA_FOLDER; ?></th>
+                                            <th class="py-2 text-center"><?php echo _FPA_MODE; ?></th>
+                                            <th class="py-2 text-center d-none d-lg-table-cell"><?php echo _FPA_WRITABLE; ?></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php
+                                        if ( $instance['instanceFOUND'] == _FPA_Y ) {
+
+                                            foreach ( $elevated as $key => $show ) {
+
+
+                                                if ( $show != $elevated['ARRNAME'] ) {
+
+                                                    echo '<tr>';
+
+                                                    /**
+                                                     * modeset checks
+                                                     *
+                                                     * looking for --7 or -7- or -77 (default folder permissions are usually 755)
+                                                     *
+                                                     */
+                                                    if ( substr( $show['mode'],1 ,1 ) == '7' OR substr( $show['mode'],2 ,1 ) == '7' ) {
+                                                        $modeClass  = 'white bg-danger';
+                                                        $alertClass = 'danger';
+
+                                                    } else {
+                                                        $modeClass  = 'default';
+                                                        $alertClass = 'default';
+                                                    }
+
+                                                    /**
+                                                     * effective writeable permissions
+                                                     *
+                                                     * is the folder writable by the executing user
+                                                     *
+                                                     */
+                                                    if ( ( $show['writable'] == _FPA_Y ) ) {
+                                                        $writeClass = 'danger';
+
+                                                    } else {
+                                                        $writeClass = 'warning';
+                                                    }
+
+                                                    echo '<td class="text-'.$alertClass.'">'. $key .'/</td>';
+
+                                                    echo '<td class="text-'.$modeClass.' text-center">'. $show['mode'] .'</td>';
+
+                                                    echo '<td class="text-'.$writeClass.' text-center d-none d-lg-table-cell">';
+
+                                                        if ( substr( $show['mode'],1 ,1 ) == '7' ) {
+                                                            $gIcon  = 'check';
+                                                            $gColor = 'danger';
+                                                        } else {
+                                                            $gIcon  = 'minus';
+                                                            $gColor = 'muted';
+                                                        }
+                                                        if ( substr( $show['mode'],2 ,1 ) == '7' ) {
+                                                            $wIcon  = 'check';
+                                                            $wColor = 'danger';
+                                                        } else {
+                                                            $wIcon  = 'minus';
+                                                            $wColor = 'muted';
+                                                        }
+
+                                                        echo '<table class="table table-borderless table-sm m-0"><tbody><tr class=" bg-transparent">';
+                                                        echo '<td class="p-0 xsmall bg-transparent">Group Writable<br /><i class="fas fa-'.$gIcon.'-circle text-'.$gColor.' fa-lg pt-1"></i></td>';
+                                                        echo '<td class="p-0 xsmall bg-transparent">World Writable<br /><i class="fas fa-'.$wIcon.'-circle text-'.$wColor.' fa-lg pt-1"></i></td>';
+                                                        echo '</tr></tbody></table>';
+
+                                                    echo '</td>';
+
+                                                    echo '</tr>';
+
+                                                } // endif , dont show array name
+
+                                            } // end foreach
+
+                                        } else { // an instance wasn't found in the initial checks, so no elevated permissions to check
+                                            echo '<tr class="table-warning text-center p-3">';
+                                            echo '<td class="lead" colspan="3">'. _FPA_INSTANCE .' '. _FPA_NF .', '. _FPA_NO .' '. $elevated['ARRNAME'] .' '. _FPA_TESTP .' '. _FPA_TESTP .'</td>';
+                                            echo '</tr>';
+                                        }
+
+                                    ?>
+                                    </tbody>
+                                </table>
+
+                            </div><!--/.table-responsive elevated-->
+
+                            <?php showDev( $elevated ); ?>
+                            <?php unset ( $key, $show ); ?>
+                        </div><!--/.container-->
+
+                    <?php } // end elevated ?>
+
+                </section><!--/#folder-checks-->
+
+            <?php } // dont show if doVEL = 1 } ?>
 
 
 

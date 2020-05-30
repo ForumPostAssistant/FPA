@@ -34,17 +34,101 @@
     }
 
     /** SET THE FPA DEFAULTS *****************************************************************/
-     #define ( '_FPA_DEV', TRUE );      // developer-mode, displays raw array data
-     #define ( '_FPA_DIAG', TRUE );     // diagnostic-mode, turns on PHP logging errors, display errors and logs error to a file.
+     #define ( '_FPA_DEV', TRUE );                 // developer-mode, displays raw array data
+     #define ( '_FPA_DIAG', TRUE );                // diagnostic-mode, turns on PHP logging errors, display errors and logs error to a file
 
-    /** DISABLE LIVE CHECK FEATURES **********************************************************/
-      define ( '_LIVE_CHECK_FPA', TRUE );    // enable live latest FPA version check
-      define ( '_LIVE_CHECK_JOOMLA', TRUE ); // enable live latest Joomla! version check
-      #define ( '_LIVE_CHECK_VEL', TRUE );    // enable live VEL check
+
+
+    /**
+     * FPA Self-Destruct
+     * comment-out _FPA_SELF_DESTRUCT in Default Settings to disable
+     * (there is no need to comment-out the _FPA_SELF_DESTRUCT_AGE constant)
+     *
+     * if enabled, checks the FPA file date and if over _FPA_SELF_DESTRUCT_AGE days old then run the self-delete script
+     *  - if _FPA_DEV or _FPA_DIAG are defined/TRUE then self-destruction won't happen
+     *
+     * CONSTANTS are used throughout this feature as a security measure because they cannot be overriden at runtime
+     * added @RussW 30/05/2020
+     *
+     */
+    define ( '_FPA_SELF', $_SERVER['PHP_SELF']);  // take in to account that some user rename FPA, ensure that all local links still work
+    define ( '_FPA_SELF_DESTRUCT_AGE', 7 );       // age of FPA file before _FPA_SELF_DESTRUCT runs (set as CONSTANT so it can't be changed/overridden at runtime)
+    #define ( '_FPA_SELF_DESTRUCT', TRUE);         // self-destruct, attempts to self-delete on next run if file older than configured duration
+
+    if ( defined('_FPA_SELF_DESTRUCT') AND ( !defined('_FPA_DEV') AND !defined('_FPA_DIAG') ) ) {
+
+        //$fpafile         = _FPA_SELF;
+        $fpafile         = 'fred.php';
+
+        if ( file_exists($fpafile) ) {
+            $fileinfo = stat( $fpafile );
+        }
+
+        // only try and delete the file if we can get the 'last modified' date
+        if ( !empty($fileinfo) ) {
+
+            $fileMTime = date( 'd-m-Y', $fileinfo['mtime'] );
+            $today     = date( 'd-m-Y' );
+
+            $thisDate = new DateTime($today);
+            $fileDate = new DateTime($fileMTime);
+            $interval = $thisDate->diff($fileDate);
+            $fileAge  = $interval->days;
+            //var_dump($interval);
+
+            // if all the criteria satisfied, define the _FPA_SELF_DESTRUCT_DOIT constant
+            if ( $fileAge > _FPA_SELF_DESTRUCT_AGE AND $interval->invert == 1 ) {
+                define ('_FPA_SELF_DESTRUCT_DOIT', TRUE);
+            }
+
+        }
+    } // if _FPA_SELF_DESTRUCT defined
+
+
+
+    /**
+     * DISABLE LIVECHECK FEATURES
+     * comment-out to disable each LiveCheck
+     *
+     * LiveChecks require cURL to function (tested below)
+     * - each LiveCheck also has it's own resource requirement criteria to run
+     * - this is tested for within each unique LiveCheck function
+     *
+     */
+
+     define ( '_LIVE_CHECK_FPA', TRUE );     // enable live latest FPA version check
+     define ( '_LIVE_CHECK_JOOMLA', TRUE );  // enable live latest Joomla! version check
+     define ( '_LIVE_CHECK_VEL', TRUE );     // enable live VEL check
+
+    /**
+     * check for cURL availability
+     * (required for LiveChecks to function)
+     *
+     * - check cURL is not in php disabled_functions
+     * - check there is a cURL module loaded
+     * - check the curl_exec function is available
+     * - DISABLE if doIT = 1 (no point in LiveChecks when generating post content)
+     * added @RussW - 27/05/2020
+     *
+     */
+    $canDOLIVE = '0';
+    if (
+        ( defined('_LIVE_CHECK_FPA')
+          OR defined('_LIVE_CHECK_JOOMLA')
+          OR defined('_LIVE_CHECK_VEL')
+        )
+         AND stristr(ini_get('disable_functions'), 'curl') == FALSE
+         AND extension_loaded('curl')
+         AND function_exists('curl_exec')
+         AND @$_POST['doIT'] != 1) {
+            $canDOLIVE = '1';
+    } // $canDOLIVE
+
+
 
 	/** SET THE JOOMLA! PARENT FLAG AND CONSTANTS ********************************************/
-	define ( '_VALID_MOS', 1 );         // for J!1.0
-	define ( '_JEXEC', 1 );             // for J!1.5, J!1.6, J!1.7, J!2.5, J!3.0
+	define ( '_VALID_MOS', 1 );               // for J!1.0
+	define ( '_JEXEC', 1 );                   // for J!1.5, J!1.6, J!1.7, J!2.5, J!3.0, J!4.0
 
 
 	// Define some basic assistant information
@@ -109,7 +193,7 @@
     // @RussW updated 23/05/2020
     define ( '_FPA_DELNOTE_LN2', '<p class="small">Due to the highly sensitive nature of the information displayed by the FPA script, it should be removed from the server immediately after use. If the script is left on the site, it can be used to gather enough information to hack your site.</p>' );
     // @RussW updated 23/05/2020
-    define ( '_FPA_DELNOTE_LN3', '<p>After use, <a class="text-danger" href="'.$_SERVER["PHP_SELF"].'?act=delete">Click Here</a>  to delete this script.</p>' );
+    define ( '_FPA_DELNOTE_LN3', '<p class="text-danger">After use, please delete the FPA script.</p>' );
     // dev/diag-mode content
 	define ( '_FPA_DEVMI', 'developer-mode-information' );
     define ( '_FPA_ELAPSE', 'elapse-runtime' );
@@ -343,36 +427,51 @@
      * fixed undefined index when server uses E_STRICT - PhilD 9-20-12
      * @PhilD 8/07/12
      * @RussW updated 21/05/2020
+     * @RussW 30/05/2020
+     * added FPA Self Destruct feature, updated to use global file path & $_POST
      *
      */
+    if ( ( isset($_POST['act']) AND $_POST['act']  == 'delete' ) OR ( defined('_FPA_SELF_DESTRUCT') AND defined('_FPA_SELF_DESTRUCT_DOIT') ) ) {
+        $host        = $_SERVER['HTTP_HOST'];
+        $uri         = rtrim(dirname(_FPA_SELF), '/\\');
+        $extra       = ''; // add index (or other) page if desired
 
-    if (isset($_GET['act']) && $_GET['act']  == 'delete') {
-        $host  = $_SERVER['HTTP_HOST'];
-        $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-        $extra = ''; // add index (or other) page if desired
+        //$fpaFilename = _FPA_SELF;
+        $fpaFilename = 'fred.php';
 
         // try to set script to 777 to make sure we have permission to delete
-        chmod($_SERVER['PHP_SELF'], 0777);  // octal; correct value of mode
+        @chmod($fpaFilename, 0777);  // octal; correct value of mode
 
         // Delete the file.
-        unlink($_SERVER['PHP_SELF']);
+        @unlink($fpaFilename);
 
         // Message and link to home page of site.
         $page= ('"http://$host$uri/');
-        $filename = $_SERVER['PHP_SELF'];
 
         // Something went wrong and the script was not deleted so it must be removed manually so we tell the user to do so - PhilD 8-07-12
-        if (file_exists($filename)) {
-            chmod($_SERVER['PHP_SELF'], 0644);  // octal; correct value of mode
+        if ( file_exists($fpaFilename) ) {
+            @chmod($fpaFilename, 0644);  // octal; correct value of mode
 
             echo '<div id="deleteMessage" style="padding:20px;border:1px solid #e99002;background-color:#fff8ee;margin:0 auto;margin-top:50px;margin-bottom:20px;max-width:70%;position:relative;z-index:9999;top:10%;font-family:sans-serif, arial;" align="center">';
             echo '<h1 style="color:#e99002;font-size:44px;">SOMETHING WENT WRONG!</h1>';
-            echo '<p style="color:#e99002;font-size:30px;">We could not delete the FPA file ('. $filename .').</p>';
-            echo '<p style="color:#e99002;font-size:20px;margin:0 auto;max-width:80%;">For your website security, please remove the file <em style="color:#f04124;">'. $filename .'</em> manually using FTP or through your hosting File Manager.</p>';
+            if ( defined('_FPA_SELF_DESTRUCT_DOIT') ) {
+                echo '<h2 style="color:#43ac6a;">As a security measure, FPA attempted to self-delete itself due to the time it has been present on the server, but was not successful.</h2>';
+                echo '<p style="color:#e99002;font-size:20px;margin:0 auto;max-width:80%;">Please remove the file manually using FTP or through your hosting File Manager, or upload a new copy to continue using it.</p>';
+
+            } else {
+                echo '<h1 style="color:#e99002;font-size:44px;">SOMETHING WENT WRONG!</h1>';
+                echo '<p style="color:#e99002;font-size:30px;">We could not delete the FPA file ('. $fpaFilename .').</p>';
+                echo '<p style="color:#e99002;font-size:20px;margin:0 auto;max-width:80%;">For your website security, please remove the file <em style="color:#f04124;">'. $filename .'</em> manually using FTP or through your hosting File Manager.</p>';
+            }
 
         } else {
             echo '<div id="deleteMessage" style="padding:20px;border:1px solid #43ac6a;background-color:#effff5;margin:0 auto;margin-top:50px;margin-bottom:20px;max-width:70%;position:relative;z-index:9999;top:10%;font-family:sans-serif, arial;" align="center">';
-            echo '<h1 style="color:#43ac6a;">Thank You For Using The FPA.</h1>';
+            if ( defined('_FPA_SELF_DESTRUCT_DOIT') ) {
+                echo '<h2 style="color:#43ac6a;">As a security measure, this copy of FPA has been self-deleted due to the time it has been present on the server.</h2>';
+                echo '<p style="color:#e99002;font-size:20px;margin:0 auto;max-width:80%;">You will need to upload another copy of FPA to continue.</p>';
+            } else {
+                echo '<h1 style="color:#43ac6a;">Thank You For Using The FPA.</h1>';
+            }
         }
 
         echo '<p><a href="'. $page .'">Go to your Home Page.</a></p>';
@@ -2635,30 +2734,16 @@
 
 
     /**
-     * check for cURL availability
-     *
-     * so we can do any enabled version LiveChecks
-     * - check if not in php diabled_functions
-     * - check there is a cURL module loaded
-     * - check the cURL function is available
-     * added @RussW - 27/05/2020
-     *
-     */
-    $canDOLIVE = '0';
-    if ( stristr($phpenv['phpDISABLED'], 'curl') === FALSE AND extension_loaded('curl') AND function_exists('curl_version') ) {
-        $canDOLIVE = '1';
-    }
-
-    /**
      * LiveCheck - FPA
      * comment out _LIVE_CHECK_FPA in settings to disable
      *
      * checks this FPA version against the latest release on Github using cURL
      * - don't run if cURL disabled or not available
+     * - don't run if doIT = 1
      * added - @RussW 28/05/2020
      *
      */
-    if ( defined( '_LIVE_CHECK_FPA' ) AND $canDOLIVE == '1' ) {
+    if ( defined( '_LIVE_CHECK_FPA' ) AND $canDOLIVE == '1') {
 
         function doFPALIVE() {
 
@@ -2889,7 +2974,7 @@
         <header>
             <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow">
 
-                <a class="navbar-brand mr-0 mr-md-2 text-primary py-2 lead font-weight-bolder" href="<?php echo $_SERVER['PHP_SELF']; ?>" aria-label="<?php echo _RES; ?>">
+                <a class="navbar-brand mr-0 mr-md-2 text-primary py-2 lead font-weight-bolder" href="<?php echo _FPA_SELF; ?>" aria-label="<?php echo _RES; ?>">
                     <span class="d-inline-block d-sm-none" aria-hidden="true">FPA</span>
                     <span class="d-none d-sm-inline-block"><?php echo _RES; ?></span>
                     <span class="ml-1 small text-muted"><?php echo 'v'. _RES_VERSION; ?></span>
@@ -2915,19 +3000,25 @@
                             <?php } ?>
                             <a class="dropdown-item py-1" href="#templates">Templates</a>
                             <div class="dropdown-divider mb-0"></div>
-                            <a class="dropdown-item py-2 bg-danger text-white lead" href="<?php echo $_SERVER['PHP_SELF']; ?>?act=delete"><i class="fas fa-trash-alt"></i> Delete FPA</a>
+
+                            <form class="m-0 ml-auto p-0 1bg-danger small 1text-white" method="post" name="dropdownDELForm" id="dropdownDELForm">
+                                <input type="hidden" name="act" value="delete" />
+                                <button class="btn btn-danger text-white text-left btn-sm mr-1 w-100" type="submit" aria-label="Delete FPA now">
+                                    <i class="fas fa-trash-alt fa-fw text-white lead"></i> Delete FPA Now
+                                </button>
+                            </form>
                         </div>
                     </li>
 
                     <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Basic Discovry Report" data-content="Run the basic (on-screen) FPA Discovery report">
-                        <a class="btn btn-outline-primary mr-1" href="<?php echo $_SERVER['PHP_SELF']; ?>" role="button" aria-label="<?php echo _RES_FPALATEST2; ?>">
+                        <a class="btn btn-outline-primary mr-1" href="<?php echo _FPA_SELF; ?>" role="button" aria-label="<?php echo _RES_FPALATEST2; ?>">
                             <i class="fas fa-chalkboard fa-fw lead"></i>
                         </a>
                     </li>
 
                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                         <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Vulnerable Extension List" data-content="Run a vulnerable extension check">
-                            <form class="m-0 ml-auto p-0" method="post" name="navForm" id="navForm">
+                            <form class="m-0 ml-auto p-0" method="post" name="navVELForm" id="navVELForm">
                                 <input type="hidden" name="doVEL" value="1" />
                                 <button class="btn btn-outline-warning mr-1" type="submit" aria-label="Run a Vulnerable Extension Check">
                                     <i class="fas fa-radiation fa-fw lead"></i>
@@ -2965,9 +3056,12 @@
                     -->
 
                     <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Security Notice" data-content="Delete the FPA script now">
-                        <a class="btn btn-danger mr-1" href="<?php echo $_SERVER['PHP_SELF']; ?>?act=delete" role="button" aria-label="Delete FPA now">
-                            <i class="fas fa-trash-alt fa-fw lead"></i>
-                        </a>
+                        <form class="m-0 ml-auto p-0" method="post" name="navDELForm" id="navDELForm">
+                            <input type="hidden" name="act" value="delete" />
+                            <button class="btn btn-outline-danger mr-1" type="submit" aria-label="Delete FPA now">
+                                <i class="fas fa-trash-alt fa-fw lead"></i>
+                            </button>
+                        </form>
                     </li>
                 </ul>
 
@@ -2979,7 +3073,7 @@
         <?php
             /**
              * SEEING A WHITE SCREEN WHILST RUNNING FPA? OR SOMEONE HELPING YOU SENT YOU HERE?
-             * uncomment _FPA_DIAG above and re-run FPA
+             * uncomment _FPA_DIAG or _FPA_DIAG in Default Settings to enable and re-run FPA
              *
              * display_errors, enables php errors to be displayed on the screen
              * error_reporting, sets the level of errors to report, "-1" is all errors

@@ -18,10 +18,11 @@
     /**
      * for edit changelog see https://github.com/ForumPostAssistant/FPA/pulls?q=is%3Apr+is%3Aclosed
      *
-     * TODO:
+     * TODO/WISHLIST:
      * @mandville - add print to PDF
      * @RussW - add expoert to .csv on tabular data/lists
      * @RussW - add FPA Guided Tour
+     * @RussW - split fpa post content to multiple textareas/posts if exceeds 20k characters
      *
      */
 
@@ -65,7 +66,7 @@
     #define ( '_FPA_SSL_REDIRECT', TRUE);          // self-destruct, attempts to self-delete on next run if file older than configured duration
     define ( '_LIVE_CHECK_FPA', TRUE );           // enable live latest FPA version check
     define ( '_LIVE_CHECK_JOOMLA', TRUE );        // enable live latest Joomla! version check
-    #define ( '_LIVE_CHECK_VEL', TRUE );           // enable live VEL check
+    define ( '_LIVE_CHECK_VEL', TRUE );           // enable live VEL check
 
 
 
@@ -3073,10 +3074,10 @@
                 var text = document.getElementById(switchTextDiv);
                 if ( ele.style.display == 'block' ) {
                     ele.style.display = 'none';
-                    text.innerHTML    = '<i class="fas fa-chevron-circle-right"></i> Open the <strong><?php echo _RES; ?></strong>';
+                    text.innerHTML    = '<i class="fas fa-chevron-circle-right"></i> Open the FPA Options';
                 } else {
                     ele.style.display = 'block';
-                    text.innerHTML    = '<i class="fas fa-chevron-circle-down"></i> Close the <strong><?php echo _RES; ?></strong>';
+                    text.innerHTML    = '<i class="fas fa-chevron-circle-down"></i> Close the FPA Options';
                 }
             }
         </script>
@@ -3309,963 +3310,967 @@
             }
         ?>
 
-
-
-        <?php
-        /**
-         * fpa snapshot section
-         *
-         * basic joomla and environment checks and display
-         *
-         */
-        ?>
-        <section class="bg-light pt-2" id="fpa-dashboard">
-            <div class="container pt-4 pb-3">
-
-                <h1 class="font-weight-light border-bottom"><i class="fas fa-dice-d6 fa-sm text-muted"></i> <?php echo _FPA_SNAP_TITLE; ?></h1>
-                <p class="text-dark mb-lg-5"><?php echo _FPA_DASHBOARD_CONFIDENCE_NOTE; ?></p>
-
-                <div class="row">
-                    <div class="col-md-8 col-lg-8">
-
-                        <?php
-                        /**
-                         * fpa snapshot section
-                         * basic joomla and environment checks and display
-                         *
-                         * SUPPORT SECTIONS
-                         * added a 2.5 section - @PhilD 4-20-12
-                         * added a 3.1, 3.2 section - @PhilD 01-01-14
-                         *
-                         * Note:
-                         * With the release of Joomla! 3.2, the CMS introduced a new feature called, Strong Passwords.
-                         * The intent was to enhance the encryption of password hashing and storage through the use of BCrypt,
-                         * thus increasing the security of Joomla! 3.2 user accounts. Bcrypt was not available in the early releases
-                         * of php 5.3, and with the first releases, a bug in the algorithm surfaced. This prompted a change in the
-                         * later php versions to fix it. The Joomla 3 series required a minimum php version of 5.3+ which unfortunately
-                         * includes php versions without BCrypt and the buggy first release of BCrypt. The Strong Passwords feature
-                         * has built in compatibility to determine if BCrypt was available based on a php version check of the Joomla
-                         * installation's server. The version check is used to determine exactly what the Strong Passwords feature
-                         * would enable, BCrypt or the next best available password hashing encryption available. Unfortunately,
-                         * this can lead to access issues under certain circumstances.
-                         * To reflect this issue with Joomla 3.2.0 and earlier versions of php 5.3, the FPA checks to see if the
-                         * Joomla! version is 3.2.0 and then checks the php version on the server. If the version php version is less
-                         * than 5.3.7 then the FPA will report that php does not support Joomla!
-                         *
-                         * PHP version of 5.3.1+ is supported by Joomla 3.2.1 due to the fix put in place in Joomla 3.2.1
-                         *
-                         * MySQL:
-                         * On Medialayer at least, mysql 5.0.87-community will work with current versions of Joomla and has inno db enabled
-                         *
-                         */
-
-                        /**
-                         * MariaDB check. Get the Database type and look for MariaDB. All current versions of MariaDB should be current
-                         * with Joomla. The issue with using version numbers is mysql also uses numbers, so this check differentiates
-                         * between mysql and MariaDB. If there is a better idea given the current FPA code feel free to submit it.
-                         * @PhilD 03-17-17
-                         *
-                         */
-                        $input_line = @$database['dbHOSTSERV'];
-                        preg_match("/\b(\w*mariadb\w*)\b/i", $input_line, $output_array);
-
-                        if  (@$instance['cmsRELEASE'] >= '4.0') {
-                            $fpa['supportENV']['minPHP']        = '7.2.5';
-                            $fpa['supportENV']['minSQL']        = '5.6.0';
-                            $fpa['supportENV']['maxPHP']        = '8.0.0';
-                            $fpa['supportENV']['maxSQL']        = '9.0.0';
-                            $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                            $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                            $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                            $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                            $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                            $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                            $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                            $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-                        } elseif  (@$instance['cmsRELEASE'] == '3.10') {
-                            $fpa['supportENV']['minPHP']        = '5.3.10';
-                            $fpa['supportENV']['minSQL']        = '5.1.0';
-                            $fpa['supportENV']['maxPHP']        = '8.0.0';
-                            $fpa['supportENV']['maxSQL']        = '9.0.0';
-                            $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                            $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                            $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                            $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                            $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                            $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                            $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                            $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-                        } elseif  (@$instance['cmsRELEASE'] == '3.9') {
-                            $fpa['supportENV']['minPHP']        = '5.3.10';
-                            $fpa['supportENV']['minSQL']        = '5.1.0';
-                            $fpa['supportENV']['maxPHP']        = '7.5.0';
-                            $fpa['supportENV']['maxSQL']        = '8.5.0';
-                            $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                            $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                            $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                            $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                            $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                            $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                            $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                            $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-                        } elseif  (@$instance['cmsRELEASE'] > '3.7' AND @$instance['cmsDEVLEVEL'] > '2') {
-                            $fpa['supportENV']['minPHP']        = '5.3.10';
-                            $fpa['supportENV']['minSQL']        = '5.1.0';
-                            $fpa['supportENV']['maxPHP']        = '7.5.0';
-                            $fpa['supportENV']['maxSQL']        = '5.8.0';
-                            $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                            $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                            $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                            $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                            $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                            $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                            $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                            $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-                        } elseif ( @$instance['cmsRELEASE'] >= '3.5') {
-                            $fpa['supportENV']['minPHP']        = '5.3.10';
-                            $fpa['supportENV']['minSQL']        = '5.1.0';
-                            $fpa['supportENV']['maxPHP']        = '7.1.99';
-                            $fpa['supportENV']['maxSQL']        = '5.8.0';
-                            $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                            $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                            $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                            $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                            $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                            $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                            $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                            $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-                        } elseif ( @$instance['cmsRELEASE']  == '3.3' OR @$instance['cmsRELEASE']  == '3.4')  {
-                            $fpa['supportENV']['minPHP']        = '5.3.10';
-                            $fpa['supportENV']['minSQL']        = '5.1.0';
-                            $fpa['supportENV']['maxPHP']        = '6.0.0';
-                            $fpa['supportENV']['maxSQL']        = '5.8.0';
-                            $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                            $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                            $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                            $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                            $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                            $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                            $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                            $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-                        } elseif ( @$instance['cmsRELEASE'] == '3.2' AND @$instance['cmsDEVLEVEL'] >= 1) {
-                            $fpa['supportENV']['minPHP']        = '5.3.1';
-                            $fpa['supportENV']['minSQL']        = '5.1.0';
-                            $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-                            $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-                            $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                            $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                            $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                            $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                            $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                            $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                            $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                            $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-                        } elseif ( @$instance['cmsRELEASE'] == '3.2' AND @$instance['cmsDEVLEVEL'] == 0) {
-                            $fpa['supportENV']['minPHP']        = '5.3.7';
-                            $fpa['supportENV']['minSQL']        = '5.1.0';
-                            $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-                            $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-                            $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                            $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                            $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                            $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                            $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                            $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                            $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                            $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-                        } elseif ( @$instance['cmsRELEASE'] == '3.1' ) {
-                            $fpa['supportENV']['minPHP']        = '5.3.1';
-                            $fpa['supportENV']['minSQL']        = '5.1.0';
-                            $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-                            $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-                            $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                            $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                            $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                            $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                            $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                            $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                            $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                            $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-                        } elseif ( @$instance['cmsRELEASE'] == '3.0' ) {
-                            $fpa['supportENV']['minPHP']        = '5.3.1';
-                            $fpa['supportENV']['minSQL']        = '5.1.0';
-                            $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-                            $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-                            $fpa['supportENV']['badPHP'][0]     = '5.3.0';
-                            $fpa['supportENV']['badPHP'][1]     = '5.3.1';
-                            $fpa['supportENV']['badPHP'][2]     = '5.3.2';
-                            $fpa['supportENV']['badPHP'][3]     = '5.3.3';
-                            $fpa['supportENV']['badPHP'][4]     = '5.3.4';
-                            $fpa['supportENV']['badPHP'][5]     = '5.3.5';
-                            $fpa['supportENV']['badPHP'][6]     = '5.3.6';
-                            $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-                        } elseif ( @$instance['cmsRELEASE'] == '2.5' ) {
-                            $fpa['supportENV']['minPHP']        = '5.2.4';
-                            $fpa['supportENV']['minSQL']        = '5.0.4';
-                            $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-                            $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-                            $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
-                            $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-                        } elseif ( @$instance['cmsRELEASE'] == '1.7' ) {
-                            $fpa['supportENV']['minPHP']        = '5.2.4';
-                            $fpa['supportENV']['minSQL']        = '5.0.4';
-                            $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-                            $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-                            $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
-                            $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-                        } elseif ( @$instance['cmsRELEASE'] == '1.6' ) {
-                            $fpa['supportENV']['minPHP']        = '5.2.4';
-                            $fpa['supportENV']['minSQL']        = '5.0.4';
-                            $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
-                            $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
-                            $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
-                            $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-                        } elseif ( @$instance['cmsRELEASE'] == '1.5' ) {
-
-                            if ( @$instance['cmsDEVLEVEL'] <= '14' ) {
-                                $fpa['supportENV']['minPHP']        = '4.3.10';
-                                $fpa['supportENV']['minSQL']        = '3.23.0';
-                                $fpa['supportENV']['maxPHP']        = '5.2.17';
-                                $fpa['supportENV']['maxSQL']        = '5.5.0';  // limited by ENGINE TYPE changes in 5.5 and install sql syntax
-
-                            } else {
-                                $fpa['supportENV']['minPHP']        = '4.3.10';
-                                $fpa['supportENV']['minSQL']        = '3.23.0';
-                                $fpa['supportENV']['maxPHP']        = '5.3.6';
-                                $fpa['supportENV']['maxSQL']        = '5.5.0';  // limited by ENGINE TYPE changes in 5.5 and install sql syntax
-
-                            }
-
-                            $fpa['supportENV']['badPHP'][0]     = '4.3.9';
-                            $fpa['supportENV']['badPHP'][1]     = '4.4.2';
-                            $fpa['supportENV']['badPHP'][2]     = '5.0.4';
-                            $fpa['supportENV']['badZND'][0]     = '2.5.10';
-
-                        } elseif ( @$instance['cmsRELEASE'] == '1.0' ) {
-                            $fpa['supportENV']['minPHP']        = '3.0.1';
-                            $fpa['supportENV']['minSQL']        = '3.0.0';
-                            $fpa['supportENV']['maxPHP']        = '5.2.17';  // changed max supported php from 4.4.9 to 5.2.17 - 03/12/17 - PD
-                            $fpa['supportENV']['maxSQL']        = '5.0.91';  // limited by ENGINE TYPE changes in 5.0 and install sql syntax
-                            $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
-                            $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-
-                        } else {
-                            $fpa['supportENV']['minPHP']        = _FPA_NA;
-                            $fpa['supportENV']['minSQL']        = _FPA_NA;
-                            $fpa['supportENV']['maxPHP']        = _FPA_NA;
-                            $fpa['supportENV']['maxSQL']        = _FPA_NA;
-                            $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
-                            $fpa['supportENV']['badZND'][0]     = _FPA_NA;
-                        }
-                        ?>
-
-                        <div class="row">
-
-                            <div class="col-sm-6 col-lg-3 text-center mb-3">
-
-                                <small class="d-block text-truncate"><?php echo _FPA_SUPPHP .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL']; ?></small>
-                                <div class="border bg-white p-2 py-lg-3">
-
-                                    <?php // minimum and maximum PHP support requirements met?
-                                        if ( $fpa['supportENV']['minPHP'] == _FPA_NA ) {
-                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
-                                            $snapshot['phpSUP4J'] = _FPA_U;
-
-                                        } elseif ( ( version_compare( PHP_VERSION, $fpa['supportENV']['minPHP'], '>=' ) ) AND ( version_compare( PHP_VERSION, $fpa['supportENV']['maxPHP'], '<=' ) ) ) {
-                                            echo '<span class="text-success">'. _FPA_Y .'</span>';
-                                            $snapshot['phpSUP4J'] = _FPA_Y;
-
-                                        } elseif ( ( version_compare( PHP_VERSION, $fpa['supportENV']['minPHP'], '<' ) ) OR ( version_compare( PHP_VERSION, $fpa['supportENV']['maxPHP'], '>' ) ) ) {
-                                            echo '<span class="text-danger">'. _FPA_N .'</span>';
-                                            $snapshot['phpSUP4J'] = _FPA_N;
-
-                                        } else {
-                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
-                                            $snapshot['phpSUP4J'] = _FPA_U;
-                                        }
-                                    ?>
-
-                                </div>
-
-                            </div>
-                            <div class="col-sm-6 col-lg-3 text-center mb-3">
-
-                                <small class="d-block text-truncate">PHP API</small>
-                                <div class="border bg-white p-2 py-lg-3">
-
-                                    <?php // PHP API
-                                        if ( @$phpenv['phpAPI'] ) {
-
-                                            if ( @$phpenv['phpAPI'] == 'apache2handler' ) {
-                                                echo '<span class="text-warning">'. @$phpenv['phpAPI'] .'</span>';
-
-                                            } else {
-                                                echo '<span class="text-success">'. @$phpenv['phpAPI'] .'</span>';
-                                            }
-
-                                        } else {
-                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
-                                        }
-                                    ?>
-
-                                </div>
-
-                            </div>
-                            <div class="col-sm-6 col-lg-3 text-center mb-3">
-
-                                <small class="d-block text-truncate"><?php echo _FPA_SUPPHP; ?> MySQL</small>
-                                <div class="border bg-white p-2 py-lg-3">
-
-                                    <?php // MySQL supported by PHP?
-                                        if ( array_key_exists( 'mysql', $phpextensions ) ) {
-                                            echo '<span class="text-success">'. _FPA_Y .'</span>';
-                                            $snapshot['phpSUP4MYSQL'] = _FPA_Y;
-
-                                        } else {
-                                            echo '<span class="">'. _FPA_N .'</span>';
-                                            $snapshot['phpSUP4MYSQL'] = _FPA_N;
-                                        }
-                                    ?>
-
-                                </div>
-
-                            </div>
-                            <div class="col-sm-6 col-lg-3 text-center mb-3">
-
-                                <small class="d-block text-truncate"><?php echo _FPA_SUPPHP; ?> MySQLi</small>
-                                <div class="border bg-white p-2 py-lg-3">
-
-                                    <?php // MySQLi supported by PHP?
-                                        if ( array_key_exists( 'mysqli', $phpextensions ) ) {
-                                            echo '<span class="text-success">'. _FPA_Y .'</span>';
-                                            $snapshot['phpSUP4MYSQL-i'] = _FPA_Y;
-
-                                        } else {
-                                            echo '<span class="text-warning">'. _FPA_N .'</span>';
-                                            $snapshot['phpSUP4MYSQL-i'] = _FPA_N;
-                                        }
-                                    ?>
-
-                                </div>
-
-                            </div>
-                            <div class="col-sm-6 col-lg-3 text-center mb-3">
-
-                                <small class="d-block text-truncate"><?php echo _FPA_SUPSQL .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL']; ?></small>
-                                <div class="border bg-white p-2 py-lg-3">
-
-                                    <?php // minimum and maximum MySQL support requirements met?
-                                        if ( $fpa['supportENV']['minSQL'] == _FPA_NA OR @$database['dbERROR'] != _FPA_N ) {
-                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
-                                            $snapshot['sqlSUP4J'] = _FPA_U;
-
-                                        } elseif ( ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['minSQL'], '>=' ) ) AND ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['maxSQL'], '<=' ) ) ) {
-
-                                            // WARNING, will run, but ONLY after modifying install SQL to remove ENGINE TYPE statements (removed in MySQL 5.5)
-                                            if ( ( $instance['cmsRELEASE'] == '1.5' ) AND ( @$database['dbHOSTSERV'] > '5.1.43' ) ) {
-                                                echo '<span class="text-warning">'. _FPA_M .' (<a href="http://forum.joomla.org/viewtopic.php?p=2297327" target="_new">'. _FPA_SPNOTE .'</a>)</span>';
-                                                $snapshot['sqlSUP4J'] = _FPA_M;
-
-                                            } else {
-                                                echo '<span class="text-success">'. _FPA_Y .'</span>';
-                                                $snapshot['sqlSUP4J'] = _FPA_Y;
-                                            }
-
-                                        } elseif ( ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['minSQL'], '<' ) ) OR ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['maxSQL'], '>' ) ) ) {
-
-                                            // WARNING, will run, but ONLY after modifying install SQL to remove ENGINE TYPE statements (removed in MySQL 5.5)
-                                            if ( ( $instance['cmsRELEASE'] == '1.5' ) AND ( @$database['dbHOSTSERV'] > '5.1.43' ) ) {
-                                                echo '<span class="text-warning">'. _FPA_M .' (<a href="http://forum.joomla.org/viewtopic.php?p=2297327" target="_new">'. _FPA_SPNOTE .'</a>)</span>';
-                                                $snapshot['sqlSUP4J'] = _FPA_M;
-
-                                            }
-                                            //Added this elseif to give the ok for postgreSQL
-                                            elseif ($instance['configDBTYPE'] == 'postgresql' AND $database['dbHOSTSERV'] >= 8.3 ) {
-                                                echo '<span class="text-success">'. _FPA_Y .'</span>';
-                                                $snapshot['sqlSUP4J'] = _FPA_Y;
-                                            }
-                                            //Added this elseif to give the ok for PDO postgreSQL
-                                            elseif ($instance['configDBTYPE'] == 'pgsql' AND $database['dbHOSTSERV'] >= 8.3 ) {
-                                                echo '<span class="text-success">'. _FPA_Y .'</span>';
-                                                $snapshot['sqlSUP4J'] = _FPA_Y;
-                                            }
-                                            //Added this elseif to give the ok for MariaDB -- PhilD 03-17-17
-                                            elseif (strtoupper(@$output_array[0]) == "MARIADB") {
-                                                echo '<span class="text-success">'. _FPA_MDB .'</span>';
-                                                $snapshot['sqlSUP4J'] = _FPA_Y;
-                                            }
-                                            else {
-                                                echo '<span class="text-danger">'. _FPA_N .'</span>';
-                                                $snapshot['sqlSUP4J'] = _FPA_N;
-                                            }
-
-                                        } else {
-                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
-                                            $snapshot['sqlSUP4J'] = _FPA_U;
-                                        }
-                                    ?>
-
-                                </div>
-
-                            </div>
-                            <div class="col-sm-6 col-lg-3 text-center mb-3">
-
-                                <small class="d-block text-truncate"><?php echo _FPA_SUPSQL; ?> MySQLi</small>
-                                <div class="border bg-white p-2 py-lg-3">
-
-                                    <?php // MySQLi supported by MySQL?
-                                        if ( !@$database['dbHOSTSERV'] OR @$database['dbERROR'] != _FPA_N ) {
-                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
-                                            $snapshot['sqlSUP4SQL-i'] = _FPA_U;
-
-                                        } elseif ( version_compare( @$database['dbHOSTSERV'], '5.0.7', '>=' ) ) {
-                                            echo '<span class="text-success">'. _FPA_Y .'</span>';
-
-                                        } else {
-                                            echo '<span class="text-danger">'. _FPA_N .'</span>';
-                                            $snapshot['sqlSUP4SQL-i'] = _FPA_N;
-                                        }
-                                    ?>
-
-                                </div>
-
-                            </div>
-                            <div class="col-sm-6 col-lg-3 text-center mb-3">
-
-                                <small class="d-block text-truncate">Database Connection Type</small>
-                                <div class="border bg-white p-2 py-lg-3">
-
-                                    <?php // J! connection to MySQL
-                                        if ( @$instance['configDBTYPE'] ) {
-
-                                            if ( ( @$snapshot['sqlSUP4SQL-i'] == _FPA_N OR @$snapshot['sqlSUP4SQL-i'] == _FPA_U ) AND @$instance['configDBTYPE'] == 'mysqli') {
-                                                echo '<span class="text-danger">'. @$instance['configDBTYPE'] .'</span>';
-
-                                            } else {
-                                                echo '<span class="text-success">'. @$instance['configDBTYPE'] .'</span>';
-                                            }
-
-                                        } else {
-                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
-                                        }
-                                    ?>
-
-                                </div>
-
-                            </div>
-                            <div class="col-sm-6 col-lg-3 text-center mb-3">
-
-                                <small class="d-block text-truncate">Database <?php echo _FPA_DEF .' '. _FPA_TCOL; ?></small>
-                                <div class="border bg-white p-2 py-lg-3">
-
-                                    <?php // MySQL default collation
-                                        if ( @$database['dbHOSTDEFCHSET'] ) {
-                                            echo '<span class="text-success">'. @$database['dbHOSTDEFCHSET'] .'</span>';
-
-                                        } else {
-                                            echo '<span class="text-warning">'. _FPA_U .'</span>';
-                                        }
-                                    ?>
-
-                                </div>
-
-                            </div>
-                            <div class="col-sm-6 col-lg-3 text-center mb-3">
-
-                                <small class="d-block text-truncate">PHP <?php echo _FPA_VER; ?></small>
-                                <div class="border bg-white p-2 py-lg-3">
-
-                                    <?php // Unsupported PHP version
-                                        if ( version_compare( PHP_VERSION, '5', '<' ) ) {
-                                            echo '<span class="text-danger">'. PHP_VERSION .'</span>';
-
-                                        } else {
-                                            echo '<span class="text-success">'. PHP_VERSION .'</span>';
-                                        }
-                                    ?>
-
-                                </div>
-
-                            </div>
-                            <div class="col-sm-6 col-lg-3 text-center mb-3">
-
-                                <small class="d-block text-truncate"><?php echo _FPA_BADPHP; ?></small>
-                                <div class="border bg-white p-2 py-lg-3">
-
-                                    <?php // known buggy php releases (mainly for installation on 1.5)
-                                        foreach ( $fpa['supportENV']['badPHP'] as $badKey => $badValue ) {
-                                            if ( version_compare( PHP_VERSION, $badValue, '==' ) ) {
-                                                $badANS = _FPA_Y;
-                                                continue;
-                                            }
-
-                                        }
-
-                                        if ( @$badANS == _FPA_Y ) {
-                                            $badClass = 'text-danger';
-                                            $snapshot['buggyPHP'] = _FPA_N;
-
-                                        } else {
-                                            $badANS = _FPA_N;
-                                            $badClass = 'success';
-                                            $snapshot['buggyPHP'] = _FPA_N;
-                                        }
-                                    ?>
-
-                                    <span class="text-<?php echo $badClass; ?>"><?php echo $badANS; ?></span>
-                                </div>
-
-                            </div>
-                            <div class="col-sm-6 col-lg-3 text-center mb-3">
-
-                                <small class="d-block text-truncate">Database <?php echo _FPA_VER; ?></small>
-                                <div class="border bg-white p-2 py-lg-3">
-                                    <span class="">
-                                        <?php // MySQL Version
-                                            if ( @$database['dbHOSTSERV'] ) {
-                                                echo @$database['dbHOSTSERV'];
-                                            } else {
-                                                echo _FPA_U;
-                                            }
-                                        ?>
-                                    </span>
-                                </div>
-
-                            </div>
-                            <div class="col-sm-6 col-lg-3 text-center mb-3">
-
-                                <small class="d-block text-truncate"><?php echo _FPA_BADZND; ?></small>
-                                <div class="border bg-white p-2 py-lg-3">
-
-                                    <?php // known buggy zend releases (mainly for installation on 1.5)
-                                        $badValue   = ''; // reset variables to fix zend check bug
-                                        $badANS     = '';
-                                        foreach ( $fpa['supportENV']['badZND'] as $badKey => $badValue ) {
-
-                                            if ( version_compare( $phpextensions['Zend Engine'], $badValue, '==' ) ) {
-                                                $badANS = _FPA_Y;
-                                                continue;
-                                            }
-
-                                        }
-
-                                        if ( @$badANS == _FPA_Y ) {
-                                            $badClass = 'danger';
-                                            $snapshot['buggyZEND'] = _FPA_Y;
-
-                                        } else {
-                                            $badANS = _FPA_N;
-                                            $badClass = 'success';
-                                            $snapshot['buggyZEND'] = _FPA_N;
-                                        }
-                                    ?>
-
-                                    <span class="text-<?php echo $badClass; ?>"><?php echo $badANS; ?></span>
-                                </div>
-
-                            </div>
-
-                        </div><!-- /.row-->
-                        <?php showDev( $snapshot ); ?>
-
-
-                        <?php
-                        /**
-                         * if enabled, display live update information
-                         * added @RussW 28/05/2020
-                         *
-                         */
-                        ?>
-                        <?php if ( (defined( '_LIVE_CHECK_FPA' ) OR defined( '_LIVE_CHECK_JOOMLA' )) AND $canDOLIVE == '1' ) { ?>
-
-                            <?php
-                                if ( defined( '_LIVE_CHECK_FPA' ) AND (defined( '_LIVE_CHECK_JOOMLA' ) AND $instance['instanceFOUND'] == _FPA_Y)) {
-                                    $rowCol = '2';
-                                } else {
-                                    $rowCol = '1';
-                                }
-                            ?>
-
-                            <div class="row row-cols-1 row-cols-lg-<?php echo $rowCol; ?>">
-
-                                <?php if ( defined( '_LIVE_CHECK_FPA' ) ) { ?>
-                                    <div class="col text-center mb-2 d-flex align-self-stretch d-print-none">
-
-                                        <?php doFPALIVE(); ?>
-
-                                    </div>
-                                <?php } // end FPA ?>
-
-                                <?php if ( defined( '_LIVE_CHECK_JOOMLA' ) AND $instance['instanceFOUND'] == _FPA_Y AND extension_loaded('simplexml') ) { ?>
-                                    <div class="col text-center mb-2 d-flex align-self-stretch">
-
-                                        <?php
-                                            $thisJVER = @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'];
-                                            doJOOMLALIVE($thisJVER);
-                                        ?>
-
-                                    </div>
-                                <?php } // end Joomla! ?>
-
-                            </div><!--/.row-->
-
-                        <?php } // end FPA & Joomla! LiveChecks ?>
-
-                    </div><!--/.col-->
-                    <div class="col-md-4 col-lg-4">
-                        <?php
-                        /**
-                         * confidence rating based on basic environment tests
-                         *
-                         * a quick and dirty visual feedback method to display a score/rating in the confidence that
-                         * Joomla! will run/work based on some basic initial test results
-                         * @RussW added 23/05/2020
-                         *
-                         */
-
-                        /**
-                         * confidenceScore
-                         * scale :
-                         * 0  = danger/no/unknown/unsupported/bad
-                         * 1  = warning/ok/old(minor)/maybe
-                         * 2  = success/yes/latest/good
-                         *
-                         */
-                        (float)$confidenceScore = 0;
-                        $confidenceResult = array();
-                        $confidenceHelp   = array();
-
-                            // check php handler & phpsuexec
-                            if (substr($phpenv['phpAPI'], 0, 3) == 'cgi' OR $phpenv['phpAPI'] != 'apache2handler') {
-                                $confidenceResult['PHP API'] = 2;
-
-                            } elseif ($phpenv['phpAPI'] == 'apache2handler') {
-                                $confidenceResult['PHP API'] = 1;
-
-                                if ($phpenv['phpPHPSUEXEC'] == _FPA_Y) {
-                                    $confidenceResult['phpPHPSUEXEC'] = 2;
-
-                                } elseif ($phpenv['phpPHPSUEXEC'] == _FPA_N) {
-                                    $confidenceResult['PHPsuExec available'] = 1;
-
-                                } else {
-                                    $confidenceResult['PHPsuExec available'] = 0;
-                                }
-
-                            } else {
-                                $confidenceResult['PHP API'] = 0;
-                            }
-
-                            // check apache suexec
-                            if ($phpenv['phpAPACHESUEXEC'] == _FPA_Y) {
-                                $confidenceResult['Apache suExec available'] = 2;
-
-                            } elseif (substr($phpenv['phpAPI'], 0, 4) == 'lite') {
-                                $confidenceResult['Server suExec available'] = 1;
-
-                            } else {
-                                $confidenceResult['Server suExec available'] = 0;
-                            }
-
-                            // check for UTF8 support
-                            if (array_key_exists( 'mbstring', $phpextensions )) {
-                                $confidenceResult['PHP mbstring available'] = 2;
-                            } else {
-                                $confidenceResult['PHP mbstring available'] = 1;
-                            }
-
-                            // check for compression extensions
-                            if (array_key_exists( 'zip', $phpextensions ) OR array_key_exists( 'zlib', $phpextensions ) OR array_key_exists( 'bz2', $phpextensions )) {
-                                $confidenceResult['PHP zip, zlib or bz2 available'] = 2;
-                            } else {
-                                $confidenceResult['PHP zip, zlib or bz2 available'] = 1;
-                            }
-
-                            // check for encryption extensions
-                            if (array_key_exists( 'mcrypt', $phpextensions ) OR array_key_exists( 'sodium', $phpextensions )) {
-                                $confidenceResult['PHP mcrypt or sodium available'] = 2;
-                            } else {
-                                $confidenceResult['PHP mcrypt or sodium available'] = 1;
-                            }
-
-                            // check for cURL extensions
-                            if (array_key_exists( 'curl', $phpextensions ) OR array_key_exists( 'sodium', $phpextensions )) {
-                                $confidenceResult['PHP cURL available'] = 2;
-                            } else {
-                                $confidenceResult['PHP cURL available'] = 1;
-                            }
-
-                            // check for XML extensions
-                            if (array_key_exists( 'xml', $phpextensions ) OR array_key_exists( 'libxml', $phpextensions )) {
-                                $confidenceResult['PHP xml or libxml available'] = 2;
-                            } else {
-                                $confidenceResult['PHP xml or libxml available'] = 1;
-                            }
-
-                            // check for database support
-                            if ($snapshot['phpSUP4MYSQL'] == _FPA_Y OR $snapshot['phpSUP4MYSQL-i'] == _FPA_Y) {
-                                $confidenceResult[_FPA_SUPPHP .' MySQL or MySQLi'] = 2;
-
-                            } else {
-                                $confidenceResult[_FPA_SUPPHP .' MySQL or MySQLi'] = 0;
-                            }
-
-                            // check for bad php versions
-                            if ($snapshot['buggyPHP'] == _FPA_N) {
-                                $confidenceResult[_FPA_BADPHP] = 2;
-
-                            } else {
-                                $confidenceResult[_FPA_BADPHP] = 0;
-                            }
-
-                            // check bad zend versions
-                            if ($snapshot['buggyZEND'] == _FPA_N) {
-                                $confidenceResult[_FPA_BADZND] = 2;
-
-                            } else {
-                                $confidenceResult[_FPA_BADZND] = 0;
-                            }
-
-                            // check if php sessionpath writable
-                            if ($phpenv['phpSESSIONPATHWRITABLE'] == _FPA_Y) {
-                                $confidenceResult['PHP Session Path '. _FPA_WRITABLE] = 2;
-
-                            } else {
-                                $confidenceResult['PHP Session Path '. _FPA_WRITABLE] = 0;
-                            }
-
-                            // check if system tmp is writable
-                            if ($system['sysTMPDIRWRITABLE'] == _FPA_Y) {
-                                $confidenceResult[_FPA_SERV .' Tmp '. _FPA_WRITABLE] = 2;
-
-                            } else {
-                                $confidenceResult[_FPA_SERV .' Tmp '. _FPA_WRITABLE] = 0;
-                            }
-
-
-                            // only test these items if instance is found (installed or not)
-                            if ($instance['instanceFOUND'] == _FPA_Y) {
-
-                                // does php support J! version
-                                if ($snapshot['phpSUP4J'] == _FPA_Y) {
-                                    $confidenceResult[_FPA_SUPPHP .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] .' <small>(PHP '. PHP_VERSION .')</small>'] = 2;
-
-                                } elseif ($snapshot['phpSUP4J'] == _FPA_M) {
-                                        $confidenceResult[_FPA_SUPPHP .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] .' <small>(PHP '. PHP_VERSION .')</small>'] = 1;
-
-                                } else {
-                                    $confidenceResult[_FPA_SUPPHP .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] .' <small>(PHP v'. PHP_VERSION .')</small>'] = 0;
-                                }
-
-                                // does db support J! version
-                                if ($snapshot['sqlSUP4J'] == _FPA_Y) {
-                                    $confidenceResult[_FPA_SUPSQL .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL']] = 2;
-
-                                } elseif ($snapshot['sqlSUP4J'] == _FPA_M) {
-                                    $confidenceResult[_FPA_SUPSQL .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL']] = 1;
-
-                                } else {
-                                    $confidenceResult[_FPA_SUPSQL .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL']] = 0;
-                                }
-
-                            } // end instandFOUND checks
-
-
-                            // nothing to change here if adding new confidence results (auto counts & calculates)
-                            $countConfidence = count($confidenceResult)*2;
-                            $confidenceScore = (array_sum($confidenceResult) / $countConfidence)*100;
-
-
-                            /**
-                             * showstoppers & belt 'n' braces
-                             *
-                             * if guaranteed to break Joomla!, definately unsupported, any of the following criteria
-                             * are met or if score result is not numeric or a positive number between 0-100, force
-                             * $confidenceScore to 0(zero)/F
-                             *
-                             */
-
-                            // unsupported minimum PHP version
-                            if (version_compare( PHP_VERSION, '5', '<' ))  {
-                                $confidenceScore = 0;
-                            }
-
-                            // mysql or php does not support installed Joomla! version
-                            if ($instance['instanceFOUND'] == _FPA_Y AND ($snapshot['phpSUP4J'] == _FPA_NO OR $snapshot['sqlSUP4J'] == _FPA_NO)) {
-                                $confidenceScore = 0;
-                            }
-
-                            // bad score result
-                            if (!is_numeric($confidenceScore) OR $confidenceScore < 0) {
-                                $confidenceScore = 0;
-                            }
-
-                            /**
-                             * set the $confidenceHelp icon colour
-                             *
-                             * we limit the colours use for the help icon and don't use the $confidenceScore colour scheme
-                             * so that it is more generic and will change the icon only within larger score variations.
-                             *
-                             * the colour changes are purely a visual method of informing the user that some audit tests
-                             * do not equal 2 (top score) and may need review (via the help icon button/panel)
-                             *
-                             * 0 - 25.000 (F rated) = danger
-                             * 25.001 - 99.999 (E, D, C, B & A rated) = warning
-                             * 100 (A+ rated) = info (default)
-                             *
-                             */
-                            if ($confidenceScore == 100) {
-                                $helpIconColor = 'info';
-
-                            } elseif ($confidenceScore == 0 OR $confidenceScore <= 25) {
-                                $helpIconColor = 'danger';
-
-                            } elseif ($confidenceScore > 40 OR $confidenceScore < 100) {
-                                $helpIconColor = 'warning';
-
-                            } else {
-                                $helpIconColor = 'info';
-                            }
-
-                            /**
-                             * generate a formated audit results table
-                             * displayed in the confidenceResult Help collapsable
-                             *
-                             * @param array $confidenceResult
-                             * @return $confidenceHelp
-                             */
-                            function confidenceShowHelp(array $confidenceResult) {
-
-                                echo '<table class="table table-striped table-bordered table-sm">';
-                                foreach ($confidenceResult as $confidenceHelpDesc => $confidenceHelpScore) {
-                                    if ($confidenceHelpScore == 2) {
-                                        $helpIcon  = 'check-circle';
-                                        $helpColor = 'success';
-                                    } elseif ($confidenceHelpScore == 1) {
-                                        $helpIcon  = 'info-circle';
-                                        $helpColor = 'info';
-                                    } elseif ($confidenceHelpScore == 0) {
-                                        $helpIcon  = 'times-circle';
-                                        $helpColor = 'danger';
-                                    } else {
-                                        $helpIcon  = 'question-circle';
-                                        $helpColor = 'light';
-                                    }
-                                    echo '<tr><td class="col-8">'. $confidenceHelpDesc .'</td><td class="col-4"><i class="fas fa-'. $helpIcon .' text-'. $helpColor .'"></i></td></tr>';
-                                }
-                                echo '</table>';
-
-                                return $confidenceResult;
-                            }
-                        ?>
-                        <div class="mx-lg-3">
-                            <div class="bg-white shadow text-center">
-                                <div class="m-2 float-right" data-toggle="popover" data-trigger="hover" data-placement="top" data-fallbackPlacement="flip" data-title="Confidence Audit Help" data-content="Click the icon to review the basic audit tests and results that determine this rating">
-                                    <i class="fas fa-question-circle fa-lg text-<?php echo $helpIconColor; ?>" data-toggle="collapse" data-target="#confidenceHelp" aria-expanded="false" aria-controls="confidenceHelp" role="button" aria-label="View confidence results"></i>
-                                </div>
-                                <h2 class="h4 text-dark text-center border-bottom p-2"><?php echo _FPA_DASHBOARD_CONFIDENCE_TITLE; ?></h2>
-
-                                <div class="collapse text-left p-2" id="confidenceHelp">
-                                    <h3 class="h6 text-center pb-2 m-0">Basic Audit Results</h3>
-                                    <?php $confidenceHelp = confidenceShowHelp($confidenceResult); ?>
-                                </div>
-
-                                <?php
-                                    /**
-                                     * generate confidence rating
-                                     * based on $confidenceScore
-                                     * A - F & messaging
-                                     *
-                                     */
-                                    if ($confidenceScore > 100 OR $confidenceScore < 0) {
-                                        $confidenceRating = '<i class="fas fa-question-circle text-light"></i>';
-                                        $confidenceColor  = 'muted';
-                                        $confidenceMessage = _FPA_U;
-
-                                    } elseif ($confidenceScore >= 0 AND $confidenceScore <= 25) {
-                                        $confidenceRating  = 'F';
-                                        $confidenceColor   = 'danger';
-                                        $confidenceMessage = _FPA_CNF_F;
-
-                                    } elseif ($confidenceScore <= 40) {
-                                        $confidenceRating  = 'E';
-                                        $confidenceColor   = 'warning';
-                                        $confidenceMessage = _FPA_CNF_E;
-
-                                    } elseif ($confidenceScore <= 60) {
-                                        $confidenceRating  = 'D';
-                                        $confidenceColor   = 'warning';
-                                        $confidenceMessage = _FPA_CNF_D;
-
-                                    } elseif ($confidenceScore <= 75) {
-                                        $confidenceRating  = 'C';
-                                        $confidenceColor   = 'info';
-                                        $confidenceMessage = _FPA_CNF_C;
-
-                                    } elseif ($confidenceScore <= 90) {
-                                        $confidenceRating  = 'B';
-                                        $confidenceColor   = 'primary';
-                                        $confidenceMessage = _FPA_CNF_B;
-
-                                    } elseif ($confidenceScore < 100) {
-                                        $confidenceRating  = 'A';
-                                        $confidenceColor   = 'success';
-                                        $confidenceMessage = _FPA_CNF_A;
-
-                                    } elseif ($confidenceScore == 100) {
-                                        $confidenceRating  = 'A+';
-                                        $confidenceColor   = 'success';
-                                        $confidenceMessage = _FPA_CNF_A;
-
-                                    } else { // catch-all
-                                        $confidenceRating  = '<i class="fas fa-question-circle text-light"></i>';
-                                        $confidenceColor   = 'muted';
-                                        $confidenceMessage = _FPA_U;
-                                    }
-                                ?>
-                                <h1 class="text-center display-2 text-<?php echo $confidenceColor; ?> mb-0"><strong><?php echo $confidenceRating; ?></strong></h1>
-                                <span class="badge badge-pill badge-light text-dark <?php echo $confidenceColor; ?> mx-auto position-relative" style="top:-15px;"><?php echo number_format($confidenceScore, 1); ?>%</span>
-                                <?php if ($confidenceMessage) { ?>
-                                    <p class="xsmall text-center border-top bg-white text-<?php echo $confidenceColor; ?> p-2 mb-2"><?php echo $confidenceMessage; ?></p>
-                                <?php } ?>
-                            </div>
-                            <?php showDev( $confidenceResult ); ?>
-
-                            <!-- access the FPA optionPanels -->
-                            <a class="d-block btn btn-primary d-print-none" role="button" href="javascript:toggleFPA('fpaOptions','fpaButton');" id="fpaButton" ><i class="fas fa-chevron-circle-right"></i> Open the <strong><?php echo _RES; ?></strong></a>
-                        </div>
-
-                    </div><!--/.col-->
-                </div><!--/.row-->
-
-            </div><!--/.container-->
-        </section>
-
-
-
         <main class="main">
 
-            <?php
-            /**
-             * fpa settings & post output section
-             *
-             */
-            ?>
-            <section class="border-top d-print-none" id="post-form">
+            <!--START POST FORM-->
+            <form method="post" name="postDetails" id="postDetails">
 
-                <div class="container mb-2">
 
-                    <!-- POST FORM -->
-                    <form method="post" name="postDetails" id="postDetails">
+                <?php
+                /**
+                 * fpa snapshot section
+                 *
+                 * basic joomla and environment checks and display
+                 *
+                 */
+                ?>
+                <section class="bg-light pt-2" id="fpa-dashboard">
+                    <div class="container pt-4 pb-3">
+
+                        <h1 class="font-weight-light border-bottom"><i class="fas fa-dice-d6 fa-sm text-muted"></i> <?php echo _FPA_SNAP_TITLE; ?></h1>
+                        <p class="text-dark mb-lg-5"><?php echo _FPA_DASHBOARD_CONFIDENCE_NOTE; ?></p>
+
+                        <div class="row">
+                            <div class="col-md-8 col-lg-8">
+
+                                <?php
+                                /**
+                                 * fpa snapshot section
+                                 * basic joomla and environment checks and display
+                                 *
+                                 * SUPPORT SECTIONS
+                                 * added a 2.5 section - @PhilD 4-20-12
+                                 * added a 3.1, 3.2 section - @PhilD 01-01-14
+                                 *
+                                 * Note:
+                                 * With the release of Joomla! 3.2, the CMS introduced a new feature called, Strong Passwords.
+                                 * The intent was to enhance the encryption of password hashing and storage through the use of BCrypt,
+                                 * thus increasing the security of Joomla! 3.2 user accounts. Bcrypt was not available in the early releases
+                                 * of php 5.3, and with the first releases, a bug in the algorithm surfaced. This prompted a change in the
+                                 * later php versions to fix it. The Joomla 3 series required a minimum php version of 5.3+ which unfortunately
+                                 * includes php versions without BCrypt and the buggy first release of BCrypt. The Strong Passwords feature
+                                 * has built in compatibility to determine if BCrypt was available based on a php version check of the Joomla
+                                 * installation's server. The version check is used to determine exactly what the Strong Passwords feature
+                                 * would enable, BCrypt or the next best available password hashing encryption available. Unfortunately,
+                                 * this can lead to access issues under certain circumstances.
+                                 * To reflect this issue with Joomla 3.2.0 and earlier versions of php 5.3, the FPA checks to see if the
+                                 * Joomla! version is 3.2.0 and then checks the php version on the server. If the version php version is less
+                                 * than 5.3.7 then the FPA will report that php does not support Joomla!
+                                 *
+                                 * PHP version of 5.3.1+ is supported by Joomla 3.2.1 due to the fix put in place in Joomla 3.2.1
+                                 *
+                                 * MySQL:
+                                 * On Medialayer at least, mysql 5.0.87-community will work with current versions of Joomla and has inno db enabled
+                                 *
+                                 */
+
+                                /**
+                                 * MariaDB check. Get the Database type and look for MariaDB. All current versions of MariaDB should be current
+                                 * with Joomla. The issue with using version numbers is mysql also uses numbers, so this check differentiates
+                                 * between mysql and MariaDB. If there is a better idea given the current FPA code feel free to submit it.
+                                 * @PhilD 03-17-17
+                                 *
+                                 */
+                                $input_line = @$database['dbHOSTSERV'];
+                                preg_match("/\b(\w*mariadb\w*)\b/i", $input_line, $output_array);
+
+                                if  (@$instance['cmsRELEASE'] >= '4.0') {
+                                    $fpa['supportENV']['minPHP']        = '7.2.5';
+                                    $fpa['supportENV']['minSQL']        = '5.6.0';
+                                    $fpa['supportENV']['maxPHP']        = '8.0.0';
+                                    $fpa['supportENV']['maxSQL']        = '9.0.0';
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif  (@$instance['cmsRELEASE'] == '3.10') {
+                                    $fpa['supportENV']['minPHP']        = '5.3.10';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '8.0.0';
+                                    $fpa['supportENV']['maxSQL']        = '9.0.0';
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif  (@$instance['cmsRELEASE'] == '3.9') {
+                                    $fpa['supportENV']['minPHP']        = '5.3.10';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '7.5.0';
+                                    $fpa['supportENV']['maxSQL']        = '8.5.0';
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif  (@$instance['cmsRELEASE'] > '3.7' AND @$instance['cmsDEVLEVEL'] > '2') {
+                                    $fpa['supportENV']['minPHP']        = '5.3.10';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '7.5.0';
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif ( @$instance['cmsRELEASE'] >= '3.5') {
+                                    $fpa['supportENV']['minPHP']        = '5.3.10';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '7.1.99';
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif ( @$instance['cmsRELEASE']  == '3.3' OR @$instance['cmsRELEASE']  == '3.4')  {
+                                    $fpa['supportENV']['minPHP']        = '5.3.10';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '6.0.0';
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif ( @$instance['cmsRELEASE'] == '3.2' AND @$instance['cmsDEVLEVEL'] >= 1) {
+                                    $fpa['supportENV']['minPHP']        = '5.3.1';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+                                } elseif ( @$instance['cmsRELEASE'] == '3.2' AND @$instance['cmsDEVLEVEL'] == 0) {
+                                    $fpa['supportENV']['minPHP']        = '5.3.7';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+                                } elseif ( @$instance['cmsRELEASE'] == '3.1' ) {
+                                    $fpa['supportENV']['minPHP']        = '5.3.1';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+                                } elseif ( @$instance['cmsRELEASE'] == '3.0' ) {
+                                    $fpa['supportENV']['minPHP']        = '5.3.1';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+                                } elseif ( @$instance['cmsRELEASE'] == '2.5' ) {
+                                    $fpa['supportENV']['minPHP']        = '5.2.4';
+                                    $fpa['supportENV']['minSQL']        = '5.0.4';
+                                    $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
+                                    $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif ( @$instance['cmsRELEASE'] == '1.7' ) {
+                                    $fpa['supportENV']['minPHP']        = '5.2.4';
+                                    $fpa['supportENV']['minSQL']        = '5.0.4';
+                                    $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
+                                    $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif ( @$instance['cmsRELEASE'] == '1.6' ) {
+                                    $fpa['supportENV']['minPHP']        = '5.2.4';
+                                    $fpa['supportENV']['minSQL']        = '5.0.4';
+                                    $fpa['supportENV']['maxPHP']        = '6.0.0';  // latest release?
+                                    $fpa['supportENV']['maxSQL']        = '5.8.0';  // latest release?
+                                    $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif ( @$instance['cmsRELEASE'] == '1.5' ) {
+
+                                    if ( @$instance['cmsDEVLEVEL'] <= '14' ) {
+                                        $fpa['supportENV']['minPHP']        = '4.3.10';
+                                        $fpa['supportENV']['minSQL']        = '3.23.0';
+                                        $fpa['supportENV']['maxPHP']        = '5.2.17';
+                                        $fpa['supportENV']['maxSQL']        = '5.5.0';  // limited by ENGINE TYPE changes in 5.5 and install sql syntax
+
+                                    } else {
+                                        $fpa['supportENV']['minPHP']        = '4.3.10';
+                                        $fpa['supportENV']['minSQL']        = '3.23.0';
+                                        $fpa['supportENV']['maxPHP']        = '5.3.6';
+                                        $fpa['supportENV']['maxSQL']        = '5.5.0';  // limited by ENGINE TYPE changes in 5.5 and install sql syntax
+
+                                    }
+
+                                    $fpa['supportENV']['badPHP'][0]     = '4.3.9';
+                                    $fpa['supportENV']['badPHP'][1]     = '4.4.2';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.0.4';
+                                    $fpa['supportENV']['badZND'][0]     = '2.5.10';
+
+                                } elseif ( @$instance['cmsRELEASE'] == '1.0' ) {
+                                    $fpa['supportENV']['minPHP']        = '3.0.1';
+                                    $fpa['supportENV']['minSQL']        = '3.0.0';
+                                    $fpa['supportENV']['maxPHP']        = '5.2.17';  // changed max supported php from 4.4.9 to 5.2.17 - 03/12/17 - PD
+                                    $fpa['supportENV']['maxSQL']        = '5.0.91';  // limited by ENGINE TYPE changes in 5.0 and install sql syntax
+                                    $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } else {
+                                    $fpa['supportENV']['minPHP']        = _FPA_NA;
+                                    $fpa['supportENV']['minSQL']        = _FPA_NA;
+                                    $fpa['supportENV']['maxPHP']        = _FPA_NA;
+                                    $fpa['supportENV']['maxSQL']        = _FPA_NA;
+                                    $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+                                }
+                                ?>
+
+                                <div class="row">
+
+                                    <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                        <small class="d-block text-truncate"><?php echo _FPA_SUPPHP .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL']; ?></small>
+                                        <div class="border bg-white p-2 py-lg-3">
+
+                                            <?php // minimum and maximum PHP support requirements met?
+                                                if ( $fpa['supportENV']['minPHP'] == _FPA_NA ) {
+                                                    echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                    $snapshot['phpSUP4J'] = _FPA_U;
+
+                                                } elseif ( ( version_compare( PHP_VERSION, $fpa['supportENV']['minPHP'], '>=' ) ) AND ( version_compare( PHP_VERSION, $fpa['supportENV']['maxPHP'], '<=' ) ) ) {
+                                                    echo '<span class="text-success">'. _FPA_Y .'</span>';
+                                                    $snapshot['phpSUP4J'] = _FPA_Y;
+
+                                                } elseif ( ( version_compare( PHP_VERSION, $fpa['supportENV']['minPHP'], '<' ) ) OR ( version_compare( PHP_VERSION, $fpa['supportENV']['maxPHP'], '>' ) ) ) {
+                                                    echo '<span class="text-danger">'. _FPA_N .'</span>';
+                                                    $snapshot['phpSUP4J'] = _FPA_N;
+
+                                                } else {
+                                                    echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                    $snapshot['phpSUP4J'] = _FPA_U;
+                                                }
+                                            ?>
+
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                        <small class="d-block text-truncate">PHP API</small>
+                                        <div class="border bg-white p-2 py-lg-3">
+
+                                            <?php // PHP API
+                                                if ( @$phpenv['phpAPI'] ) {
+
+                                                    if ( @$phpenv['phpAPI'] == 'apache2handler' ) {
+                                                        echo '<span class="text-warning">'. @$phpenv['phpAPI'] .'</span>';
+
+                                                    } else {
+                                                        echo '<span class="text-success">'. @$phpenv['phpAPI'] .'</span>';
+                                                    }
+
+                                                } else {
+                                                    echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                }
+                                            ?>
+
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                        <small class="d-block text-truncate"><?php echo _FPA_SUPPHP; ?> MySQL</small>
+                                        <div class="border bg-white p-2 py-lg-3">
+
+                                            <?php // MySQL supported by PHP?
+                                                if ( array_key_exists( 'mysql', $phpextensions ) ) {
+                                                    echo '<span class="text-success">'. _FPA_Y .'</span>';
+                                                    $snapshot['phpSUP4MYSQL'] = _FPA_Y;
+
+                                                } else {
+                                                    echo '<span class="">'. _FPA_N .'</span>';
+                                                    $snapshot['phpSUP4MYSQL'] = _FPA_N;
+                                                }
+                                            ?>
+
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                        <small class="d-block text-truncate"><?php echo _FPA_SUPPHP; ?> MySQLi</small>
+                                        <div class="border bg-white p-2 py-lg-3">
+
+                                            <?php // MySQLi supported by PHP?
+                                                if ( array_key_exists( 'mysqli', $phpextensions ) ) {
+                                                    echo '<span class="text-success">'. _FPA_Y .'</span>';
+                                                    $snapshot['phpSUP4MYSQL-i'] = _FPA_Y;
+
+                                                } else {
+                                                    echo '<span class="text-warning">'. _FPA_N .'</span>';
+                                                    $snapshot['phpSUP4MYSQL-i'] = _FPA_N;
+                                                }
+                                            ?>
+
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                        <small class="d-block text-truncate"><?php echo _FPA_SUPSQL .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL']; ?></small>
+                                        <div class="border bg-white p-2 py-lg-3">
+
+                                            <?php // minimum and maximum MySQL support requirements met?
+                                                if ( $fpa['supportENV']['minSQL'] == _FPA_NA OR @$database['dbERROR'] != _FPA_N ) {
+                                                    echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                    $snapshot['sqlSUP4J'] = _FPA_U;
+
+                                                } elseif ( ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['minSQL'], '>=' ) ) AND ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['maxSQL'], '<=' ) ) ) {
+
+                                                    // WARNING, will run, but ONLY after modifying install SQL to remove ENGINE TYPE statements (removed in MySQL 5.5)
+                                                    if ( ( $instance['cmsRELEASE'] == '1.5' ) AND ( @$database['dbHOSTSERV'] > '5.1.43' ) ) {
+                                                        echo '<span class="text-warning">'. _FPA_M .' (<a href="http://forum.joomla.org/viewtopic.php?p=2297327" target="_new">'. _FPA_SPNOTE .'</a>)</span>';
+                                                        $snapshot['sqlSUP4J'] = _FPA_M;
+
+                                                    } else {
+                                                        echo '<span class="text-success">'. _FPA_Y .'</span>';
+                                                        $snapshot['sqlSUP4J'] = _FPA_Y;
+                                                    }
+
+                                                } elseif ( ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['minSQL'], '<' ) ) OR ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['maxSQL'], '>' ) ) ) {
+
+                                                    // WARNING, will run, but ONLY after modifying install SQL to remove ENGINE TYPE statements (removed in MySQL 5.5)
+                                                    if ( ( $instance['cmsRELEASE'] == '1.5' ) AND ( @$database['dbHOSTSERV'] > '5.1.43' ) ) {
+                                                        echo '<span class="text-warning">'. _FPA_M .' (<a href="http://forum.joomla.org/viewtopic.php?p=2297327" target="_new">'. _FPA_SPNOTE .'</a>)</span>';
+                                                        $snapshot['sqlSUP4J'] = _FPA_M;
+
+                                                    }
+                                                    //Added this elseif to give the ok for postgreSQL
+                                                    elseif ($instance['configDBTYPE'] == 'postgresql' AND $database['dbHOSTSERV'] >= 8.3 ) {
+                                                        echo '<span class="text-success">'. _FPA_Y .'</span>';
+                                                        $snapshot['sqlSUP4J'] = _FPA_Y;
+                                                    }
+                                                    //Added this elseif to give the ok for PDO postgreSQL
+                                                    elseif ($instance['configDBTYPE'] == 'pgsql' AND $database['dbHOSTSERV'] >= 8.3 ) {
+                                                        echo '<span class="text-success">'. _FPA_Y .'</span>';
+                                                        $snapshot['sqlSUP4J'] = _FPA_Y;
+                                                    }
+                                                    //Added this elseif to give the ok for MariaDB -- PhilD 03-17-17
+                                                    elseif (strtoupper(@$output_array[0]) == "MARIADB") {
+                                                        echo '<span class="text-success">'. _FPA_MDB .'</span>';
+                                                        $snapshot['sqlSUP4J'] = _FPA_Y;
+                                                    }
+                                                    else {
+                                                        echo '<span class="text-danger">'. _FPA_N .'</span>';
+                                                        $snapshot['sqlSUP4J'] = _FPA_N;
+                                                    }
+
+                                                } else {
+                                                    echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                    $snapshot['sqlSUP4J'] = _FPA_U;
+                                                }
+                                            ?>
+
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                        <small class="d-block text-truncate"><?php echo _FPA_SUPSQL; ?> MySQLi</small>
+                                        <div class="border bg-white p-2 py-lg-3">
+
+                                            <?php // MySQLi supported by MySQL?
+                                                if ( !@$database['dbHOSTSERV'] OR @$database['dbERROR'] != _FPA_N ) {
+                                                    echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                    $snapshot['sqlSUP4SQL-i'] = _FPA_U;
+
+                                                } elseif ( version_compare( @$database['dbHOSTSERV'], '5.0.7', '>=' ) ) {
+                                                    echo '<span class="text-success">'. _FPA_Y .'</span>';
+
+                                                } else {
+                                                    echo '<span class="text-danger">'. _FPA_N .'</span>';
+                                                    $snapshot['sqlSUP4SQL-i'] = _FPA_N;
+                                                }
+                                            ?>
+
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                        <small class="d-block text-truncate">Database Connection Type</small>
+                                        <div class="border bg-white p-2 py-lg-3">
+
+                                            <?php // J! connection to MySQL
+                                                if ( @$instance['configDBTYPE'] ) {
+
+                                                    if ( ( @$snapshot['sqlSUP4SQL-i'] == _FPA_N OR @$snapshot['sqlSUP4SQL-i'] == _FPA_U ) AND @$instance['configDBTYPE'] == 'mysqli') {
+                                                        echo '<span class="text-danger">'. @$instance['configDBTYPE'] .'</span>';
+
+                                                    } else {
+                                                        echo '<span class="text-success">'. @$instance['configDBTYPE'] .'</span>';
+                                                    }
+
+                                                } else {
+                                                    echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                }
+                                            ?>
+
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                        <small class="d-block text-truncate">Database <?php echo _FPA_DEF .' '. _FPA_TCOL; ?></small>
+                                        <div class="border bg-white p-2 py-lg-3">
+
+                                            <?php // MySQL default collation
+                                                if ( @$database['dbHOSTDEFCHSET'] ) {
+                                                    echo '<span class="text-success">'. @$database['dbHOSTDEFCHSET'] .'</span>';
+
+                                                } else {
+                                                    echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                }
+                                            ?>
+
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                        <small class="d-block text-truncate">PHP <?php echo _FPA_VER; ?></small>
+                                        <div class="border bg-white p-2 py-lg-3">
+
+                                            <?php // Unsupported PHP version
+                                                if ( version_compare( PHP_VERSION, '5', '<' ) ) {
+                                                    echo '<span class="text-danger">'. PHP_VERSION .'</span>';
+
+                                                } else {
+                                                    echo '<span class="text-success">'. PHP_VERSION .'</span>';
+                                                }
+                                            ?>
+
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                        <small class="d-block text-truncate"><?php echo _FPA_BADPHP; ?></small>
+                                        <div class="border bg-white p-2 py-lg-3">
+
+                                            <?php // known buggy php releases (mainly for installation on 1.5)
+                                                foreach ( $fpa['supportENV']['badPHP'] as $badKey => $badValue ) {
+                                                    if ( version_compare( PHP_VERSION, $badValue, '==' ) ) {
+                                                        $badANS = _FPA_Y;
+                                                        continue;
+                                                    }
+
+                                                }
+
+                                                if ( @$badANS == _FPA_Y ) {
+                                                    $badClass = 'text-danger';
+                                                    $snapshot['buggyPHP'] = _FPA_N;
+
+                                                } else {
+                                                    $badANS = _FPA_N;
+                                                    $badClass = 'success';
+                                                    $snapshot['buggyPHP'] = _FPA_N;
+                                                }
+                                            ?>
+
+                                            <span class="text-<?php echo $badClass; ?>"><?php echo $badANS; ?></span>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                        <small class="d-block text-truncate">Database <?php echo _FPA_VER; ?></small>
+                                        <div class="border bg-white p-2 py-lg-3">
+                                            <span class="">
+                                                <?php // MySQL Version
+                                                    if ( @$database['dbHOSTSERV'] ) {
+                                                        echo @$database['dbHOSTSERV'];
+                                                    } else {
+                                                        echo _FPA_U;
+                                                    }
+                                                ?>
+                                            </span>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-6 col-lg-3 text-center mb-3">
+
+                                        <small class="d-block text-truncate"><?php echo _FPA_BADZND; ?></small>
+                                        <div class="border bg-white p-2 py-lg-3">
+
+                                            <?php // known buggy zend releases (mainly for installation on 1.5)
+                                                $badValue   = ''; // reset variables to fix zend check bug
+                                                $badANS     = '';
+                                                foreach ( $fpa['supportENV']['badZND'] as $badKey => $badValue ) {
+
+                                                    if ( version_compare( $phpextensions['Zend Engine'], $badValue, '==' ) ) {
+                                                        $badANS = _FPA_Y;
+                                                        continue;
+                                                    }
+
+                                                }
+
+                                                if ( @$badANS == _FPA_Y ) {
+                                                    $badClass = 'danger';
+                                                    $snapshot['buggyZEND'] = _FPA_Y;
+
+                                                } else {
+                                                    $badANS = _FPA_N;
+                                                    $badClass = 'success';
+                                                    $snapshot['buggyZEND'] = _FPA_N;
+                                                }
+                                            ?>
+
+                                            <span class="text-<?php echo $badClass; ?>"><?php echo $badANS; ?></span>
+                                        </div>
+
+                                    </div>
+
+                                </div><!-- /.row-->
+                                <?php showDev( $snapshot ); ?>
+
+
+                                <?php
+                                /**
+                                 * if enabled, display live update information
+                                 * added @RussW 28/05/2020
+                                 *
+                                 */
+                                ?>
+                                <?php if ( (defined( '_LIVE_CHECK_FPA' ) OR defined( '_LIVE_CHECK_JOOMLA' )) AND $canDOLIVE == '1' ) { ?>
+
+                                    <?php
+                                        if ( defined( '_LIVE_CHECK_FPA' ) AND (defined( '_LIVE_CHECK_JOOMLA' ) AND $instance['instanceFOUND'] == _FPA_Y)) {
+                                            $rowCol = '2';
+                                        } else {
+                                            $rowCol = '1';
+                                        }
+                                    ?>
+
+                                    <div class="row row-cols-1 row-cols-lg-<?php echo $rowCol; ?>">
+
+                                        <?php if ( defined( '_LIVE_CHECK_FPA' ) ) { ?>
+                                            <div class="col text-center mb-2 d-flex align-self-stretch d-print-none">
+
+                                                <?php doFPALIVE(); ?>
+
+                                            </div>
+                                        <?php } // end FPA ?>
+
+                                        <?php if ( defined( '_LIVE_CHECK_JOOMLA' ) AND $instance['instanceFOUND'] == _FPA_Y AND extension_loaded('simplexml') ) { ?>
+                                            <div class="col text-center mb-2 d-flex align-self-stretch">
+
+                                                <?php
+                                                    $thisJVER = @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'];
+                                                    doJOOMLALIVE($thisJVER);
+                                                ?>
+
+                                            </div>
+                                        <?php } // end Joomla! ?>
+
+                                    </div><!--/.row-->
+
+                                <?php } // end FPA & Joomla! LiveChecks ?>
+
+                            </div><!--/.col-->
+                            <div class="col-md-4 col-lg-4">
+                                <?php
+                                /**
+                                 * confidence rating based on basic environment tests
+                                 *
+                                 * a quick and dirty visual feedback method to display a score/rating in the confidence that
+                                 * Joomla! will run/work based on some basic initial test results
+                                 * @RussW added 23/05/2020
+                                 *
+                                 */
+
+                                /**
+                                 * confidenceScore
+                                 * scale :
+                                 * 0  = danger/no/unknown/unsupported/bad
+                                 * 1  = warning/ok/old(minor)/maybe
+                                 * 2  = success/yes/latest/good
+                                 *
+                                 */
+                                (float)$confidenceScore = 0;
+                                $confidenceResult = array();
+                                $confidenceHelp   = array();
+
+                                    // check php handler & phpsuexec
+                                    if (substr($phpenv['phpAPI'], 0, 3) == 'cgi' OR $phpenv['phpAPI'] != 'apache2handler') {
+                                        $confidenceResult['PHP API'] = 2;
+
+                                    } elseif ($phpenv['phpAPI'] == 'apache2handler') {
+                                        $confidenceResult['PHP API'] = 1;
+
+                                        if ($phpenv['phpPHPSUEXEC'] == _FPA_Y) {
+                                            $confidenceResult['phpPHPSUEXEC'] = 2;
+
+                                        } elseif ($phpenv['phpPHPSUEXEC'] == _FPA_N) {
+                                            $confidenceResult['PHPsuExec available'] = 1;
+
+                                        } else {
+                                            $confidenceResult['PHPsuExec available'] = 0;
+                                        }
+
+                                    } else {
+                                        $confidenceResult['PHP API'] = 0;
+                                    }
+
+                                    // check apache suexec
+                                    if ($phpenv['phpAPACHESUEXEC'] == _FPA_Y) {
+                                        $confidenceResult['Apache suExec available'] = 2;
+
+                                    } elseif (substr($phpenv['phpAPI'], 0, 4) == 'lite') {
+                                        $confidenceResult['Server suExec available'] = 1;
+
+                                    } else {
+                                        $confidenceResult['Server suExec available'] = 0;
+                                    }
+
+                                    // check for UTF8 support
+                                    if (array_key_exists( 'mbstring', $phpextensions )) {
+                                        $confidenceResult['PHP mbstring available'] = 2;
+                                    } else {
+                                        $confidenceResult['PHP mbstring available'] = 1;
+                                    }
+
+                                    // check for compression extensions
+                                    if (array_key_exists( 'zip', $phpextensions ) OR array_key_exists( 'zlib', $phpextensions ) OR array_key_exists( 'bz2', $phpextensions )) {
+                                        $confidenceResult['PHP zip, zlib or bz2 available'] = 2;
+                                    } else {
+                                        $confidenceResult['PHP zip, zlib or bz2 available'] = 1;
+                                    }
+
+                                    // check for encryption extensions
+                                    if (array_key_exists( 'mcrypt', $phpextensions ) OR array_key_exists( 'sodium', $phpextensions )) {
+                                        $confidenceResult['PHP mcrypt or sodium available'] = 2;
+                                    } else {
+                                        $confidenceResult['PHP mcrypt or sodium available'] = 1;
+                                    }
+
+                                    // check for cURL extensions
+                                    if (array_key_exists( 'curl', $phpextensions ) OR array_key_exists( 'sodium', $phpextensions )) {
+                                        $confidenceResult['PHP cURL available'] = 2;
+                                    } else {
+                                        $confidenceResult['PHP cURL available'] = 1;
+                                    }
+
+                                    // check for XML extensions
+                                    if (array_key_exists( 'xml', $phpextensions ) OR array_key_exists( 'libxml', $phpextensions )) {
+                                        $confidenceResult['PHP xml or libxml available'] = 2;
+                                    } else {
+                                        $confidenceResult['PHP xml or libxml available'] = 1;
+                                    }
+
+                                    // check for database support
+                                    if ($snapshot['phpSUP4MYSQL'] == _FPA_Y OR $snapshot['phpSUP4MYSQL-i'] == _FPA_Y) {
+                                        $confidenceResult[_FPA_SUPPHP .' MySQL or MySQLi'] = 2;
+
+                                    } else {
+                                        $confidenceResult[_FPA_SUPPHP .' MySQL or MySQLi'] = 0;
+                                    }
+
+                                    // check for bad php versions
+                                    if ($snapshot['buggyPHP'] == _FPA_N) {
+                                        $confidenceResult[_FPA_BADPHP] = 2;
+
+                                    } else {
+                                        $confidenceResult[_FPA_BADPHP] = 0;
+                                    }
+
+                                    // check bad zend versions
+                                    if ($snapshot['buggyZEND'] == _FPA_N) {
+                                        $confidenceResult[_FPA_BADZND] = 2;
+
+                                    } else {
+                                        $confidenceResult[_FPA_BADZND] = 0;
+                                    }
+
+                                    // check if php sessionpath writable
+                                    if ($phpenv['phpSESSIONPATHWRITABLE'] == _FPA_Y) {
+                                        $confidenceResult['PHP Session Path '. _FPA_WRITABLE] = 2;
+
+                                    } else {
+                                        $confidenceResult['PHP Session Path '. _FPA_WRITABLE] = 0;
+                                    }
+
+                                    // check if system tmp is writable
+                                    if ($system['sysTMPDIRWRITABLE'] == _FPA_Y) {
+                                        $confidenceResult[_FPA_SERV .' Tmp '. _FPA_WRITABLE] = 2;
+
+                                    } else {
+                                        $confidenceResult[_FPA_SERV .' Tmp '. _FPA_WRITABLE] = 0;
+                                    }
+
+
+                                    // only test these items if instance is found (installed or not)
+                                    if ($instance['instanceFOUND'] == _FPA_Y) {
+
+                                        // does php support J! version
+                                        if ($snapshot['phpSUP4J'] == _FPA_Y) {
+                                            $confidenceResult[_FPA_SUPPHP .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] .' <small>(PHP '. PHP_VERSION .')</small>'] = 2;
+
+                                        } elseif ($snapshot['phpSUP4J'] == _FPA_M) {
+                                                $confidenceResult[_FPA_SUPPHP .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] .' <small>(PHP '. PHP_VERSION .')</small>'] = 1;
+
+                                        } else {
+                                            $confidenceResult[_FPA_SUPPHP .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL'] .' <small>(PHP v'. PHP_VERSION .')</small>'] = 0;
+                                        }
+
+                                        // does db support J! version
+                                        if ($snapshot['sqlSUP4J'] == _FPA_Y) {
+                                            $confidenceResult[_FPA_SUPSQL .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL']] = 2;
+
+                                        } elseif ($snapshot['sqlSUP4J'] == _FPA_M) {
+                                            $confidenceResult[_FPA_SUPSQL .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL']] = 1;
+
+                                        } else {
+                                            $confidenceResult[_FPA_SUPSQL .' J! '. @$instance['cmsRELEASE'] .'.' . @$instance['cmsDEVLEVEL']] = 0;
+                                        }
+
+                                    } // end instandFOUND checks
+
+
+                                    // nothing to change here if adding new confidence results (auto counts & calculates)
+                                    $countConfidence = count($confidenceResult)*2;
+                                    $confidenceScore = (array_sum($confidenceResult) / $countConfidence)*100;
+
+
+                                    /**
+                                     * showstoppers & belt 'n' braces
+                                     *
+                                     * if guaranteed to break Joomla!, definately unsupported, any of the following criteria
+                                     * are met or if score result is not numeric or a positive number between 0-100, force
+                                     * $confidenceScore to 0(zero)/F
+                                     *
+                                     */
+
+                                    // unsupported minimum PHP version
+                                    if (version_compare( PHP_VERSION, '5', '<' ))  {
+                                        $confidenceScore = 0;
+                                    }
+
+                                    // mysql or php does not support installed Joomla! version
+                                    if ($instance['instanceFOUND'] == _FPA_Y AND ($snapshot['phpSUP4J'] == _FPA_NO OR $snapshot['sqlSUP4J'] == _FPA_NO)) {
+                                        $confidenceScore = 0;
+                                    }
+
+                                    // bad score result
+                                    if (!is_numeric($confidenceScore) OR $confidenceScore < 0) {
+                                        $confidenceScore = 0;
+                                    }
+
+                                    /**
+                                     * set the $confidenceHelp icon colour
+                                     *
+                                     * we limit the colours use for the help icon and don't use the $confidenceScore colour scheme
+                                     * so that it is more generic and will change the icon only within larger score variations.
+                                     *
+                                     * the colour changes are purely a visual method of informing the user that some audit tests
+                                     * do not equal 2 (top score) and may need review (via the help icon button/panel)
+                                     *
+                                     * 0 - 25.000 (F rated) = danger
+                                     * 25.001 - 99.999 (E, D, C, B & A rated) = warning
+                                     * 100 (A+ rated) = info (default)
+                                     *
+                                     */
+                                    if ($confidenceScore == 100) {
+                                        $helpIconColor = 'info';
+
+                                    } elseif ($confidenceScore == 0 OR $confidenceScore <= 25) {
+                                        $helpIconColor = 'danger';
+
+                                    } elseif ($confidenceScore > 40 OR $confidenceScore < 100) {
+                                        $helpIconColor = 'warning';
+
+                                    } else {
+                                        $helpIconColor = 'info';
+                                    }
+
+                                    /**
+                                     * generate a formated audit results table
+                                     * displayed in the confidenceResult Help collapsable
+                                     *
+                                     * @param array $confidenceResult
+                                     * @return $confidenceHelp
+                                     */
+                                    function confidenceShowHelp(array $confidenceResult) {
+
+                                        echo '<table class="table table-striped table-bordered table-sm">';
+                                        foreach ($confidenceResult as $confidenceHelpDesc => $confidenceHelpScore) {
+                                            if ($confidenceHelpScore == 2) {
+                                                $helpIcon  = 'check-circle';
+                                                $helpColor = 'success';
+                                            } elseif ($confidenceHelpScore == 1) {
+                                                $helpIcon  = 'info-circle';
+                                                $helpColor = 'info';
+                                            } elseif ($confidenceHelpScore == 0) {
+                                                $helpIcon  = 'times-circle';
+                                                $helpColor = 'danger';
+                                            } else {
+                                                $helpIcon  = 'question-circle';
+                                                $helpColor = 'light';
+                                            }
+                                            echo '<tr><td class="col-8">'. $confidenceHelpDesc .'</td><td class="col-4"><i class="fas fa-'. $helpIcon .' text-'. $helpColor .'"></i></td></tr>';
+                                        }
+                                        echo '</table>';
+
+                                        return $confidenceResult;
+                                    }
+                                ?>
+                                <div class="mx-lg-3">
+                                    <div class="bg-white shadow text-center">
+                                        <div class="m-2 float-right" data-toggle="popover" data-trigger="hover" data-placement="top" data-fallbackPlacement="flip" data-title="Confidence Audit Help" data-content="Click the icon to review the basic audit tests and results that determine this rating">
+                                            <i class="fas fa-question-circle fa-lg text-<?php echo $helpIconColor; ?>" data-toggle="collapse" data-target="#confidenceHelp" aria-expanded="false" aria-controls="confidenceHelp" role="button" aria-label="View confidence results"></i>
+                                        </div>
+                                        <h2 class="h4 text-dark text-center border-bottom p-2"><?php echo _FPA_DASHBOARD_CONFIDENCE_TITLE; ?></h2>
+
+                                        <div class="collapse text-left p-2" id="confidenceHelp">
+                                            <h3 class="h6 text-center pb-2 m-0">Basic Audit Results</h3>
+                                            <?php $confidenceHelp = confidenceShowHelp($confidenceResult); ?>
+                                        </div>
+
+                                        <?php
+                                            /**
+                                             * generate confidence rating
+                                             * based on $confidenceScore
+                                             * A - F & messaging
+                                             *
+                                             */
+                                            if ($confidenceScore > 100 OR $confidenceScore < 0) {
+                                                $confidenceRating = '<i class="fas fa-question-circle text-light"></i>';
+                                                $confidenceColor  = 'muted';
+                                                $confidenceMessage = _FPA_U;
+
+                                            } elseif ($confidenceScore >= 0 AND $confidenceScore <= 25) {
+                                                $confidenceRating  = 'F';
+                                                $confidenceColor   = 'danger';
+                                                $confidenceMessage = _FPA_CNF_F;
+
+                                            } elseif ($confidenceScore <= 40) {
+                                                $confidenceRating  = 'E';
+                                                $confidenceColor   = 'warning';
+                                                $confidenceMessage = _FPA_CNF_E;
+
+                                            } elseif ($confidenceScore <= 60) {
+                                                $confidenceRating  = 'D';
+                                                $confidenceColor   = 'warning';
+                                                $confidenceMessage = _FPA_CNF_D;
+
+                                            } elseif ($confidenceScore <= 75) {
+                                                $confidenceRating  = 'C';
+                                                $confidenceColor   = 'info';
+                                                $confidenceMessage = _FPA_CNF_C;
+
+                                            } elseif ($confidenceScore <= 90) {
+                                                $confidenceRating  = 'B';
+                                                $confidenceColor   = 'primary';
+                                                $confidenceMessage = _FPA_CNF_B;
+
+                                            } elseif ($confidenceScore < 100) {
+                                                $confidenceRating  = 'A';
+                                                $confidenceColor   = 'success';
+                                                $confidenceMessage = _FPA_CNF_A;
+
+                                            } elseif ($confidenceScore == 100) {
+                                                $confidenceRating  = 'A+';
+                                                $confidenceColor   = 'success';
+                                                $confidenceMessage = _FPA_CNF_A;
+
+                                            } else { // catch-all
+                                                $confidenceRating  = '<i class="fas fa-question-circle text-light"></i>';
+                                                $confidenceColor   = 'muted';
+                                                $confidenceMessage = _FPA_U;
+                                            }
+                                        ?>
+                                        <h1 class="text-center display-2 text-<?php echo $confidenceColor; ?> mb-0"><strong><?php echo $confidenceRating; ?></strong></h1>
+                                        <span class="badge badge-pill badge-light text-dark <?php echo $confidenceColor; ?> mx-auto position-relative" style="top:-15px;"><?php echo number_format($confidenceScore, 1); ?>%</span>
+                                        <?php if ($confidenceMessage) { ?>
+                                            <p class="xsmall text-center border-top bg-white text-<?php echo $confidenceColor; ?> p-2 mb-2"><?php echo $confidenceMessage; ?></p>
+                                        <?php } ?>
+                                    </div>
+                                    <?php showDev( $confidenceResult ); ?>
+
+                                    <!--generate basic post-->
+                                    <input type="hidden" name="doIT" value="1" />
+                                    <input type="submit" class="btn btn-success btn-block shadow-sm my-2 d-print-none" name="submit" value="<?php echo _FPA_CLICK; ?>" />
+
+                                    <!-- access the FPA optionPanels -->
+                                    <a class="d-block btn btn-outline-primary mb-1 d-print-none" role="button" href="javascript:toggleFPA('fpaOptions','fpaButton');" id="fpaButton" ><i class="fas fa-chevron-circle-right"></i> Open the FPA Options</a>
+
+                                </div>
+
+                            </div><!--/.col-->
+                        </div><!--/.row-->
+
+                    </div><!--/.container-->
+                </section>
+
+
+
+                <?php
+                /**
+                 * fpa settings & post output section
+                 *
+                 */
+                ?>
+                <section class="border-top d-print-none" id="post-form">
+
+                    <div class="container mb-2">
 
                         <div id="fpaOptions" style="display: none;">
                             <div class="row mt-5">
@@ -5277,13 +5282,11 @@
                             </div><!--/.row-->
                         <?php } // end post doIT ?>
 
-                    </form>
-                    <!-- POST FORM -->
+                    </div><!--/.container-->
 
-                </div><!--/.container-->
+                </section><!--/post form-->
 
-            </section><!--/post form-->
-
+            </form><!--END POST FORM-->
 
 
             <?php
@@ -8342,7 +8345,7 @@
                     var eleOptions  = document.getElementById('fpaOptions');
                     var textButton  = document.getElementById('fpaButton');
                     eleOptions.style.display = 'none';
-                    textButton.innerHTML     = '<i class="fas fa-chevron-circle-right"></i> Open the <strong><?php echo _RES; ?></strong>';
+                    textButton.innerHTML     = '<i class="fas fa-chevron-circle-right"></i> Open the FPA Options';
 
 
                     // count and display post characters

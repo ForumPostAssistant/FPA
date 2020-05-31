@@ -3047,6 +3047,7 @@
 
                 <ul class="navbar-nav flex-row ml-md-auto">
 
+                    <!--dropdown anchors-->
                     <li class="nav-item dropdown py-2 d-none d-md-inline-block">
                         <a class="nav-link 1dropdown-toggle px-2 mr-1" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="Report navigation">
                             <i class="fas fa-ellipsis-v fa-fw lead"></i>
@@ -3076,12 +3077,14 @@
                         </div>
                     </li>
 
+                    <!--standard FPA report (resets options)-->
                     <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Basic Discovry Report" data-content="Run the basic (on-screen) FPA Discovery report">
-                        <a class="btn btn-outline-primary mr-1" href="<?php echo _FPA_SELF; ?>" role="button" aria-label="<?php echo _RES_FPALATEST2; ?>">
+                        <a class="btn btn-outline-primary mr-1" href="<?php echo _FPA_SELF; ?>" role="button" aria-label="Run the basic FPA Discovery report">
                             <i class="fas fa-chalkboard fa-fw lead"></i>
                         </a>
                     </li>
 
+                    <!--run a VEL report-->
                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                         <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Vulnerable Extension List" data-content="Run a vulnerable extension check">
                             <form class="m-0 ml-auto p-0" method="post" name="navVELForm" id="navVELForm">
@@ -3093,12 +3096,14 @@
                         </li>
                     <?php } // doVEL ?>
 
+                    <!--print FPA output-->
                     <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Print FPA Report" data-content="Print the current FPA snapshot and discovery report.">
                         <button class="btn btn-outline-info mr-1" onclick="window.print()" aria-label="Print the FPA Report">
                             <i class="fas fa-print fa-fw lead"></i>
                         </button>
                     </li>
 
+                    <!--download latest FPA-->
                     <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Download FPA" data-content="<?php echo _RES_FPALATEST2; ?>">
                         <a class="btn btn-outline-info mr-1" href="<?php echo _RES_FPALINK2; ?>" rel="noreferrer noopener" target="_blank" role="button" aria-label="<?php echo _RES_FPALATEST2; ?>">
                             <i class="fas fa-cloud-download-alt fa-fw lead"></i>
@@ -3113,13 +3118,14 @@
                     </li>
                     -->
 
+                    <!--got to docs-->
                     <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Documentation" data-content="Visit the FPA documentation site on Github">
                         <a class="1nav-link btn btn-outline-info mr-1" href="https://forumpostassistant.github.io/docs/" rel="noreferrer noopener" target="_blank" role="button" aria-label="Visit the FPA documentation site on Github">
                             <i class="fas fa-book-reader lead"></i>
                         </a>
                     </li>
 
-                    <!-- print fpa
+                    <!--SPARE
                     <li class="nav-item py-2 border-right d-none d-md-inline-block mr-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="Print the current FPA audit report">
                         <a class="btn btn-info lead mr-2" href="#" role="button" aria-label="Print the current FPA audit report">
                             <i class="fas fa-print lead"></i>
@@ -3127,6 +3133,7 @@
                     </li>
                     -->
 
+                    <!--delete FPA-->
                     <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Security Notice" data-content="Delete the FPA script now">
                         <form class="m-0 ml-auto p-0" method="post" name="navDELForm" id="navDELForm">
                             <input type="hidden" name="act" value="delete" />
@@ -3239,7 +3246,7 @@
             <div class="container pt-4 pb-3">
 
                 <h1 class="font-weight-light border-bottom"><i class="fas fa-dice-d6 fa-sm text-muted"></i> <?php echo _FPA_SNAP_TITLE; ?></h1>
-                <p class="text-dark text-justify mb-lg-5"><?php echo _FPA_DASHBOARD_CONFIDENCE_NOTE; ?></p>
+                <p class="text-dark mb-lg-5"><?php echo _FPA_DASHBOARD_CONFIDENCE_NOTE; ?></p>
 
                 <div class="row">
                     <div class="col-md-8 col-lg-8">
@@ -4088,10 +4095,10 @@
                                 <div class="m-2 float-right" data-toggle="popover" data-trigger="hover" data-placement="top" data-fallbackPlacement="flip" data-title="Confidence Audit Help" data-content="Click the icon to review the basic audit tests and results that determine this rating">
                                     <i class="fas fa-question-circle fa-lg text-<?php echo $helpIconColor; ?>" data-toggle="collapse" data-target="#confidenceHelp" aria-expanded="false" aria-controls="confidenceHelp" role="button" aria-label="View confidence results"></i>
                                 </div>
-                                <h5 class="text-center border-bottom p-2"><?php echo _FPA_DASHBOARD_CONFIDENCE_TITLE; ?></h5>
+                                <h2 class="h4 text-dark text-center border-bottom p-2"><?php echo _FPA_DASHBOARD_CONFIDENCE_TITLE; ?></h2>
 
                                 <div class="collapse text-left p-2" id="confidenceHelp">
-                                    <h6 class=" text-center pb-2 m-0">Basic Audit Results</h6>
+                                    <h3 class="h6 text-center pb-2 m-0">Basic Audit Results</h3>
                                     <?php $confidenceHelp = confidenceShowHelp($confidenceResult); ?>
                                 </div>
 
@@ -4189,7 +4196,7 @@
 
                                     <div class="card border align-items-stretch text-dark w-100 optionPanel">
                                         <div class="card-body">
-                                            <h5 class="text-info"><i class="fas fa-question-circle"></i> <?php echo _FPA_INSTRUCTIONS;  ?></h5>
+                                            <h2 class="h5 text-info"><i class="fas fa-question-circle"></i> <?php echo _FPA_INSTRUCTIONS;  ?></h2>
                                             <?php
                                                 echo '<ol>';
                                                 echo '<li class="text-muted py-1">'. _FPA_INS_1 .'</li>';
@@ -4208,7 +4215,7 @@
 
                                     <div class="card border align-items-stretch text-muted w-100 optionPanel">
                                         <div class="card-body">
-                                            <h5 class="text-muted mb-0"><i class="fas fa-info-circle"></i> Optional Information</h5>
+                                            <h3 class="h5 text-muted mb-0"><i class="fas fa-info-circle"></i> Optional Information</h3>
                                             <span class="xsmall"><?php  echo _FPA_POST_NOTE; ?></span>
 
                                             <div class="form-group row mt-3">
@@ -4255,7 +4262,7 @@
 
                                     <div class="card border align-items-stretch w-100 optionPanel">
                                         <div class="card-body">
-                                            <h5 class="text-primary"><i class="fas fa-running"></i> Run-Time Options</h5>
+                                            <h2 class="h5 text-primary"><i class="fas fa-running"></i> Run-Time Options</h2>
 
                                             <div class="row">
                                                 <div class="col-sm-7 text-dark mb-3">
@@ -4309,7 +4316,7 @@
                                                     }
                                                     ?>
 
-                                                    <h6 class="text-muted mb-0"><?php echo _FPA_OPT .' '. $dis; ?>:</h6>
+                                                    <h3 class="h6 text-muted mb-0"><?php echo _FPA_OPT .' '. $dis; ?>:</h3>
 
                                                     <div class="form-check">
                                                         <input <?php echo $dis; ?> class="form-check-input" type="checkbox" name="showElevated" id="showElevatedCheck" value="1" <?php echo $selectshowElevated; ?> />
@@ -4368,19 +4375,21 @@
                                                     }
                                                 ?>
 
-                                                    <h6 class="text-muted mb-0">Information Privacy :</h6>
+                                                    <h3 class="h6 text-muted mb-0">Information Privacy :</h3>
 
-                                                    <div class="form-check mb-1">
-                                                        <input class="form-check-input" type="radio" name="showProtected" id="showProtected1" value="1" <?php echo $selectshowProtected_1; ?> aria-describedby="privacyNoHelp" />
-                                                        <label class="form-check-label mt-1" for="showProtected1"><?php echo _FPA_PRIVNON; ?></label>
-                                                        <small id="privacyNoHelp" class="form-text text-muted"><?php echo _FPA_PRIVNONNOTE; ?></small>
-                                                    </div>
+                                                    <fieldset>
+                                                        <div class="form-check mb-1">
+                                                            <input class="form-check-input" type="radio" name="showProtected" id="showProtected1" value="1" <?php echo $selectshowProtected_1; ?> aria-describedby="privacyNoHelp" />
+                                                            <label class="form-check-label mt-1" for="showProtected1"><?php echo _FPA_PRIVNON; ?></label>
+                                                            <small id="privacyNoHelp" class="form-text text-muted"><?php echo _FPA_PRIVNONNOTE; ?></small>
+                                                        </div>
 
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" type="radio" name="showProtected" id="showProtected2" value="2" <?php echo $selectshowProtected_2; ?> aria-describedby="privacyPartialHelp" />
-                                                        <label class="form-check-label mt-1" for="showProtected2"><?php echo _FPA_PRIVPAR .' <small class="text-success">('. _FPA_DEF .')</small>'; ?></label>
-                                                        <small id="privacyPartialHelp" class="form-text text-muted"><?php echo _FPA_PRIVPARNOTE; ?></small>
-                                                    </div>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio" name="showProtected" id="showProtected2" value="2" <?php echo $selectshowProtected_2; ?> aria-describedby="privacyPartialHelp" />
+                                                            <label class="form-check-label mt-1" for="showProtected2"><?php echo _FPA_PRIVPAR .' <small class="text-success">('. _FPA_DEF .')</small>'; ?></label>
+                                                            <small id="privacyPartialHelp" class="form-text text-muted"><?php echo _FPA_PRIVPARNOTE; ?></small>
+                                                        </div>
+                                                    </fieldset>
 
                                                 </div>
                                             </div><!--/.row-->
@@ -4435,7 +4444,7 @@
                                 <div class="col-lg-6 mb-4 d-flex">
 
                                     <div class="border border-info text-dark bg-white p-3 align-items-stretch w-100">
-                                        <h5 class="text-info"><i class="fas fa-question-circle"></i> <?php echo _FPA_INSTRUCTIONS;  ?></h5>
+                                        <h2 class="h5 text-info"><i class="fas fa-question-circle"></i> <?php echo _FPA_INSTRUCTIONS;  ?></h2>
                                         <?php echo _FPA_INS_7; ?>
                                     </div>
 
@@ -6133,7 +6142,7 @@
                                          *
                                          */
                                         ?>
-                                        <table class="table table-striped table-bordered 1table-sm">
+                                        <table class="table table-striped table-bordered">
                                             <thead>
                                                 <tr>
                                                     <td colspan="3" class="bg-info text-white">Switch  <?php echo  _FPA_USR .' '.  _FPA_CFG; ?></td>
@@ -8202,8 +8211,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="toast-body text-dark text-justify">
-                <?php //echo _FPA_DELNOTE_LN1; ?>
+            <div class="toast-body text-dark text-left">
                 <?php echo _FPA_DELNOTE_LN2; ?>
                 <?php echo _FPA_DELNOTE_LN3; ?>
             </div>

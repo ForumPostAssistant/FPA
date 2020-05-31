@@ -538,6 +538,37 @@
 
 
 
+    /**
+     * darkmode template
+     *
+     * use the bootswatch cyborg BS4 theme instead of the Yeti theme
+     * use PHP _SESSION to maintain the users choice
+     * added @RussW 31/05/2020
+     *
+     */
+    session_start();
+    if ( @$_POST['darkmode'] == '0' )  {
+        $_SESSION['darkmode'] = '0';
+        $darkmode             = '0';
+
+    } elseif ( @$_POST['darkmode'] == '1' )  {
+        $_SESSION['darkmode'] = '1';
+        $darkmode             = '1';
+
+    } elseif ( isset($_SESSION['darkmode']) )  {
+        $darkmode             = $_SESSION['darkmode'];
+        $_SESSION['darkmode'] = $_SESSION['darkmode'];
+
+    } elseif ( !isset($_SESSION['darkmode']) OR ( $_SESSION['darkmode'] != '1' OR @$_POST['darkmode'] != '1' ) )  {
+        //session_start();
+        $_SESSION['darkmode'] = '0';
+        $darkmode             = '0';
+    }
+    // unset($_SESSION['darkmode']);
+    // unset($_SESSION);
+    // session_destroy();
+
+
 
 	// setup the default runtime parameters and collect the POST data changes, if any
 	if ( @$_POST['showProtected'] ) {
@@ -618,7 +649,6 @@
 		return round($time_end - $mt_time, $len);
 
 	}
-
 	// actually start the timer-pop
 	mt_start();
 
@@ -2968,7 +2998,11 @@
 		<link rel="shortcut icon" href="./templates/protostar/favicon.ico" />
 
         <!-- bootswatch yeti theme - bootstrap core css -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.0/yeti/bootstrap.min.css" integrity="sha256-99KgWr1SjvkqT7dcWV+Cj9yfsKF2j4wrVRgHJYAiEtU=" crossorigin="anonymous" />
+        <?php if ( $_POST['darkmode'] == 1 OR $_SESSION['darkmode'] == 1 ) { ?>
+           <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.0/cyborg/bootstrap.min.css" integrity="sha256-04BHXjNfsJ2qy+AStQeom2QIJYU8+6AMCfcO60W0qc8=" crossorigin="anonymous" />
+        <?php } else { ?>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.0/yeti/bootstrap.min.css" integrity="sha256-99KgWr1SjvkqT7dcWV+Cj9yfsKF2j4wrVRgHJYAiEtU=" crossorigin="anonymous" />
+        <?php } // darkmode ?>
 
         <!-- fontawesome icon css -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
@@ -2979,16 +3013,18 @@
             body { font-size: 0.98rem; color: #868ba1 !important; line-height: 1.3 !important; margin-top: 68px; scroll-behavior: smooth; }
             .small { letter-spacing: -0.25px; line-height: 1.1; font-size: 0.9rem; }
             .xsmall { letter-spacing: -0.25px; line-height: 1.1; font-size: 0.7rem; }
+            small { letter-spacing: -0.25px; line-height: 1.2 !important; }
+            .protected { background: #f0f0f5; color: #b80000; text-transform: uppercase; padding: 0 5px; border-left: 1px solid #b80000; border-right: 1px solid #b80000; font-size: 10px; line-height: 1.1; display: inline-block; }
+            p, .btn { font-weight: 400 !important; }
             /* add dark blue to match other FPA pages */
             .bg-fpa-dark { background-color: #224872 !important; }
             .border-fpa-dark { border-color: #224872 !important; }
             .text-fpa-dark { color: #224872; }
-            .protected { background: #f0f0f5; color: #b80000; text-transform: uppercase; padding: 0 5px; border-left: 1px solid #b80000; border-right: 1px solid #b80000; font-size: 10px; line-height: 1.1; display: inline-block; }
+
+        <?php if ( $darkmode != 1 ) { ?>
             /* override default BS Yeti theme to match other FPA pages */
-            p, .btn { font-weight: 400 !important; }
             h1 { color: #000; font-weight: 400; }
             h1.h2, h2, h3, h4, h5, h6 { color: #343a40; font-weight: 400; }
-            small { letter-spacing: -0.25px; line-height: 1.2 !important; }
             .bg-info, .badge-info, .btn-info { background-color: #17a2b8 !important; }
             .border-info, .btn-info { border-color: #17a2b8 !important; }
             .btn-info:hover { color: #fff !important;background-color: #138496 !important;border-color: #117a8b !important; }
@@ -2997,19 +3033,31 @@
             .text-info { color: #17a2b8 !important; }
             .alert-info {color: #0c5460 !important;background-color: #d1ecf1 !important;border-color: #bee5eb !important; }
             .bg-light { background-color: rgba(0,0,0,0.03) !important; }
+
+        <?php } else { // is darkmode ?>
+            body, #confidenceHelp td, .form-control { color: #b0b0b0 !important; }
+            h1, .h1 { font-size: 2.34375rem; font-weight: 400; }
+            h2, .h2 { font-size: 1.875rem; font-weight: 400; }
+            h1.h2, h2, h3, h4, h5, h6 { font-weight: 400; }
+            .border { border-color: #97999c !important; }
+            .text-muted { color: #888 !important; }
+            .btn { padding: 0.375rem 0.5rem; }
+            .btn, .btn-sm, .btn-lg, .card { border-radius: 0px !important; }
+            .form-control, .form-control-sm { border-radius: 0px; }
+            #confidenceHelp td { font-size: 0.85rem; }
+        <?php } // end style mode ?>
+
             /* increase default container widths to better suit dashboard type page */
             @media (min-width: 576px) { .container { max-width: 540px; } }
             @media (min-width: 768px) { .container { max-width: 720px; } }
             @media (min-width: 992px) { .container { max-width: 960px; } }
             @media (min-width: 1200px) { .container { max-width: 1160px; } }
             @media (min-width: 1440px) { .container { max-width: 1240px; } }
-
             @media print {
                 .break-before { page-break-before : always; }
                 .break-after { page-break-after : always; }
                 .card-header, table th { color: #000 !important; }
                 footer { border-top: 1px solid #000; }
-
             }
         </style>
 
@@ -3037,7 +3085,15 @@
     <body data-spy="scroll" data-target=".navbar" data-offset="68">
 
         <header>
-            <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow d-print-none">
+            <?php
+                // adjust navbar classes depending on nightmode
+                if ($darkmode == '1') {
+                    $navbarClass = 'navbar-dark bg-dark';
+                } else {
+                    $navbarClass = 'navbar-light bg-white';
+                }
+            ?>
+            <nav class="navbar navbar-expand-lg <?php echo $navbarClass; ?> fixed-top shadow d-print-none">
 
                 <a class="navbar-brand mr-0 mr-md-2 text-primary py-2 lead font-weight-bolder" href="<?php echo _FPA_SELF; ?>" aria-label="<?php echo _RES; ?>">
                     <span class="d-inline-block d-sm-none" aria-hidden="true">FPA</span>
@@ -3117,6 +3173,27 @@
                         </a>
                     </li>
                     -->
+
+                    <!--darkmode-->
+                    <?php if ( $darkmode == '0' ) { ?>
+                        <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Switch To Dark Mode" data-content="View FPA in Dark Mode">
+                            <form class="m-0 ml-auto p-0" method="post" name="navDARKForm" id="navDARKForm">
+                                <input type="hidden" name="darkmode" value="1" />
+                                <button class="btn btn-outline-dark mr-1" type="submit" aria-label="Dark Mode">
+                                    <i class="fas fa-moon fa-fw lead"></i>
+                                </button>
+                            </form>
+                        </li>
+                    <?php } else { ?>
+                        <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Switch To Dark Mode" data-content="View FPA in Dark Mode">
+                            <form class="m-0 ml-auto p-0" method="post" name="navDARKForm" id="navDARKForm">
+                                <input type="hidden" name="darkmode" value="0" />
+                                <button class="btn btn-outline-dark mr-1" type="submit" aria-label="Dark Mode">
+                                    <i class="fas fa-sun fa-fw lead"></i>
+                                </button>
+                            </form>
+                        </li>
+                    <?php } // darkmode ?>
 
                     <!--got to docs-->
                     <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Documentation" data-content="Visit the FPA documentation site on Github">

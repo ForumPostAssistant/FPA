@@ -2958,6 +2958,7 @@
                 .break-after { page-break-after : always; }
                 .card-header, table th { color: #000 !important; }
                 footer { border-top: 1px solid #000; }
+
             }
         </style>
 
@@ -2984,8 +2985,8 @@
     </head>
     <body data-spy="scroll" data-target=".navbar" data-offset="68">
 
-        <header class="d-print-none">
-            <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow">
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow d-print-none">
 
                 <a class="navbar-brand mr-0 mr-md-2 text-primary py-2 lead font-weight-bolder" href="<?php echo _FPA_SELF; ?>" aria-label="<?php echo _RES; ?>">
                     <span class="d-inline-block d-sm-none" aria-hidden="true">FPA</span>
@@ -2995,7 +2996,7 @@
 
                 <ul class="navbar-nav flex-row ml-md-auto">
 
-                    <li class="nav-item dropdown py-2 d-none d-lg-inline-block">
+                    <li class="nav-item dropdown py-2 d-none d-md-inline-block">
                         <a class="nav-link 1dropdown-toggle px-2 mr-1" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="Report navigation">
                             <i class="fas fa-ellipsis-v fa-fw lead"></i>
                         </a>
@@ -3041,7 +3042,13 @@
                         </li>
                     <?php } // doVEL ?>
 
-                    <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Download FPA" data-content="<?php echo _RES_FPALATEST2; ?>">
+                    <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Print FPA Report" data-content="Print the current FPA snapshot and discovery report.">
+                        <button class="btn btn-outline-info mr-1" onclick="window.print()" aria-label="Print the FPA Report">
+                            <i class="fas fa-print fa-fw lead"></i>
+                        </button>
+                    </li>
+
+                    <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Download FPA" data-content="<?php echo _RES_FPALATEST2; ?>">
                         <a class="btn btn-outline-info mr-1" href="<?php echo _RES_FPALINK2; ?>" rel="noreferrer noopener" target="_blank" role="button" aria-label="<?php echo _RES_FPALATEST2; ?>">
                             <i class="fas fa-cloud-download-alt fa-fw lead"></i>
                         </a>
@@ -3081,6 +3088,28 @@
                 </ul><!--/.navbar-nav-->
 
             </nav>
+
+            <?php
+            /**
+             * print only header
+             * added @RussW 31/05/2020
+             *
+             */
+            ?>
+            <div class="container d-none d-print-block border-bottom border-dark">
+                <div>
+                    <h1 class="font-weight-lighter mb-1">
+                        <div class="xsmall text-right float-right"><?php echo date('jS F Y'); ?><br /><?php echo date('g:i a'); ?><br /><?php echo date('e'); ?></div>
+                            <?php
+                                if ( !empty($config->sitename) ) {
+                                    echo $config->sitename;
+                                }
+                            ?>
+                    </h1>
+                    <h2 class="h4"><?php echo $_SERVER['HTTP_HOST']; ?></h2>
+                </div>
+            </div>
+
         </header>
 
 

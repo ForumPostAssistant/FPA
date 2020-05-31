@@ -3236,7 +3236,7 @@
             <div class="container d-none d-print-block border-bottom border-dark">
                 <div>
                     <h1 class="font-weight-lighter mb-1">
-                        <div class="xsmall text-right float-right"><?php echo date('jS F Y'); ?><br /><?php echo date('g:i a'); ?><br /><?php echo date('e'); ?></div>
+                        <span class="xsmall text-right float-right"><?php echo date('jS F Y'); ?><br /><?php echo date('g:i a'); ?><br /><?php echo date('e'); ?></span>
                             <?php
                                 if ( !empty($config->sitename) ) {
                                     echo $config->sitename;

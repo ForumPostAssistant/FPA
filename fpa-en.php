@@ -282,10 +282,10 @@
 	define ( '_FPA_SPNOTE', 'Special Note' );
 	// user post form content
 	define ( '_FPA_INSTRUCTIONS', 'Instructions' );
-	define ( '_FPA_INS_1', 'Enter your problem description <i>(optional)</i>' );
-	define ( '_FPA_INS_2', 'Enter any error messages you see <i>(optional)</i>' );
-	define ( '_FPA_INS_3', 'Enter any actions taken to resolve the issue <i>(optional)</i>' );
-	define ( '_FPA_INS_4', 'Select detail level options of output <i>(optional)</i>' );
+	define ( '_FPA_INS_1', 'Enter your problem description <em>(optional)</em>' );
+	define ( '_FPA_INS_2', 'Enter any error messages you see <em>(optional)</em>' );
+	define ( '_FPA_INS_3', 'Enter any actions taken to resolve the issue <em>(optional)</em>' );
+	define ( '_FPA_INS_4', 'Select detail level options of output <em>(optional)</em>' );
     // @RussW updated 23/05/2020
     define ( '_FPA_INS_5', 'Click the <span class="text-success">Click Here To Generate Post</span> button to build the post content' );
     // @RussW updated 23/05/2020
@@ -3060,7 +3060,7 @@
             .border { border-color: #97999c !important; }
             .text-muted { color: #888 !important; }
             .btn { padding: 0.375rem 0.5rem; }
-            .btn, .btn-sm, .btn-lg, .card { border-radius: 0px !important; }
+            .btn, .btn-sm, .btn-lg, .card, .badge { border-radius: 0px !important; }
             .form-control, .form-control-sm { border-radius: 0px; }
             #confidenceHelp td { font-size: 0.85rem; }
             .bg-fpa-dark { background-color: #282828 !important; }
@@ -3107,7 +3107,7 @@
 
             <!--assistive tech/screenreader accesskey polite notice-->
             <span class="sr-only d-print-none" role="alert" aria-live="polite" aria-atomic="false">
-                The following keyboard access keys are enabled.<em>d</em> to delete FPA, <em>g</em> to generate post content,  <em>o</em> to to access the FPA options, <em>n</em> to run in night mode, <em>l</em> to run in light mode, <em>v</em> to run a vulnerable extensions check and <em>f</em> to re-run the default FPA report.
+                The following keyboard access keys are enabled, <em>d</em> to delete FPA, <em>g</em> to generate post content,  <em>o</em> to to access the FPA options, <em>n</em> to run in night mode, <em>l</em> to run in light mode, <em>v</em> to run a vulnerable extensions check and <em>f</em> to re-run the default FPA report.
             </span>
 
             <?php

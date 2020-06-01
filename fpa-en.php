@@ -3235,15 +3235,15 @@
             ?>
             <div class="container d-none d-print-block border-bottom border-dark">
                 <div>
-                    <h1 class="font-weight-lighter mb-1">
+                    <h2 class="h1 font-weight-lighter mb-1">
                         <span class="xsmall text-right float-right"><?php echo date('jS F Y'); ?><br /><?php echo date('g:i a'); ?><br /><?php echo date('e'); ?></span>
                             <?php
                                 if ( !empty($config->sitename) ) {
                                     echo $config->sitename;
                                 }
                             ?>
-                    </h1>
-                    <h2 class="h4"><?php echo $_SERVER['HTTP_HOST']; ?></h2>
+                    </h2>
+                    <h3 class="h4"><?php echo $_SERVER['HTTP_HOST']; ?></h3>
                 </div>
             </div>
 
@@ -4237,7 +4237,7 @@
                                                 $confidenceMessage = _FPA_U;
                                             }
                                         ?>
-                                        <h1 class="text-center display-2 text-<?php echo $confidenceColor; ?> mb-0"><strong><?php echo $confidenceRating; ?></strong></h1>
+                                        <h2 class="text-center display-2 text-<?php echo $confidenceColor; ?> mb-0"><strong><?php echo $confidenceRating; ?></strong></h2>
                                         <span class="badge badge-pill badge-light text-dark <?php echo $confidenceColor; ?> mx-auto position-relative" style="top:-15px;"><?php echo number_format($confidenceScore, 1); ?>%</span>
                                         <?php if ($confidenceMessage) { ?>
                                             <p class="xsmall text-center border-top bg-white text-<?php echo $confidenceColor; ?> p-2 mb-2"><?php echo $confidenceMessage; ?></p>
@@ -5303,7 +5303,7 @@
                 <section class="py-3" id="instance-discovery">
                     <div class="container mt-5">
 
-                        <h1 class="font-weight-light border-bottom mb-4"><i class="fas fa-chalkboard fa-sm text-muted"></i> <?php echo _FPA_DISCOVERY_REPORT; ?></h1>
+                        <h2 class="h1 font-weight-light border-bottom mb-4"><i class="fas fa-chalkboard fa-sm text-muted"></i> <?php echo _FPA_DISCOVERY_REPORT; ?></h2>
 
                         <div class="row row-cols-1 row-cols-lg-2 break-after application-discovery">
                             <div class="col mb-4 d-flex align-self-stretch">
@@ -6864,7 +6864,7 @@
                 <section class="py-3 break-before" id="database-tables">
                     <div class="container mt-5">
 
-                        <h1 class="h2 border-bottom mb-4"><?php echo _FPA_DB .' '. _FPA_DBTBL_TITLE; ?></h1>
+                        <h2 class="border-bottom mb-4"><?php echo _FPA_DB .' '. _FPA_DBTBL_TITLE; ?></h2>
 
                         <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
 
@@ -7007,7 +7007,7 @@
 
                     <div class="container mt-5">
 
-                        <h1 class="h2 border-bottom mb-4"><?php echo $folders['ARRNAME'] .' '. $modecheck['ARRNAME']; ?></h1>
+                        <h2 class="border-bottom mb-4"><?php echo $folders['ARRNAME'] .' '. $modecheck['ARRNAME']; ?></h2>
 
                         <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
 
@@ -7176,7 +7176,7 @@
 
                         <div class="container mt-5">
 
-                            <h1 class="h2 border-bottom mb-4"><?php echo $elevated['ARRNAME'] .' <span class="small text-muted">('. _FPA_FIRST .' 10)</span>'; ?></h1>
+                            <h2 class="border-bottom mb-4"><?php echo $elevated['ARRNAME'] .' <span class="small text-muted">('. _FPA_FIRST .' 10)</span>'; ?></h2>
 
                             <div class="table-responsive-md">
 
@@ -7300,7 +7300,7 @@
                         <div class="container mt-5 site-components">
 
                             <form class="m-0 ml-auto p-0" method="post" name="comVELForm" id="comVELForm">
-                                <h1 class="h2 border-bottom mb-4">
+                                <h2 class="border-bottom mb-4">
                                     <?php echo $component['ARRNAME'] .' :: '. _FPA_SITE; ?>
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
@@ -7308,7 +7308,7 @@
                                             <i class="fas fa-radiation fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
-                                </h1>
+                                </h2>
                             </form>
 
                             <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
@@ -7413,7 +7413,7 @@
 
                         <div class="container mt-5 admin-components">
 
-                            <h1 class="h2 border-bottom mb-4"><?php echo $component['ARRNAME'] .' :: '. _FPA_ADMIN; ?></h1>
+                            <h2 class="border-bottom mb-4"><?php echo $component['ARRNAME'] .' :: '. _FPA_ADMIN; ?></h2>
 
                             <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
 
@@ -7528,7 +7528,7 @@
                         <div class="container mt-5 site-modules">
 
                             <form class="m-0 ml-auto p-0" method="post" name="modVELForm" id="modVELForm">
-                                <h1 class="h2 border-bottom mb-4">
+                                <h2 class="border-bottom mb-4">
                                     <?php echo $module['ARRNAME'] .' :: '. _FPA_SITE; ?>
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
@@ -7536,7 +7536,7 @@
                                             <i class="fas fa-radiation fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
-                                </h1>
+                                </h2>
                             </form>
 
                             <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
@@ -7641,7 +7641,7 @@
 
                         <div class="container mt-5 admin-modules">
 
-                            <h1 class="h2 border-bottom mb-4"><?php echo $module['ARRNAME'] .' :: '. _FPA_ADMIN; ?></h1>
+                            <h2 class="border-bottom mb-4"><?php echo $module['ARRNAME'] .' :: '. _FPA_ADMIN; ?></h2>
 
                             <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
 
@@ -7756,7 +7756,7 @@
                         <div class="container mt-5 libraries">
 
                             <form class="m-0 ml-auto p-0" method="post" name="libVELForm" id="libVELForm">
-                                <h1 class="h2 border-bottom mb-4">
+                                <h2 class="border-bottom mb-4">
                                     <?php echo $library['ARRNAME'] .' :: '; ?>
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
@@ -7764,7 +7764,7 @@
                                             <i class="fas fa-radiation fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
-                                </h1>
+                                </h2>
                             </form>
 
                             <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
@@ -7880,7 +7880,7 @@
                         <div class="container mt-5 plugins">
 
                             <form class="m-0 ml-auto p-0" method="post" name="plgVELForm" id="plgVELForm">
-                                <h1 class="h2 border-bottom mb-4">
+                                <h2 class="border-bottom mb-4">
                                     <?php echo $plugin['ARRNAME'] .' :: '; ?>
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
@@ -7888,7 +7888,7 @@
                                             <i class="fas fa-radiation fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
-                                </h1>
+                                </h2>
                             </form>
 
                             <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
@@ -8011,7 +8011,7 @@
                 <div class="container mt-5 site-templates">
 
                     <form class="m-0 ml-auto p-0" method="post" name="tplVELForm" id="tplVELForm">
-                        <h1 class="h2 border-bottom mb-4">
+                        <h2 class="border-bottom mb-4">
                             <?php echo $template['ARRNAME'] .' :: '. _FPA_SITE; ?>
                             <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                 <input type="hidden" name="doVEL" value="1" />
@@ -8019,7 +8019,7 @@
                                     <i class="fas fa-radiation fa-sm fa-fw lead"></i> Check VEL
                                 </button>
                             <?php } // doVEL ?>
-                        </h1>
+                        </h2>
                     </form>
 
                     <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
@@ -8125,7 +8125,7 @@
 
                 <div class="container mt-5 admin-templates">
 
-                    <h1 class="h2 border-bottom mb-4"><?php echo $template['ARRNAME'] .' :: '. _FPA_ADMIN; ?></h1>
+                    <h2 class="border-bottom mb-4"><?php echo $template['ARRNAME'] .' :: '. _FPA_ADMIN; ?></h2>
 
                     <div class="d-md-none d-lg-none d-xl-none small text-center bg-warning text-white p-2 mb-2">Best viewed in landscape or larger viewports</div>
 

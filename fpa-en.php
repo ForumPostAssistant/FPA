@@ -13,6 +13,20 @@
      *
      * Remember to revision and last updated date below on about line 36
      *
+     * Keyboard Access Keys:
+     * d = delete, g = generate post,  o = FPA options, n = night mode, l = light mode, v = run VEL, f = re-run default FPA
+     *
+     * Chrome
+     * Windows/Linux - [alt]+ accesskey
+     * Mac/OSX - [control]+[alt]+ accesskey
+     * Firefox
+     * Windows/Linux - [alt]+[shift]+ accesskey
+     * Mac/OSX - [control]+[alt]+ accesskey
+     * Safari
+     * [control]+[alt]+ accesskey
+     * Edge/IE
+     * [alt]+ accesskey
+     *
      */
 
     /**
@@ -3138,18 +3152,18 @@
                     </li>
 
                     <!--standard FPA report (resets options)-->
-                    <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Basic Discovry Report" data-content="Run the basic (on-screen) FPA Discovery report">
-                        <a class="btn btn-outline-primary mr-1" href="<?php echo _FPA_SELF; ?>" role="button" aria-label="Run the basic FPA Discovery report">
+                    <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Basic Discovry Report" data-content="Run the basic (on-screen) FPA Discovery report (accesskey = [control] alt + f)">
+                        <a class="btn btn-outline-primary mr-1" href="<?php echo _FPA_SELF; ?>" role="button" accesskey="f" aria-label="Run the basic FPA Discovery report">
                             <i class="fas fa-chalkboard fa-fw lead"></i>
                         </a>
                     </li>
 
                     <!--run a VEL report-->
                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
-                        <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Vulnerable Extension List" data-content="Run a vulnerable extension check">
+                        <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Vulnerable Extension List" data-content="Run a vulnerable extension check (accesskey = [control] alt + v)">
                             <form class="m-0 ml-auto p-0" method="post" name="navVELForm" id="navVELForm">
                                 <input type="hidden" name="doVEL" value="1" />
-                                <button class="btn btn-outline-warning mr-1" type="submit" aria-label="Run a Vulnerable Extension Check">
+                                <button class="btn btn-outline-warning mr-1" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
                                     <i class="fas fa-radiation fa-fw lead"></i>
                                 </button>
                             </form>
@@ -3180,19 +3194,19 @@
 
                     <!--darkmode-->
                     <?php if ( @$darkmode == '0' ) { ?>
-                        <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Switch To Dark Mode" data-content="View FPA in Dark Mode">
+                        <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Switch To Night Mode" data-content="View FPA in Night Mode (accesskey = [control] alt + n)">
                             <form class="m-0 ml-auto p-0" method="post" name="navDARKForm" id="navDARKForm">
                                 <input type="hidden" name="darkmode" value="1" />
-                                <button class="btn btn-outline-dark mr-1" type="submit" aria-label="Dark Mode">
+                                <button class="btn btn-outline-dark mr-1" type="submit" accesskey="n" aria-label="Night Mode">
                                     <i class="fas fa-moon fa-fw lead"></i>
                                 </button>
                             </form>
                         </li>
                     <?php } else { ?>
-                        <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Switch To Dark Mode" data-content="View FPA in Dark Mode">
+                        <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Switch To Light Mode" data-content="View FPA in Light Mode (accesskey = [control] alt + l)">
                             <form class="m-0 ml-auto p-0" method="post" name="navDARKForm" id="navDARKForm">
                                 <input type="hidden" name="darkmode" value="0" />
-                                <button class="btn btn-outline-dark mr-1" type="submit" aria-label="Dark Mode">
+                                <button class="btn btn-outline-dark mr-1" type="submit" accesskey="l" aria-label="Light Mode">
                                     <i class="fas fa-sun fa-fw lead"></i>
                                 </button>
                             </form>
@@ -3215,10 +3229,10 @@
                     -->
 
                     <!--delete FPA-->
-                    <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Security Notice" data-content="Delete the FPA script now">
+                    <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Security Notice" data-content="Delete the FPA script now (accesskey = [control] alt + d)">
                         <form class="m-0 ml-auto p-0" method="post" name="navDELForm" id="navDELForm">
                             <input type="hidden" name="act" value="delete" />
-                            <button class="btn btn-outline-danger mr-1" type="submit" aria-label="Delete FPA now">
+                            <button class="btn btn-outline-danger mr-1" type="submit" accesskey="d" aria-label="Delete FPA now">
                                 <i class="fas fa-trash-alt fa-fw lead"></i>
                             </button>
                         </form>
@@ -4250,10 +4264,10 @@
 
                                     <!--generate basic post-->
                                     <input type="hidden" name="doIT" value="1" />
-                                    <input type="submit" class="btn btn-success btn-block shadow-sm my-2 d-print-none" name="submit" value="<?php echo _FPA_CLICK; ?>" />
+                                    <input type="submit" class="btn btn-success btn-block shadow-sm my-2 d-print-none" name="submit" value="<?php echo _FPA_CLICK; ?>" accesskey="g" />
 
                                     <!-- access the FPA optionPanels -->
-                                    <a class="d-block btn btn-outline-primary mb-1 d-print-none" role="button" href="javascript:toggleFPA('fpaOptions','fpaButton');" id="fpaButton" ><i class="fas fa-chevron-circle-right"></i> Open the FPA Options</a>
+                                    <a class="d-block btn btn-outline-primary mb-1 d-print-none" role="button" href="javascript:toggleFPA('fpaOptions','fpaButton');" id="fpaButton" accesskey="o"><i class="fas fa-chevron-circle-right"></i> Open the FPA Options</a>
 
                                 </div>
 
@@ -4495,7 +4509,7 @@
                                             <div class="py-3">
                                                 <input type="hidden" name="doIT" value="1" />
 
-                                                <input type="submit" class="btn btn-success btn-lg btn-block w-75 mx-auto shadow-sm" name="submit" value="<?php echo _FPA_CLICK; ?>" />
+                                                <input type="submit" class="btn btn-success btn-lg btn-block w-75 mx-auto shadow-sm" name="submit" value="<?php echo _FPA_CLICK; ?>" accesskey="g" />
 
                                                 <input type="reset" class="btn btn-light btn-sm btn-block w-25 mx-auto" name="reset" value="reset" />
                                             </div>
@@ -7307,7 +7321,7 @@
                                     <?php echo $component['ARRNAME'] .' :: '. _FPA_SITE; ?>
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
-                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" aria-label="Run a Vulnerable Extension Check">
+                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
                                             <i class="fas fa-radiation fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
@@ -7535,7 +7549,7 @@
                                     <?php echo $module['ARRNAME'] .' :: '. _FPA_SITE; ?>
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
-                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" aria-label="Run a Vulnerable Extension Check">
+                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
                                             <i class="fas fa-radiation fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
@@ -7763,7 +7777,7 @@
                                     <?php echo $library['ARRNAME'] .' :: '; ?>
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
-                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" aria-label="Run a Vulnerable Extension Check">
+                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
                                             <i class="fas fa-radiation fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
@@ -7887,7 +7901,7 @@
                                     <?php echo $plugin['ARRNAME'] .' :: '; ?>
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
-                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" aria-label="Run a Vulnerable Extension Check">
+                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
                                             <i class="fas fa-radiation fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
@@ -8018,7 +8032,7 @@
                             <?php echo $template['ARRNAME'] .' :: '. _FPA_SITE; ?>
                             <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                 <input type="hidden" name="doVEL" value="1" />
-                                <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" aria-label="Run a Vulnerable Extension Check">
+                                <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
                                     <i class="fas fa-radiation fa-sm fa-fw lead"></i> Check VEL
                                 </button>
                             <?php } // doVEL ?>

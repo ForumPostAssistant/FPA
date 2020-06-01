@@ -2999,7 +2999,7 @@
 		<link rel="shortcut icon" href="./templates/protostar/favicon.ico" />
 
         <!-- bootswatch yeti theme - bootstrap core css -->
-        <?php if ( $_POST['darkmode'] == 1 OR $_SESSION['darkmode'] == 1 ) { ?>
+        <?php if ( @$_POST['darkmode'] == 1 OR $_SESSION['darkmode'] == 1 ) { ?>
            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.0/cyborg/bootstrap.min.css" integrity="sha256-04BHXjNfsJ2qy+AStQeom2QIJYU8+6AMCfcO60W0qc8=" crossorigin="anonymous" />
         <?php } else { ?>
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.0/yeti/bootstrap.min.css" integrity="sha256-99KgWr1SjvkqT7dcWV+Cj9yfsKF2j4wrVRgHJYAiEtU=" crossorigin="anonymous" />
@@ -3022,7 +3022,7 @@
             .border-fpa-dark { border-color: #224872 !important; }
             .text-fpa-dark { color: #224872; }
 
-        <?php if ( $darkmode != 1 ) { ?>
+        <?php if ( @$darkmode != 1 ) { ?>
             /* override default BS Yeti theme to match other FPA pages */
             h1 { color: #000; font-weight: 400; }
             h1.h2, h2, h3, h4, h5, h6 { color: #343a40; font-weight: 400; }
@@ -3046,6 +3046,7 @@
             .btn, .btn-sm, .btn-lg, .card { border-radius: 0px !important; }
             .form-control, .form-control-sm { border-radius: 0px; }
             #confidenceHelp td { font-size: 0.85rem; }
+            .bg-fpa-dark { background-color: #282828 !important; }
         <?php } // end style mode ?>
 
             /* increase default container widths to better suit dashboard type page */
@@ -3088,15 +3089,17 @@
         <header>
             <?php
                 // adjust navbar classes depending on nightmode
-                if ($darkmode == '1') {
-                    $navbarClass = 'navbar-dark bg-dark';
+                if (@$darkmode == '1') {
+                    $navbarClass = 'navbar-dark bg-fpa-dark';
+                    $navbarBrandClass = 'white';
                 } else {
                     $navbarClass = 'navbar-light bg-white';
+                    $navbarBrandClass = 'primary';
                 }
             ?>
             <nav class="navbar navbar-expand-lg <?php echo $navbarClass; ?> fixed-top shadow d-print-none">
 
-                <a class="navbar-brand mr-0 mr-md-2 text-primary py-2 lead font-weight-bolder" href="<?php echo _FPA_SELF; ?>" aria-label="<?php echo _RES; ?>">
+                <a class="navbar-brand mr-0 mr-md-2 text-<?php echo $navbarBrandClass; ?> py-2 lead font-weight-bolder" href="<?php echo _FPA_SELF; ?>" aria-label="<?php echo _RES; ?>">
                     <span class="d-inline-block d-sm-none" aria-hidden="true">FPA</span>
                     <span class="d-none d-sm-inline-block"><?php echo _RES; ?></span>
                     <span class="ml-1 small text-muted"><?php echo 'v'. _RES_VERSION; ?></span>
@@ -3176,7 +3179,7 @@
                     -->
 
                     <!--darkmode-->
-                    <?php if ( $darkmode == '0' ) { ?>
+                    <?php if ( @$darkmode == '0' ) { ?>
                         <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Switch To Dark Mode" data-content="View FPA in Dark Mode">
                             <form class="m-0 ml-auto p-0" method="post" name="navDARKForm" id="navDARKForm">
                                 <input type="hidden" name="darkmode" value="1" />
@@ -6525,7 +6528,7 @@
                                                                 echo '<br />'. _FPA_CLNT .': '. substr ($database['dbHOSTCLIENT'], 0, 30) .'...';
 
                                                             } else {
-                                                                echo _FPA_CLNT .': <span class="text-warning">'. _FPA_U .'</span>';
+                                                                echo '<br />'. _FPA_CLNT .': <span class="text-warning">'. _FPA_U .'</span>';
                                                             }
                                                         ?>
                                                     </td>

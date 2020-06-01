@@ -14,6 +14,9 @@
      * Remember to revision and last updated date below on about line 36
      *
      * Keyboard Access Keys:
+     * a screan reader accessible only note regarding this information is located just
+     * inside the body so it is read to the user before any menu or page informatin is.
+     *
      * d = delete, g = generate post,  o = FPA options, n = night mode, l = light mode, v = run VEL, f = re-run default FPA
      *
      * Chrome
@@ -3101,6 +3104,12 @@
     <body data-spy="scroll" data-target=".navbar" data-offset="68">
 
         <header>
+
+            <!--assistive tech/screenreader accesskey polite notice-->
+            <span class="sr-only d-print-none" role="alert" aria-live="polite" aria-atomic="false">
+                The following keyboard access keys are enabled.<em>d</em> to delete FPA, <em>g</em> to generate post content,  <em>o</em> to to access the FPA options, <em>n</em> to run in night mode, <em>l</em> to run in light mode, <em>v</em> to run a vulnerable extensions check and <em>f</em> to re-run the default FPA report.
+            </span>
+
             <?php
                 // adjust navbar classes depending on nightmode
                 if (@$darkmode == '1') {

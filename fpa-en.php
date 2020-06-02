@@ -8377,7 +8377,7 @@
 
 
                     // count and display post characters
-                    var maxCharCount = '19995';
+                    var maxCharCount = '19850';
                     var eleCount     = document.getElementById('postOUTPUT');
                     var countMessage = '<?php echo _FPA_INS_8; ?>';
                     if ( eleCount.value.length > maxCharCount ) {

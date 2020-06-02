@@ -2831,6 +2831,7 @@
      * - don't run if cURL disabled or not available
      * - don't run if doIT = 1
      * added - @RussW 28/05/2020
+     * updated CURLOPT_SSL_VERIFYPEER added @RussW 3/06/2020
      *
      */
     if ( defined( '_LIVE_CHECK_FPA' ) AND $canDOLIVE == '1') {
@@ -2843,6 +2844,7 @@
                                    CURLOPT_TIMEOUT => 5,
                                    CURLOPT_CONNECTTIMEOUT => 5,
                                    CURLOPT_RETURNTRANSFER => true,
+                                   CURLOPT_SSL_VERIFYPEER => false,
                                    CURLOPT_HTTPHEADER => array('Content-type: application/json'),
                                   );
             curl_setopt_array( $ch, $gitcURLOPT );

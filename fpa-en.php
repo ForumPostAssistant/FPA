@@ -2887,7 +2887,7 @@
 
             echo '<div class="w-100 p-2 bg-white small border border-'. $fpaVersionCheckStatus .' text-'. $fpaVersionCheckStatus .'">';
             echo '<i class="fas fa-'. $fpaVersionCheckIcon .'-circle fa-fw"></i>&nbsp;';
-            echo 'FPA '.$fpaVersionCheckMessage;
+            echo 'FPA '.@$fpaVersionCheckMessage;
 
             if ( !empty($fpaVersionCheckDownload) ) {
                 echo '<a class="mt-1 py-1 badge badge-'. $fpaVersionCheckStatus .' d-block w-75 mx-auto" href="'. $fpaVersionCheckDownload .'" rel="noreferrer noopener" target="_blank">Download Latest FPA (v'.$latestFPAVER.')</a>';

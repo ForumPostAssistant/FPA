@@ -5752,7 +5752,7 @@
                                                         <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_DB; ?></div>
 
                                                         <div class="xsmall w-100 mb-1 text-left px-1 mb-1">
-                                                            Type: <span class=" float-right text-capitalize"><?php echo substr(@$instance['configDBTYPE'], 0, 5); ?></span>
+                                                            Type: <span class=" float-right text-capitalize"><?php echo substr(@$instance['configDBTYPE'], 0, 8); ?></span>
                                                         </div>
 
                                                         <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
@@ -5760,7 +5760,7 @@
                                                         </div>
 
                                                         <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
-                                                            CharSet: <span class=" float-right"><?php echo substr(@$database['dbCHARSET'], 0, 5); ?></span>
+                                                            CharSet: <span class=" float-right"><?php echo substr(@$database['dbCHARSET'], 0, 6); ?></span>
                                                         </div>
 
                                                     </div>

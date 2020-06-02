@@ -6989,7 +6989,14 @@
                                         echo '</tr>';
                                         echo '<tr class="text-info">';
                                         echo '<td>'. ($dbTotalTABL -1) .' Tables</td>'; // -1 to not count the array name
-                                        echo '<td class="text-center">'. sprintf( '%.2f', ( $dbTotalSIZE /1024 ) ) .' MiB</td>';
+
+                                        // only show if configDBTYPE not postgres
+                                        if ( @$instance['configDBTYPE'] != 'postgresql' OR @$instance['configDBTYPE'] != 'pgsql' ) {
+                                            echo '<td class="text-center">'. sprintf( '%.2f', ( $dbTotalSIZE /1024 ) ) .' MiB</td>';
+                                        } else {
+                                            echo '<td></td>';
+                                        }
+
                                         echo '<td class="text-center">'. $dbTotalRCDS .'</td>';
                                         echo '<td class="d-none d-lg-table-cell"></td>';
                                         echo '<td class="text-center d-none d-lg-table-cell">'. sprintf( '%.2f', ( $dbTotalFRAG /1024 ) ) .' MiB<br />'.$dbFragPERC.'%</td>';

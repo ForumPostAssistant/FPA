@@ -83,7 +83,7 @@
     #define ( '_FPA_SSL_REDIRECT', TRUE);          // self-destruct, attempts to self-delete on next run if file older than configured duration
     define ( '_LIVE_CHECK_FPA', TRUE );           // enable live latest FPA version check
     define ( '_LIVE_CHECK_JOOMLA', TRUE );        // enable live latest Joomla! version check
-    define ( '_LIVE_CHECK_VEL', TRUE );           // enable live VEL check
+    #define ( '_LIVE_CHECK_VEL', TRUE );           // enable live VEL check
 
 
 

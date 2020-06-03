@@ -6978,8 +6978,12 @@
                                                 // calculate some statistics for the table footer as we iterate the database array
                                                 $dbTotalSIZE = $dbTotalSIZE + str_ireplace(' KiB', '', $show['SIZE']);
                                                 $dbTotalRCDS = $dbTotalRCDS + $show['RECORDS'];
-                                                $dbTotalFRAG = $dbTotalFRAG + str_ireplace(' KiB', '', $show['FRAGSIZE']);
-                                                $dbFragPERC  = number_format(($dbTotalFRAG / $dbTotalSIZE) * 100);
+
+                                                // only calculate if configDBTYPE not postgres
+                                                if ( @$instance['configDBTYPE'] != 'postgresql' OR @$instance['configDBTYPE'] != 'pgsql' ) {
+                                                    $dbTotalFRAG = $dbTotalFRAG + str_ireplace(' KiB', '', $show['FRAGSIZE']);
+                                                    $dbFragPERC  = number_format(($dbTotalFRAG / $dbTotalSIZE) * 100);
+                                                }
 
                                                 echo '</tr>';
 
@@ -8406,7 +8410,6 @@
                 <?php echo _FPA_DELNOTE_LN3; ?>
             </div>
         </div>
-
 
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.min.js" integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=" crossorigin="anonymous"></script>

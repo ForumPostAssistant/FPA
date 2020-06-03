@@ -6396,8 +6396,8 @@
 
                                                         // find and highlight the requirements and mark them as present or missing
                                                         if ( $key == 'libxml' OR $key == 'xml' OR $key == 'zip' OR $key == 'openssl' OR $key == 'zlib' OR $key == 'curl' OR $key == 'iconv' OR $key == 'mbstring' OR $key == 'mysql' OR $key == 'mysqli' OR $key == 'pdo_mysql' OR $key == 'mcrypt' OR $key == 'sodium' OR $key == 'suhosin' OR $key == 'cgi' OR $key == 'cgi-fcgi' ) {
-                                                            $status = 'success';
-                                                            $border = 'success';
+                                                            $status = 'dark';
+                                                            $border = 'dark';
                                                             $weight = 'bolder';
 
                                                         } elseif ( $key == 'apache2handler') {

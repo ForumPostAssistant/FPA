@@ -3081,6 +3081,7 @@
             .form-control, .form-control-sm { border-radius: 0px; }
             #confidenceHelp td { font-size: 0.85rem; }
             .bg-fpa-dark { background-color: #282828 !important; }
+            .bg-white { background-color: #424242 !important; }
         <?php } // end style mode ?>
 
             /* increase default container widths to better suit dashboard type page */
@@ -7012,17 +7013,17 @@
                                         echo '<th class="py-2 text-center d-none d-lg-table-cell">'. _FPA_TCKD .'</th>';
                                         echo '</tr>';
                                         echo '<tr class="text-info">';
-                                        echo '<td>'. ($dbTotalTABL -1) .' Tables</td>'; // -1 to not count the array name                                       
+                                        echo '<td>'. ($dbTotalTABL -1) .' Tables</td>'; // -1 to not count the array name
                                         echo '<td class="text-center">'. sprintf( '%.2f', ( $dbTotalSIZE /1024 ) ) .' MiB</td>';
                                         echo '<td class="text-center">'. $dbTotalRCDS .'</td>';
                                         echo '<td class="d-none d-lg-table-cell"></td>';
 
                                         // only show if configDBTYPE not postgres
-                                        if ( @$instance['configDBTYPE'] != 'postgresql' AND @$instance['configDBTYPE'] != 'pgsql' ) {					    
+                                        if ( @$instance['configDBTYPE'] != 'postgresql' AND @$instance['configDBTYPE'] != 'pgsql' ) {
 					    echo '<td class="text-center d-none d-lg-table-cell">'. sprintf( '%.2f', ( $dbTotalFRAG /1024 ) ) .' MiB<br />'.$dbFragPERC.'%</td>';
                                         } else {
                                             echo '<td></td>';
-                                        }				    
+                                        }
 
                                         echo '<td></td>';
                                         echo '<td></td>';

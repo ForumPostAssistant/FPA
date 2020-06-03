@@ -520,7 +520,9 @@
         @unlink($fpaFilename);
 
         // Message and link to home page of site.
-        $page= ('"http://$host$uri/');
+        // if SSL return to https:// otherwise http://
+        if ( @$_SERVER['HTTPS'] == 'on' ? $hostPrefix = 'https://' : $hostPrefix = 'http://');
+        $page = $hostPrefix . $host;
 
         // Something went wrong and the script was not deleted so it must be removed manually so we tell the user to do so - PhilD 8-07-12
         if ( file_exists($fpaFilename) ) {

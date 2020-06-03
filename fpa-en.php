@@ -3178,7 +3178,7 @@
                     </li>
 
                     <!--standard FPA report (resets options)-->
-                    <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Basic Discovry Report" data-content="Run the basic (on-screen) FPA Discovery report (accesskey = [control] alt + f)">
+                    <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Basic Discovery Report" data-content="Run the basic (on-screen) FPA Discovery report (accesskey = [control] alt + f)">
                         <a class="btn btn-outline-primary mr-1" href="<?php echo _FPA_SELF; ?>" role="button" accesskey="f" aria-label="Run the basic FPA Discovery report">
                             <i class="fas fa-chalkboard fa-fw lead"></i>
                         </a>

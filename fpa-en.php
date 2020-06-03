@@ -8359,9 +8359,9 @@
         <script>
             var doIT = '<?php echo @$_POST['doIT']; ?>';
             if ( doIT == '1' ) {
-                var timeleft  = 4;
+                var timeleft  = 5;
             } else {
-                var timeleft  = 9;
+                var timeleft  = 19;
             }
             var noticeTimer = setInterval(function() {
                 if (timeleft <= 0) {
@@ -8373,7 +8373,7 @@
                 timeleft -= 1;
             }, 1000);
         </script>
-        <div role="alert" aria-live="assertive" aria-atomic="true" class="toast position-fixed shadow d-print-none" style="top: 60px; right: 20px; z-index: 9999; width: 90%; max-width: 390px;" data-delay="<?php if (@$_POST['doIT'] == '1') { echo 5000; } else { echo 10000; } ?>" data-animation="false" id="securityToast">
+        <div role="alert" aria-live="assertive" aria-atomic="true" class="toast position-fixed shadow d-print-none" style="top: 60px; right: 20px; z-index: 9999; width: 90%; max-width: 390px;" data-delay="<?php if (@$_POST['doIT'] == '1') { echo 6000; } else { echo 20000; } ?>" data-animation="false" id="securityToast">
             <div class="toast-header bg-danger text-white">
                 <i class="fas fa-exclamation-circle fa-lg mr-2"></i>
                 <span class="mr-auto">Security Notification</span>

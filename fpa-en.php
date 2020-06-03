@@ -8100,6 +8100,31 @@
                                                         $extenabled = '?';
                                                     }
 
+                                                    // test for whether this is the default template
+                                                    if (isset($tmpldef[0]['template'])) {
+                                                        $extarrkey = recursive_array_search($show['name'], $tmpldef);
+
+                                                        if ($extarrkey  !== False) {
+                                                            $deftempl = $tmpldef[$extarrkey]['home'];
+
+                                                        } else {
+                                                            $deftempl = '';
+                                                        }
+
+                                                    } else {
+                                                        $deftempl = '';
+                                                    }
+
+                                                    if ($deftempl == 1 ) {
+                                                        $isDEFTPL = 'bolder';
+                                                        $isDEFTPLMSG = '<sup><i class="fas fa-check fa-fw text-success" data-toggle="tooltip" data-placement="top" title="Default Template"></i></sup>';
+
+                                                    } else {
+                                                        $isDEFTPL = 'normal';
+                                                        $isDEFTPLMSG = '';
+                                                    }
+
+
                                                     if ( $show['type'] == _FPA_3PD) {
                                                         $typeColor = 'info';
                                                     } else {
@@ -8109,9 +8134,13 @@
                                                     if ($extenabled != 1) {
                                                         $typeColor = 'muted';
                                                     }
+
                                                 ?>
 
-                                                <td class="text-<?php echo $typeColor; ?>"><?php echo $show['name']; ?></td>
+                                                <td class="text-<?php echo $typeColor; ?>">
+                                                    <span class="font-weight-<?php echo $isDEFTPL; ?>"><?php echo $show['name']; ?></span>
+                                                    <?php echo @$isDEFTPLMSG; ?>
+                                                </td>
 
                                                 <td class="text-<?php echo $typeColor; ?> text-center"><?php echo $show['version']; ?></td>
 
@@ -8205,6 +8234,30 @@
                                                         $extenabled = '?';
                                                     }
 
+                                                    // test for whether this is the default template
+                                                    if (isset($tmpldef[0]['template'])) {
+                                                        $extarrkey = recursive_array_search($show['name'], $tmpldef);
+
+                                                        if ($extarrkey  !== False) {
+                                                            $deftempl = $tmpldef[$extarrkey]['home'];
+
+                                                        } else {
+                                                            $deftempl = '';
+                                                        }
+
+                                                    } else {
+                                                        $deftempl = '';
+                                                    }
+
+                                                    if ($deftempl == 1 ) {
+                                                        $isDEFTPL = 'bolder';
+                                                        $isDEFTPLMSG = '<sup><i class="fas fa-check fa-fw text-success" data-toggle="tooltip" data-placement="top" title="Default Template"></i></sup>';
+
+                                                    } else {
+                                                        $isDEFTPL = 'normal';
+                                                        $isDEFTPLMSG = '';
+                                                    }
+
                                                     if ( $show['type'] == _FPA_3PD) {
                                                         $typeColor = 'info';
                                                     } else {
@@ -8216,7 +8269,10 @@
                                                     }
                                                 ?>
 
-                                                <td class="text-<?php echo $typeColor; ?>"><?php echo $show['name']; ?></td>
+                                                <td class="text-<?php echo $typeColor; ?>">
+                                                    <span class="font-weight-<?php echo $isDEFTPL; ?>"><?php echo $show['name']; ?></span>
+                                                    <?php echo $isDEFTPLMSG; ?>
+                                                </td>
 
                                                 <td class="text-<?php echo $typeColor; ?> text-center"><?php echo $show['version']; ?></td>
 

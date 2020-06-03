@@ -2953,7 +2953,7 @@
                     echo 'Joomla! '.$joomlaVersionCheckMessage;
 
                     if ( !empty($joomlaVersionCheckDownload) ) {
-                        echo '<a class="mt-1 py-1 badge badge-'. $joomlaVersionCheckStatus .' d-block w-75 mx-auto d-print-none" href="'. $joomlaVersionCheckDownload .'" rel="noreferrer noopener" target="_blank">Download Latest Joomla! (v'.$latestJVER.')</a>';
+                        echo '<a class="mt-1 py-1 badge badge-'. $joomlaVersionCheckStatus .' d-block w-75 mx-auto d-print-none" data-html2canvas-ignore="true" href="'. $joomlaVersionCheckDownload .'" rel="noreferrer noopener" target="_blank">Download Latest Joomla! (v'.$latestJVER.')</a>';
                     }
                     echo '</div>';
 
@@ -3046,6 +3046,8 @@
             .bg-fpa-dark { background-color: #224872 !important; }
             .border-fpa-dark { border-color: #224872 !important; }
             .text-fpa-dark { color: #224872; }
+            .pdf-break-before { page-break-before : always; }
+            .pdf-break-after { page-break-after : always; }
 
         <?php if ( @$darkmode != 1 ) { ?>
             /* override default BS Yeti theme to match other FPA pages */
@@ -3081,8 +3083,10 @@
             @media (min-width: 1200px) { .container { max-width: 1160px; } }
             @media (min-width: 1440px) { .container { max-width: 1240px; } }
             @media print {
-                .break-before { page-break-before : always; }
-                .break-after { page-break-after : always; }
+                .pdf-break-before { page-break-before : auto; }
+                .pdf-break-after { page-break-after : auto; }
+                .print-break-before { page-break-before : always; }
+                .print-break-after { page-break-after : always; }
                 .card-header, table th { color: #000 !important; }
                 footer { border-top: 1px solid #000; }
             }
@@ -3090,11 +3094,11 @@
 
         <script>
             /**
-                * toggle show/hide FPA options panel/form
-                * is overriden when doIT = 1 to hide panel/form and only show post output
-                * @RussW 23/05/2020
-                *
-                */
+             * toggle show/hide FPA options panel/form
+             * is overriden when doIT = 1 to hide panel/form and only show post output
+             * @RussW 23/05/2020
+             *
+             */
             function toggleFPA(showHideDiv, switchTextDiv) {
                 var ele = document.getElementById(showHideDiv);
                 var text = document.getElementById(switchTextDiv);
@@ -3109,12 +3113,12 @@
         </script>
 
     </head>
-    <body data-spy="scroll" data-target=".navbar" data-offset="68">
+    <body data-spy="scroll" data-target=".navbar" data-offset="68" id="fpa-body">
 
         <header>
 
             <!--assistive tech/screenreader accesskey polite notice-->
-            <span class="sr-only d-print-none" role="alert" aria-live="polite" aria-atomic="false">
+            <span class="sr-only d-print-none" data-html2canvas-ignore="true" role="alert" aria-live="polite" aria-atomic="false">
                 The following keyboard access keys are enabled, <em>d</em> to delete FPA, <em>g</em> to generate post content,  <em>o</em> to to access the FPA options, <em>n</em> to run in night mode, <em>l</em> to run in light mode, <em>v</em> to run a vulnerable extensions check and <em>f</em> to re-run the default FPA report.
             </span>
 
@@ -3128,7 +3132,7 @@
                     $navbarBrandClass = 'primary';
                 }
             ?>
-            <nav class="navbar navbar-expand-lg <?php echo $navbarClass; ?> fixed-top shadow d-print-none">
+            <nav class="navbar navbar-expand-lg <?php echo $navbarClass; ?> fixed-top shadow d-print-none" data-html2canvas-ignore="true">
 
                 <a class="navbar-brand mr-0 mr-md-2 text-<?php echo $navbarBrandClass; ?> py-2 lead font-weight-bolder" href="<?php echo _FPA_SELF; ?>" aria-label="<?php echo _RES; ?>">
                     <span class="d-inline-block d-sm-none" aria-hidden="true">FPA</span>
@@ -3169,7 +3173,7 @@
                     </li>
 
                     <!--standard FPA report (resets options)-->
-                    <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Basic Discovery Report" data-content="Run the basic (on-screen) FPA Discovery report (accesskey = [control] alt + f)">
+                    <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Basic Discovry Report" data-content="Run the basic (on-screen) FPA Discovery report (accesskey = [control] alt + f)">
                         <a class="btn btn-outline-primary mr-1" href="<?php echo _FPA_SELF; ?>" role="button" accesskey="f" aria-label="Run the basic FPA Discovery report">
                             <i class="fas fa-chalkboard fa-fw lead"></i>
                         </a>
@@ -3187,11 +3191,14 @@
                         </li>
                     <?php } // doVEL ?>
 
-                    <!--print FPA output-->
-                    <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Print FPA Report" data-content="Print the current FPA snapshot and discovery report.">
-                        <button class="btn btn-outline-info mr-1" onclick="window.print()" aria-label="Print the FPA Report">
-                            <i class="fas fa-print fa-fw lead"></i>
-                        </button>
+                    <!--print to PDF-->
+                    <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Print FPA Report to PDF" data-content="Print to PDF the current FPA snapshot and discovery report.">
+                        <form class="m-0 ml-auto p-0" method="post" name="navPDFForm" id="navPDFForm">
+                            <input type="hidden" name="doPDF" value="1" />
+                            <button class="btn btn-outline-warning mr-1" type="submit" accesskey="p" aria-label="Produce a PDF document of the FPA Report">
+                                <i class="fas fa-file-pdf fa-fw lead"></i>
+                            </button>
+                        </form>
                     </li>
 
                     <!--download latest FPA-->
@@ -3267,7 +3274,7 @@
              *
              */
             ?>
-            <div class="container d-none d-print-block border-bottom border-dark">
+            <div class="container d-none d-print-block border-bottom border-dark" id="printHeader">
                 <div>
                     <h2 class="h1 font-weight-lighter mb-1">
                         <span class="xsmall text-right float-right"><?php echo date('jS F Y'); ?><br /><?php echo date('g:i a'); ?><br /><?php echo date('e'); ?></span>
@@ -3299,7 +3306,7 @@
          */
         if ( defined( '_FPA_DEV' ) OR defined( '_FPA_DIAG' ) OR @$_SERVER['HTTPS'] != 'on' ) {
         ?>
-            <div class="alert alert-warning text-white text-center p-0 m-0 d-print-none">
+            <div class="alert alert-warning text-white text-center p-0 m-0 d-print-none" data-html2canvas-ignore="true">
 
                 <?php
                     // display developer-mode notice
@@ -3937,7 +3944,7 @@
                                     <div class="row row-cols-1 row-cols-lg-<?php echo $rowCol; ?>">
 
                                         <?php if ( defined( '_LIVE_CHECK_FPA' ) ) { ?>
-                                            <div class="col text-center mb-2 d-flex align-self-stretch d-print-none">
+                                            <div class="col text-center mb-2 d-flex align-self-stretch d-print-none" data-html2canvas-ignore="true">
 
                                                 <?php doFPALIVE(); ?>
 
@@ -4281,10 +4288,10 @@
 
                                     <!--generate basic post-->
                                     <input type="hidden" name="doIT" value="1" />
-                                    <input type="submit" class="btn btn-success btn-block shadow-sm my-2 d-print-none" name="submit" value="<?php echo _FPA_CLICK; ?>" accesskey="g" />
+                                    <input type="submit" class="btn btn-success btn-block shadow-sm my-2 d-print-none" data-html2canvas-ignore="true" name="submit" value="<?php echo _FPA_CLICK; ?>" accesskey="g" />
 
                                     <!-- access the FPA optionPanels -->
-                                    <a class="d-block btn btn-outline-primary mb-1 d-print-none" role="button" href="javascript:toggleFPA('fpaOptions','fpaButton');" id="fpaButton" accesskey="o"><i class="fas fa-chevron-circle-right"></i> Open the FPA Options</a>
+                                    <a class="d-block btn btn-outline-primary mb-1 d-print-none" data-html2canvas-ignore="true" role="button" href="javascript:toggleFPA('fpaOptions','fpaButton');" id="fpaButton" accesskey="o"><i class="fas fa-chevron-circle-right"></i> Open the FPA Options</a>
 
                                 </div>
 
@@ -4302,7 +4309,7 @@
                  *
                  */
                 ?>
-                <section class="border-top d-print-none" id="post-form">
+                <section class="border-top d-print-none" data-html2canvas-ignore="true" id="post-form">
 
                     <div class="container mb-2">
 
@@ -5334,12 +5341,12 @@
             ?>
             <?php if ( @$_POST['doVEL'] != 1 ) { ?>
 
-                <section class="py-3" id="instance-discovery">
+                <section class="py-3 pdf-break-before" id="instance-discovery">
                     <div class="container mt-5">
 
                         <h2 class="h1 font-weight-light border-bottom mb-4"><i class="fas fa-chalkboard fa-sm text-muted"></i> <?php echo _FPA_DISCOVERY_REPORT; ?></h2>
 
-                        <div class="row row-cols-1 row-cols-lg-2 break-after application-discovery">
+                        <div class="row row-cols-1 row-cols-lg-2 print-break-after application-discovery">
                             <div class="col mb-4 d-flex align-self-stretch">
 
                                 <div class="card border shadow w-100">
@@ -5876,7 +5883,7 @@
                         </div><!--./row application-discovery-->
                         <?php showDev( $instance ); ?>
 
-                        <div class="row row-cols-1 row-cols-lg-2 break-after hosting-discovery">
+                        <div class="row row-cols-1 row-cols-lg-2 print-break-after hosting-discovery">
                             <div class="col mb-4 d-flex align-self-stretch">
 
                                 <div class="card border shadow w-100">
@@ -6369,7 +6376,7 @@
                             </div><!--/.col-->
                         </div><!--./row hosting-discovery-->
 
-                        <div class="row row-cols-12 break-after php-extensions">
+                        <div class="row row-cols-12 print-break-after php-extensions">
                             <div class="col mb-4 d-flex align-self-stretch">
 
                                 <div class="card border shadow w-100">
@@ -6459,7 +6466,7 @@
 
                         <?php if ( $phpenv['phpAPI'] == 'apache2handler' ) { ?>
 
-                            <div class="row row-cols-12 break-after apache-modules">
+                            <div class="row row-cols-12 print-break-after apache-modules">
                                 <div class="col mb-4 d-flex align-self-stretch">
 
                                     <div class="card border shadow w-100">
@@ -6895,7 +6902,7 @@
             ?>
             <?php if ( $showTables == '1' ) { ?>
 
-                <section class="py-3 break-before" id="database-tables">
+                <section class="py-3 break-before pdf-break-before" id="database-tables">
                     <div class="container mt-5">
 
                         <h2 class="border-bottom mb-4"><?php echo _FPA_DB .' '. _FPA_DBTBL_TITLE; ?></h2>
@@ -7044,7 +7051,7 @@
             ?>
             <?php if ( @$_POST['doVEL'] != 1 ) { ?>
 
-                <section class="py-3 break-before" id="folder-checks">
+                <section class="py-3 break-before pdf-break-before" id="folder-checks">
 
                     <div class="container mt-5">
 
@@ -7332,7 +7339,7 @@
              *
              */
             ?>
-            <div class="break-before" id="extensions">
+            <div class="break-before pdf-break-before" id="extensions">
 
                 <?php if ( $showComponents == '1' ) { ?>
 
@@ -7345,7 +7352,7 @@
                                     <?php echo $component['ARRNAME'] .' :: '. _FPA_SITE; ?>
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
-                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
+                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" data-html2canvas-ignore="true" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
                                             <i class="fas fa-biohazard fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
@@ -7573,7 +7580,7 @@
                                     <?php echo $module['ARRNAME'] .' :: '. _FPA_SITE; ?>
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
-                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
+                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" data-html2canvas-ignore="true" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
                                             <i class="fas fa-biohazard fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
@@ -7801,7 +7808,7 @@
                                     <?php echo $library['ARRNAME'] .' :: '; ?>
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
-                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
+                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" data-html2canvas-ignore="true" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
                                             <i class="fas fa-biohazard fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
@@ -7925,7 +7932,7 @@
                                     <?php echo $plugin['ARRNAME'] .' :: '; ?>
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
-                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
+                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" data-html2canvas-ignore="true" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
                                             <i class="fas fa-biohazard fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
@@ -8056,7 +8063,7 @@
                             <?php echo $template['ARRNAME'] .' :: '. _FPA_SITE; ?>
                             <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                 <input type="hidden" name="doVEL" value="1" />
-                                <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
+                                <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" data-html2canvas-ignore="true" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
                                     <i class="fas fa-biohazard fa-sm fa-fw lead"></i> Check VEL
                                 </button>
                             <?php } // doVEL ?>
@@ -8333,7 +8340,7 @@
 
         <footer class="mt-5" id="fpa-footer">
             <div class="container text-center p-3 xsmall">
-                <p class="mb-2 d-print-none">
+            <p class="mb-2 d-print-none" data-html2canvas-ignore="true">
                     <?php echo _LICENSE_FOOTER .' '. _LICENSE_LINK; ?>
                 </p>
                 <p class="mb-1">
@@ -8379,7 +8386,8 @@
                 timeleft -= 1;
             }, 1000);
         </script>
-        <div role="alert" aria-live="assertive" aria-atomic="true" class="toast position-fixed shadow d-print-none" style="top: 60px; right: 20px; z-index: 9999; width: 90%; max-width: 390px;" data-delay="<?php if (@$_POST['doIT'] == '1') { echo 6000; } else { echo 20000; } ?>" data-animation="false" id="securityToast">
+
+        <div role="alert" aria-live="assertive" aria-atomic="true" class="toast position-fixed shadow d-print-none" data-html2canvas-ignore="true" style="top: 60px; right: 20px; z-index: 9999; width: 90%; max-width: 390px;" data-delay="<?php if (@$_POST['doIT'] == '1') { echo 6000; } else { echo 20000; } ?>" data-animation="false" id="securityToast">
             <div class="toast-header bg-danger text-white">
                 <i class="fas fa-exclamation-circle fa-lg mr-2"></i>
                 <span class="mr-auto">Security Notification</span>
@@ -8400,6 +8408,43 @@
         <!--<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>-->
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+        <?php if (@$_POST['doPDF'] == '1') { ?>
+            <?php
+            /**
+             * load the export to PDF libaries and options
+             *
+             * added @RussW 03/06/2020
+             * html2pdf bundle
+             * - includes html2canvas
+             * - includes jsPDF
+             * also loads the pace progress bar in the head when invoked as the generation can take a little
+             * time and end-users could get confused  or lost whilst the PDF is being generated
+             *
+             * exports to "landscape by default, as there is way too much information to show in portrait
+             *
+             */
+            ?>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js" integrity="sha256-1UYP03Qm8NpJtVQjd6OTwT9DjfgsYrNa8w1szRxBeqQ=" crossOrigin="anonymous"></script>
+            <script>
+
+                var filename = '<?php echo $_SERVER['SERVER_NAME'].'-'; ?>';
+                var element = document.getElementById('fpa-body');
+                var opt = {
+                    margin:       10,
+                    pagebreak: { mode: 'css', after: '.pdf-break-after', before: '.pdf-break-before' },
+                    enableLinks: false,
+                    filename:     filename+Date.now()+'.pdf',
+                    image:        { type: 'jpeg', quality: 0.95 },
+                    html2canvas:  { scale: 2 },
+                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'l', compress: 'true', userUnit: 'px' }
+                };
+
+                // promise-based execution
+                html2pdf().set(opt).from(element).save();
+
+            </script>
+        <?php } // doPDF = 1 ?>
 
         <script>
 

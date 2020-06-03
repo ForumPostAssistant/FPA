@@ -520,9 +520,7 @@
         @unlink($fpaFilename);
 
         // Message and link to home page of site.
-        // if SSL return to https:// otherwise http://
-        if ( @$_SERVER['HTTPS'] == 'on' ? $hostPrefix = 'https://' : $hostPrefix = 'http://');
-        $page = $hostPrefix . $host;
+        $page= ('"http://$host$uri/');
 
         // Something went wrong and the script was not deleted so it must be removed manually so we tell the user to do so - PhilD 8-07-12
         if ( file_exists($fpaFilename) ) {
@@ -6982,7 +6980,7 @@
                                                 $dbTotalRCDS = $dbTotalRCDS + $show['RECORDS'];
 
                                                 // only calculate if configDBTYPE not postgres
-                                                if ( @$instance['configDBTYPE'] != 'postgresql' OR @$instance['configDBTYPE'] != 'pgsql' ) {
+                                                if ( @$instance['configDBTYPE'] != 'postgresql' AND @$instance['configDBTYPE'] != 'pgsql' ) {
                                                     $dbTotalFRAG = $dbTotalFRAG + str_ireplace(' KiB', '', $show['FRAGSIZE']);
                                                     $dbFragPERC  = number_format(($dbTotalFRAG / $dbTotalSIZE) * 100);
                                                 }
@@ -7012,18 +7010,18 @@
                                         echo '<th class="py-2 text-center d-none d-lg-table-cell">'. _FPA_TCKD .'</th>';
                                         echo '</tr>';
                                         echo '<tr class="text-info">';
-                                        echo '<td>'. ($dbTotalTABL -1) .' Tables</td>'; // -1 to not count the array name
-
-                                        // only show if configDBTYPE not postgres
-                                        if ( @$instance['configDBTYPE'] != 'postgresql' OR @$instance['configDBTYPE'] != 'pgsql' ) {
-                                            echo '<td class="text-center">'. sprintf( '%.2f', ( $dbTotalSIZE /1024 ) ) .' MiB</td>';
-                                        } else {
-                                            echo '<td></td>';
-                                        }
-
+                                        echo '<td>'. ($dbTotalTABL -1) .' Tables</td>'; // -1 to not count the array name                                       
+                                        echo '<td class="text-center">'. sprintf( '%.2f', ( $dbTotalSIZE /1024 ) ) .' MiB</td>';
                                         echo '<td class="text-center">'. $dbTotalRCDS .'</td>';
                                         echo '<td class="d-none d-lg-table-cell"></td>';
-                                        echo '<td class="text-center d-none d-lg-table-cell">'. sprintf( '%.2f', ( $dbTotalFRAG /1024 ) ) .' MiB<br />'.$dbFragPERC.'%</td>';
+
+                                        // only show if configDBTYPE not postgres
+                                        if ( @$instance['configDBTYPE'] != 'postgresql' AND @$instance['configDBTYPE'] != 'pgsql' ) {					    
+					    echo '<td class="text-center d-none d-lg-table-cell">'. sprintf( '%.2f', ( $dbTotalFRAG /1024 ) ) .' MiB<br />'.$dbFragPERC.'%</td>';
+                                        } else {
+                                            echo '<td></td>';
+                                        }				    
+
                                         echo '<td></td>';
                                         echo '<td></td>';
                                         echo '<td class="d-none d-md-table-cell"></td>';

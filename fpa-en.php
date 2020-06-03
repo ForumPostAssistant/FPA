@@ -3326,7 +3326,7 @@
                     } // end diagnostic-mode display
 
                     if ( @$_SERVER['HTTPS'] != 'on' ) {
-                        echo '<p class="pt-1 mb-1 w-75 mx-auto"><i class="fas fa-unlock-alt fa-fw"></i> SSL may not be available for this site, it is strongly recommended that SSL is used on all sites where possible.</p>';
+                        echo '<p class="pt-1 mb-1 w-75 mx-auto"><i class="fas fa-unlock-alt fa-fw"></i> SSL may not be available for this site, it is recommended that SSL is used on all sites where possible.</p>';
                     }
                 ?>
 

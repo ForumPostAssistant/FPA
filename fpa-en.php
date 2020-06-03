@@ -3195,7 +3195,7 @@
                     <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Print FPA Report to PDF" data-content="Print to PDF the current FPA snapshot and discovery report.">
                         <form class="m-0 ml-auto p-0" method="post" name="navPDFForm" id="navPDFForm">
                             <input type="hidden" name="doPDF" value="1" />
-                            <button class="btn btn-outline-warning mr-1" type="submit" accesskey="p" aria-label="Produce a PDF document of the FPA Report">
+                            <button class="btn btn-outline-info mr-1" type="submit" accesskey="p" aria-label="Produce a PDF document of the FPA Report">
                                 <i class="fas fa-file-pdf fa-fw lead"></i>
                             </button>
                         </form>

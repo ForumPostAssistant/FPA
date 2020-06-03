@@ -3175,7 +3175,7 @@
                             <form class="m-0 ml-auto p-0" method="post" name="navVELForm" id="navVELForm">
                                 <input type="hidden" name="doVEL" value="1" />
                                 <button class="btn btn-outline-warning mr-1" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
-                                    <i class="fas fa-radiation fa-fw lead"></i>
+                                    <i class="fas fa-biohazard fa-fw lead"></i>
                                 </button>
                             </form>
                         </li>
@@ -7340,7 +7340,7 @@
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
                                         <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
-                                            <i class="fas fa-radiation fa-sm fa-fw lead"></i> Check VEL
+                                            <i class="fas fa-biohazard fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
                                 </h2>
@@ -7568,7 +7568,7 @@
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
                                         <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
-                                            <i class="fas fa-radiation fa-sm fa-fw lead"></i> Check VEL
+                                            <i class="fas fa-biohazard fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
                                 </h2>
@@ -7796,7 +7796,7 @@
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
                                         <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
-                                            <i class="fas fa-radiation fa-sm fa-fw lead"></i> Check VEL
+                                            <i class="fas fa-biohazard fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
                                 </h2>
@@ -7920,7 +7920,7 @@
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
                                         <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
-                                            <i class="fas fa-radiation fa-sm fa-fw lead"></i> Check VEL
+                                            <i class="fas fa-biohazard fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
                                 </h2>
@@ -8051,7 +8051,7 @@
                             <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                 <input type="hidden" name="doVEL" value="1" />
                                 <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
-                                    <i class="fas fa-radiation fa-sm fa-fw lead"></i> Check VEL
+                                    <i class="fas fa-biohazard fa-sm fa-fw lead"></i> Check VEL
                                 </button>
                             <?php } // doVEL ?>
                         </h2>

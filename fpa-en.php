@@ -7175,7 +7175,7 @@
 
                                                 echo '<td class="text-'.$alertClass.'">';
                                                 echo $show;
-                                                    if ($modecheck[$show]['group']['name'] == _FPA_DNE) {
+                                                    if ($modecheck[$show]['mode'] == '---') {
                                                         echo ' <span class="xsmall">('. _FPA_DNE .')</span>';
                                                     }
                                                 echo '</td>';
@@ -7203,6 +7203,7 @@
                                                     } else {
                                                         echo $modecheck[$show]['group']['name'];
                                                     }
+
                                                 echo '</td>';
 
                                                 echo '</tr>';

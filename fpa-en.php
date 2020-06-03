@@ -3017,6 +3017,12 @@
 
 		<link rel="shortcut icon" href="./templates/protostar/favicon.ico" />
 
+        <?php if (@$_POST['doPDF'] == '1' OR @$_POST['doVEL'] == '1') { ?>
+            <!--load pace progress bar if this take a while to run-->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js" integrity="sha256-EPrkNjGEmCWyazb3A/Epj+W7Qm2pB9vnfXw+X6LImPM=" crossorigin="anonymous"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-flash.min.css" integrity="sha256-t/Bn1Mo8tYq5d8SoQoJF07C5qOrQ5B0iNPQiCmstoCo=" crossorigin="anonymous" />
+        <?php } // load pace for selected actions ?>
+
         <!-- bootswatch yeti theme - bootstrap core css -->
         <?php if ( @$_POST['darkmode'] == 1 OR $_SESSION['darkmode'] == 1 ) { ?>
            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.0/cyborg/bootstrap.min.css" integrity="sha256-04BHXjNfsJ2qy+AStQeom2QIJYU8+6AMCfcO60W0qc8=" crossorigin="anonymous" />

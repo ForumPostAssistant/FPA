@@ -489,6 +489,8 @@
     define ( '_VER_CHECK_ATCUR', 'is up to date' );
     define ( '_VER_CHECK_ATDEV', 'is a development version' );
 
+    define ( '_FPA_WIN_LOCALHOST', '<span class="d-inline-block text-dark py-1"><span class="badge badge-info">Note:</span> Elevated permissions are expected on Windows localhost development environments.</span>' );
+
     define ( '_FPA_JDISCLAIMER', 'Forum Post Assistant (FPA) is not affiliated with or endorsed by The Joomla! Project<sup>&trade;</sup>. Use of the Joomla!<sup>&reg;</sup> name, symbol, logo, and related trademarks is licensed by Open Source Matters, Inc.' );
 	/** END LANGUAGE STRINGS *****************************************************************/
 
@@ -777,7 +779,18 @@
 		ini_set ( 'max_execution_time', ($fpa['ORIGphpMAXEXECTIME']*2) );
 	}
 
-
+    /**
+     * Check for a windows localhost
+     *
+     * if a windows development environment is "localhost" then default permisisons are always
+     * elevated (777) show a notice to the user that this is normal
+     * added @RussW 05/05/2020
+     *
+     */
+    $isWINLOCAL = 0;
+    if ( $system['sysSHORTOS'] == 'WIN' AND ($_SERVER['REMOTE_ADDR'] =='127.0.0.1' OR $_SERVER['REMOTE_ADDR'] == '::1' OR $_SERVER['SERVER_NAME'] == 'localhost')) {
+        $isWINLOCAL = 1;
+    }
 
 	/**
      * DETERMINE IF THERE IS A KNOWN ERROR ALREADY
@@ -6425,6 +6438,9 @@
                                                                 // this may indicate a need to raise modeset to make user writable
                                                                 if ( ( substr($dirEPCheck,1 ,1) > '5' OR substr($dirEPCheck,2 ,1) > '5' ) OR ( substr($fileEPCheck,0 ,1) > '6' OR substr($fileEPCheck,1 ,1) > '4' OR substr($fileEPCheck,2 ,1) > '4' ) ) {
                                                                     $elevatedMSG = 'Permissions may have been elevated to overcome access problems.';
+                                                                    if ( $isWINLOCAL == '1' ) {
+                                                                        $elevatedMSG = $elevatedMSG.' '._FPA_WIN_LOCALHOST;
+                                                                    }
                                                                 }
 
                                                             } else {
@@ -7291,6 +7307,8 @@
                             </table>
 
                         </div><!--/.table-responsive permissions-->
+
+                        <?php if ( $isWINLOCAL == '1' ) { echo _FPA_WIN_LOCALHOST; } // win localhost notice ?>
 
                         <?php showDev( $folders ); ?>
                         <?php showDev( $modecheck ); ?>

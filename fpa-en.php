@@ -6323,6 +6323,7 @@
                                                 <tr>
                                                     <td colspan="3">
                                                         <?php
+                                                        /* OLD SUEXEC ROUTINE @RussW
                                                             if ($phpenv['phpAPACHESUEXEC'] != _FPA_Y AND $phpenv['phpPHPSUEXEC'] != _FPA_Y) {
                                                                     // not handlers installed
                                                                     $suColor = 'danger';
@@ -6368,10 +6369,74 @@
                                                                     $suMSG    = 'Unable to determine effective perrmissions or ownership information.';
                                                                 }
                                                             }
+                                                        */
+
+
+                                                            /**
+                                                             * Simplified "effective" rights testing
+                                                             * this routine is designed to try and determine if the user is, or will have, problems
+                                                             * installing extensions or uploading files due to ownershop/permission configuration
+                                                             * - only runs if an instance is found
+                                                             *
+                                                             * test a directory and the fpa script itself for "writable" status
+                                                             * - if BOTH the test items are user writable then ownership obviously isn't a problem - display NO
+                                                             * - if ONLY ONE test item is writable then we have non-standard permissions : display MAYBE
+                                                             * - else if above criteria is not met (ie: both items are NOT writable) : display YES
+                                                             *
+                                                             * then check both items for elevated permissions, which may indicate a need raise modeset to achieve access
+                                                             * assumed modeset defaults - Directory: 755, File: 644
+                                                             * - raise a warning message elevated permisions are found
+                                                             *
+                                                             * NOTE: this test routine is now independant of the suExec (Switch User) status
+                                                             * - this means the suExec (& user) status is purely informational now
+                                                             * - this caters for litespeed using setUID and custom/Cloud solutions
+                                                             * - this is a more robust method than using the presence of suExec, using the users own
+                                                             *   "effective" rights to test for ownership or permission issues
+                                                             *
+                                                             * added @RussW 04/05/2020
+                                                             *
+                                                             */
+                                                            if ( $instance['instanceFOUND'] == _FPA_Y ) {
+
+                                                                $dirTOTest   = 'components';
+                                                                $dirEPCheck  = substr( sprintf('%o', fileperms( $dirTOTest ) ),-3, 3 );
+                                                                $fileEPCheck = substr( sprintf('%o', fileperms( basename($_SERVER['PHP_SELF']) ) ),-3, 3 );
+
+                                                                if ( is_writeable(basename($_SERVER['PHP_SELF'])) AND is_writeable('components') ) {
+                                                                    $suColor     = 'success';
+                                                                    $suStatus    = _FPA_N;
+                                                                    $suMSG       = 'Extension & template installations, file & image uploads should not have any problems.';
+                                                                    $elevatesMSG = '';
+
+                                                                } elseif ( !is_writeable(basename($_SERVER['PHP_SELF'])) XOR !is_writeable('components') ) {
+                                                                    $suColor     = 'info';
+                                                                    $suStatus    = _FPA_M;
+                                                                    $suMSG       = 'Extension & template installations, file & image uploads might have some problems.';
+                                                                    $elevatesMSG = 'Permissions are non-standard and may cause issues.';
+
+                                                                } else {
+                                                                    $suColor     = 'warning';
+                                                                    $suStatus    = _FPA_Y;
+                                                                    $suMSG       = 'Extension & template installations, file & image uploads are likely to have problems.';
+                                                                    $elevatesMSG = '';
+                                                                }
+
+                                                                // display a warnng message if any "actual" permissions are elevated,
+                                                                // this may indicate a need to raise modeset to make user writable
+                                                                if ( ( substr($dirEPCheck,1 ,1) > '5' OR substr($dirEPCheck,2 ,1) > '5' ) OR ( substr($fileEPCheck,0 ,1) > '6' OR substr($fileEPCheck,1 ,1) > '4' OR substr($fileEPCheck,2 ,1) > '4' ) ) {
+                                                                    $elevatedMSG = 'Permissions may have been elevated to overcome access problems.';
+                                                                }
+
+                                                            } else {
+                                                                $suColor     = 'info';
+                                                                $suStatus    = _FPA_U;
+                                                                $suMSG       = 'No Joomla! instance found to test';
+                                                                $elevatesMSG = '';
+                                                            } // instanceFOUND, effective rights test
                                                         ?>
 
                                                         <?php echo _FPA_PERMOWN; ?> Problems&nbsp;:&nbsp;<span class="badge badge-<?php echo $suColor; ?>"><?php echo $suStatus; ?></span>&nbsp;<span class="badge badge-light"><?php echo $phpenv['phpAPI']; ?></span>
-                                                        <p class="my-1"><?php echo $suMSG; ?></p>
+                                                        <p class="my-1"><?php echo $suMSG; ?> <span class="text-warning"><?php echo $elevatedMSG; ?></span></p>
                                                     </td>
                                                 </tr>
                                             </tbody>

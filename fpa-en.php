@@ -77,8 +77,7 @@
      * - this is tested for within each unique LiveCheck function
      *
      */
-    define ( '_FPA_SELF', basename($_SERVER['PHP_SELF']));  // DONT DISABLE SEVERAL FUNCTIONS RELY ON THIS : take in to account renamed FPA, ensure all local links work
-    #define ( '_FPA_SELF', 'fred.php');  // DONT DISABLE SEVERAL FUNCTIONS RELY ON THIS : take in to account renamed FPA, ensure all local links work
+    define ( '_FPA_SELF', basename($_SERVER['PHP_SELF']) );  // DONT DISABLE SEVERAL FUNCTIONS RELY ON THIS : take in to account renamed FPA, ensure all local links work
 
     define ( '_FPA_SELF_DESTRUCT', TRUE);         // self-destruct, attempts to self-delete on next run if file older than configured duration
     #define ( '_FPA_SSL_REDIRECT', TRUE);          // self-destruct, attempts to self-delete on next run if file older than configured duration
@@ -102,10 +101,7 @@
     define ( '_FPA_SELF_DESTRUCT_AGE', 7 );       // age of FPA file before _FPA_SELF_DESTRUCT runs (set as CONSTANT so it can't be changed/overridden at runtime)
     if ( defined('_FPA_SELF_DESTRUCT') AND ( !defined('_FPA_DEV') AND !defined('_FPA_DIAG') ) ) {
 
-        //$fpafile         = _FPA_SELF;
-        ///$fpafile         = 'fred.php';
-
-        if ( file_exists(_FPA_SELF) ) {
+        if ( file_exists( _FPA_SELF ) ) {
             $fileinfo = stat( _FPA_SELF );
         }
 

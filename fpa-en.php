@@ -2136,6 +2136,15 @@
                 $database['dbHOSTDEFCHSET'] = mysql_client_encoding( $dBconn );      // this is the hosts default character-set
                 $database['dbHOSTSTATS']    = explode("  ", mysql_stat( $dBconn ) ); // latest statistics
 
+
+                // get the database grants/privilidges
+                // added @RussW 5/05/2020
+                $privResult = mysql_query( "SHOW GRANTS FOR CURRENT_USER" );
+
+                while ( $row = @mysql_fetch_row( $privResult ) ) {
+                    $database['dbPRIVS'] =  $row[0];
+                }
+
                 // find the database collation
                 $coResult = mysql_query( "SHOW VARIABLES LIKE 'collation_database'" );
 
@@ -2254,6 +2263,14 @@
                 $database['dbHOSTDEFCHSET'] = @mysqli_character_set_name( $dBconn );       // this is the hosts default character-set
                 $database['dbHOSTSTATS']    = explode("  ", @mysqli_stat( $dBconn ) );  // latest statistics
 
+                // get the database grants/privilidges
+                // added @RussW 5/05/2020
+                $privResult = @$dBconn->query( "SHOW GRANTS FOR CURRENT_USER" );
+
+                while ( $row = @mysqli_fetch_row( $privResult ) ) {
+                    $database['dbPRIVS'] =  $row[0];
+                }
+
                 // find the database collation
                 $coResult = @$dBconn->query( "SHOW VARIABLES LIKE 'collation_database'" );
 
@@ -2368,6 +2385,14 @@
                     $database['dbHOSTCLIENT']   = $dBconn->getAttribute(constant("PDO::ATTR_CLIENT_VERSION" ));                // client library version
                     $database['dbHOSTDEFCHSET'] = $dBconn->query("SELECT CHARSET('')")->fetchColumn();      // this is the hosts default character-set
                     $database['dbHOSTSTATS']    = explode("  ", $dBconn->getAttribute(constant("PDO::ATTR_SERVER_INFO" )));  // latest statistics
+                }
+
+                // get the database grants/privilidges
+                // added @RussW 5/05/2020
+                $privResult = @$dBconn->query( "SHOW GRANTS FOR CURRENT_USER" );
+
+                while ( $row = $privResult->fetch( PDO::FETCH_BOTH )) {
+                    $database['dbPRIVS'] =  $row[0];
                 }
 
                 // find the database collation
@@ -6802,6 +6827,32 @@
 
                                                             } else {
                                                                 echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">User Privileges&nbsp;
+                                                        <?php
+                                                            if ( @$database['dbPRIVS'] ) {
+                                                                if (stristr($database['dbPRIVS'], 'GRANT ALL')) {
+                                                                    echo '<span class="badge badge-success xsmall text-lowercase mb-1 mr-1">'. substr($database['dbPRIVS'], 0, 9) .'</span>';
+
+                                                                } else {
+                                                                    $privPieces = explode(',', $database['dbPRIVS']);
+
+                                                                    $i = 0;
+                                                                    while ($i < count($privPieces)) {
+                                                                        if ( stristr($privPieces[$i], 'TRIGGER') ) {
+                                                                            echo '<span class="badge badge-info xsmall text-lowercase mb-1 mr-1">'. substr($privPieces[$i], 0, 8) .'</span>';
+                                                                        } else {
+                                                                            echo '<span class="badge badge-info xsmall text-lowercase mb-1 mr-1">'. $privPieces[$i] .'</span>';
+                                                                        }
+                                                                        $i++;
+                                                                    }
+                                                                }
+                                                            } else {
+                                                                echo '<span class="text-info">'. _FPA_U .'</span>';
                                                             }
                                                         ?>
                                                     </td>

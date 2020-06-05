@@ -36,7 +36,6 @@
      * for edit changelog see https://github.com/ForumPostAssistant/FPA/pulls?q=is%3Apr+is%3Aclosed
      *
      * TODO/WISHLIST:
-     * @mandville - add print to PDF
      * @RussW - add expoert to .csv on tabular data/lists
      * @RussW - add FPA Guided Tour
      * @RussW - split fpa post content to multiple textareas/posts if exceeds 20k characters
@@ -6845,6 +6844,10 @@
                                                                     while ($i < count($privPieces)) {
                                                                         if ( stristr($privPieces[$i], 'TRIGGER') ) {
                                                                             echo '<span class="badge badge-info xsmall text-lowercase mb-1 mr-1">'. substr($privPieces[$i], 0, 8) .'</span>';
+
+                                                                        }elseif ( stristr($privPieces[$i], 'GRANT PROXY ON') ) {
+                                                                                echo '<span class="badge badge-info xsmall text-lowercase mb-1 mr-1">'. substr($privPieces[$i], 0, 11) .'</span>';
+
                                                                         } else {
                                                                             echo '<span class="badge badge-info xsmall text-lowercase mb-1 mr-1">'. $privPieces[$i] .'</span>';
                                                                         }

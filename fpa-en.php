@@ -77,8 +77,10 @@
      * - this is tested for within each unique LiveCheck function
      *
      */
-    define ( '_FPA_SELF', $_SERVER['PHP_SELF']);  // DONT DISABLE SEVERAL FUNCTIONS RELY ON THIS : take in to account renamed FPA, ensure all local links work
-    #define ( '_FPA_SELF_DESTRUCT', TRUE);         // self-destruct, attempts to self-delete on next run if file older than configured duration
+    define ( '_FPA_SELF', basename($_SERVER['PHP_SELF']));  // DONT DISABLE SEVERAL FUNCTIONS RELY ON THIS : take in to account renamed FPA, ensure all local links work
+    #define ( '_FPA_SELF', 'fred.php');  // DONT DISABLE SEVERAL FUNCTIONS RELY ON THIS : take in to account renamed FPA, ensure all local links work
+
+    define ( '_FPA_SELF_DESTRUCT', TRUE);         // self-destruct, attempts to self-delete on next run if file older than configured duration
     #define ( '_FPA_SSL_REDIRECT', TRUE);          // self-destruct, attempts to self-delete on next run if file older than configured duration
     define ( '_LIVE_CHECK_FPA', TRUE );           // enable live latest FPA version check
     define ( '_LIVE_CHECK_JOOMLA', TRUE );        // enable live latest Joomla! version check
@@ -101,10 +103,10 @@
     if ( defined('_FPA_SELF_DESTRUCT') AND ( !defined('_FPA_DEV') AND !defined('_FPA_DIAG') ) ) {
 
         //$fpafile         = _FPA_SELF;
-        $fpafile         = 'fred.php';
+        ///$fpafile         = 'fred.php';
 
-        if ( file_exists($fpafile) ) {
-            $fileinfo = stat( $fpafile );
+        if ( file_exists(_FPA_SELF) ) {
+            $fileinfo = stat( _FPA_SELF );
         }
 
         // only try and delete the file if we can get the 'last modified' date
@@ -508,26 +510,23 @@
      */
     if ( ( isset($_POST['act']) AND $_POST['act']  == 'delete' ) OR ( defined('_FPA_SELF_DESTRUCT') AND defined('_FPA_SELF_DESTRUCT_DOIT') ) ) {
         $host        = $_SERVER['HTTP_HOST'];
-        $uri         = rtrim(dirname(_FPA_SELF), '/\\');
+        $uri         = rtrim( dirname($_SERVER['PHP_SELF'] ), '/\\');
         $extra       = ''; // add index (or other) page if desired
 
-        //$fpaFilename = _FPA_SELF;
-        $fpaFilename = 'fred.php';
-
         // try to set script to 777 to make sure we have permission to delete
-        @chmod($fpaFilename, 0777);  // octal; correct value of mode
+        @chmod(_FPA_SELF, 0777);  // octal; correct value of mode
 
         // Delete the file.
-        @unlink($fpaFilename);
+        @unlink(_FPA_SELF);
 
         // Message and link to home page of site.
         // if SSL return to https:// otherwise http://
         if ( @$_SERVER['HTTPS'] == 'on' ? $hostPrefix = 'https://' : $hostPrefix = 'http://');
-        $page = $hostPrefix . $host;
+        $page = $hostPrefix . $host . $uri . $extra;
 
         // Something went wrong and the script was not deleted so it must be removed manually so we tell the user to do so - PhilD 8-07-12
-        if ( file_exists($fpaFilename) ) {
-            @chmod($fpaFilename, 0644);  // octal; correct value of mode
+        if ( file_exists(_FPA_SELF) ) {
+            @chmod(_FPA_SELF, 0644);  // octal; correct value of mode
 
             echo '<div id="deleteMessage" style="padding:20px;border:1px solid #e99002;background-color:#fff8ee;margin:0 auto;margin-top:50px;margin-bottom:20px;max-width:70%;position:relative;z-index:9999;top:10%;font-family:sans-serif, arial;" align="center">';
             echo '<h1 style="color:#e99002;font-size:44px;">SOMETHING WENT WRONG!</h1>';
@@ -2952,7 +2951,6 @@
      */
     if ( defined( '_LIVE_CHECK_JOOMLA') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) {
 
-        // TODO: check why not working on litespeed server although simpleXML is available
         if ( extension_loaded('simplexml') AND ini_get( 'allow_url_fopen' ) == '1' ) {
 
             function doJOOMLALIVE($thisJVER) {
@@ -3217,6 +3215,16 @@
                         </div>
                     </li>
 
+                    <!--privacy
+                    <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Vulnerable Extension List" data-content="Run a vulnerable extension check (accesskey = [control] alt + v)">
+                        <form class="m-0 ml-auto p-0" method="post" name="navVELForm" id="navVELForm">
+                            <input type="hidden" name="doVEL" value="1" />
+                            <button class="btn btn-outline-warning mr-1" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
+                                <i class="fas fa-biohazard fa-fw lead"></i>
+                            </button>
+                        </form>
+                    </li>-->
+
                     <!--standard FPA report (resets options)-->
                     <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Basic Discovery Report" data-content="Run the basic (on-screen) FPA Discovery report (accesskey = [control] alt + f)">
                         <a class="btn btn-outline-primary mr-1" href="<?php echo _FPA_SELF; ?>" role="button" accesskey="f" aria-label="Run the basic FPA Discovery report">
@@ -3395,6 +3403,8 @@
                 ini_set( 'display_errors', 0 ); // default-display
             }
         ?>
+
+
 
         <main class="main">
 

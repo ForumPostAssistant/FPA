@@ -262,7 +262,7 @@
     // @RussW _FPA_DELNOTE_LN1 to be removed 23/05/2020
 	define ( '_FPA_DELNOTE_LN1', '<h5 class="text-danger">** SECURITY NOTICE **</h5>' );
     // @RussW updated 23/05/2020
-    define ( '_FPA_DELNOTE_LN2', '<p class="small">Due to the highly sensitive nature of the information displayed by the FPA script, it should be removed from the server immediately after use. If the script is left on the site, it can be used to gather enough information to hack your site.</p>' );
+    define ( '_FPA_DELNOTE_LN2', '<p class="small">The FPA script may contain private information that could be used to obtain information by others to compromise your website. We recommend that you remove the FPA script after you use it.</p>' );
     // @RussW updated 23/05/2020
     define ( '_FPA_DELNOTE_LN3', '<p class="text-danger">After use, please delete the FPA script.</p>' );
     // dev/diag-mode content

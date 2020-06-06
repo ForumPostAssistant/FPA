@@ -1,7 +1,7 @@
 <?php
     /**
      *  @package Forum Post Assistant
-     *  @version 1.5.5 facelift
+     *  @version 1.5.5 rhytidectomy
      *  @last updated 27 May 2020
      *  @release Beta
      *  @date 24/06/2011
@@ -98,7 +98,7 @@
      * added @RussW 30/05/2020
      *
      */
-    define ( '_FPA_SELF_DESTRUCT_AGE', 7 );       // age of FPA file before _FPA_SELF_DESTRUCT runs (set as CONSTANT so it can't be changed/overridden at runtime)
+    define ( '_FPA_SELF_DESTRUCT_AGE', -7 );       // age of FPA file before _FPA_SELF_DESTRUCT runs (set as CONSTANT so it can't be changed/overridden at runtime)
     if ( defined('_FPA_SELF_DESTRUCT') AND ( !defined('_FPA_DEV') AND !defined('_FPA_DIAG') ) ) {
 
         if ( file_exists( _FPA_SELF ) ) {
@@ -205,7 +205,7 @@
 	// Define some basic assistant information
 
 	define ( '_RES', 'Forum Post Assistant' );
-	define ( '_RES_VERSION', '1.5.5 (facelift)' );
+	define ( '_RES_VERSION', '1.5.5 (rhytidectomy)' );
 	define ( '_last_updated', '27-May-2020' );
 	define ( '_COPYRIGHT_STMT', ' Copyright &copy; 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
 	define ( '_LICENSE_LINK', '<a href="https://www.gnu.org/licenses/" target="_blank" rel="noopener noreferrer">https://www.gnu.org/licenses/</a>' ); // link to GPL license
@@ -3276,13 +3276,6 @@
                                     <input type="radio" name="showProtected" value="0" onclick="document.getElementById('navPROTECTForm').submit()" id="showProtectedOFF" <?php echo $privOFFCHECKED; ?> > OFF
                                 </label>
                             </div>
-
-                            <!--
-                            <input type="hidden" name="doVEL" value="1" />
-                            <button class="btn btn-outline-warning mr-1" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
-                                <i class="fas fa-biohazard fa-fw lead"></i>
-                            </button>
-                            -->
                         </form>
                     </li>
 
@@ -4718,8 +4711,8 @@
                                              * BBCode for the Joomla! Forum
                                              */
 
-                                            echo '<textarea class="protected xsmall text-dark w-100 border bg-light p-1" type="text" rows="10" name="postOUTPUT" id="postOUTPUT">';
-                                            echo '[quote="'. _RES .' (v'. _RES_VERSION .') : '. @date( 'jS F Y' ) .'"]';
+                                            echo '<textarea class="1protected xsmall text-dark w-100 border bg-light p-1" type="text" rows="10" name="postOUTPUT" id="postOUTPUT">';
+                                            echo '[quote="'. _RES .' (v'. _RES_VERSION .') : '. @date( 'j-M-Y' ) .'"]';
 
                                             if ( $_POST['probDSC'] ) { echo '[quote="'. _FPA_PROB_DSC .' :: "][size=85]'. $_POST['probDSC'] .' [/size][/quote]'; }
 

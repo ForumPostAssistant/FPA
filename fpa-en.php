@@ -532,8 +532,8 @@
 
             } else {
                 echo '<h1 style="color:#e99002;font-size:44px;">SOMETHING WENT WRONG!</h1>';
-                echo '<p style="color:#e99002;font-size:30px;">We could not delete the FPA file ('. $fpaFilename .').</p>';
-                echo '<p style="color:#e99002;font-size:20px;margin:0 auto;max-width:80%;">For your website security, please remove the file <em style="color:#f04124;">'. $filename .'</em> manually using FTP or through your hosting File Manager.</p>';
+                echo '<p style="color:#e99002;font-size:30px;">We could not delete the FPA file ('. _FPA_SELF .').</p>';
+                echo '<p style="color:#e99002;font-size:20px;margin:0 auto;max-width:80%;">For your website security, please remove the file <em style="color:#f04124;">'. _FPA_SELF .'</em> manually using FTP or through your hosting File Manager.</p>';
             }
 
         } else {

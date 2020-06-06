@@ -558,7 +558,7 @@
      * darkmode template
      *
      * use the bootswatch cyborg BS4 theme instead of the Yeti theme
-     * use PHP _SESSION to maintain the users choice
+     * use PHP_SESSION to maintain the users choice
      * added @RussW 31/05/2020
      *
      */
@@ -581,18 +581,54 @@
         $darkmode             = '0';
     }
     // unset($_SESSION['darkmode']);
-    // unset($_SESSION);
     // session_destroy();
 
+    // TESTING PRIVACY
+    // setup the default runtime parameters and collect the POST data changes, if any
+    if ( !$_SESSION ) {
+        session_start();
+    }
 
+    if ( @$_POST['showProtected'] == 0 ) {
+        $_SESSION['privacy'] = 0;
+        $showProtected       = 0;
 
+    } elseif ( @$_POST['showProtected'] == 1 ) {
+        $_SESSION['privacy'] = 1;
+        $showProtected       = 1;
+
+    } elseif ( isset($_SESSION['privacy']) ) {
+        $_SESSION['privacy'] = $_SESSION['privacy'];
+        $showProtected       = $_SESSION['privacy'];
+
+    } elseif ( !isset($_SESSION['privacy']) OR ( $_SESSION['privacy'] != 1 OR !isset($_POST['showProtected']) OR @$_POST['showProtected'] != 1 OR $showProtected != 1 ) )  {
+        $_SESSION['privacy'] = 0;
+        $showProtected       = 0;
+
+	} else {
+        $showProtected       = 0;
+        $_SESSION['privacy'] = 0;
+
+    }
+
+    // hardened server and no explicit choice
+    if ( extension_loaded('suhosin') AND !isset($_POST['showProtected']) ) {
+        $showProtected       = 1;
+        $_SESSION['privacy'] = 1;
+    }
+    //unset($_SESSION['privacy']);
+    //unset($_SESSION);
+    //session_destroy();
+
+    /*
 	// setup the default runtime parameters and collect the POST data changes, if any
 	if ( @$_POST['showProtected'] ) {
 		$showProtected  = @$_POST['showProtected'];
 
 	} else {
 		$showProtected = 2; // default (limited privacy masking)
-	}
+    }
+    */
 
 	if ( @$_POST['showElevated'] == 0 AND  @$_POST['doIT'] == 1   ) {
 		$showElevated  = 0;
@@ -3211,15 +3247,44 @@
                         </div>
                     </li>
 
-                    <!--privacy
-                    <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Vulnerable Extension List" data-content="Run a vulnerable extension check (accesskey = [control] alt + v)">
-                        <form class="m-0 ml-auto p-0" method="post" name="navVELForm" id="navVELForm">
+                    <!--privacy-->
+                    <?php
+                        if ($showProtected == 0) {
+                            $privONACTIVE   = '';
+                            $privONCHECKED  = '';
+                            $privONBTN      = 'secondary';
+                            $privOFFACTIVE  = 'active';
+                            $privOFFCHECKED = 'checked';
+                            $privOFFBTN     = 'info';
+                        } else {
+                            $privONACTIVE   = 'active';
+                            $privONCHECKED  = 'checked';
+                            $privONBTN      = 'info';
+                            $privOFFACTIVE  = '';
+                            $privOFFCHECKED = '';
+                            $privOFFBTN      = 'secondary';
+                        }
+                    ?>
+                    <li class="nav-item py-2 1d-none 1d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Enable Privacy" data-content="Protect certain sensitive information from public view.">
+                        <form class="m-0 ml-auto p-0" method="post" name="navVELForm" id="navPROTECTForm">
+                            <div class="xsmall text-center text-primary">Privacy</div>
+                            <div class="btn-group btn-group-toggle mr-2" data-toggle="buttons">
+                                <label class="btn btn-<?php echo $privONBTN; ?> btn-sm xsmall <?php echo $privONACTIVE; ?>">
+                                    <input type="radio" name="showProtected" value="1" onclick="document.getElementById('navPROTECTForm').submit()" id="showProtectedON" <?php echo $privONCHECKED; ?>> ON
+                                </label>
+                                <label class="btn btn-<?php echo $privOFFBTN; ?> btn-sm xsmall <?php echo $privOFFACTIVE; ?>">
+                                    <input type="radio" name="showProtected" value="0" onclick="document.getElementById('navPROTECTForm').submit()" id="showProtectedOFF" <?php echo $privOFFCHECKED; ?> > OFF
+                                </label>
+                            </div>
+
+                            <!--
                             <input type="hidden" name="doVEL" value="1" />
                             <button class="btn btn-outline-warning mr-1" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
                                 <i class="fas fa-biohazard fa-fw lead"></i>
                             </button>
+                            -->
                         </form>
-                    </li>-->
+                    </li>
 
                     <!--standard FPA report (resets options)-->
                     <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Basic Discovery Report" data-content="Run the basic (on-screen) FPA Discovery report (accesskey = [control] alt + f)">
@@ -4531,21 +4596,24 @@
                                                 <div class="col-sm-5 text-dark mb-3">
 
                                                 <?php
-                                                    if ( $showProtected == 2 OR @$_POST['showProtected'] == 2 ) {
+//                                                    if ( $showProtected == 2 OR @$_POST['showProtected'] == 2 ) {
+                                                    if ( $showProtected == 1 OR @$_POST['showProtected'] == 1 ) {
                                                         $selectshowProtected_1 = '';
                                                         $selectshowProtected_2 = 'CHECKED';
 
-                                                    } elseif ( $showProtected == 1 OR @$_POST['showProtected'] == 1 ) {
-                                                        $selectshowProtected_1 = 'CHECKED';
-                                                        $selectshowProtected_2 = '';
+//                                                    } elseif ( $showProtected == 1 OR @$_POST['showProtected'] == 1 ) {
+//                                                        $selectshowProtected_1 = 'CHECKED';
+//                                                        $selectshowProtected_2 = '';
 
-                                                    } elseif ( $showProtected == 2 ) {
-                                                        $selectshowProtected_1 = '';
-                                                        $selectshowProtected_2 = 'CHECKED';
+//                                                    } elseif ( $showProtected == 2 ) {
+//                                                        $selectshowProtected_1 = '';
+//                                                        $selectshowProtected_2 = 'CHECKED';
 
                                                     } else {
-                                                        $selectshowProtected_1 = '';
-                                                        $selectshowProtected_2 = 'CHECKED';
+                                                        $selectshowProtected_1 = 'CHECKED';
+                                                        $selectshowProtected_2 = '';
+//                                                        $selectshowProtected_1 = '';
+//                                                        $selectshowProtected_2 = 'CHECKED';
                                                     }
                                                 ?>
 
@@ -4554,13 +4622,13 @@
                                                     <fieldset>
                                                         <div class="form-check mb-1">
                                                             <input class="form-check-input" type="radio" name="showProtected" id="showProtected1" value="1" <?php echo $selectshowProtected_1; ?> aria-describedby="privacyNoHelp" />
-                                                            <label class="form-check-label mt-1" for="showProtected1"><?php echo _FPA_PRIVNON; ?></label>
+                                                            <label class="form-check-label mt-1" for="showProtected1"><?php echo _FPA_PRIVNON .'<small class="text-success">('. _FPA_DEF .')</small>'; ?></label>
                                                             <small id="privacyNoHelp" class="form-text text-muted"><?php echo _FPA_PRIVNONNOTE; ?></small>
                                                         </div>
 
                                                         <div class="form-check">
                                                             <input class="form-check-input" type="radio" name="showProtected" id="showProtected2" value="2" <?php echo $selectshowProtected_2; ?> aria-describedby="privacyPartialHelp" />
-                                                            <label class="form-check-label mt-1" for="showProtected2"><?php echo _FPA_PRIVPAR .' <small class="text-success">('. _FPA_DEF .')</small>'; ?></label>
+                                                            <label class="form-check-label mt-1" for="showProtected2"><?php echo _FPA_PRIVPAR .' <!--<small class="text-success">('. _FPA_DEF .')</small>-->'; ?></label>
                                                             <small id="privacyPartialHelp" class="form-text text-muted"><?php echo _FPA_PRIVPARNOTE; ?></small>
                                                         </div>
                                                     </fieldset>
@@ -5600,7 +5668,7 @@
                                                         <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_OWNER; ?></div>
 
                                                         <?php
-                                                            if ( $showProtected == 1 ) {
+                                                            if ( $showProtected == 0 ) {
                                                                 echo $instance['configOWNER']['name'];
 
                                                             } else {
@@ -5617,7 +5685,7 @@
                                                         <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_CF .' '. _FPA_GROUP; ?></div>
 
                                                         <?php
-                                                            if ( $showProtected == 1 ) {
+                                                            if ( $showProtected == 0 ) {
                                                                 echo $instance['configGROUP']['name'];
 
                                                             } else {
@@ -6074,7 +6142,7 @@
                                                     <td class="text-capitalize">Session Path</td>
                                                     <td class="xsmall">
                                                         <?php
-                                                            if ( $showProtected == 1 ) {
+                                                            if ( $showProtected == 0 ) {
                                                                 echo $phpenv['phpSESSIONPATH'] .'<br />';
                                                             } else {
                                                                 echo '<span class="protected">'. _FPA_HIDDEN .'</span><br />';
@@ -6154,7 +6222,7 @@
                                                     <td class="text-capitalize"><?php echo _FPA_HNAME; ?></td>
                                                     <td>
                                                         <?php
-                                                            if ( $showProtected == 1 ) {
+                                                            if ( $showProtected == 0 ) {
                                                                 echo $system['sysPLATNAME'];
 
                                                             } else {
@@ -6209,7 +6277,7 @@
                                                     <td class="text-capitalize"><?php echo _FPA_SERV; ?> Name</td>
                                                     <td>
                                                         <?php
-                                                            if ( $showProtected == 1 ) {
+                                                            if ( $showProtected == 0 ) {
                                                                 echo $system['sysSERVNAME'];
 
                                                             } else {
@@ -6222,7 +6290,7 @@
                                                     <td class="text-capitalize"><?php echo _FPA_SERV; ?> IP Address</td>
                                                     <td>
                                                         <?php
-                                                            if ( $showProtected == 1 ) {
+                                                            if ( $showProtected == 0 ) {
                                                                 echo $system['sysSERVIP'];
 
                                                             } else {
@@ -6259,7 +6327,7 @@
                                                     <td class="text-capitalize"><?php echo _FPA_SERV .' '.  _FPA_DROOT; ?></td>
                                                     <td>
                                                         <?php
-                                                            if ( $showProtected == 1 ) {
+                                                            if ( $showProtected == 0 ) {
                                                                 echo '<span class="xsmall">'. $system['sysDOCROOT'] .'</span>';
 
                                                             } else {
@@ -6272,7 +6340,7 @@
                                                     <td class="text-capitalize"><?php echo _FPA_SERV; ?> /Tmp Directory</td>
                                                     <td class="xsmall">
                                                         <?php
-                                                            if ( $showProtected == 1 ) {
+                                                            if ( $showProtected == 0 ) {
                                                                 echo $system['sysSYSTMPDIR'] .'<br />';
 
                                                             } else {
@@ -6694,7 +6762,7 @@
                                                     <td class="text-capitalize"><?php echo @$instance['configDBTYPE'] .' '. _FPA_HNAME; ?></td>
                                                     <td>
                                                         <?php
-                                                            if ( $showProtected == 1 ) {
+                                                            if ( $showProtected == 0 ) {
 
                                                                 if ( $instance['configDBHOST'] ) {
                                                                     echo $instance['configDBHOST'];
@@ -6718,7 +6786,7 @@
 
                                                             } elseif ( $database['dbLOCAL'] == _FPA_N AND @$database['dbHOSTINFO'] ) {
 
-                                                                if ( $showProtected <= 2 ) {
+                                                                if ( $showProtected == 0 ) {
                                                                     echo '('. _FPA_REMOTE .') '. $database['dbHOSTINFO'];
 
                                                                 } else {
@@ -7097,10 +7165,10 @@
 
                                                 echo '<tr>';
 
-                                                if ( $showProtected <= 2 ) {
+                                                if ( $showProtected == 0 ) {
                                                     echo '<td class="xsmall">'. $show['TABLE'] .'</td>';
                                                 } else {
-                                                    echo '<td class="xsmall"><span class="protected">[&nbsp;--&nbsp;'. _FPA_HIDDEN .'&nbsp;--&nbsp;]</span></td>';
+                                                    echo '<td class="xsmall"><span class="protected">'. _FPA_HIDDEN .'</span></td>';
                                                 }
 
                                                 echo '<td class="xsmall text-center">'. $show['SIZE'] .'</td>';

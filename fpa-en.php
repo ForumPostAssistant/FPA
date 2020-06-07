@@ -106,7 +106,7 @@
      * added @RussW 30/05/2020
      *
      */
-    define ( '_FPA_SELF_DESTRUCT_AGE', 7 );       // age of FPA file before _FPA_SELF_DESTRUCT runs (set as CONSTANT so it can't be changed/overridden at runtime)
+    define ( '_FPA_SELF_DESTRUCT_AGE', 5 );       // age of FPA file before _FPA_SELF_DESTRUCT runs (set as CONSTANT so it can't be changed/overridden at runtime)
     if ( defined('_FPA_SELF_DESTRUCT') AND ( !defined('_FPA_DEV') AND !defined('_FPA_DIAG') ) ) {
 
         if ( file_exists( _FPA_SELF ) ) {
@@ -128,6 +128,9 @@
             // if all the criteria satisfied, define the _FPA_SELF_DESTRUCT_DOIT constant
             if ( $fileAge > _FPA_SELF_DESTRUCT_AGE AND $interval->invert == 1 ) {
                 define ('_FPA_SELF_DESTRUCT_DOIT', TRUE);
+
+            } else {
+                $fpaEXPIRENOTICE = '<div class="bg-info p-1 text-center text-white d-print-none" data-html2canvas-ignore="true">This copy of FPA will <strong>expire in '. ( (int)_FPA_SELF_DESTRUCT_AGE - $fileAge) .' days</strong>.</div>';
             }
 
         }
@@ -3268,7 +3271,7 @@
                             $privOFFBTN      = 'secondary';
                         }
                     ?>
-                    <li class="nav-item py-2 1d-none 1d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Enable Privacy" data-content="Protect certain sensitive information from public view.">
+                    <li class="nav-item py-2 d-none d-lg-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Enable Privacy" data-content="Protect certain sensitive information from public view.">
                         <form class="m-0 ml-auto p-0" method="post" name="navVELForm" id="navPROTECTForm">
                             <div class="xsmall text-center text-primary">Privacy</div>
                             <div class="btn-group btn-group-toggle mr-2" data-toggle="buttons">
@@ -3461,6 +3464,11 @@
             }
         ?>
 
+        <?php
+            if ( $fpaEXPIRENOTICE ) {
+                echo $fpaEXPIRENOTICE;
+            }
+        ?>
 
 
         <main class="main">

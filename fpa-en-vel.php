@@ -106,7 +106,7 @@
      * added @RussW 30/05/2020
      *
      */
-    define ( '_FPA_SELF_DESTRUCT_AGE', 7 );       // age of FPA file before _FPA_SELF_DESTRUCT runs (set as CONSTANT so it can't be changed/overridden at runtime)
+    define ( '_FPA_SELF_DESTRUCT_AGE', 5 );       // age of FPA file before _FPA_SELF_DESTRUCT runs (set as CONSTANT so it can't be changed/overridden at runtime)
     if ( defined('_FPA_SELF_DESTRUCT') AND ( !defined('_FPA_DEV') AND !defined('_FPA_DIAG') ) ) {
 
         if ( file_exists( _FPA_SELF ) ) {
@@ -128,6 +128,9 @@
             // if all the criteria satisfied, define the _FPA_SELF_DESTRUCT_DOIT constant
             if ( $fileAge > _FPA_SELF_DESTRUCT_AGE AND $interval->invert == 1 ) {
                 define ('_FPA_SELF_DESTRUCT_DOIT', TRUE);
+
+            } else {
+                $fpaEXPIRENOTICE = '<div class="bg-info p-1 text-center text-white d-print-none" data-html2canvas-ignore="true">This copy of FPA will <strong>expire in '. ( (int)_FPA_SELF_DESTRUCT_AGE - $fileAge) .' days</strong>.</div>';
             }
 
         }
@@ -3509,6 +3512,11 @@
             }
         ?>
 
+        <?php
+            if ( $fpaEXPIRENOTICE ) {
+                echo $fpaEXPIRENOTICE;
+            }
+        ?>
 
 
         <main class="main">

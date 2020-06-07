@@ -98,7 +98,7 @@
      * added @RussW 30/05/2020
      *
      */
-    define ( '_FPA_SELF_DESTRUCT_AGE', -7 );       // age of FPA file before _FPA_SELF_DESTRUCT runs (set as CONSTANT so it can't be changed/overridden at runtime)
+    define ( '_FPA_SELF_DESTRUCT_AGE', 7 );       // age of FPA file before _FPA_SELF_DESTRUCT runs (set as CONSTANT so it can't be changed/overridden at runtime)
     if ( defined('_FPA_SELF_DESTRUCT') AND ( !defined('_FPA_DEV') AND !defined('_FPA_DIAG') ) ) {
 
         if ( file_exists( _FPA_SELF ) ) {

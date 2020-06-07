@@ -6523,19 +6523,19 @@
                                                                     $suColor     = 'success';
                                                                     $suStatus    = _FPA_N;
                                                                     $suMSG       = 'Extension & template installations, file & image uploads should not have any problems.';
-                                                                    $elevatesMSG = '';
+                                                                    $elevatedMSG = '';
 
                                                                 } elseif ( !is_writeable(basename($_SERVER['PHP_SELF'])) XOR !is_writeable('components') ) {
                                                                     $suColor     = 'info';
                                                                     $suStatus    = _FPA_M;
                                                                     $suMSG       = 'Extension & template installations, file & image uploads might have some problems.';
-                                                                    $elevatesMSG = 'Permissions are non-standard and may cause issues.';
+                                                                    $elevatedMSG = 'Permissions are non-standard and may cause issues.';
 
                                                                 } else {
                                                                     $suColor     = 'warning';
                                                                     $suStatus    = _FPA_Y;
                                                                     $suMSG       = 'Extension & template installations, file & image uploads are likely to have problems.';
-                                                                    $elevatesMSG = '';
+                                                                    $elevatedMSG = '';
                                                                 }
 
                                                                 // display a warnng message if any "actual" permissions are elevated,
@@ -6551,7 +6551,7 @@
                                                                 $suColor     = 'info';
                                                                 $suStatus    = _FPA_U;
                                                                 $suMSG       = 'No Joomla! instance found to test';
-                                                                $elevatesMSG = '';
+                                                                $elevatedMSG = '';
                                                             } // instanceFOUND, effective rights test
                                                         ?>
 

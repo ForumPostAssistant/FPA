@@ -134,6 +134,8 @@
             }
 
         }
+    } else {
+        $fpaEXPIRENOTICE = '';
     } // if _FPA_SELF_DESTRUCT defined
 
 

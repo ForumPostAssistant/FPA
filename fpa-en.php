@@ -2,7 +2,7 @@
     /**
      *  @package Forum Post Assistant
      *  @version 1.5.5 rhytidectomy
-     *  @last updated 27 May 2020
+     *  @last updated 7 June 2020
      *  @release Beta
      *  @date 24/06/2011
      *  @author RussW
@@ -11,8 +11,16 @@
      * UI/UX overhauled
      * @RussW 05/20202
      *
-     * Remember to revision and last updated date below on about line 36
+     * Remember to revision and last updated date below
      *
+     */
+	define ( '_RES', 'Forum Post Assistant' );
+	define ( '_RES_VERSION', '1.5.5 (rhytidectomy)' );
+	define ( '_last_updated', '27-May-2020' );
+	define ( '_COPYRIGHT_STMT', ' Copyright &copy; 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
+
+
+    /**
      * Keyboard Access Keys:
      * a screan reader accessible only note regarding this information is located just
      * inside the body so it is read to the user before any menu or page informatin is.
@@ -203,11 +211,6 @@
 
 
 	// Define some basic assistant information
-
-	define ( '_RES', 'Forum Post Assistant' );
-	define ( '_RES_VERSION', '1.5.5 (rhytidectomy)' );
-	define ( '_last_updated', '27-May-2020' );
-	define ( '_COPYRIGHT_STMT', ' Copyright &copy; 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
 	define ( '_LICENSE_LINK', '<a href="https://www.gnu.org/licenses/" target="_blank" rel="noopener noreferrer">https://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. <br> This is free software,
 	and covered under the GNU GPLv3 or later license. You are welcome to redistribute it under certain conditions.

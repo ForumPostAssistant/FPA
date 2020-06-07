@@ -7661,6 +7661,7 @@
                                 $rowDISPLAY = '';
                                 $countISONVEL++;
 
+                                $velEXTREPORT[$countEXTVELREPORT]['id']              = @$checkVEL['id'];
                                 $velEXTREPORT[$countEXTVELREPORT]['name']            = @$checkVEL['title'];
                                 $velEXTREPORT[$countEXTVELREPORT]['risk_level']      = @$checkVEL['risk_level'];
                                 $velEXTREPORT[$countEXTVELREPORT]['started_at']      = @$checkVEL['start_version'];
@@ -7783,7 +7784,13 @@
                                     <div class="col-9 col-md-9 bg-white border border-<?php echo $divBorder; ?> pl-2 py-1">
                                         <div class="xsmall mb-1"><span class="d-inline-block w-50 text-dark">Vulnerable From:</span> <?php echo $vulnerable_from; ?></div>
                                         <div class="xsmall mb-1"><span class="d-inline-block w-50 text-dark">Patched At:</span> <?php echo $patched_at; ?></div>
-                                        <div class="xsmall"><span class="d-inline-block">Recommendation:</span> <?php echo $key['suggest']; ?></div>
+                                        <div class="mb-1"><span class="d-inline-block w-50 text-dark xsmall">Description:</span>
+                                            <a class="badge badge-pill badge-info text-white" data-toggle="collapse" data-target="#collapseVEL<?php echo $key['id']; ?>" aria-expanded="false" aria-controls="collapseVEL<?php echo $key['id']; ?>">
+                                                Show/Hide
+                                            </a>
+                                            <div class="collapse xsmall py-1" id="collapseVEL<?php echo $key['id']; ?>"><?php echo $key['description']; ?></div>
+                                        </div>
+                                        <div class="xsmall"><span class="d-inline-block">Recommendation:</span><br /><?php echo $key['suggest']; ?></div>
                                     </div>
                                 </div><!--/.row.no-gutters-->
 
@@ -7955,6 +7962,7 @@
                                 $rowDISPLAY = '';
                                 $countISONVEL++;
 
+                                $velEXTREPORT[$countEXTVELREPORT]['id']              = @$checkVEL['id'];
                                 $velEXTREPORT[$countEXTVELREPORT]['name']            = @$checkVEL['title'];
                                 $velEXTREPORT[$countEXTVELREPORT]['risk_level']      = @$checkVEL['risk_level'];
                                 $velEXTREPORT[$countEXTVELREPORT]['started_at']      = @$checkVEL['start_version'];
@@ -8077,7 +8085,13 @@
                                     <div class="col-9 col-md-9 bg-white border border-<?php echo $divBorder; ?> pl-2 py-1">
                                         <div class="xsmall mb-1"><span class="d-inline-block w-50 text-dark">Vulnerable From:</span> <?php echo $vulnerable_from; ?></div>
                                         <div class="xsmall mb-1"><span class="d-inline-block w-50 text-dark">Patched At:</span> <?php echo $patched_at; ?></div>
-                                        <div class="xsmall"><span class="d-inline-block">Recommendation:</span> <?php echo $key['suggest']; ?></div>
+                                        <div class="mb-1"><span class="d-inline-block w-50 text-dark xsmall">Description:</span>
+                                            <a class="badge badge-pill badge-info text-white" data-toggle="collapse" data-target="#collapseVEL<?php echo $key['id']; ?>" aria-expanded="false" aria-controls="collapseVEL<?php echo $key['id']; ?>">
+                                                Show/Hide
+                                            </a>
+                                            <div class="collapse xsmall py-1" id="collapseVEL<?php echo $key['id']; ?>"><?php echo $key['description']; ?></div>
+                                        </div>
+                                        <div class="xsmall"><span class="d-inline-block">Recommendation:</span><br /><?php echo $key['suggest']; ?></div>
                                     </div>
                                 </div><!--/.row.no-gutters-->
 
@@ -8268,6 +8282,7 @@
                                 $rowDISPLAY = '';
                                 $countISONVEL++;
 
+                                $velEXTREPORT[$countEXTVELREPORT]['id']              = @$checkVEL['id'];
                                 $velEXTREPORT[$countEXTVELREPORT]['name']            = @$checkVEL['title'];
                                 $velEXTREPORT[$countEXTVELREPORT]['risk_level']      = @$checkVEL['risk_level'];
                                 $velEXTREPORT[$countEXTVELREPORT]['started_at']      = @$checkVEL['start_version'];
@@ -8390,7 +8405,13 @@
                                     <div class="col-9 col-md-9 bg-white border border-<?php echo $divBorder; ?> pl-2 py-1">
                                         <div class="xsmall mb-1"><span class="d-inline-block w-50 text-dark">Vulnerable From:</span> <?php echo $vulnerable_from; ?></div>
                                         <div class="xsmall mb-1"><span class="d-inline-block w-50 text-dark">Patched At:</span> <?php echo $patched_at; ?></div>
-                                        <div class="xsmall"><span class="d-inline-block">Recommendation:</span> <?php echo $key['suggest']; ?></div>
+                                        <div class="mb-1"><span class="d-inline-block w-50 text-dark xsmall">Description:</span>
+                                            <a class="badge badge-pill badge-info text-white" data-toggle="collapse" data-target="#collapseVEL<?php echo $key['id']; ?>" aria-expanded="false" aria-controls="collapseVEL<?php echo $key['id']; ?>">
+                                                Show/Hide
+                                            </a>
+                                            <div class="collapse xsmall py-1" id="collapseVEL<?php echo $key['id']; ?>"><?php echo $key['description']; ?></div>
+                                        </div>
+                                        <div class="xsmall"><span class="d-inline-block">Recommendation:</span><br /><?php echo $key['suggest']; ?></div>
                                     </div>
                                 </div><!--/.row.no-gutters-->
 
@@ -8561,6 +8582,7 @@
                                 $rowDISPLAY = '';
                                 $countISONVEL++;
 
+                                $velEXTREPORT[$countEXTVELREPORT]['id']              = @$checkVEL['id'];
                                 $velEXTREPORT[$countEXTVELREPORT]['name']            = @$checkVEL['title'];
                                 $velEXTREPORT[$countEXTVELREPORT]['risk_level']      = @$checkVEL['risk_level'];
                                 $velEXTREPORT[$countEXTVELREPORT]['started_at']      = @$checkVEL['start_version'];
@@ -8683,7 +8705,13 @@
                                     <div class="col-9 col-md-9 bg-white border border-<?php echo $divBorder; ?> pl-2 py-1">
                                         <div class="xsmall mb-1"><span class="d-inline-block w-50 text-dark">Vulnerable From:</span> <?php echo $vulnerable_from; ?></div>
                                         <div class="xsmall mb-1"><span class="d-inline-block w-50 text-dark">Patched At:</span> <?php echo $patched_at; ?></div>
-                                        <div class="xsmall"><span class="d-inline-block">Recommendation:</span> <?php echo $key['suggest']; ?></div>
+                                        <div class="mb-1"><span class="d-inline-block w-50 text-dark xsmall">Description:</span>
+                                            <a class="badge badge-pill badge-info text-white" data-toggle="collapse" data-target="#collapseVEL<?php echo $key['id']; ?>" aria-expanded="false" aria-controls="collapseVEL<?php echo $key['id']; ?>">
+                                                Show/Hide
+                                            </a>
+                                            <div class="collapse xsmall py-1" id="collapseVEL<?php echo $key['id']; ?>"><?php echo $key['description']; ?></div>
+                                        </div>
+                                        <div class="xsmall"><span class="d-inline-block">Recommendation:</span><br /><?php echo $key['suggest']; ?></div>
                                     </div>
                                 </div><!--/.row.no-gutters-->
 
@@ -8874,6 +8902,7 @@
                                 $rowDISPLAY = '';
                                 $countISONVEL++;
 
+                                $velEXTREPORT[$countEXTVELREPORT]['id']              = @$checkVEL['id'];
                                 $velEXTREPORT[$countEXTVELREPORT]['name']            = @$checkVEL['title'];
                                 $velEXTREPORT[$countEXTVELREPORT]['risk_level']      = @$checkVEL['risk_level'];
                                 $velEXTREPORT[$countEXTVELREPORT]['started_at']      = @$checkVEL['start_version'];
@@ -8996,7 +9025,13 @@
                                     <div class="col-9 col-md-9 bg-white border border-<?php echo $divBorder; ?> pl-2 py-1">
                                         <div class="xsmall mb-1"><span class="d-inline-block w-50 text-dark">Vulnerable From:</span> <?php echo $vulnerable_from; ?></div>
                                         <div class="xsmall mb-1"><span class="d-inline-block w-50 text-dark">Patched At:</span> <?php echo $patched_at; ?></div>
-                                        <div class="xsmall"><span class="d-inline-block">Recommendation:</span> <?php echo $key['suggest']; ?></div>
+                                        <div class="mb-1"><span class="d-inline-block w-50 text-dark xsmall">Description:</span>
+                                            <a class="badge badge-pill badge-info text-white" data-toggle="collapse" data-target="#collapseVEL<?php echo $key['id']; ?>" aria-expanded="false" aria-controls="collapseVEL<?php echo $key['id']; ?>">
+                                                Show/Hide
+                                            </a>
+                                            <div class="collapse xsmall py-1" id="collapseVEL<?php echo $key['id']; ?>"><?php echo $key['description']; ?></div>
+                                        </div>
+                                        <div class="xsmall"><span class="d-inline-block">Recommendation:</span><br /><?php echo $key['suggest']; ?></div>
                                     </div>
                                 </div><!--/.row.no-gutters-->
 
@@ -9187,6 +9222,7 @@
                                 $rowDISPLAY = '';
                                 $countISONVEL++;
 
+                                $velEXTREPORT[$countEXTVELREPORT]['id']            = @$checkVEL['id'];
                                 $velEXTREPORT[$countEXTVELREPORT]['name']            = @$checkVEL['title'];
                                 $velEXTREPORT[$countEXTVELREPORT]['risk_level']      = @$checkVEL['risk_level'];
                                 $velEXTREPORT[$countEXTVELREPORT]['started_at']      = @$checkVEL['start_version'];
@@ -9309,7 +9345,13 @@
                                     <div class="col-9 col-md-9 bg-white border border-<?php echo $divBorder; ?> pl-2 py-1">
                                         <div class="xsmall mb-1"><span class="d-inline-block w-50 text-dark">Vulnerable From:</span> <?php echo $vulnerable_from; ?></div>
                                         <div class="xsmall mb-1"><span class="d-inline-block w-50 text-dark">Patched At:</span> <?php echo $patched_at; ?></div>
-                                        <div class="xsmall"><span class="d-inline-block">Recommendation:</span> <?php echo $key['suggest']; ?></div>
+                                        <div class="mb-1"><span class="d-inline-block w-50 text-dark xsmall">Description:</span>
+                                            <a class="badge badge-pill badge-info text-white" data-toggle="collapse" data-target="#collapseVEL<?php echo $key['id']; ?>" aria-expanded="false" aria-controls="collapseVEL<?php echo $key['id']; ?>">
+                                                Show/Hide
+                                            </a>
+                                            <div class="collapse xsmall py-1" id="collapseVEL<?php echo $key['id']; ?>"><?php echo $key['description']; ?></div>
+                                        </div>
+                                        <div class="xsmall"><span class="d-inline-block">Recommendation:</span><br /><?php echo $key['suggest']; ?></div>
                                     </div>
                                 </div><!--/.row.no-gutters-->
 
@@ -9507,6 +9549,7 @@
                                 $rowDISPLAY = '';
                                 $countISONVEL++;
 
+                                $velEXTREPORT[$countEXTVELREPORT]['id']              = @$checkVEL['id'];
                                 $velEXTREPORT[$countEXTVELREPORT]['name']            = @$checkVEL['title'];
                                 $velEXTREPORT[$countEXTVELREPORT]['risk_level']      = @$checkVEL['risk_level'];
                                 $velEXTREPORT[$countEXTVELREPORT]['started_at']      = @$checkVEL['start_version'];
@@ -9629,7 +9672,13 @@
                                     <div class="col-9 col-md-9 bg-white border border-<?php echo $divBorder; ?> pl-2 py-1">
                                         <div class="xsmall mb-1"><span class="d-inline-block w-50 text-dark">Vulnerable From:</span> <?php echo $vulnerable_from; ?></div>
                                         <div class="xsmall mb-1"><span class="d-inline-block w-50 text-dark">Patched At:</span> <?php echo $patched_at; ?></div>
-                                        <div class="xsmall"><span class="d-inline-block">Recommendation:</span> <?php echo $key['suggest']; ?></div>
+                                        <div class="mb-1"><span class="d-inline-block w-50 text-dark xsmall">Description:</span>
+                                            <a class="badge badge-pill badge-info text-white" data-toggle="collapse" data-target="#collapseVEL<?php echo $key['id']; ?>" aria-expanded="false" aria-controls="collapseVEL<?php echo $key['id']; ?>">
+                                                Show/Hide
+                                            </a>
+                                            <div class="collapse xsmall py-1" id="collapseVEL<?php echo $key['id']; ?>"><?php echo $key['description']; ?></div>
+                                        </div>
+                                        <div class="xsmall"><span class="d-inline-block">Recommendation:</span><br /><?php echo $key['suggest']; ?></div>
                                     </div>
                                 </div><!--/.row.no-gutters-->
 
@@ -9830,6 +9879,7 @@
                                 $rowDISPLAY = '';
                                 $countISONVEL++;
 
+                                $velEXTREPORT[$countEXTVELREPORT]['id']              = @$checkVEL['id'];
                                 $velEXTREPORT[$countEXTVELREPORT]['name']            = @$checkVEL['title'];
                                 $velEXTREPORT[$countEXTVELREPORT]['risk_level']      = @$checkVEL['risk_level'];
                                 $velEXTREPORT[$countEXTVELREPORT]['started_at']      = @$checkVEL['start_version'];
@@ -9952,7 +10002,13 @@
                                     <div class="col-9 col-md-9 bg-white border border-<?php echo $divBorder; ?> pl-2 py-1">
                                         <div class="xsmall mb-1"><span class="d-inline-block w-50 text-dark">Vulnerable From:</span> <?php echo $vulnerable_from; ?></div>
                                         <div class="xsmall mb-1"><span class="d-inline-block w-50 text-dark">Patched At:</span> <?php echo $patched_at; ?></div>
-                                        <div class="xsmall"><span class="d-inline-block">Recommendation:</span> <?php echo $key['suggest']; ?></div>
+                                        <div class="mb-1"><span class="d-inline-block w-50 text-dark xsmall">Description:</span>
+                                            <a class="badge badge-pill badge-info text-white" data-toggle="collapse" data-target="#collapseVEL<?php echo $key['id']; ?>" aria-expanded="false" aria-controls="collapseVEL<?php echo $key['id']; ?>">
+                                                Show/Hide
+                                            </a>
+                                            <div class="collapse xsmall py-1" id="collapseVEL<?php echo $key['id']; ?>"><?php echo $key['description']; ?></div>
+                                        </div>
+                                        <div class="xsmall"><span class="d-inline-block">Recommendation:</span><br /><?php echo $key['suggest']; ?></div>
                                     </div>
                                 </div><!--/.row.no-gutters-->
 

@@ -5911,7 +5911,7 @@
                                                             }
                                                         ?>
                                                         <div class="xsmall w-100 mb-1 text-left px-1 mb-1">
-                                                            Error Rep: <span class="text-<?php echo $debugClass; ?> float-right text-capitalize"><?php echo substr($instance['configERRORREP'], 0, 5); ?></span>
+                                                            Error Rep: <span class="text-<?php echo $debugClass; ?> float-right text-capitalize"><?php echo substr($instance['configERRORREP'], 0, 8); ?></span>
                                                         </div>
 
                                                         <?php
@@ -5951,11 +5951,11 @@
                                                         </div>
 
                                                         <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
-                                                            Version: <span class=" float-right text-capitalize"><?php echo substr(@$database['dbHOSTSERV'], 0, 5); ?></span>
+                                                            Version: <span class=" float-right text-capitalize"><?php echo substr(@$database['dbHOSTSERV'], 0, 6); ?></span>
                                                         </div>
 
                                                         <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
-                                                            CharSet: <span class=" float-right"><?php echo substr(@$database['dbCHARSET'], 0, 6); ?></span>
+                                                            CharSet: <span class=" float-right"><?php echo substr(@$database['dbCHARSET'], 0, 7); ?></span>
                                                         </div>
 
                                                     </div>
@@ -7273,7 +7273,7 @@
                                         // calculated database statistics
                                         echo '<tfoot>';
                                         echo '<tr class="bg-info text-white xsmall">';
-                                        echo '<th class="py-2">'. _FPA_TNAM .'</th>';
+                                        echo '<th class="py-2">No. Tables</th>';
                                         echo '<th class="py-2 text-center">'. _FPA_TSIZ .'</th>';
                                         echo '<th class="py-2 text-center">'. _FPA_TREC .'</th>';
                                         echo '<th class="py-2 text-center d-none d-lg-table-cell">'. _FPA_TAVL .'</th>';

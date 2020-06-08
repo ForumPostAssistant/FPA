@@ -96,18 +96,49 @@
 
 
     /**
+     * Check for a localhost before doing anything
+     *
+     * if on a reserved subnet, then don't use _FPA_AUTO_DESTRUCT function
+     * due to never changing "modified" date on copy n paste
+     *
+     * if a windows development environment is "localhost" then default permisisons are always
+     * elevated (777) show a notice to the user that this is normal
+     * added @RussW 05/05/2020
+     *
+     */
+    $isLOCALHOST = 0;
+    $isWINLOCAL  = 0;
+    if ( strpos( $_SERVER['REMOTE_ADDR'], '127.0', 0 )
+         OR strpos( $_SERVER['REMOTE_ADDR'], '10.', 0 )
+         OR strpos( $_SERVER['REMOTE_ADDR'], '192.168.', 0 )
+         OR strpos( $_SERVER['REMOTE_ADDR'], '172.16.', 0 )
+         OR strpos( $_SERVER['SERVER_NAME'], 'localhost', 0 )
+         OR $_SERVER['REMOTE_ADDR'] == '::1' ) {
+
+        $isLOCALHOST = 1; // skip the auto-destruct
+
+        // check for windows to show local permission message
+        if ( strtoupper( substr( PHP_OS, 0, 3 ) ) == 'WIN' ) {
+            $isWINLOCAL = 1;
+        }
+    }
+
+
+    /**
      * FPA Self Destruct
      * comment-out _FPA_SELF_DESTRUCT in Default Settings to disable
      * (there is no need to comment-out the _FPA_SELF_DESTRUCT_AGE constant)
      *
      * if enabled, checks the FPA file date and if over _FPA_SELF_DESTRUCT_AGE days old then run the self-delete script
+     * - if $isLOCAL = 1 : don't even access the _FPA_SEF_DESTRUCT routine
+     *   as local file modified dates are not udpated when copied and will keep being deleted (thanks @sozzled)
      *
      * CONSTANTS are used throughout this feature as a security measure because they cannot be overriden at runtime
      * added @RussW 30/05/2020
      *
      */
     define ( '_FPA_SELF_DESTRUCT_AGE', 5 );       // age of FPA file before _FPA_SELF_DESTRUCT runs (set as CONSTANT so it can't be changed/overridden at runtime)
-    if ( defined('_FPA_SELF_DESTRUCT') AND ( !defined('_FPA_DEV') AND !defined('_FPA_DIAG') ) ) {
+    if ( defined('_FPA_SELF_DESTRUCT') AND $isLOCALHOST == 0 AND ( !defined('_FPA_DEV') AND !defined('_FPA_DIAG') ) ) {
 
         if ( file_exists( _FPA_SELF ) ) {
             $fileinfo = stat( _FPA_SELF );
@@ -126,11 +157,11 @@
             //var_dump($interval);
 
             // if all the criteria satisfied, define the _FPA_SELF_DESTRUCT_DOIT constant
-            if ( $fileAge > _FPA_SELF_DESTRUCT_AGE AND $interval->invert == 1 ) {
+            if ( $fileAge > _FPA_SELF_DESTRUCT_AGE AND $interval->invert == 1) {
                 define ('_FPA_SELF_DESTRUCT_DOIT', TRUE);
 
             } else {
-                $fpaEXPIRENOTICE = '<div class="bg-info p-1 text-center text-white d-print-none" data-html2canvas-ignore="true">This copy of FPA will <strong>expire in '. ( (int)_FPA_SELF_DESTRUCT_AGE - $fileAge) .' days</strong>.</div>';
+                $fpaEXPIRENOTICE = '<span class="d-print-none d-inline-block mx-auto small text-center text-info" data-html2canvas-ignore="true">As a security measure, this copy of FPA will expire and be deleted in <strong>'. ( (int)_FPA_SELF_DESTRUCT_AGE - $fileAge) .'</strong> days.</span>';
             }
 
         }
@@ -817,18 +848,7 @@
 		ini_set ( 'max_execution_time', ($fpa['ORIGphpMAXEXECTIME']*2) );
 	}
 
-    /**
-     * Check for a windows localhost
-     *
-     * if a windows development environment is "localhost" then default permisisons are always
-     * elevated (777) show a notice to the user that this is normal
-     * added @RussW 05/05/2020
-     *
-     */
-    $isWINLOCAL = 0;
-    if ( $system['sysSHORTOS'] == 'WIN' AND ($_SERVER['REMOTE_ADDR'] =='127.0.0.1' OR $_SERVER['REMOTE_ADDR'] == '::1' OR $_SERVER['SERVER_NAME'] == 'localhost')) {
-        $isWINLOCAL = 1;
-    }
+
 
 	/**
      * DETERMINE IF THERE IS A KNOWN ERROR ALREADY
@@ -3466,11 +3486,6 @@
             }
         ?>
 
-        <?php
-            if ( $fpaEXPIRENOTICE ) {
-                echo $fpaEXPIRENOTICE;
-            }
-        ?>
 
 
         <main class="main">
@@ -4087,6 +4102,12 @@
                                     </div><!--/.row-->
 
                                 <?php } // end FPA & Joomla! LiveChecks ?>
+
+                                <?php
+                                    if ( $fpaEXPIRENOTICE ) {  // modified date expiration notice
+                                        echo '<div class="border my-1 py-1 text-center bg-white w-100">'. $fpaEXPIRENOTICE .'</div>';
+                                    }
+                                ?>
 
                             </div><!--/.col-->
                             <div class="col-md-4 col-lg-4">

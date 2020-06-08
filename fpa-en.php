@@ -1,7 +1,7 @@
 <?php
     /**
      *  @package Forum Post Assistant
-     *  @version 1.5.5 rhytidectomy
+     *  @version 1.5.5
      *  @last updated 7 June 2020
      *  @release Beta
      *  @date 24/06/2011
@@ -15,9 +15,12 @@
      *
      */
 	define ( '_RES', 'Forum Post Assistant' );
-	define ( '_RES_VERSION', '1.5.5 (rhytidectomy)' );
-	define ( '_last_updated', '27-May-2020' );
-	define ( '_COPYRIGHT_STMT', ' Copyright &copy; 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
+    define ( '_RES_VERSION', '1.5.5' );
+    define ( '_RES_CODENAME', '(rhytidectomy)' );
+    define ( '_RES_LAST_UPDATED', '27-May-2020' );
+	define ( '_RES_RELEASE', 'Alpha' );              // can be Alpha, Beta, RC, Final
+	define ( '_RES_LANG', 'en-GB' );                 // Country/Language Code
+	define ( '_RES_COPYRIGHT_STMT', ' Copyright &copy; 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
 
 
     /**
@@ -282,9 +285,6 @@
 	and covered under the GNU GPLv3 or later license. You are welcome to redistribute it under certain conditions.
 	For details read the LICENSE.txt file included in the download package with this script.
     A copy of the license may also be obtained at ' );
-	define ( '_RES_RELEASE', '' );         // can be Alpha, Beta, RC, Final
-	define ( '_RES_BRANCH', 'Branch en-GB' );    // can be playGround (Alpha/Beta only), currentDevelopment (RC only), masterPublic (Final only)
-	define ( '_RES_LANG', ' Language en-GB' );               // Country/Language Code
 	define ( '_RES_FPALINK', 'https://github.com/ForumPostAssistant/FPA/tarball/en-GB/' ); // where to get the latest 'Final Releases'
     // @RussW updated 23/05/2020
     define ( '_RES_FPALATEST', 'Download the latest FPA release (tar.gz)' );
@@ -2984,8 +2984,8 @@
 
             } else {
                 $gitcURLARRAY   = json_decode($gitcURLJSON);  // decode json in to an array
-                $thisFPAVER     = substr(_RES_VERSION, 0, 5);
-                //$thisFPAVER     = substr('1.4.0 (midden)', 0, 5);
+                $thisFPAVER     = substr(_RES_VERSION, 0, 8);
+
 
                 if (substr($gitcURLARRAY->tag_name, 0, 1) == 'v') {
                     $latestFPAVER   = ltrim($gitcURLARRAY->tag_name, 'v');  // trim the "v" (version) from the latest release tag
@@ -3270,7 +3270,7 @@
                 <a class="navbar-brand mr-0 mr-md-2 text-<?php echo $navbarBrandClass; ?> py-2 lead font-weight-bolder" href="<?php echo _FPA_SELF; ?>" aria-label="<?php echo _RES; ?>">
                     <span class="d-inline-block d-sm-none" aria-hidden="true">FPA</span>
                     <span class="d-none d-sm-inline-block"><?php echo _RES; ?></span>
-                    <span class="ml-1 small text-muted"><?php echo 'v'. _RES_VERSION; ?></span>
+                    <span class="ml-1 small text-muted"><?php echo 'v'. _RES_VERSION .' '. _RES_CODENAME; ?></span>
                 </a><!--/.navbar-brand-->
 
                 <ul class="navbar-nav flex-row ml-md-auto">
@@ -8630,9 +8630,9 @@
             </div>
             <div class="container-fluid bg-fpa-dark text-white py-2">
                 <p class="p-0 m-0 xsmall text-center">
-                    FPA <?php echo _RES_VERSION .' '. _COPYRIGHT_STMT; ?><br />
+                    FPA <?php echo _RES_VERSION .' '. _RES_CODENAME .' '. _RES_COPYRIGHT_STMT; ?><br />
                     <small class="text-center">
-                        <?php echo _RES_RELEASE .' ('. _RES_BRANCH .' -'. _RES_LANG; ?>). Last updated on: <?php echo _last_updated; ?>
+                        <?php echo '[ Release : '. _RES_RELEASE .' ] [ Language : '. _RES_LANG .' ] [ Updated : '. _RES_LAST_UPDATED .' ]'; ?>
                     </small>
                 </p>
             </div>

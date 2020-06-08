@@ -8,7 +8,8 @@
      * @author PhilD
      * @copyright 2011-present, GNU GPLv3 or later license
      * @see https://forumpostassistant.github.io/docs/
-     * @internal Supports: J4.x, J3.x, J2,5, J1.7, J1.6, J1.5, J1.0
+     * @internal Supports: J4.x, J3.x, J2,5, J1.7, J1.6, J1.5
+     * @internal Supports: PHP J5.4 and above
      * @internal Contributors : @RussW, @PhilD13, @mandville, @Frostmakk, @sozzled, @Webdongle, @btoplak
      * @since 24-June-2011
      *

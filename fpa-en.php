@@ -9,7 +9,7 @@
      * @copyright 2011-present, GNU GPLv3 or later license
      * @see https://forumpostassistant.github.io/docs/
      * @internal Supports: J4.x, J3.x, J2,5, J1.7, J1.6, J1.5
-     * @internal Supports: PHP J5.4 and above
+     * @internal Supports: PHP v5.4 and above
      * @internal Contributors : @RussW, @PhilD13, @mandville, @Frostmakk, @sozzled, @Webdongle, @btoplak
      * @since 24-June-2011
      *
@@ -171,7 +171,7 @@
      * (there is no need to comment-out the _FPA_SELF_DESTRUCT_AGE constant)
      *
      * if enabled, checks the FPA file date and if over _FPA_SELF_DESTRUCT_AGE days old then run the self-delete script
-     * - if $isLOCAL = 1 : don't even access the _FPA_SEF_DESTRUCT routine
+     * - if $isLOCAL = 1 : don't even access the _FPA_SELF_DESTRUCT routine
      *   as local file modified dates are not udpated when copied and will keep being deleted (thanks @sozzled)
      *
      * CONSTANTS are used throughout this feature as a security measure because they cannot be overriden at runtime
@@ -5822,7 +5822,7 @@
                                                 <div class="col text-center my-2 d-flex align-self-stretch">
 
                                                     <div class="bg-white small w-100 border">
-                                                        <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">SEF URL's</div>
+                                                        <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">SEF URLs</div>
                                                         <?php
                                                             if ( $instance['configSEF'] == 'true' ) {
                                                                 $sefClass  = 'info';

@@ -1,22 +1,28 @@
 <?php
     /**
-     *  @package Forum Post Assistant
-     *  @version 1.5.5
-     *  @last updated 7 June 2020
-     *  @release Beta
-     *  @date 24/06/2011
-     *  @author RussW
-     *  @author PhilD
+     * @package Joomla!
+     * @subpackage Forum Post Assistant
+     * @category Diagnostic Tool
+     * @version 1.6.0
+     * @since 24/06/2011
+     * @author RussW
+     * @author PhilD
+     * @copyright 2011-present, GNU GPLv3 or later license
+     * @see https://forumpostassistant.github.io/docs/
+     * @internal Supports: J4.x, J3.x, J2,5, J1.7, J1.6, J1.5, J1.0
+     * @internal Contributors : @RussW, @PhilD13, @mandville, @Frostmakk, @sozzled, @Webdongle, @botplak
      *
      * UI/UX overhauled
      * @RussW 05/20202
+     * docblock updated from the dark-ages
+     * @RussW 08/06/2020
      *
      * Remember to revision and last updated date below
      *
      */
 	define ( '_RES', 'Forum Post Assistant' );
-    define ( '_RES_VERSION', '1.5.5' );
-    define ( '_RES_CODENAME', '(rhytidectomy)' );
+    define ( '_RES_VERSION', '1.6.0' );
+    define ( '_RES_CODENAME', 'rhytidectomy' );
     define ( '_RES_LAST_UPDATED', '27-May-2020' );
 	define ( '_RES_RELEASE', 'Alpha' );              // can be Alpha, Beta, RC, Final
 	define ( '_RES_LANG', 'en-GB' );                 // Country/Language Code

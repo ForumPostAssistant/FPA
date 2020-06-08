@@ -14,11 +14,12 @@
      * @since 24-June-2011
      *
      * UI/UX overhauled
-     * @RussW 05/20202
+     * @RussW June-2020
      * docblock updated from the dark-ages
-     * @RussW 08/06/2020
+     * @RussW 08-June-2020
      *
      * Remember to revision and last updated date below
+     * Date reference format : dd-mmm-yyyy (EG: 1-Jan-1970 | 1-Janauary-1970)
      *
      */
 	define ( '_RES', 'Forum Post Assistant' );

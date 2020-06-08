@@ -10,7 +10,7 @@
      * @copyright 2011-present, GNU GPLv3 or later license
      * @see https://forumpostassistant.github.io/docs/
      * @internal Supports: J4.x, J3.x, J2,5, J1.7, J1.6, J1.5, J1.0
-     * @internal Contributors : @RussW, @PhilD13, @mandville, @Frostmakk, @sozzled, @Webdongle, @botplak
+     * @internal Contributors : @RussW, @PhilD13, @mandville, @Frostmakk, @sozzled, @Webdongle, @btoplak
      *
      * UI/UX overhauled
      * @RussW 05/20202
@@ -23,8 +23,8 @@
 	define ( '_RES', 'Forum Post Assistant' );
     define ( '_RES_VERSION', '1.6.0' );
     define ( '_RES_CODENAME', 'rhytidectomy' );
-    define ( '_RES_LAST_UPDATED', '27-May-2020' );
-	define ( '_RES_RELEASE', 'Alpha' );              // can be Alpha, Beta, RC, Final
+    define ( '_RES_LAST_UPDATED', '9-June-2020' );
+	define ( '_RES_RELEASE', 'RC' );              // can be Alpha, Beta, RC, Final
 	define ( '_RES_LANG', 'en-GB' );                 // Country/Language Code
 	define ( '_RES_COPYRIGHT_STMT', ' Copyright &copy; 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
 
@@ -3276,7 +3276,7 @@
                 <a class="navbar-brand mr-0 mr-md-2 text-<?php echo $navbarBrandClass; ?> py-2 lead font-weight-bolder" href="<?php echo _FPA_SELF; ?>" aria-label="<?php echo _RES; ?>">
                     <span class="d-inline-block d-sm-none" aria-hidden="true">FPA</span>
                     <span class="d-none d-sm-inline-block"><?php echo _RES; ?></span>
-                    <span class="ml-1 small text-muted"><?php echo 'v'. _RES_VERSION .' '. _RES_CODENAME; ?></span>
+                    <span class="ml-1 small text-muted"><?php echo 'v'. _RES_VERSION .' ('. _RES_CODENAME; ?>)</span>
                 </a><!--/.navbar-brand-->
 
                 <ul class="navbar-nav flex-row ml-md-auto">
@@ -6600,7 +6600,7 @@
                                                                 if ( ( substr($dirEPCheck,1 ,1) > '5' OR substr($dirEPCheck,2 ,1) > '5' ) OR ( substr($fileEPCheck,0 ,1) > '6' OR substr($fileEPCheck,1 ,1) > '4' OR substr($fileEPCheck,2 ,1) > '4' ) ) {
                                                                     $elevatedMSG = 'Permissions may have been elevated to overcome access problems.';
                                                                     if ( $isWINLOCAL == '1' ) {
-                                                                        $elevatedMSG = $elevatedMSG.' '._FPA_WIN_LOCALHOST;
+                                                                        $elevatedMSG = @$elevatedMSG.' '._FPA_WIN_LOCALHOST;
                                                                     }
                                                                 }
 
@@ -6613,7 +6613,7 @@
                                                         ?>
 
                                                         <?php echo _FPA_PERMOWN; ?> Problems&nbsp;:&nbsp;<span class="badge badge-<?php echo $suColor; ?>"><?php echo $suStatus; ?></span>&nbsp;<span class="badge badge-light"><?php echo $phpenv['phpAPI']; ?></span>
-                                                        <p class="my-1"><?php echo $suMSG; ?> <span class="text-warning"><?php echo $elevatedMSG; ?></span></p>
+                                                        <p class="my-1"><?php echo $suMSG; ?> <span class="text-warning"><?php echo @$elevatedMSG; ?></span></p>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -6684,7 +6684,7 @@
                                         </div><!--row-->
 
                                         <?php
-                                            if ( version_compare( $instance['cmsRELEASE'], '3.8', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
+                                            if ( version_compare( @$instance['cmsRELEASE'], '3.8', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
                                                 unset($phpreq['mcrypt']);
                                             }
 
@@ -6827,7 +6827,7 @@
                                                         <?php
                                                             if ( $showProtected == 0 ) {
 
-                                                                if ( $instance['configDBHOST'] ) {
+                                                                if ( @$instance['configDBHOST'] ) {
                                                                     echo $instance['configDBHOST'];
 
                                                                 } else {
@@ -8636,7 +8636,7 @@
             </div>
             <div class="container-fluid bg-fpa-dark text-white py-2">
                 <p class="p-0 m-0 xsmall text-center">
-                    FPA <?php echo _RES_VERSION .' '. _RES_CODENAME .' '. _RES_COPYRIGHT_STMT; ?><br />
+                    FPA <?php echo _RES_VERSION .' ('. _RES_CODENAME .') '. _RES_COPYRIGHT_STMT; ?><br />
                     <small class="text-center">
                         <?php echo '[ Release : '. _RES_RELEASE .' ] [ Language : '. _RES_LANG .' ] [ Updated : '. _RES_LAST_UPDATED .' ]'; ?>
                     </small>

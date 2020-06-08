@@ -1,16 +1,16 @@
 <?php
     /**
+     * @version 1.6.0
      * @package Joomla!
      * @subpackage Forum Post Assistant
      * @category Diagnostic Tool
-     * @version 1.6.0
-     * @since 24/06/2011
      * @author RussW
      * @author PhilD
      * @copyright 2011-present, GNU GPLv3 or later license
      * @see https://forumpostassistant.github.io/docs/
      * @internal Supports: J4.x, J3.x, J2,5, J1.7, J1.6, J1.5, J1.0
      * @internal Contributors : @RussW, @PhilD13, @mandville, @Frostmakk, @sozzled, @Webdongle, @btoplak
+     * @since 24-06-2011
      *
      * UI/UX overhauled
      * @RussW 05/20202

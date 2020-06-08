@@ -104,24 +104,54 @@
      * if a windows development environment is "localhost" then default permisisons are always
      * elevated (777) show a notice to the user that this is normal
      * added @RussW 05/05/2020
+     * updated @RussW 08/06/2020 to search array of known reserved ip addresses
      *
      */
+
+
+    /**
+     * set the list of 'localhost' possibilities to be chcked for
+     * added @russW 08/06/2020
+     */
+    $maskLOCAL = array('127.0',
+                    '10.',
+                    '192.168.',
+                    '172.16',
+                    '172.17.',
+                    '172.18.',
+                    '172.19.',
+                    '172.20.',
+                    '172.21.',
+                    '172.22.',
+                    '172.23.',
+                    '172.24.',
+                    '172.25.',
+                    '172.26.',
+                    '172.27.',
+                    '172.28.',
+                    '172.29.',
+                    '172.30.',
+                    '172.31.',
+                    '::1'
+                    );
+
     $isLOCALHOST = 0;
     $isWINLOCAL  = 0;
-    if ( strpos( $_SERVER['REMOTE_ADDR'], '127.0', 0 )
-         OR strpos( $_SERVER['REMOTE_ADDR'], '10.', 0 )
-         OR strpos( $_SERVER['REMOTE_ADDR'], '192.168.', 0 )
-         OR strpos( $_SERVER['REMOTE_ADDR'], '172.16.', 0 )
-         OR strpos( $_SERVER['SERVER_NAME'], 'localhost', 0 )
-         OR $_SERVER['REMOTE_ADDR'] == '::1' ) {
+    foreach ($maskLOCAL as $checkLOCALHOST) {
 
-        $isLOCALHOST = 1; // skip the auto-destruct
+        if ( strpos( $_SERVER['REMOTE_ADDR'], $checkLOCALHOST, 0 ) !== FALSE ) {
+            $isLOCALHOST = 1;
+            break;
+        } // found one of the reserved ip addresses
 
-        // check for windows to show local permission message
-        if ( strtoupper( substr( PHP_OS, 0, 3 ) ) == 'WIN' ) {
-            $isWINLOCAL = 1;
-        }
+    } // end foreach through reserved ip address & SERVER_NAME check
+
+
+    // check for windows to show local permission message
+    if ( $isLOCALHOST == 1 AND strtoupper( substr( PHP_OS, 0, 3 ) ) == 'WIN' ) {
+        $isWINLOCAL = 1;
     }
+
 
 
     /**

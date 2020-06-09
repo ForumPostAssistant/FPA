@@ -62,9 +62,9 @@
 
     /**
      * attempt to GZip the page output for performance
-     * added @RussW 27/05/2020
+     * added @RussW 27-May-2020
      * added testing for zlib otherwise conflicts with gzip
-     * updated @RussW 29/05/2020
+     * updated @RussW 29-May-2020
      *
      */
     if ( ini_get( 'zlib.output_compression' ) != '1' AND substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') ) {
@@ -113,15 +113,15 @@
      *
      * if a windows development environment is "localhost" then default permisisons are always
      * elevated (777) show a notice to the user that this is normal
-     * added @RussW 05/05/2020
-     * updated @RussW 08/06/2020 to search array of known reserved ip addresses
+     * added @RussW 05-May-2020
+     * updated @RussW 08-June-2020 to search array of known reserved ip addresses
      *
      */
 
 
     /**
      * set the list of 'localhost' possibilities to be chcked for
-     * added @russW 08/06/2020
+     * added @russW 08-June-2020
      */
     $maskLOCAL = array('127.0',
                     '10.',
@@ -174,7 +174,7 @@
      *   as local file modified dates are not udpated when copied and will keep being deleted (thanks @sozzled)
      *
      * CONSTANTS are used throughout this feature as a security measure because they cannot be overriden at runtime
-     * added @RussW 30/05/2020
+     * added @RussW 30-May-2020
      *
      */
     define ( '_FPA_SELF_DESTRUCT_AGE', 5 );       // age of FPA file before _FPA_SELF_DESTRUCT runs (set as CONSTANT so it can't be changed/overridden at runtime)
@@ -215,7 +215,7 @@
      * SSL check and redirect
      *
      * redirects to the SSL site if is SSL capable
-     * added @RussW 31/05/2020
+     * added @RussW 31-May-2020
      *
      */
     function has_ssl( $domain ) {
@@ -263,7 +263,7 @@
      * - check there is a cURL module loaded
      * - check the curl_exec function is available
      * - DISABLE if doIT = 1 (no point in LiveChecks when generating post content)
-     * added @RussW - 27/05/2020
+     * added @RussW - 27-May-2020
      *
      */
     $canDOLIVE = '0';
@@ -293,10 +293,10 @@
 	For details read the LICENSE.txt file included in the download package with this script.
     A copy of the license may also be obtained at ' );
 	define ( '_RES_FPALINK', 'https://github.com/ForumPostAssistant/FPA/tarball/en-GB/' ); // where to get the latest 'Final Releases'
-    // @RussW updated 23/05/2020
+    // @RussW updated 23-May-2020
     define ( '_RES_FPALATEST', 'Download the latest FPA release (tar.gz)' );
 	define ( '_RES_FPALINK2', 'https://github.com/ForumPostAssistant/FPA/zipball/en-GB/' ); // where to get the latest 'Final Releases'
-    // @RussW updated 23/05/2020
+    // @RussW updated 23-May-2020
     define ( '_RES_FPALATEST2', 'Download the latest FPA release (zip)' );
 
 	/** DEFINE LANGUAGE STRINGS **************************************************************/
@@ -304,7 +304,7 @@
 	define ( '_PHP_ERRREP', 'PHP Error Reporting Enabled' );
 	define ( '_PHP_LOGERR', 'PHP Errors Being Logged To File' );
     // section titles & developer-mode array names
-    // updated @RussW 29/05/2020
+    // updated @RussW 29-May-2020
 	define ( '_FPA_SNAP_TITLE', 'Environment Snapshot' );
 	define ( '_FPA_INST_TITLE', 'Application Instance' );
 	define ( '_FPA_SYS_TITLE', 'System Environment' );
@@ -330,27 +330,27 @@
 	define ( '_FPA_BADPHP', 'Known Buggy PHP');
 	define ( '_FPA_BADZND', 'Known Buggy Zend');
 	// slow screen message
-    // @RussW _FPA_SLOWGENPOST to be removed 23/05/2020
+    // @RussW _FPA_SLOWGENPOST to be removed 23-May-2020
     define ( '_FPA_SLOWGENPOST', 'Generating Post Output...' );
-    // @RussW _FPA_SLOWRUNTEST to be removed 23/05/2020
+    // @RussW _FPA_SLOWRUNTEST to be removed 23-May-2020
     define ( '_FPA_SLOWRUNTEST', 'Hang on while we run some tests...' );
     // remove script notice content - Phil 4-17-12
-    // @RussW _FPA_DELNOTE_LN1 to be removed 23/05/2020
+    // @RussW _FPA_DELNOTE_LN1 to be removed 23-May-2020
 	define ( '_FPA_DELNOTE_LN1', '<h5 class="text-danger">** SECURITY NOTICE **</h5>' );
-    // @RussW updated 23/05/2020
+    // @RussW updated 23-May-2020
     define ( '_FPA_DELNOTE_LN2', '<p class="small">The FPA script may contain private information that could be used to obtain information by others to compromise your website. We recommend that you remove the FPA script after you use it.</p>' );
-    // @RussW updated 23/05/2020
+    // @RussW updated 23-May-2020
     define ( '_FPA_DELNOTE_LN3', '<p class="text-danger">After use, please delete the FPA script.</p>' );
     // dev/diag-mode content
 	define ( '_FPA_DEVMI', 'developer-mode-information' );
     define ( '_FPA_ELAPSE', 'elapse-runtime' );
-    // @RussW removed uppercase 27/05/2020
+    // @RussW removed uppercase 27-May-2020
 	define ( '_FPA_DEVENA', 'Developer Mode Enabled' );
 	define ( '_FPA_DEVDSC', 'This means that a variety of additional information will be displayed on-screen to assist with troubleshooting this script.' );
-    // @RussW typo fixed & removed uppercase 27/05/2020
+    // @RussW typo fixed & removed uppercase 27-May-2020
     define ( '_FPA_DIAENA', 'Diagnostic Mode Enabled' );
 	define ( '_FPA_DIADSC', 'This means that all php and script errors will be displayed on-screen and logged out to a file named' );
-    // @RussW _FPA_DIAERR to be removed 27/05/2020
+    // @RussW _FPA_DIAERR to be removed 27-May-2020
     define ( '_FPA_DIAERR', 'Last DIGNOSTIC MODE Error' );
 	define ( '_FPA_SPNOTE', 'Special Note' );
 	// user post form content
@@ -359,11 +359,11 @@
 	define ( '_FPA_INS_2', 'Enter any error messages you see <em>(optional)</em>' );
 	define ( '_FPA_INS_3', 'Enter any actions taken to resolve the issue <em>(optional)</em>' );
 	define ( '_FPA_INS_4', 'Select detail level options of output <em>(optional)</em>' );
-    // @RussW updated 23/05/2020
+    // @RussW updated 23-May-2020
     define ( '_FPA_INS_5', 'Click the <span class="text-success">Click Here To Generate Post</span> button to build the post content' );
-    // @RussW updated 23/05/2020
+    // @RussW updated 23-May-2020
     define ( '_FPA_INS_6', 'Copy the contents of the <span class="text-dark">Post Content</span> box and paste it into a post following the instructions provided' );
-    // @RussW updated 23/05/2020
+    // @RussW updated 23-May-2020
     define ( '_FPA_INS_7', '<p class="text-muted">To copy the contents of the Post Detail box:</p>
             <ol>
             <li class="pb-1">Click the <span class="badge badge-warning">Copy Post Content To Clipboard</span> button</li>
@@ -372,7 +372,7 @@
             <li class="pb-1"><em>Disable smilies to prevent charcters being converted by the forums software</em></li>
             </ol>
             <p class="xsmall py-1 my-1"><i class="fas fa-info-circle text-info"></i> In the event that the "Copy Post Content To Clipboard" button does not work, <strong>click inside the Post Content textarea</strong>, then <strong>press CTRL-a (or Command-a)</strong> to select all the content, then <strong>press CTRL-c (Command-c)</strong> to copy the content and use <strong>CRTL-v (Command-v)</strong> to paste the copied content in to your forum post</p>');
-    // @RussW added 23/05/2020
+    // @RussW added 23-May-2020
     define ( '_FPA_INS_8', '<p class="text-center">Your site has many extensions installed, the post output exceededs the forum post limit. <strong>Please run the FPA twice</strong> and make two seperate posts/replies.</p><ol><li>First run without the plugins selected</li><li>Run again with only the plugins selected</li></ol>');
 	define ( '_FPA_POST_NOTE', 'Leave ALL fields blank/empty to simply post diagnostic information.' );
 	define ( '_FPA_PROB_DSC', 'Problem Description' );
@@ -479,7 +479,7 @@
 	define ( '_FPA_PASS', 'Password' );
 	define ( '_FPA_USER', 'Username' );
     define ( '_FPA_USR', 'User' );
-    // @RussW updated 23/05/2020
+    // @RussW updated 23-May-2020
 	define ( '_FPA_TNAM', 'Name' );
 	define ( '_FPA_TSIZ', 'Size' );
 	define ( '_FPA_TENG', 'Engine' );
@@ -545,7 +545,7 @@
  	define ( '_FPA_OTHER_TABLE', '#of other Tables' );
  	define ( '_FPA_MSSQL_SUPP', 'Microsoft SQL Server is not supported by the FPA' );
     define ( '_FPA_MYSQLI_CONN', 'PHP function mysqli_connect not found.' );
-    // @RussW new 05/2020
+    // @RussW new May-2020
     define ( '_FPA_DASHBOARD', 'Dashboard' );
     define ( '_FPA_DASHBOARD_CONFIDENCE_TITLE', 'Confidence' );
     define ( '_FPA_DASHBOARD_CONFIDENCE_NOTE', 'An initial <em>basic confidence audit</em> has been performed to determine if the minimum requirements and best practices have been met to ensure the successful operation of the latest version of Joomla! and it\'s standard functions.');
@@ -575,8 +575,8 @@
      * attempts to delete file from site. If it fails then message to manually delete the file is presented.
      * fixed undefined index when server uses E_STRICT - PhilD 9-20-12
      * @PhilD 8/07/12
-     * @RussW updated 21/05/2020
-     * @RussW 30/05/2020
+     * @RussW updated 21-May-2020
+     * @RussW 30-May-2020
      * added FPA Self Destruct feature, updated to use global file path & $_POST
      *
      */
@@ -635,7 +635,7 @@
      *
      * use the bootswatch cyborg BS4 theme instead of the Yeti theme
      * use PHP_SESSION to maintain the users choice
-     * added @RussW 31/05/2020
+     * added @RussW 31-May-2020
      *
      */
     session_start();
@@ -2233,7 +2233,7 @@
 
 
                 // get the database grants/privilidges
-                // added @RussW 5/05/2020
+                // added @RussW 5-May-2020
                 $privResult = mysql_query( "SHOW GRANTS FOR CURRENT_USER" );
 
                 while ( $row = @mysql_fetch_row( $privResult ) ) {
@@ -2359,7 +2359,7 @@
                 $database['dbHOSTSTATS']    = explode("  ", @mysqli_stat( $dBconn ) );  // latest statistics
 
                 // get the database grants/privilidges
-                // added @RussW 5/05/2020
+                // added @RussW 5-May-2020
                 $privResult = @$dBconn->query( "SHOW GRANTS FOR CURRENT_USER" );
 
                 while ( $row = @mysqli_fetch_row( $privResult ) ) {
@@ -2483,7 +2483,7 @@
                 }
 
                 // get the database grants/privilidges
-                // added @RussW 5/05/2020
+                // added @RussW 5-May-2020
                 $privResult = @$dBconn->query( "SHOW GRANTS FOR CURRENT_USER" );
 
                 while ( $row = $privResult->fetch( PDO::FETCH_BOTH )) {
@@ -2965,8 +2965,8 @@
      * checks this FPA version against the latest release on Github using cURL
      * - don't run if cURL disabled or not available
      * - don't run if doIT = 1
-     * added - @RussW 28/05/2020
-     * updated CURLOPT_SSL_VERIFYPEER added @RussW 3/06/2020
+     * added - @RussW 28-May-2020
+     * updated CURLOPT_SSL_VERIFYPEER added @RussW 3-June-2020
      *
      */
     if ( defined( '_LIVE_CHECK_FPA' ) AND $canDOLIVE == '1') {
@@ -3043,7 +3043,7 @@
      * - don't run if cURL disabled or not available
      * - don't run if simpleXML or XML not available
      * - don't run if Joomla! instance not found
-     * added - @RussW 28/05/2020
+     * added - @RussW 28-May-2020
      *
      */
     if ( defined( '_LIVE_CHECK_JOOMLA') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) {
@@ -3111,7 +3111,7 @@
      *
      * should always be below audit/test routines as it will disable the following options
      * - disable $showElevated, $showTables, $showCoreEx
-     * added - @RussW 29/05/2020
+     * added - @RussW 29-May-2020
      *
      */
     if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y AND @$_POST['doVEL'] == 1 ) {
@@ -3171,7 +3171,7 @@
         <!-- fontawesome icon css -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
 
-        <!-- custom BS4 styling @RussW 23/05/2020 -->
+        <!-- custom BS4 styling @RussW 23-May-2020 -->
         <style>
             html { position: relative; min-height: 100%; }
             body { font-size: 0.98rem; color: #868ba1 !important; line-height: 1.3 !important; margin-top: 68px; scroll-behavior: smooth; }
@@ -3236,7 +3236,7 @@
             /**
              * toggle show/hide FPA options panel/form
              * is overriden when doIT = 1 to hide panel/form and only show post output
-             * @RussW 23/05/2020
+             * @RussW 23-May-2020
              *
              */
             function toggleFPA(showHideDiv, switchTextDiv) {
@@ -3442,7 +3442,7 @@
             /**
              * print only header
              *
-             * added @RussW 31/05/2020
+             * added @RussW 31-May-2020
              *
              */
             ?>
@@ -3473,7 +3473,7 @@
          * error_reporting, sets the level of errors to report, "-1" is all errors
          * log_errors, enables errors to be logged to a file, fpa_error.log in the "/" folder
          *
-         * moved inside body to avoid page layout errors - @RussW 27/05/2020
+         * moved inside body to avoid page layout errors - @RussW 27-May-2020
          *
          */
         if ( defined( '_FPA_DEV' ) OR defined( '_FPA_DIAG' ) OR @$_SERVER['HTTPS'] != 'on' ) {
@@ -4101,7 +4101,7 @@
                                 <?php
                                 /**
                                  * if enabled, display live update information
-                                 * added @RussW 28/05/2020
+                                 * added @RussW 28-May-2020
                                  *
                                  */
                                 ?>
@@ -4154,7 +4154,7 @@
                                  *
                                  * a quick and dirty visual feedback method to display a score/rating in the confidence that
                                  * Joomla! will run/work based on some basic initial test results
-                                 * @RussW added 23/05/2020
+                                 * @RussW added 23-May-2020
                                  *
                                  */
 
@@ -5518,7 +5518,7 @@
              * fpa instance discovery information section
              *
              * dont show if doVEL = 1
-             * added @RussW 29/05/2020
+             * added @RussW 29-May-2020
              *
              */
             ?>
@@ -6442,7 +6442,7 @@
                                          *
                                          * if is 'cgi' then the process and current should match with no issues. however,
                                          * some cloud solutions 'fuzz' this method and users don't always have to match
-                                         * @RussW added 24/05/2020
+                                         * @RussW added 24-May-2020
                                          *
                                          */
                                         ?>
@@ -6568,7 +6568,7 @@
                                                              * - this is a more robust method than using the presence of suExec, using the users own
                                                              *   "effective" rights to test for ownership or permission issues
                                                              *
-                                                             * added @RussW 04/05/2020
+                                                             * added @RussW 04-May-2020
                                                              *
                                                              */
                                                             if ( $instance['instanceFOUND'] == _FPA_Y ) {
@@ -7330,7 +7330,7 @@
              * instance known directory & elevated permisisons list (optional)
              *
              * dont show if doVEL = 1
-             * added @RussW 29/05/2020
+             * added @RussW 29-May-2020
              *
              */
             ?>
@@ -8653,7 +8653,7 @@
          *
          * dismissable toast/alert to replace the space-hog on page message
          * 5s display if doIT = 1, else 10s display
-         * @RussW 21/05/2020
+         * @RussW 21-May-2020
          *
          */
         ?>
@@ -8701,7 +8701,7 @@
             /**
              * load the export to PDF libaries and options
              *
-             * added @RussW 03/06/2020
+             * added @RussW 03-June-2020
              * html2pdf bundle
              * - includes html2canvas
              * - includes jsPDF
@@ -8738,7 +8738,7 @@
             /**
              * activate BS popovers, tooltips (on hover) and toasts
              * requires : jQuery & popper
-             * @RussW 23/05/2020
+             * @RussW 23-May-2020
              *
              */
             $(function () {
@@ -8762,7 +8762,7 @@
              * 3. add an event listener to copy post output to clipboard when button clicked
              *
              * only executes child functions if doIT = 1
-             * @RussW 23/05/2020
+             * @RussW 23-May-2020
              *
              */
             function doPostActions() {

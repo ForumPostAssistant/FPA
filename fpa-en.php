@@ -5576,7 +5576,7 @@
                                                 <div class="bg-white small w-100 border">
                                                     <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1">CMS <?php echo _FPA_F; ?></div>
 
-                                                    <?php if ( $instance['instanceFOUND'] == _FPA_Y AND $instance['platformVFILE'] != _FPA_N) { ?>
+                                                    <?php if ( $instance['instanceFOUND'] == _FPA_Y) { ?>
 
                                                         <div class="xsmall mb-1"><?php echo @$instance['cmsPRODUCT']; ?></div>
                                                         <div class="font-weight-bolder mb-1"><?php echo @$instance['cmsRELEASE'] .'.'. @$instance['cmsDEVLEVEL']; ?></div>
@@ -6578,7 +6578,7 @@
                                                         */
 
 
-                                                          
+
 
                                                         ?>
 

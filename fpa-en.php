@@ -1907,64 +1907,96 @@
         // looking for the Apache "suExec" utility
         if ( ( $system['sysCURRUSER'] === $system['sysWEBOWNER'] ) AND ( substr($phpenv['phpAPI'], 0, 3) == 'cgi' ) ) {
             $phpenv['phpAPACHESUEXEC'] = _FPA_Y;
-            $phpenv['phpOWNERPROB'] = _FPA_N;
 
         } else {
             $phpenv['phpAPACHESUEXEC'] = _FPA_N;
-            $phpenv['phpOWNERPROB'] = _FPA_M;
         }
 
         // looking for the "phpsuExec" utility
         if ( ( $system['sysCURRUSER'] === $system['sysEXECUSER'] ) AND ( substr($phpenv['phpAPI'], 0, 3) == 'cgi' ) ) {
             $phpenv['phpPHPSUEXEC'] = _FPA_Y;
-            $phpenv['phpOWNERPROB'] = _FPA_N;
 
         } else {
             $phpenv['phpPHPSUEXEC'] = _FPA_N;
-            $phpenv['phpOWNERPROB'] = _FPA_M;
         }
 
     } else {
         $phpenv['phpCGI'] = _FPA_N;
         $phpenv['phpAPACHESUEXEC'] = _FPA_N;
         $phpenv['phpPHPSUEXEC'] = _FPA_N;
-        $phpenv['phpOWNERPROB'] = _FPA_M;
     }
+
 
 
 
     /**
-     * WARNING WILL ROBINSON! ****************************************************************
-     * THIS IS A TEST FEATURE AND AS SUCH NOT GUARANTEED TO BE 100% ACCURATE
-     * try and cater for custom "su" environments, like cluster, grid and cloud computing.
-     * this would include weird ownership combinations that allow group access to non-owner files
-     * (like GoDaddy and a couple of grid and cloud providers I know of)
-     *
-     * took out this part: AND ( $instance['configWRITABLE'] == _FPA_Y )  as Joomla sets config file
-     * to 444 so is read only permissions. Also changed this section:
-     * ( $system['sysCURRUSER'] != $instance['configOWNER']['name'] from != to ==
-     * If config owner is same as current user then we are probably using a custom "su" enviroment
-     * such as LiteSpeed uses - @PhilD 8-Apr-2012
-     *
-     */
+    * Simplified "effective" rights testing
+    * this routine is designed to try and determine if the user is, or will have, problems
+    * installing extensions or uploading files due to ownershop/permission configuration
+    * - only runs if an instance is found
+    *
+    * test a directory and the fpa script itself for "writable" status
+    * - if BOTH the test items are user writable then ownership obviously isn't a problem - display NO
+    * - if ONLY ONE test item is writable then we have non-standard permissions : display MAYBE
+    * - else if above criteria is not met (ie: both items are NOT writable) : display YES
+    *
+    * then check both items for elevated permissions, which may indicate a need raise modeset to achieve access
+    * assumed modeset defaults - Directory: 755, File: 644
+    * - raise a warning message elevated permisions are found
+    *
+    * NOTE: this test routine is now independant of the suExec (Switch User) status
+    * - this means the suExec (& user) status is purely informational now
+    * - this caters for litespeed using setUID and custom/Cloud solutions
+    * - this is a more robust method than using the presence of suExec, using the users own
+    *   "effective" rights to test for ownership or permission issues
+    *
+    * added @RussW 04-May-2020
+    *
+    */
 
-    if ( ( $instance['instanceCONFIGURED'] == _FPA_Y ) AND ( @$phpenv['phpAPI'] == 'litespeed' ) AND ( $system['sysCURRUSER'] == $instance['configOWNER']['name'] ) AND ( ( substr( $instance['configMODE'],0 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],1 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],2 ,1 ) <= '6' ) ) ) {
-        /** changed from maybe to yes - @PhilD 8-Apr-2012 **/
-        $phpenv['phpCUSTOMSU'] = _FPA_Y;
-        $phpenv['phpOWNERPROB'] = _FPA_N;
 
-    } elseif( ( $instance['instanceCONFIGURED'] == _FPA_Y ) AND ( $system['sysCURRUSER'] == $instance['configOWNER']['name'] ) AND ( ( substr( $instance['configMODE'],0 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],1 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],2 ,1 ) <= '6' ) ) ) {
-        /** changed from maybe to yes - @PhilD 8-Apr-2012 **/
-        $phpenv['phpCUSTOMSU'] = _FPA_Y;
-        $phpenv['phpOWNERPROB'] = _FPA_N;
+    if ( $instance['instanceFOUND'] == _FPA_Y ) {
+
+        $dirTOTest   = 'components';
+        $dirEPCheck  = substr( sprintf('%o', fileperms( $dirTOTest ) ),-3, 3 );
+        $fileEPCheck = substr( sprintf('%o', fileperms( basename($_SERVER['PHP_SELF']) ) ),-3, 3 );
+
+    if ( is_writeable(basename($_SERVER['PHP_SELF'])) AND is_writeable('components') ) {
+        $suColor     = 'success';
+        $suStatus    = _FPA_N;
+        $suMSG       = 'Extension & template installations, file & image uploads should not have any problems.';
+        $elevatedMSG = '';
+
+    } elseif ( !is_writeable(basename($_SERVER['PHP_SELF'])) XOR !is_writeable('components') ) {
+        $suColor     = 'info';
+        $suStatus    = _FPA_M;
+        $suMSG       = 'Extension & template installations, file & image uploads might have some problems.';
+        $elevatedMSG = 'Permissions are non-standard and may cause issues.';
 
     } else {
-        $phpenv['phpCUSTOMSU'] = _FPA_N;
-        $phpenv['phpOWNERPROB'] = _FPA_M;
+        $suColor     = 'warning';
+        $suStatus    = _FPA_Y;
+        $suMSG       = 'Extension & template installations, file & image uploads are likely to have problems.';
+        $elevatedMSG = '';
     }
-    /*****************************************************************************************/
-    /** THIS IS A TEST FEATURE AND AS SUCH NOT GUARANTEED TO BE 100% ACCURATE ****************/
-    /*****************************************************************************************/
+
+    // display a warnng message if any "actual" permissions are elevated,
+    // this may indicate a need to raise modeset to make user writable
+    if ( ( substr($dirEPCheck,1 ,1) > '5' OR substr($dirEPCheck,2 ,1) > '5' ) OR ( substr($fileEPCheck,0 ,1) > '6' OR substr($fileEPCheck,1 ,1) > '4' OR substr($fileEPCheck,2 ,1) > '4' ) ) {
+        $elevatedMSG = 'Permissions may have been elevated to overcome access problems.';
+        if ( $isWINLOCAL == '1' ) {
+            $elevatedMSG = @$elevatedMSG.' '._FPA_WIN_LOCALHOST;
+        }
+    }
+
+    } else {
+        $suColor     = 'info';
+        $suStatus    = _FPA_U;
+        $suMSG       = 'No Joomla! instance found to test';
+        $elevatedMSG = '';
+    } // instanceFOUND, effective rights test
+
+
 
 
     // get all the PHP loaded extensions and versions
@@ -4979,12 +5011,15 @@
                                                 }
                                             }
 
+
+
+
+
                                             echo "\r\n\r\n";
-                                            echo '[b]Switch User '. _FPA_ENVIRO .'[/b] [i](Experimental)[/i][b] :: PHP CGI:[/b] '. $phpenv['phpCGI'] .' | [b]Server SU:[/b] '. $phpenv['phpAPACHESUEXEC'] .' |  [b]PHP SU:[/b] '. $phpenv['phpPHPSUEXEC'] .' |   [b]Custom SU (LiteSpeed/Cloud/Grid):[/b] '. $phpenv['phpCUSTOMSU'];
-                                            echo "\r\n";
+                                            echo '[b]Switch User '. _FPA_ENVIRO .' :: PHP CGI:[/b] '. $phpenv['phpCGI'] .' | [b]Server SU:[/b] '. $phpenv['phpAPACHESUEXEC'] .' |  [b]PHP SU:[/b] '. $phpenv['phpPHPSUEXEC'] .' |  ' ;
                                             echo '[b]'. _FPA_POTOI .':[/b] ';
-                                            if ( $phpenv['phpOWNERPROB'] == _FPA_Y ) { echo '[color=Red]'; } elseif ( $phpenv['phpOWNERPROB'] == _FPA_N ) { echo '[color=Green]'; } else { echo '[color=orange]'; }
-                                            echo $phpenv['phpOWNERPROB'] .'[/color] ';
+                                            if ( $suStatus == _FPA_Y ) { echo '[color=Red]'; } elseif ( $suStatus == _FPA_N ) { echo '[color=Green]'; } else { echo '[color=orange]'; }
+                                            echo $suStatus .'[/color] ';
 
                                             // IF APACHE with PHP in Module mode
                                             if ( $phpenv['phpAPI'] == 'apache2handler' ) {
@@ -6543,70 +6578,8 @@
                                                         */
 
 
-                                                            /**
-                                                             * Simplified "effective" rights testing
-                                                             * this routine is designed to try and determine if the user is, or will have, problems
-                                                             * installing extensions or uploading files due to ownershop/permission configuration
-                                                             * - only runs if an instance is found
-                                                             *
-                                                             * test a directory and the fpa script itself for "writable" status
-                                                             * - if BOTH the test items are user writable then ownership obviously isn't a problem - display NO
-                                                             * - if ONLY ONE test item is writable then we have non-standard permissions : display MAYBE
-                                                             * - else if above criteria is not met (ie: both items are NOT writable) : display YES
-                                                             *
-                                                             * then check both items for elevated permissions, which may indicate a need raise modeset to achieve access
-                                                             * assumed modeset defaults - Directory: 755, File: 644
-                                                             * - raise a warning message elevated permisions are found
-                                                             *
-                                                             * NOTE: this test routine is now independant of the suExec (Switch User) status
-                                                             * - this means the suExec (& user) status is purely informational now
-                                                             * - this caters for litespeed using setUID and custom/Cloud solutions
-                                                             * - this is a more robust method than using the presence of suExec, using the users own
-                                                             *   "effective" rights to test for ownership or permission issues
-                                                             *
-                                                             * added @RussW 04-May-2020
-                                                             *
-                                                             */
-                                                            if ( $instance['instanceFOUND'] == _FPA_Y ) {
+                                                          
 
-                                                                $dirTOTest   = 'components';
-                                                                $dirEPCheck  = substr( sprintf('%o', fileperms( $dirTOTest ) ),-3, 3 );
-                                                                $fileEPCheck = substr( sprintf('%o', fileperms( basename($_SERVER['PHP_SELF']) ) ),-3, 3 );
-
-                                                                if ( is_writeable(basename($_SERVER['PHP_SELF'])) AND is_writeable('components') ) {
-                                                                    $suColor     = 'success';
-                                                                    $suStatus    = _FPA_N;
-                                                                    $suMSG       = 'Extension & template installations, file & image uploads should not have any problems.';
-                                                                    $elevatedMSG = '';
-
-                                                                } elseif ( !is_writeable(basename($_SERVER['PHP_SELF'])) XOR !is_writeable('components') ) {
-                                                                    $suColor     = 'info';
-                                                                    $suStatus    = _FPA_M;
-                                                                    $suMSG       = 'Extension & template installations, file & image uploads might have some problems.';
-                                                                    $elevatedMSG = 'Permissions are non-standard and may cause issues.';
-
-                                                                } else {
-                                                                    $suColor     = 'warning';
-                                                                    $suStatus    = _FPA_Y;
-                                                                    $suMSG       = 'Extension & template installations, file & image uploads are likely to have problems.';
-                                                                    $elevatedMSG = '';
-                                                                }
-
-                                                                // display a warnng message if any "actual" permissions are elevated,
-                                                                // this may indicate a need to raise modeset to make user writable
-                                                                if ( ( substr($dirEPCheck,1 ,1) > '5' OR substr($dirEPCheck,2 ,1) > '5' ) OR ( substr($fileEPCheck,0 ,1) > '6' OR substr($fileEPCheck,1 ,1) > '4' OR substr($fileEPCheck,2 ,1) > '4' ) ) {
-                                                                    $elevatedMSG = 'Permissions may have been elevated to overcome access problems.';
-                                                                    if ( $isWINLOCAL == '1' ) {
-                                                                        $elevatedMSG = @$elevatedMSG.' '._FPA_WIN_LOCALHOST;
-                                                                    }
-                                                                }
-
-                                                            } else {
-                                                                $suColor     = 'info';
-                                                                $suStatus    = _FPA_U;
-                                                                $suMSG       = 'No Joomla! instance found to test';
-                                                                $elevatedMSG = '';
-                                                            } // instanceFOUND, effective rights test
                                                         ?>
 
                                                         <?php echo _FPA_PERMOWN; ?> Problems&nbsp;:&nbsp;<span class="badge badge-<?php echo $suColor; ?>"><?php echo $suStatus; ?></span>&nbsp;<span class="badge badge-light"><?php echo $phpenv['phpAPI']; ?></span>

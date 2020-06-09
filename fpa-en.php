@@ -10,24 +10,22 @@
      * @see https://forumpostassistant.github.io/docs/
      * @internal Supports: All known Joomla! versions running >php5.4
      * @internal Contributors : @RussW, @PhilD13, @mandville, @Frostmakk, @sozzled, @Webdongle, @btoplak
-     * @since 24-June-2011
+     * @since 24-Jun-2011
      *
-     * UI/UX overhauled
-     * @RussW June-2020
-     * docblock updated from the dark-ages
-     * @RussW 08-June-2020
+     * UI/UX overhauled -  @RussW Jun-2020
+     * DocBlock updated - @RussW 8-Jun-2020
      *
      * Remember to revision and last updated date below
-     * Date reference format : dd-mmm-yyyy (EG: 1-Jan-1970 | 1-Janauary-1970)
+     * Date reference format : d-mmm|mmmm-yyyy (e.g. 1-Jan-1970 | 1-January-1970)
      *
      */
-	define ( '_RES', 'Forum Post Assistant' );
-    define ( '_RES_VERSION', '1.6.0' );
-    define ( '_RES_CODENAME', 'rhytidectomy' );
-    define ( '_RES_LAST_UPDATED', '9-June-2020' );
-	define ( '_RES_RELEASE', 'RC' );              // can be Alpha, Beta, RC, Final
-	define ( '_RES_LANG', 'en-GB' );                 // Country/Language Code
-	define ( '_RES_COPYRIGHT_STMT', ' Copyright &copy; 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
+     define ( '_RES', 'Forum Post Assistant' );
+     define ( '_RES_VERSION', '1.6.0' );
+     define ( '_RES_CODENAME', 'rhytidectomy' );
+     define ( '_RES_LAST_UPDATED', '9-Jun-2020' );
+     define ( '_RES_RELEASE', 'RC' );              // can be Alpha, Beta, RC, Final
+     define ( '_RES_LANG', 'en-GB' );                 // Country/Language Code
+     define ( '_RES_COPYRIGHT_STMT', ' Copyright &copy; 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
 
 
     /**
@@ -54,17 +52,16 @@
      * for edit changelog see https://github.com/ForumPostAssistant/FPA/pulls?q=is%3Apr+is%3Aclosed
      *
      * TODO/WISHLIST:
+     * @RussW VEL integration
      * @RussW - add expoert to .csv on tabular data/lists
      * @RussW - add FPA Guided Tour
-     * @RussW - split fpa post content to multiple textareas/posts if exceeds 20k characters
+     * @RussW - split FPA post content to multiple textareas/posts if exceeds 20k characters
      *
      */
 
     /**
-     * attempt to GZip the page output for performance
-     * added @RussW 27-May-2020
-     * added testing for zlib otherwise conflicts with gzip
-     * updated @RussW 29-May-2020
+     * attempt to GZip the page output for performance - Added @RussW 27-May-2020
+     * added testing for zlib otherwise conflicts with gzip - updated @RussW 29-May-2020
      *
      */
     if ( ini_get( 'zlib.output_compression' ) != '1' AND substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') ) {
@@ -112,16 +109,15 @@
      * due to never changing "modified" date on copy n paste
      *
      * if a windows development environment is "localhost" then default permisisons are always
-     * elevated (777) show a notice to the user that this is normal
-     * added @RussW 05-May-2020
-     * updated @RussW 08-June-2020 to search array of known reserved ip addresses
+     * elevated (777) show a notice to the user that this is normal - added @RussW 5-May-2020
+     * updated @RussW 8-Jun-2020 to search array of known reserved ip addresses
      *
      */
 
 
     /**
      * set the list of 'localhost' possibilities to be chcked for
-     * added @russW 08-June-2020
+     * added @RussW 08-Jun-2020
      */
     $maskLOCAL = array('127.0',
                     '10.',
@@ -283,7 +279,7 @@
 
 	/** SET THE JOOMLA! PARENT FLAG AND CONSTANTS ********************************************/
 	define ( '_VALID_MOS', 1 );               // for J!1.0
-	define ( '_JEXEC', 1 );                   // for J!1.5, J!1.6, J!1.7, J!2.5, J!3.0, J!4.0
+	define ( '_JEXEC', 1 );                   // for J!1.5, J!1.6 thru J!2.5, J!3.0, J!4.0
 
 
 	// Define some basic assistant information
@@ -334,7 +330,7 @@
     define ( '_FPA_SLOWGENPOST', 'Generating Post Output...' );
     // @RussW _FPA_SLOWRUNTEST to be removed 23-May-2020
     define ( '_FPA_SLOWRUNTEST', 'Hang on while we run some tests...' );
-    // remove script notice content - Phil 4-17-12
+    // remove script notice content - @PhilD 17-Apr-2012
     // @RussW _FPA_DELNOTE_LN1 to be removed 23-May-2020
 	define ( '_FPA_DELNOTE_LN1', '<h5 class="text-danger">** SECURITY NOTICE **</h5>' );
     // @RussW updated 23-May-2020
@@ -573,8 +569,8 @@
      * delete script
      *
      * attempts to delete file from site. If it fails then message to manually delete the file is presented.
-     * fixed undefined index when server uses E_STRICT - PhilD 9-20-12
-     * @PhilD 8/07/12
+     * fixed undefined index when server uses E_STRICT - @PhilD 20-Sep-2012
+     * @PhilD 7-Aug-2012
      * @RussW updated 21-May-2020
      * @RussW 30-May-2020
      * added FPA Self Destruct feature, updated to use global file path & $_POST
@@ -596,7 +592,7 @@
         if ( @$_SERVER['HTTPS'] == 'on' ? $hostPrefix = 'https://' : $hostPrefix = 'http://');
         $page = $hostPrefix . $host . $uri . $extra;
 
-        // Something went wrong and the script was not deleted so it must be removed manually so we tell the user to do so - PhilD 8-07-12
+        // Something went wrong and the script was not deleted so it must be removed manually so we tell the user to do so - @PhilD 7-Aug-2012
         if ( file_exists(_FPA_SELF) ) {
             @chmod(_FPA_SELF, 0644);  // octal; correct value of mode
 
@@ -710,7 +706,7 @@
 		$showElevated  = 0;
 
 	} else {
-		$showElevated = 1; // default 1(show) changed default to 1 Phil 4-20-12
+		$showElevated = 1; // default 1(show) changed default to 1 - @PhilD 20-Apr-2012
 	}
 
 	if ( @$_POST['showTables'] == 0 AND  @$_POST['doIT'] == 1   ) {
@@ -724,14 +720,14 @@
 		$showComponents  = 0;
 
 	} else {
-		$showComponents = 1; // default 0 (hide) changed default to 1 Phil 4-20-12
+		$showComponents = 1; // default 0 (hide) changed default to 1 - @PhilD 20-Apr-2012
 	}
 
 	if ( @$_POST['showModules'] == 0 AND  @$_POST['doIT'] == 1   ) {
 		$showModules  = 0;
 
 	} else {
-		$showModules = 1; // default 0 (hide) changed default to 1 Phil 4-20-12
+		$showModules = 1; // default 0 (hide) changed default to 1 - @PhilD 20-Apr-2012
 	}
 
 	if ( @$_POST['showLibraries'] == 0 AND  @$_POST['doIT'] == 1  ) {
@@ -745,7 +741,7 @@
 		$showPlugins  = 0;
 
 	} else {
-		$showPlugins = 1; // default 0(hide) changed default to 1 Phil 4-20-12
+		$showPlugins = 1; // default 0(hide) changed default to 1 - @PhilD 20-Apr-2012
 	}
 
 	if ( @$_POST['showCoreEx'] == 0 AND  @$_POST['doIT'] == 1 ) {
@@ -910,20 +906,20 @@
         /**
          * if the file was modified less than one day ago, grab the last error entry
          * Changed this section to get rid of the "Strict Standards: Only variables should be passed by reference" error
-         * Phil - 9-20-12
+         * @PhilD 20-Sep-2012
          *
          */
 		if ( $now_time - $file_time < $age ) {
             /**
-             * !FIXME memory allocation error on large php_error file - RussW
-             * replaced these two lines with code below - Phil 09-23-12
+             * !FIXME memory allocation error on large php_error file - @RussW
+             * replaced these two lines with code below - @PhilD 23-Sep-2012
              *  $lines = file( $phpenv['phpERRLOGFILE'] );
              *  $phpenv['phpLASTERR'] = array_pop( $lines );
              *
              * Begin the fix for the memory allocation error on large php_error file
              * Solution is to read the file line by line; not reading the whole file in memory.
              * I just open a kind of a pointer to it, then seek it char by char.
-             * This is a more efficient way to work with large files.   - Phil 09-23-12
+             * This is a more efficient way to work with large files.   - @PhilD 23-Sep-2012
              *
              */
             $line = '';
@@ -1081,7 +1077,7 @@
             preg_match ( '#\$(?:CODENAME|CODE_NAME)\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsCODENAME );
             preg_match ( '#\$(?:RELDATE|RELEASE_DATE)\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsRELDATE );
 
-                // Joomla 3.5 - 3.9
+                // Joomla 3.5 to 3.9
                 if (empty($cmsPRODUCT))
                 {
                     preg_match ( '#const\s*PRODUCT\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsPRODUCT );
@@ -1154,7 +1150,7 @@
             preg_match ( '#CODE_NAME\s*=\s*[\'"](.*)[\'"]#', $platformVContent, $platformCODENAME );
             preg_match ( '#RELEASE_DATE\s*=\s*[\'"](.*)[\'"]#', $platformVContent, $platformRELDATE );
 
-                // Joomla 3.5 - 3.9
+                // Joomla 3.5 to 3.9
                 if (empty($platformPRODUCT))
                 {
                     preg_match ( '#const\s*PRODUCT\s*=\s*[\'"](.*)[\'"]#', $cmsVContent, $cmsPRODUCT );
@@ -1281,8 +1277,8 @@
         /**
          * if present, is the configuration file valid?
          *
-         * added code to fix the config version mis-match on 2.5 versions of Joomla - 4-8-12 - Phil
-         * reworked code block to better determine version in 1.7 - 3.0+ versions of Joomla - 8-06-12 - Phil
+         * added code to fix the config version mis-match on 2.5 versions of Joomla - @PhilD 8-Apr-2012
+         * reworked code block to better determine version in 1.7 to 3.0+ versions of Joomla - @PhilD 6-Aug-2012
          *
          */
         $cmsCContent = file_get_contents( $instance['configPATH'] );
@@ -1948,17 +1944,17 @@
      * to 444 so is read only permissions. Also changed this section:
      * ( $system['sysCURRUSER'] != $instance['configOWNER']['name'] from != to ==
      * If config owner is same as current user then we are probably using a custom "su" enviroment
-     * such as LiteSpeed uses - 4-8-12 - Phil
+     * such as LiteSpeed uses - @PhilD 8-Apr-2012
      *
      */
 
     if ( ( $instance['instanceCONFIGURED'] == _FPA_Y ) AND ( @$phpenv['phpAPI'] == 'litespeed' ) AND ( $system['sysCURRUSER'] == $instance['configOWNER']['name'] ) AND ( ( substr( $instance['configMODE'],0 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],1 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],2 ,1 ) <= '6' ) ) ) {
-        /** changed from maybe to yes - 4-8-12 - Phil **/
+        /** changed from maybe to yes - @PhilD 8-Apr-2012 **/
         $phpenv['phpCUSTOMSU'] = _FPA_Y;
         $phpenv['phpOWNERPROB'] = _FPA_N;
 
     } elseif( ( $instance['instanceCONFIGURED'] == _FPA_Y ) AND ( $system['sysCURRUSER'] == $instance['configOWNER']['name'] ) AND ( ( substr( $instance['configMODE'],0 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],1 ,1 ) < '6' ) OR ( substr( $instance['configMODE'],2 ,1 ) <= '6' ) ) ) {
-        /** changed from maybe to yes - 4-8-12 - Phil **/
+        /** changed from maybe to yes - @PhilD 8-Apr-2012 **/
         $phpenv['phpCUSTOMSU'] = _FPA_Y;
         $phpenv['phpOWNERPROB'] = _FPA_N;
 
@@ -2161,7 +2157,7 @@
         }
 
         // Fixed Warning: Illegal string offset 'mode' on line 1476
-        // Warning: Illegal string offset 'writable' on line 1477 - Phil 09-20-12
+        // Warning: Illegal string offset 'writable' on line 1477 - @PhilD 20-Sep-2012
         if (isset( $dirCount) == '0' ) {
             $elevated['None'] = _FPA_NONE;
             $elevated['None']['mode'] = '-';
@@ -2966,7 +2962,7 @@
      * - don't run if cURL disabled or not available
      * - don't run if doIT = 1
      * added - @RussW 28-May-2020
-     * updated CURLOPT_SSL_VERIFYPEER added @RussW 3-June-2020
+     * updated CURLOPT_SSL_VERIFYPEER added @RussW 3-Jun-2020
      *
      */
     if ( defined( '_LIVE_CHECK_FPA' ) AND $canDOLIVE == '1') {
@@ -3554,8 +3550,8 @@
                                  * basic joomla and environment checks and display
                                  *
                                  * SUPPORT SECTIONS
-                                 * added a 2.5 section - @PhilD 4-20-12
-                                 * added a 3.1, 3.2 section - @PhilD 01-01-14
+                                 * added a 2.5 section - @PhilD 20-Apr-2012
+                                 * added a 3.1, 3.2 section - @PhilD 1-Jan-2014
                                  *
                                  * Note:
                                  * With the release of Joomla! 3.2, the CMS introduced a new feature called, Strong Passwords.
@@ -3583,7 +3579,7 @@
                                  * MariaDB check. Get the Database type and look for MariaDB. All current versions of MariaDB should be current
                                  * with Joomla. The issue with using version numbers is mysql also uses numbers, so this check differentiates
                                  * between mysql and MariaDB. If there is a better idea given the current FPA code feel free to submit it.
-                                 * @PhilD 03-17-17
+                                 * @PhilD 17-Mar-2017
                                  *
                                  */
                                 $input_line = @$database['dbHOSTSERV'];
@@ -3918,7 +3914,7 @@
                                                         echo '<span class="text-success">'. _FPA_Y .'</span>';
                                                         $snapshot['sqlSUP4J'] = _FPA_Y;
                                                     }
-                                                    //Added this elseif to give the ok for MariaDB -- PhilD 03-17-17
+                                                    //Added this elseif to give the ok for MariaDB - @PhilD 17-Mar-2017
                                                     elseif (strtoupper(@$output_array[0]) == "MARIADB") {
                                                         echo '<span class="text-success">'. _FPA_MDB .'</span>';
                                                         $snapshot['sqlSUP4J'] = _FPA_Y;
@@ -4344,8 +4340,8 @@
                                      * the colour changes are purely a visual method of informing the user that some audit tests
                                      * do not equal 2 (top score) and may need review (via the help icon button/panel)
                                      *
-                                     * 0 - 25.000 (F rated) = danger
-                                     * 25.001 - 99.999 (E, D, C, B & A rated) = warning
+                                     * 0 to 25.000 (F rated) = danger
+                                     * 25.001 to 99.999 (E, D, C, B & A rated) = warning
                                      * 100 (A+ rated) = info (default)
                                      *
                                      */
@@ -4409,7 +4405,7 @@
                                             /**
                                              * generate confidence rating
                                              * based on $confidenceScore
-                                             * A - F & messaging
+                                             * A to F & messaging
                                              *
                                              */
                                             if ($confidenceScore > 100 OR $confidenceScore < 0) {
@@ -4574,7 +4570,7 @@
                                                     if ( @$_POST['showElevated'] == 0 AND  @$_POST['doIT'] == 1  ) {
                                                         $selectshowElevated = '';
                                                     } else {
-                                                        $selectshowElevated = 'CHECKED'; // changed to checked - Phil - 4-20-12
+                                                        $selectshowElevated = 'CHECKED'; // changed to checked - @PhilD 20-Apr-2012
                                                     }
 
                                                     if ( @$_POST['showTables'] == 0 AND  @$_POST['doIT'] == 1  ) {
@@ -4586,13 +4582,13 @@
                                                     if ( @$_POST['showComponents'] == 0 AND  @$_POST['doIT'] == 1  ) {
                                                         $selectshowComponents = '';
                                                     } else {
-                                                        $selectshowComponents = 'CHECKED'; // changed to checked - Phil - 4-20-12
+                                                        $selectshowComponents = 'CHECKED'; // changed to checked - @PhilD 20-Apr-2012
                                                     }
 
                                                     if ( @$_POST['showModules'] == 0 AND  @$_POST['doIT'] == 1  ) {
                                                         $selectshowModules = '';
                                                     } else {
-                                                        $selectshowModules = 'CHECKED'; // changed to checked - Phil - 4-20-12
+                                                        $selectshowModules = 'CHECKED'; // changed to checked - @PhilD 20-Apr-2012
                                                     }
 
                                                     if ( @$_POST['showLibraries'] == 0 AND  @$_POST['doIT'] == 1  ) {
@@ -4604,7 +4600,7 @@
                                                     if ( @$_POST['showPlugins'] == 0 AND  @$_POST['doIT'] == 1  ) {
                                                         $selectshowPlugins = '';
                                                     } else {
-                                                        $selectshowPlugins = 'CHECKED'; // changed to checked - Phil - 4-20-12
+                                                        $selectshowPlugins = 'CHECKED'; // changed to checked - @PhilD 20-Apr-2012
                                                     }
                                                     if ( @$_POST['showCoreEx'] == 0 AND  @$_POST['doIT'] == 1 ) {
                                                         $selectshowCoreEx = '';
@@ -8701,7 +8697,7 @@
             /**
              * load the export to PDF libaries and options
              *
-             * added @RussW 03-June-2020
+             * added @RussW 03-Jun-2020
              * html2pdf bundle
              * - includes html2canvas
              * - includes jsPDF

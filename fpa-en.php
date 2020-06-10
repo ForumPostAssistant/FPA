@@ -5091,11 +5091,7 @@
 
                                                         if ( $show != $folders['ARRNAME'] ) {
 
-                                                            if ( $_POST['showProtected'] == '3' ) {
-                                                                echo '[color=orange]--'. _FPA_HIDDEN .'--[/color] (';
-                                                            } else {
                                                                 echo $show .' (';
-                                                            }
 
                                                             if ( substr( $modecheck[$show]['mode'],1 ,1 ) == '7' OR substr( $modecheck[$show]['mode'],2 ,1 ) == '7' ) {
                                                                 echo '[color=Red]'. $modecheck[$show]['mode'] .'[/color]) | ';
@@ -5122,17 +5118,12 @@
 
                                                                     if ( $show != $elevated['ARRNAME'] ) {
 
-                                                                        if ( $_POST['showProtected'] == '3' ) {
-                                                                            echo '[color=orange]--'. _FPA_HIDDEN .'--[/color] (';
-                                                                        } else {
-
                                                                             if ( $key == 'None' ) {
                                                                                 echo '[color=Green][b]'. $key .'[/b][/color] ';
                                                                             } else {
                                                                                 echo $key .'/ (';
                                                                             }
 
-                                                                        }
 
                                                                         if ( $key != 'None' ) {
 
@@ -5174,11 +5165,6 @@
                                             // do the Extensions information
                                             if ( $instance['instanceFOUND'] == _FPA_Y AND ( @$_POST['showComponents'] == '1' OR @$_POST['showModules'] == '1' OR @$_POST['showPlugins'] == '1' ) ) {
                                                 echo '[quote="Extensions Discovered ::"][size=85]';
-
-                                                if ( $_POST['showProtected'] == '3' ) {
-                                                    echo '[color=orange][b]Strict[/b] Information Privacy was selected.[/color] Nothing to display.';
-                                                    echo '[/size][/quote]';
-                                                } else {
 
                                                     if ( @$_POST['showComponents'] == '1' ) {
                                                         echo '[b]'. _FPA_EXTCOM_TITLE .' :: '. _FPA_SITE .' :: [/b]';
@@ -5446,18 +5432,11 @@
                                                         echo '[/color]';
                                                     } // end if showComponents, Modules, Plugins, if cmsFOUND
                                                     echo '[/size][/quote]';
-                                                } // end showProtected != strict
 
 
                                                 // do the template information
                                                 if ( $instance['instanceFOUND'] == _FPA_Y ) {
                                                     echo '[quote="'. _FPA_TMPL_TITLE .' Discovered ::"][size=85]';
-
-                                                    if ( $_POST['showProtected'] == '3' ) {
-                                                        echo '[color=orange][b]'. _FPA_STRICT .'[/b] '. _FPA_INFOPRI .'[/color] '. _FPA_NODISPLAY;
-                                                        echo '[/size][/quote]';
-                                                    } else {
-
                                                         echo '[b]'. _FPA_TMPL_TITLE .' :: '. _FPA_SITE .' :: [/b]';
                                                         if ( isset ($template['SITE'])) {
                                                             foreach ( $template['SITE'] as $key => $show ) {
@@ -5541,7 +5520,6 @@
                                                             }
                                                         }
 
-                                                    }
                                                     echo '[/size][/quote]';
                                                 }
                                             } // end if InstanceFOUND

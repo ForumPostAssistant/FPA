@@ -662,24 +662,32 @@
     }
 
     if ( @$_POST['showProtected'] == 0 ) {
-        $_SESSION['privacy'] = 0;
-        $showProtected       = 0;
+        $_SESSION['privacy']   = 0;
+        $showProtected         = 0;
+        $selectshowProtected_1 = 'CHECKED';
+        $selectshowProtected_2 = '';
 
     } elseif ( @$_POST['showProtected'] == 1 ) {
-        $_SESSION['privacy'] = 1;
-        $showProtected       = 1;
+        $_SESSION['privacy']   = 1;
+        $showProtected         = 1;
+        $selectshowProtected_1 = '';
+        $selectshowProtected_2 = 'CHECKED';
 
     } elseif ( isset($_SESSION['privacy']) ) {
-        $_SESSION['privacy'] = $_SESSION['privacy'];
-        $showProtected       = $_SESSION['privacy'];
+        $_SESSION['privacy']   = $_SESSION['privacy'];
+        $showProtected         = $_SESSION['privacy'];
 
     } elseif ( !isset($_SESSION['privacy']) OR ( $_SESSION['privacy'] != 1 OR !isset($_POST['showProtected']) OR @$_POST['showProtected'] != 1 OR $showProtected != 1 ) )  {
-        $_SESSION['privacy'] = 0;
-        $showProtected       = 0;
+        $_SESSION['privacy']   = 0;
+        $showProtected         = 0;
+        $selectshowProtected_1 = 'CHECKED';
+        $selectshowProtected_2 = '';
 
 	} else {
-        $showProtected       = 0;
-        $_SESSION['privacy'] = 0;
+        $showProtected         = 0;
+        $_SESSION['privacy']   = 0;
+        $selectshowProtected_1 = 'CHECKED';
+        $selectshowProtected_2 = '';
 
     }
 
@@ -3349,13 +3357,14 @@
                             $privOFFACTIVE  = 'active';
                             $privOFFCHECKED = 'checked';
                             $privOFFBTN     = 'info';
+
                         } else {
                             $privONACTIVE   = 'active';
                             $privONCHECKED  = 'checked';
                             $privONBTN      = 'info';
                             $privOFFACTIVE  = '';
                             $privOFFCHECKED = '';
-                            $privOFFBTN      = 'secondary';
+                            $privOFFBTN     = 'secondary';
                         }
                     ?>
                     <li class="nav-item py-2 d-none d-lg-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Enable Privacy" data-content="Protect certain sensitive information from public view.">
@@ -4713,13 +4722,13 @@
 
                                                     <fieldset>
                                                         <div class="form-check mb-1">
-                                                            <input class="form-check-input" type="radio" name="showProtected" id="showProtected1" value="1" <?php echo $selectshowProtected_1; ?> aria-describedby="privacyNoHelp" />
+                                                            <input class="form-check-input" type="radio" name="showProtected" id="showProtected1" value="0" <?php echo $selectshowProtected_1; ?> aria-describedby="privacyNoHelp" />
                                                             <label class="form-check-label mt-1" for="showProtected1"><?php echo _FPA_PRIVNON .'<small class="text-success">('. _FPA_DEF .')</small>'; ?></label>
                                                             <small id="privacyNoHelp" class="form-text text-muted"><?php echo _FPA_PRIVNONNOTE; ?></small>
                                                         </div>
 
                                                         <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="showProtected" id="showProtected2" value="2" <?php echo $selectshowProtected_2; ?> aria-describedby="privacyPartialHelp" />
+                                                            <input class="form-check-input" type="radio" name="showProtected" id="showProtected2" value="1" <?php echo $selectshowProtected_2; ?> aria-describedby="privacyPartialHelp" />
                                                             <label class="form-check-label mt-1" for="showProtected2"><?php echo _FPA_PRIVPAR .' <!--<small class="text-success">('. _FPA_DEF .')</small>-->'; ?></label>
                                                             <small id="privacyPartialHelp" class="form-text text-muted"><?php echo _FPA_PRIVPARNOTE; ?></small>
                                                         </div>

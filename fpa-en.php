@@ -3185,7 +3185,14 @@
 
 		<title><?php echo _RES .' : v'. _RES_VERSION .' - '. _RES_LANG; ?></title>
 
-		<link rel="shortcut icon" href="./templates/protostar/favicon.ico" />
+        <?php
+            if ( file_exists('templates/protostar/favicon.ico') ) {
+                $faviconPath = 'templates/protostar';
+            } else {
+                $faviconPath = 'templates/cassiopeia';
+            }
+        ?>
+		<link rel="shortcut icon" href="./<?php echo $faviconPath; ?>/favicon.ico" />
 
         <?php if (@$_POST['doPDF'] == '1' OR @$_POST['doVEL'] == '1') { ?>
             <!--load pace progress bar if this take a while to run-->

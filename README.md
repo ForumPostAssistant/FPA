@@ -9,6 +9,9 @@ The idea is to make the information collection, and subsequent posting, as simpl
 #### Full Instructions https://forumpostassistant.github.io/docs/
 ***
 
+#### Joomla & PHP Version Support
+ All supported Joomla! versions running on **PHP v5.4 and above**
+***
 
 #### Multilanguage Version
 

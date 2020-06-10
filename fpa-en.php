@@ -5644,8 +5644,12 @@
                                                             }
                                                         ?>
 
+                                                    <?php } elseif ( $instance['platformVFILE'] == _FPA_N AND $instance['cmsVFILE'] == _FPA_N) { ?>
+                                                        <div class="border border-warning text-warning small mx-auto w-75"><?php echo _FPA_N; ?></div>
+
                                                     <?php } else { ?>
-                                                        <div class="border border-warning text-warning small mx-auto w-75"><?php echo @$instance['instanceFOUND']; ?></div>
+                                                        <!-- TODO: @RussW 10-June-2020 review this once J4 is more stable and we know if/where we can access the platform versioning-->
+                                                        <div class="border border-warning text-warning small mx-auto w-75"><?php echo _FPA_NF; ?></div>
                                                     <?php } // instanceFOUND ?>
 
                                                 </div>

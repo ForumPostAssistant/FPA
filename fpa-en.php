@@ -553,7 +553,7 @@
     define ( '_FPA_CNF_D', 'Joomla! might run but many features will have problems' );
     define ( '_FPA_CNF_E', 'Joomla! probably will not run or will have many problems' );
     define ( '_FPA_CNF_F', 'Joomla! probably will not run and will have many problems' );
-
+    define ( '_FPA_UPRIV', 'User Privileges' );
     define ( '_VER_CHECK_ATOLD', 'is out of date' );
     define ( '_VER_CHECK_ATCUR', 'is up to date' );
     define ( '_VER_CHECK_ATDEV', 'is a development version' );
@@ -4976,9 +4976,29 @@
                                                 echo  @$database['dbERROR'] .'[/color]' ;
                                             } elseif (@$instance['configDBTYPE'] != 'sqlsrv') {
                                                 echo '[b]'. _FPA_VER .':[/b] [b]'. $database['dbHOSTSERV'] .'[/b] (Client:'. $database['dbHOSTCLIENT'] .') | ';
-                                                echo '[b]'. _FPA_DB .' '. _FPA_TSIZ .':[/b] '. $database['dbSIZE'] .' | [b]'. _FPA_CONF_PREF_TABLE . ':&nbsp[/b] '. $confPrefTables . ' | [b]'. _FPA_OTHER_TABLE . ':&nbsp[/b] '. $notconfPrefTables ;
+                                                echo '[b]'. _FPA_DB .' '. _FPA_TSIZ .':[/b] '. $database['dbSIZE'] .' | [b]'. _FPA_CONF_PREF_TABLE . ':&nbsp[/b] '. $confPrefTables . ' | [b]'. _FPA_OTHER_TABLE . ':&nbsp[/b] '. $notconfPrefTables . ' | ';
                                             }
 
+                                            if ( @$database['dbPRIVS'] ) {
+                                                if (stristr($database['dbPRIVS'], 'GRANT ALL')) {
+                                                    echo '[b]'. _FPA_UPRIV .' : [/b]' . substr($database['dbPRIVS'], 0, 9);
+                                                } else {
+                                                    $privPieces = explode(',', $database['dbPRIVS']);
+                                                    $i = 0;
+                                                    while ($i < count($privPieces)) {
+                                                        if ( stristr($privPieces[$i], 'TRIGGER') ) {
+                                                            echo '[b]'. _FPA_UPRIV .' : [/b]' . substr($privPieces[$i], 0, 8);
+                                                        }elseif ( stristr($privPieces[$i], 'GRANT PROXY ON') ) {
+                                                            echo '[b]'. _FPA_UPRIV .' : [/b]'. substr($privPieces[$i], 0, 11); 
+                                                        } else {
+                                                            echo '[b]'. _FPA_UPRIV .' : [/b]' . $privPieces[$i];
+                                                        }
+                                                        $i++;
+                                                    }
+                                                }
+                                            } else {
+                                                echo '[b]'. _FPA_UPRIV .' : [/b]' . _FPA_U ;
+                                            }
                                             echo '[/size][/quote]';
 
                                             // do detailed information

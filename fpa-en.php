@@ -4885,7 +4885,7 @@
                                                 } elseif ( $instance['configSITEHTWC'] == _FPA_Y ) { echo '[color=Green]'. $instance['configSITEHTWC'] .'[/color] | ';
                                                 } elseif ( $instance['configSITEHTWC'] == _FPA_N ) { echo '[color=orange]'. $instance['configSITEHTWC'] .'[/color] | '; }
 
-                                                if ( $instance['configLIVESITE'] != _FPA_NA AND strlen($instance['configLIVESITE']) > 0) { 
+                                                if ( $instance['configLIVESITE'] != _FPA_NA AND strlen($instance['configLIVESITE']) > 0) {
                                                     echo '[b]GZip:[/b] '. $instance['configGZIP'] .' | [b]Cache:[/b] '. $instance['configCACHING'] .' | [b]CacheTime:[/b] '. $instance['configCACHETIME'] .' | [b]CacheHandler:[/b] '. $instance['configCACHEHANDLER'] .' | [b]CachePlatformPrefix:[/b] '. $instance['configCACHEPLFPFX'] .' | [b]FTP Layer:[/b] '. $instance['configFTP'] .' | [b]Proxy:[/b] '. $instance['configPROXY'] .' | [b]LiveSite:[/b] [color=orange] Is Not Empty [/color] | [b]Session lifetime:[/b] '. $instance['configLIFETIME'] .' | [b]Session handler:[/b] '. $instance['configSESSHAND'] .' | [b]Shared sessions:[/b] '. $instance['configSHASESS'] .' | [b]SSL:[/b] '. $instance['configSSL'] .' | [b]Error Reporting:[/b] '. $instance['configERRORREP'] .' | [b]Site Debug:[/b] '. $instance['configSITEDEBUG'] .' | ';
                                                 } else {
                                                     echo '[b]GZip:[/b] '. $instance['configGZIP'] .' | [b]Cache:[/b] '. $instance['configCACHING'] .' | [b]CacheTime:[/b] '. $instance['configCACHETIME'] .' | [b]CacheHandler:[/b] '. $instance['configCACHEHANDLER'] .' | [b]CachePlatformPrefix:[/b] '. $instance['configCACHEPLFPFX'] .' | [b]FTP Layer:[/b] '. $instance['configFTP'] .' | [b]Proxy:[/b] '. $instance['configPROXY'] .' | [b]LiveSite:[/b]  | [b]Session lifetime:[/b] '. $instance['configLIFETIME'] .' | [b]Session handler:[/b] '. $instance['configSESSHAND'] .' | [b]Shared sessions:[/b] '. $instance['configSHASESS'] .' | [b]SSL:[/b] '. $instance['configSSL'] .' | [b]Error Reporting:[/b] '. $instance['configERRORREP'] .' | [b]Site Debug:[/b] '. $instance['configSITEDEBUG'] .' | ';
@@ -4989,7 +4989,7 @@
                                                         if ( stristr($privPieces[$i], 'TRIGGER') ) {
                                                             echo '[b]'. _FPA_UPRIV .' : [/b]' . substr($privPieces[$i], 0, 8);
                                                         }elseif ( stristr($privPieces[$i], 'GRANT PROXY ON') ) {
-                                                            echo '[b]'. _FPA_UPRIV .' : [/b]'. substr($privPieces[$i], 0, 11); 
+                                                            echo '[b]'. _FPA_UPRIV .' : [/b]'. substr($privPieces[$i], 0, 11);
                                                         } else {
                                                             echo '[b]'. _FPA_UPRIV .' : [/b]' . $privPieces[$i];
                                                         }
@@ -5667,7 +5667,7 @@
 
                                                     <?php } else { ?>
                                                         <!-- TODO: @RussW 10-June-2020 review this once J4 is more stable and we know if/where we can access the platform versioning-->
-                                                        <div class="border border-warning text-warning small mx-auto w-75"><?php echo _FPA_NF; ?></div>
+                                                        <div class="border border-warning text-warning small mx-auto w-75"><?php echo _FPA_NA; ?></div>
                                                     <?php } // instanceFOUND ?>
 
                                                 </div>

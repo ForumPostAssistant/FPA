@@ -242,11 +242,13 @@
     if ( defined('_FPA_SSL_REDIRECT') AND ( !defined('_FPA_DEV') AND !defined('_FPA_DIAG') ) ) {
         $checkSSL = has_ssl($_SERVER['HTTP_HOST']);
     }
-    $pageURL = $_SERVER['HTTP_HOST'] . _FPA_SELF;
+    $pageURL = $_SERVER['HTTP_HOST'] . '/' . _FPA_SELF;
     // do the rediect
     if (is_bool(@$checkSSL) === true AND @$_SERVER['HTTPS'] != 'on') {
-        header("Location: https://$pageURL");
-        exit;
+        if (@$checkSSL) {
+            header("Location: https://$pageURL");
+            exit;
+        }
     }
 
 

@@ -5479,8 +5479,8 @@
                                                                             } else { $deftempl = ''; }
                                                                         } else { $deftempl = ''; }
                                                                         if ($deftempl == 1 ) {
-                                                                            $bldop = '[b][u]';
-                                                                            $bldcl = '[/u][/b]';
+                                                                            $bldop = '[b]'. "\u{2605} ";
+                                                                            $bldcl = '[/b]';
                                                                         } else {
                                                                             $bldop = '';
                                                                             $bldcl = '';
@@ -5521,8 +5521,8 @@
                                                                                 } else { $deftempl = ''; }
                                                                         } else { $deftempl = ''; }
                                                                             if ($deftempl == 1 ) {
-                                                                                $bldop = '[b][u]';
-                                                                                $bldcl = '[/u][/b]';
+                                                                                $bldop = '[b]'. "\u{2605} ";
+                                                                                $bldcl = '[/b]';
                                                                             } else {
                                                                                 $bldop = '';
                                                                                 $bldcl = '';

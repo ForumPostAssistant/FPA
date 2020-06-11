@@ -6,7 +6,7 @@
      * @category Diagnostic Tool
      * @author RussW
      * @author PhilD
-     * @copyright 2011-present, GNU GPLv3 or later license
+     * @copyright 2011-present, GNU GPLv2 or later license
      * @see https://forumpostassistant.github.io/docs/
      * @internal Supports: All known Joomla! versions running >php5.4
      * @internal Contributors : @RussW, @PhilD13, @mandville, @Frostmakk, @sozzled, @Webdongle, @btoplak
@@ -285,7 +285,7 @@
 	// Define some basic assistant information
 	define ( '_LICENSE_LINK', '<a href="https://www.gnu.org/licenses/" target="_blank" rel="noopener noreferrer">https://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. <br> This is free software,
-	and covered under the GNU GPLv3 or later license. You are welcome to redistribute it under certain conditions.
+	and covered under the GNU GPLv2 or later license. You are welcome to redistribute it under certain conditions.
 	For details read the LICENSE.txt file included in the download package with this script.
     A copy of the license may also be obtained at ' );
 	define ( '_RES_FPALINK', 'https://github.com/ForumPostAssistant/FPA/tarball/en-GB/' ); // where to get the latest 'Final Releases'

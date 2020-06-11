@@ -95,7 +95,7 @@
     define ( '_FPA_SELF', basename($_SERVER['PHP_SELF']) );  // DONT DISABLE SEVERAL FUNCTIONS RELY ON THIS : take in to account renamed FPA, ensure all local links work
 
     define ( '_FPA_SELF_DESTRUCT', TRUE);         // self-destruct, attempts to self-delete on next run if file older than configured duration
-    #define ( '_FPA_SSL_REDIRECT', TRUE);          // self-destruct, attempts to self-delete on next run if file older than configured duration
+    define ( '_FPA_SSL_REDIRECT', TRUE);          // SSL Redirect - when possible and if a valid SSL certificate is found FPa will attempt to redirect to the SSL version of the site
     define ( '_LIVE_CHECK_FPA', TRUE );           // enable live latest FPA version check
     define ( '_LIVE_CHECK_JOOMLA', TRUE );        // enable live latest Joomla! version check
     #define ( '_LIVE_CHECK_VEL', TRUE );           // enable live VEL check

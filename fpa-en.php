@@ -5479,7 +5479,7 @@
                                                                             } else { $deftempl = ''; }
                                                                         } else { $deftempl = ''; }
                                                                         if ($deftempl == 1 ) {
-                                                                            $bldop = '[b]'. "\u{2605} ";
+                                                                            $bldop = '[b]';
                                                                             $bldcl = '[/b]';
                                                                         } else {
                                                                             $bldop = '';
@@ -5521,7 +5521,7 @@
                                                                                 } else { $deftempl = ''; }
                                                                         } else { $deftempl = ''; }
                                                                             if ($deftempl == 1 ) {
-                                                                                $bldop = '[b]'. "\u{2605} ";
+                                                                                $bldop = '[b]';
                                                                                 $bldcl = '[/b]';
                                                                             } else {
                                                                                 $bldop = '';

@@ -22,8 +22,8 @@
      define ( '_RES', 'Forum Post Assistant' );
      define ( '_RES_VERSION', '1.6.0' );
      define ( '_RES_CODENAME', 'rhytidectomy' );
-     define ( '_RES_LAST_UPDATED', '9-Jun-2020' );
-     define ( '_RES_RELEASE', 'RC' );              // can be Alpha, Beta, RC, Stable
+     define ( '_RES_LAST_UPDATED', '17-Jun-2020' );
+     define ( '_RES_RELEASE', 'Stable' );              // can be Alpha, Beta, RC, Stable
      define ( '_RES_LANG', 'en-GB' );                 // Country/Language Code
      define ( '_RES_COPYRIGHT_STMT', ' Copyright &copy; 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
 
@@ -5479,8 +5479,8 @@
                                                                             } else { $deftempl = ''; }
                                                                         } else { $deftempl = ''; }
                                                                         if ($deftempl == 1 ) {
-                                                                            $bldop = '[b]';
-                                                                            $bldcl = '[/b]';
+                                                                            $bldop = '[b][u]';
+                                                                            $bldcl = '[/u][/b]';
                                                                         } else {
                                                                             $bldop = '';
                                                                             $bldcl = '';
@@ -5521,8 +5521,8 @@
                                                                                 } else { $deftempl = ''; }
                                                                         } else { $deftempl = ''; }
                                                                             if ($deftempl == 1 ) {
-                                                                                $bldop = '[b]';
-                                                                                $bldcl = '[/b]';
+                                                                                $bldop = '[b][u]';
+                                                                                $bldcl = '[/u][/b]';
                                                                             } else {
                                                                                 $bldop = '';
                                                                                 $bldcl = '';

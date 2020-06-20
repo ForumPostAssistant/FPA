@@ -4171,7 +4171,7 @@
                                             </div>
                                         <?php } // end FPA ?>
 
-                                        <?php if ( defined( '_LIVE_CHECK_JOOMLA' ) AND $instance['instanceFOUND'] == _FPA_Y AND extension_loaded('simplexml') ) { ?>
+                                        <?php if ( defined( '_LIVE_CHECK_JOOMLA' ) AND $instance['instanceFOUND'] == _FPA_Y AND extension_loaded('simplexml') AND ini_get( 'allow_url_fopen' ) == '1' ) { ?>
                                             <div class="col text-center mb-2 d-flex align-self-stretch">
 
                                                 <?php

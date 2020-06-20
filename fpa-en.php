@@ -4276,6 +4276,13 @@
                                         $confidenceResult['PHP cURL available'] = 1;
                                     }
 
+                                    // check for allow_url_fopen
+                                    if ( $phpenv['phpURLFOPEN'] == '1' ) {
+                                        $confidenceResult['PHP allow_url_fopen available'] = 2;
+                                    } else {
+                                        $confidenceResult['PHP allow_url_fopen available'] = 0;
+                                    }
+
                                     // check for XML extensions
                                     if (array_key_exists( 'xml', $phpextensions ) OR array_key_exists( 'libxml', $phpextensions )) {
                                         $confidenceResult['PHP xml or libxml available'] = 2;

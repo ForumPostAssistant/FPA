@@ -3133,7 +3133,7 @@
 
             } // function
 
-        } // if simpleXML
+        } // if simpleXML & allow_url_fopen
 
     } // end Joomla! LiveCheck
 
@@ -4179,6 +4179,12 @@
                                                     doJOOMLALIVE($thisJVER);
                                                 ?>
 
+                                            </div>
+
+                                        <?php } else { ?>
+                                            <div class="w-100 p-2 bg-white small border border-info text-info text-center">
+                                                <i class="fas fa-exclamation-circle fa-fw"></i>&nbsp;
+                                                Unable to check Joomla! Version <small>(SimpleXML or allow_url_fopen not available)</small>
                                             </div>
                                         <?php } // end Joomla! ?>
 

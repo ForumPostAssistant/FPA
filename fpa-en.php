@@ -2362,7 +2362,7 @@
 
         if (function_exists('mysqli_connect')) {
             $dBconn              = @new mysqli( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'], $instance['configDBNAME'] );
-            $database['dbERROR'] = mysqli_connect_errno( $dBconn ) .':'. mysqli_connect_error( $dBconn );
+            $database['dbERROR'] = mysqli_connect_errno() .':'. mysqli_connect_error();
             $sql                 = "select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template' or type='library'";
             $result              = @$dBconn->query($sql);
 
@@ -2466,7 +2466,7 @@
                 $database['dbTABLECOUNT']   = $rowCount;
 
             } else {
-            // $database['dbERROR'] = mysqli_connect_errno( $dBconn ) .':'. mysqli_connect_error( $dBconn );
+            // $database['dbERROR'] = mysqli_connect_errno() .':'. mysqli_connect_error();
             } // end mysqli if $dBconn is good
 
         } else {
@@ -5380,7 +5380,7 @@
 
                                                     if ( @$_POST['showLibraries'] == '1' ) {
                                                         echo '[b]'. _FPA_EXTLIB_TITLE .' :: [/b]';
-                                                        if ( @$_POST[showCoreEx] == '1') {
+                                                        if ( $showCoreEx == '1') {
                                                             echo "\r\n";
                                                             echo '[b] ' . _FPA_JCORE . ' :: [/b][color=Blue]';
                                                             if ( isset ($library['SITE'])) {

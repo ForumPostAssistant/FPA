@@ -183,8 +183,8 @@
         // only try and delete the file if we can get the 'last modified' date
         if ( !empty($fileinfo) ) {
 
-            $fileMTime = date( 'd-m-Y', $fileinfo['mtime'] );
-            $today     = date( 'd-m-Y' );
+            $fileMTime = @date( 'd-m-Y', $fileinfo['mtime'] );
+            $today     = @date( 'd-m-Y' );
 
             $thisDate = new DateTime($today);
             $fileDate = new DateTime($fileMTime);
@@ -3495,7 +3495,7 @@
             <div class="container d-none d-print-block border-bottom border-dark" id="printHeader">
                 <div>
                     <h2 class="h1 font-weight-lighter mb-1">
-                        <span class="xsmall text-right float-right"><?php echo date('jS F Y'); ?><br /><?php echo date('g:i a'); ?><br /><?php echo date('e'); ?></span>
+                        <span class="xsmall text-right float-right"><?php echo @date('jS F Y'); ?><br /><?php echo @date('g:i a'); ?><br /><?php echo @date('e'); ?></span>
                             <?php
                                 if ( !empty($config->sitename) ) {
                                     echo $config->sitename;
@@ -3638,7 +3638,7 @@
                                 if  (@$instance['cmsRELEASE'] >= '4.0') {
                                     $fpa['supportENV']['minPHP']        = '7.2.5';
                                     $fpa['supportENV']['minSQL']        = '5.6.0';
-                                    $fpa['supportENV']['maxPHP']        = '8.0.0';
+                                    $fpa['supportENV']['maxPHP']        = '8.1.0';
                                     $fpa['supportENV']['maxSQL']        = '9.0.0';
                                     $fpa['supportENV']['badPHP'][0]     = '5.3.0';
                                     $fpa['supportENV']['badPHP'][1]     = '5.3.1';
@@ -3652,8 +3652,22 @@
                                 } elseif  (@$instance['cmsRELEASE'] == '3.10') {
                                     $fpa['supportENV']['minPHP']        = '5.3.10';
                                     $fpa['supportENV']['minSQL']        = '5.1.0';
-                                    $fpa['supportENV']['maxPHP']        = '8.0.0';
+                                    $fpa['supportENV']['maxPHP']        = '8.1.0';
                                     $fpa['supportENV']['maxSQL']        = '9.0.0';
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif  (@$instance['cmsRELEASE'] == '3.9' AND @$instance['cmsDEVLEVEL'] > '12') {
+                                    $fpa['supportENV']['minPHP']        = '5.3.10';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '8.1.0';
+                                    $fpa['supportENV']['maxSQL']        = '8.5.0';
                                     $fpa['supportENV']['badPHP'][0]     = '5.3.0';
                                     $fpa['supportENV']['badPHP'][1]     = '5.3.1';
                                     $fpa['supportENV']['badPHP'][2]     = '5.3.2';
@@ -3666,7 +3680,7 @@
                                 } elseif  (@$instance['cmsRELEASE'] == '3.9') {
                                     $fpa['supportENV']['minPHP']        = '5.3.10';
                                     $fpa['supportENV']['minSQL']        = '5.1.0';
-                                    $fpa['supportENV']['maxPHP']        = '7.5.0';
+                                    $fpa['supportENV']['maxPHP']        = '7.3.99';
                                     $fpa['supportENV']['maxSQL']        = '8.5.0';
                                     $fpa['supportENV']['badPHP'][0]     = '5.3.0';
                                     $fpa['supportENV']['badPHP'][1]     = '5.3.1';
@@ -3680,7 +3694,7 @@
                                 } elseif  (@$instance['cmsRELEASE'] > '3.7' AND @$instance['cmsDEVLEVEL'] > '2') {
                                     $fpa['supportENV']['minPHP']        = '5.3.10';
                                     $fpa['supportENV']['minSQL']        = '5.1.0';
-                                    $fpa['supportENV']['maxPHP']        = '7.5.0';
+                                    $fpa['supportENV']['maxPHP']        = '7.3.99';
                                     $fpa['supportENV']['maxSQL']        = '5.8.0';
                                     $fpa['supportENV']['badPHP'][0]     = '5.3.0';
                                     $fpa['supportENV']['badPHP'][1]     = '5.3.1';

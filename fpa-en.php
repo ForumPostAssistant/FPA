@@ -2363,6 +2363,7 @@
         if (function_exists('mysqli_connect')) {
             $dBconn              = @new mysqli( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'], $instance['configDBNAME'] );
             $database['dbERROR'] = mysqli_connect_errno() .':'. mysqli_connect_error();
+            if ($database['dbERROR'] == '0:') {
             $sql                 = "select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template' or type='library'";
             $result              = @$dBconn->query($sql);
 
@@ -2468,6 +2469,17 @@
             } else {
             // $database['dbERROR'] = mysqli_connect_errno() .':'. mysqli_connect_error();
             } // end mysqli if $dBconn is good
+
+        } else {
+            $database['dbHOSTSERV']     = _FPA_U; // SQL server version
+            $database['dbHOSTINFO']     = _FPA_U; // connection type to dB
+            $database['dbHOSTPROTO']    = _FPA_U; // server protocol type
+            $database['dbHOSTCLIENT']   = _FPA_U; // client library version
+            $database['dbHOSTDEFCHSET'] = _FPA_U; // hosts default character-set
+            $database['dbHOSTSTATS']    = _FPA_U; // latest statistics
+            $database['dbCOLLATION']    = _FPA_U; // database collation
+            $database['dbCHARSET']      = _FPA_U; // database character-set
+        } 
 
         } else {
             $database['dbHOSTSERV']     = _FPA_U; // SQL server version

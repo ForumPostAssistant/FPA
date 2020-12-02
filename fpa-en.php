@@ -1,6 +1,6 @@
 <?php
     /**
-     * @version 1.6.0
+     * @version 1.6.2
      * @package Joomla!
      * @subpackage Forum Post Assistant
      * @category Diagnostic Tool
@@ -20,9 +20,9 @@
      *
      */
      define ( '_RES', 'Forum Post Assistant' );
-     define ( '_RES_VERSION', '1.6.1' );
-     define ( '_RES_CODENAME', 'rhytidectomy' );
-     define ( '_RES_LAST_UPDATED', '21-Jun-2020' );
+     define ( '_RES_VERSION', '1.6.2' );
+     define ( '_RES_CODENAME', 'kahdeksan' );
+     define ( '_RES_LAST_UPDATED', '3-Dec-2020' );
      define ( '_RES_RELEASE', 'Stable' );              // can be Alpha, Beta, RC, Stable
      define ( '_RES_LANG', 'en-GB' );                 // Country/Language Code
      define ( '_RES_COPYRIGHT_STMT', ' Copyright &copy; 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );

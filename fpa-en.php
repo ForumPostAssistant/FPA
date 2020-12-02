@@ -7158,11 +7158,24 @@
                                                         </td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="text-capitalize">No. Tables</td>
+                                                        <td class="text-capitalize">No. Tables with config prefix</td>
                                                         <td>
                                                             <?php
                                                                 if ( $database['dbTABLECOUNT'] ) {
-                                                                    echo $database['dbTABLECOUNT'] .' tables';
+                                                                    echo $confPrefTables .' tables';
+
+                                                                } else {
+                                                                    echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                                }
+                                                            ?>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="text-capitalize">No. Other Tables</td>
+                                                        <td>
+                                                            <?php
+                                                                if ( $database['dbTABLECOUNT'] ) {
+                                                                    echo $notconfPrefTables .' tables';
 
                                                                 } else {
                                                                     echo '<span class="text-warning">'. _FPA_U .'</span>';

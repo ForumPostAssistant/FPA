@@ -207,6 +207,78 @@
 
 
 
+	/**
+	 * loopProtection - check for an upstream server/proxy/cdn/load balancer to avoid potential redirect loops
+	 *
+	 * a redirect loop condition may arise if the hosting server & upstream server use
+	 * differing protocols to the public outbound protocol. (http => http => https)
+	 * If the FPA auto-SSL feature redirects the hosting server to https, there is the
+	 * potential for the upstream server begin a protocol redirection back to http causing
+	 * a server redirection loop ("too many redirects" fatal: 500 error)
+	 *
+	 * So, we find the Joomla! configuration, if available, and check;
+	 *
+	 * - if $force_ssl is enabled (1, 2), let the auto-redirect occur anyway as SSL is already in use
+	 * - if $proxy_enable is enabled AND $force_ssl is not (0), don't redirect
+	 * - else check if we have any headers from an upstream server, if so, don't auto-redirect and let
+	 *   the upstream server handle the protocol
+	 *
+	 * - if we haven't detected any upstream server(s), attempt to then discover if the users
+	 * hosting server is SSL capable with a valid certificate and allow the auto-redirect
+	 *
+	 * added @RussW 4-Dec-2020
+	 * GitHub Issue #108
+	 */
+
+	// find and load the configuration file to get a few relevant params
+	if ( file_exists('configuration.php') ) {
+		require_once('configuration.php');
+		$config = new JConfig();
+
+	} elseif ( file_exists('includes/defines.php') ) {
+		$configOverride = file_get_contents( 'includes/defines.php' );
+		preg_match ( '#JPATH_CONFIGURATION\s*\S*\s*[\'"](.*)[\'"]#', $configOverride, $configOVERRIDEPATH );
+
+		if ( file_exists( @$configOVERRIDEPATH[1] . '\configuration.php' ) ) {
+			require_once(@$configOVERRIDEPATH[1] . '\configuration.php');
+			$config = new JConfig();
+		}
+
+	} // configuration detection
+
+
+	$loopProtection	= '0'; // assume no upstream server initially
+	if ( isset($config->force_ssl) AND $config->force_ssl > '0' ) {
+		// force_ssl is enabled(1,2) then assume it's working and just redirect to https
+		$loopProtection	= '0';
+
+	} elseif ( isset($config->force_ssl) AND $config->force_ssl == '0' AND isset($config->proxy_enable) AND $config->proxy_enable == '1' ) {
+		// proxy_enable has been manually set, don't redirect and let the proxy manage the protocol
+		$loopProtection	= '1';
+
+	} else {
+		// check for a multitude of upstream/proxy/cdn/load balancer headers
+		$headers = array('CLIENT_IP','FORWARDED','FORWARDED_FOR','FORWARDED_FOR_IP','VIA','X_FORWARDED','X_FORWARDED_FOR','HTTP_CLIENT_IP','HTTP_FORWARDED','HTTP_FORWARDED_FOR','HTTP_FORWARDED_FOR_IP','HTTP_PROXY_CONNECTION','HTTP_VIA','HTTP_X_FORWARDED','HTTP_X_FORWARDED_FOR');
+
+		foreach ($headers as $header) {
+
+			if (isset($_SERVER[$header])) {
+				// if upstream server found, don't redirect and let the proxy manage the protocol
+				$loopProtection	= '1';
+
+			}
+
+			echo 'TESTING: '. htmlspecialchars(@$header.": ".@$_SERVER[$header], ENT_QUOTES, 'UTF-8')."<br />";
+
+		} // end headers foreach
+
+	} // end loopProtection
+
+	// destroy the $config array so as not to cause issues later
+	unset ($config);
+
+
+
     /**
      * SSL check and redirect
      *
@@ -216,40 +288,46 @@
      */
     function has_ssl( $domain ) {
 
-        $res = false;
-        $stream = @stream_context_create( array( 'ssl' => array( 'capture_peer_cert' => true ) ) );
-        $socket = @stream_socket_client( 'ssl://' . $domain . ':443', $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $stream );
+		$res		= false;
 
-        // If we got an ssl certificate we check here, if the certificate domain matches the website domain.
-        if ( $socket ) {
-            $cont = stream_context_get_params( $socket );
-            $cert_ressource = $cont['options']['ssl']['peer_certificate'];
-            $cert = openssl_x509_parse( $cert_ressource );
+		$stream = @stream_context_create( array( 'ssl' => array( 'capture_peer_cert' => true ) ) );
+		$socket = @stream_socket_client( 'ssl://' . $domain . ':443', $errno, $errstr, 30, STREAM_CLIENT_CONNECT, $stream );
 
-            // Expected name has format "/CN=*.yourdomain.com"
-            $namepart = explode( '=', $cert['name'] );
+		// If we got an ssl certificate we check here, if the certificate domain matches the website domain.
+		if ( $socket ) {
+			$cont = stream_context_get_params( $socket );
+			$cert_ressource = $cont['options']['ssl']['peer_certificate'];
+			$cert = openssl_x509_parse( $cert_ressource );
 
-            // We want to correctly confirm the certificate even for subdomains like "www.yourdomain.com"
-            if ( count( $namepart ) == 2 ) {
-                $cert_domain  = trim( $namepart[1], '*. ' );
-                $check_domain = substr( $domain, -strlen( $cert_domain ) );
-                $res          = ($cert_domain == $check_domain);
-            }
-        }
+			// Expected name has format "/CN=*.yourdomain.com"
+			$namepart = explode( '=', $cert['name'] );
 
-        return $res;
-    }
+			// We want to correctly confirm the certificate even for subdomains like "www.yourdomain.com"
+			if ( count( $namepart ) == 2 ) {
+				$cert_domain  = trim( $namepart[1], '*. ' );
+				$check_domain = substr( $domain, -strlen( $cert_domain ) );
+				$res          = ($cert_domain == $check_domain);
+			}
+		}
+		return $res;
+
+	}
+
     if ( defined('_FPA_SSL_REDIRECT') AND ( !defined('_FPA_DEV') AND !defined('_FPA_DIAG') ) ) {
-        $checkSSL = has_ssl($_SERVER['HTTP_HOST']);
-    }
-    $pageURL = $_SERVER['HTTP_HOST'] . '/' . _FPA_SELF;
+		$checkSSL = has_ssl($_SERVER['HTTP_HOST']);
+
+	}
+
+	$pageURL = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
     // do the rediect
-    if (is_bool(@$checkSSL) === true AND @$_SERVER['HTTPS'] != 'on') {
-        if (@$checkSSL) {
+	if (is_bool(@$checkSSL) === true AND @$_SERVER['HTTPS'] != 'on' AND $loopProtection == '0') {
+        // if (@$checkSSL) {
             header("Location: https://$pageURL");
             exit;
-        }
-    }
+		// }
+
+	}
 
 
 
@@ -2479,7 +2557,7 @@
             $database['dbHOSTSTATS']    = _FPA_U; // latest statistics
             $database['dbCOLLATION']    = _FPA_U; // database collation
             $database['dbCHARSET']      = _FPA_U; // database character-set
-        } 
+        }
 
         } else {
             $database['dbHOSTSERV']     = _FPA_U; // SQL server version

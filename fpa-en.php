@@ -3648,7 +3648,8 @@
 
                     if ( @$_SERVER['HTTPS'] != 'on' ) {
                         echo '<p class="pt-1 mb-1 w-75 mx-auto"><i class="fas fa-unlock-alt fa-fw"></i> SSL may not be available for this site, it is recommended that SSL is used on all sites where possible.</p>';
-                    }
+					}
+
                 ?>
 
             </div><!--/.alert DEV/DIAG-->
@@ -3656,9 +3657,14 @@
         <?php
             } else { // end developer- or diag -mode display
                 ini_set( 'display_errors', 0 ); // default-display
-            }
-        ?>
+			}
+		?>
 
+		<?php if ($loopProtection == '1') { ?>
+            <div class="alert alert-info text-white text-center p-0 m-0 d-print-none" data-html2canvas-ignore="true">
+				<p class="pt-1 mb-1 w-75 mx-auto"><i class="fas fa-server fa-fw"></i> You may be using a Proxy, Caching, CDN Server or Load Balancer. SSL results may vary.</p>
+			</div>
+		<?php } ?>
 
 
         <main class="main">

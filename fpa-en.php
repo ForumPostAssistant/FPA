@@ -208,7 +208,7 @@
 
 
 	/**
-	 * loopProtection - check for an upstream server/proxy/cdn/load balancer to avoid potential redirect loops
+	 * sslloopPROTECT - check for an upstream server/proxy/cdn/load balancer to avoid potential redirect loops
 	 *
 	 * a redirect loop condition may arise if the hosting server & upstream server use
 	 * differing protocols to the public outbound protocol. (http => http => https)
@@ -247,14 +247,14 @@
 	} // configuration detection
 
 
-	$loopProtection	= '0'; // assume no upstream server initially
+	$sslloopPROTECT	= '0';
 	if ( isset($config->force_ssl) AND $config->force_ssl > '0' ) {
 		// force_ssl is enabled(1,2) then assume it's working and just redirect to https
-		$loopProtection	= '0';
+		$sslloopPROTECT	= '0';
 
 	} elseif ( isset($config->force_ssl) AND $config->force_ssl == '0' AND isset($config->proxy_enable) AND $config->proxy_enable == '1' ) {
 		// proxy_enable has been manually set, don't redirect and let the proxy manage the protocol
-		$loopProtection	= '1';
+		$sslloopPROTECT	= '1';
 
 	} else {
 		// check for a multitude of upstream/proxy/cdn/load balancer headers
@@ -264,7 +264,7 @@
 
 			if (isset($_SERVER[$header])) {
 				// if upstream server found, don't redirect and let the proxy manage the protocol
-				$loopProtection	= '1';
+				$sslloopPROTECT	= '1';
 
 			}
 
@@ -272,7 +272,7 @@
 
 		} // end headers foreach
 
-	} // end loopProtection
+	} // end sslloopPROTECT
 
 	// destroy the $config array so as not to cause issues later
 	unset ($config);
@@ -321,11 +321,11 @@
 	$pageURL = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
     // do the rediect
-	if (is_bool(@$checkSSL) === true AND @$_SERVER['HTTPS'] != 'on' AND $loopProtection == '0') {
-        // if (@$checkSSL) {
+	if (is_bool(@$checkSSL) === true AND @$_SERVER['HTTPS'] != 'on' AND $sslloopPROTECT == '0') {
+         if (@$checkSSL) {
             header("Location: https://$pageURL");
             exit;
-		// }
+		 }
 
 	}
 
@@ -3660,7 +3660,7 @@
 			}
 		?>
 
-		<?php if ($loopProtection == '1') { ?>
+		<?php if ($sslloopPROTECT == '1') { ?>
             <div class="alert alert-info text-white text-center p-0 m-0 d-print-none" data-html2canvas-ignore="true">
 				<p class="pt-1 mb-1 w-75 mx-auto"><i class="fas fa-server fa-fw"></i> You may be using a Proxy, Caching, CDN Server or Load Balancer. SSL results may vary.</p>
 			</div>

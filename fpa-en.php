@@ -3335,7 +3335,7 @@
             if ( file_exists('templates/protostar/favicon.ico') ) {
                 $faviconPath = 'templates/protostar';
             } else {
-                $faviconPath = 'templates/cassiopeia';
+                $faviconPath = 'media/system/images';
             }
         ?>
 		<link rel="shortcut icon" href="./<?php echo $faviconPath; ?>/favicon.ico" />

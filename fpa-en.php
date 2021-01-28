@@ -2670,10 +2670,10 @@
                     if ($pgDbUserIsSuper == "t") {
                        $pgDbUserPriv = 'SuperUser';
                     }
-                    elseif ($pgDbUserIsOwner == "t") {
+                    elseif ($pgDbUserIsOwner) {
                        $pgDbUserPriv = 'Database Owner';
                     }
-                    elseif ($pgExtTblUserIsOwner == "t") {
+                    elseif ($pgExtTblUserIsOwner) {
                        $pgDbUserPriv = 'Table Owner';
                     }
                     else {

@@ -3313,7 +3313,7 @@
         </script>
 
     </head>
-    <body data-spy="scroll" data-target=".navbar" data-offset="68" id="fpa-body">
+    <body data-bs-spy="scroll" data-bs-target="#navbar-main" data-bs-offset="68" id="fpa-body">
 
         <header>
 
@@ -3332,171 +3332,173 @@
                     $navbarBrandClass = 'primary';
                 }
             ?>
-            <nav class="navbar navbar-expand-lg <?php echo $navbarClass; ?> fixed-top shadow d-print-none" data-html2canvas-ignore="true">
+            <nav id="navbar-main" class="navbar navbar-expand-lg <?php echo $navbarClass; ?> fixed-top shadow d-print-none" data-html2canvas-ignore="true">
+				<div class="container>
 
-                <a class="navbar-brand mr-0 mr-md-2 text-<?php echo $navbarBrandClass; ?> py-2 lead font-weight-bolder" href="<?php echo _FPA_SELF; ?>" aria-label="<?php echo _RES; ?>">
-                    <span class="d-inline-block d-sm-none" aria-hidden="true">FPA</span>
-                    <span class="d-none d-sm-inline-block"><?php echo _RES; ?></span>
-                    <span class="ml-1 small text-muted"><?php echo 'v'. _RES_VERSION .' ('. _RES_CODENAME; ?>)</span>
-                </a><!--/.navbar-brand-->
+					<a class="navbar-brand mr-0 mr-md-2 text-<?php echo $navbarBrandClass; ?> py-2 lead font-weight-bolder" href="<?php echo _FPA_SELF; ?>" aria-label="<?php echo _RES; ?>">
+						<span class="d-inline-block d-sm-none" aria-hidden="true">FPA</span>
+						<span class="d-none d-sm-inline-block"><?php echo _RES; ?></span>
+						<span class="ml-1 small text-muted"><?php echo 'v'. _RES_VERSION .' ('. _RES_CODENAME; ?>)</span>
+					</a><!--/.navbar-brand-->
 
-                <ul class="navbar-nav flex-row ml-md-auto">
+					<ul class="navbar-nav flex-row ml-md-auto">
 
-                    <!--dropdown anchors-->
-                    <li class="nav-item dropdown py-2 d-none d-md-inline-block">
-                        <a class="nav-link 1dropdown-toggle px-2 mr-1" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="Report navigation">
-                            <i class="fas fa-ellipsis-v fa-fw lead"></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right shadow" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item py-1" href="#fpa-dashboard">Dashboard</a>
-                            <?php if ( @$_POST['doIT'] == '1' ) { ?>
-                                <a class="dropdown-item py-1" href="#postDetails">Post Content</a>
-                            <?php } ?>
-                            <a class="dropdown-item py-1" href="#instance-discovery">Discovery</a>
-                            <?php if ( $showTables == '1' ) { ?>
-                                <a class="dropdown-item py-1" href="#database-tables">Database</a>
-                            <?php } ?>
-                                <a class="dropdown-item py-1" href="#folder-checks">Permissions</a>
-                            <?php if ( $showComponents == '1' OR $showModules == '1' OR $showLibraries == '1' OR $showPlugins == '1' ) { ?>
-                                <a class="dropdown-item py-1" href="#extensions">Extensions</a>
-                            <?php } ?>
-                            <a class="dropdown-item py-1" href="#templates">Templates</a>
-                            <div class="dropdown-divider mb-0"></div>
+						<!--dropdown anchors-->
+						<li class="nav-item dropdown py-2 d-none d-md-inline-block">
+							<a class="nav-link dropdown-toggle px-2 mr-1" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" aria-label="Report navigation">
+								<i class="fas fa-ellipsis-v fa-fw lead"></i>
+							</a>
+							<div class="dropdown-menu dropdown-menu-right shadow" aria-labelledby="navbarDropdown">
+								<a class="dropdown-item py-1" href="#fpa-dashboard">Dashboard</a>
+								<?php if ( @$_POST['doIT'] == '1' ) { ?>
+									<a class="dropdown-item py-1" href="#postDetails">Post Content</a>
+								<?php } ?>
+								<a class="dropdown-item py-1" href="#instance-discovery">Discovery</a>
+								<?php if ( $showTables == '1' ) { ?>
+									<a class="dropdown-item py-1" href="#database-tables">Database</a>
+								<?php } ?>
+									<a class="dropdown-item py-1" href="#folder-checks">Permissions</a>
+								<?php if ( $showComponents == '1' OR $showModules == '1' OR $showLibraries == '1' OR $showPlugins == '1' ) { ?>
+									<a class="dropdown-item py-1" href="#extensions">Extensions</a>
+								<?php } ?>
+								<a class="dropdown-item py-1" href="#templates">Templates</a>
+								<div class="dropdown-divider mb-0"></div>
 
-                            <form class="m-0 ml-auto p-0 1bg-danger small 1text-white" method="post" name="dropdownDELForm" id="dropdownDELForm">
-                                <input type="hidden" name="act" value="delete" />
-                                <button class="btn btn-danger text-white text-left btn-sm mr-1 w-100" type="submit" aria-label="Delete FPA now">
-                                    <i class="fas fa-trash-alt fa-fw text-white lead"></i> Delete FPA Now
-                                </button>
-                            </form>
-                        </div>
-                    </li>
+								<form class="m-0 ml-auto p-0 1bg-danger small 1text-white" method="post" name="dropdownDELForm" id="dropdownDELForm">
+									<input type="hidden" name="act" value="delete" />
+									<button class="btn btn-danger text-white text-left btn-sm mr-1 w-100" type="submit" aria-label="Delete FPA now">
+										<i class="fas fa-trash-alt fa-fw text-white lead"></i> Delete FPA Now
+									</button>
+								</form>
+							</div>
+						</li>
 
-                    <!--privacy-->
-                    <?php
-                        if ($showProtected == 0) {
-                            $privONACTIVE   = '';
-                            $privONCHECKED  = '';
-                            $privONBTN      = 'secondary';
-                            $privOFFACTIVE  = 'active';
-                            $privOFFCHECKED = 'checked';
-                            $privOFFBTN     = 'info';
+						<!--privacy-->
+						<?php
+							if ($showProtected == 0) {
+								$privONACTIVE   = '';
+								$privONCHECKED  = '';
+								$privONBTN      = 'secondary';
+								$privOFFACTIVE  = 'active';
+								$privOFFCHECKED = 'checked';
+								$privOFFBTN     = 'info';
 
-                        } else {
-                            $privONACTIVE   = 'active';
-                            $privONCHECKED  = 'checked';
-                            $privONBTN      = 'info';
-                            $privOFFACTIVE  = '';
-                            $privOFFCHECKED = '';
-                            $privOFFBTN     = 'secondary';
-                        }
-                    ?>
-                    <li class="nav-item py-2 d-none d-lg-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Enable Privacy" data-content="Protect certain sensitive information from public view.">
-                        <form class="m-0 ml-auto p-0" method="post" name="navVELForm" id="navPROTECTForm">
-                            <div class="xsmall text-center text-primary">Privacy</div>
-                            <div class="btn-group btn-group-toggle mr-2" data-toggle="buttons">
-                                <label class="btn btn-<?php echo $privONBTN; ?> btn-sm xsmall <?php echo $privONACTIVE; ?>">
-                                    <input type="radio" name="showProtected" value="1" onclick="document.getElementById('navPROTECTForm').submit()" id="showProtectedON" <?php echo $privONCHECKED; ?>> ON
-                                </label>
-                                <label class="btn btn-<?php echo $privOFFBTN; ?> btn-sm xsmall <?php echo $privOFFACTIVE; ?>">
-                                    <input type="radio" name="showProtected" value="0" onclick="document.getElementById('navPROTECTForm').submit()" id="showProtectedOFF" <?php echo $privOFFCHECKED; ?> > OFF
-                                </label>
-                            </div>
-                        </form>
-                    </li>
+							} else {
+								$privONACTIVE   = 'active';
+								$privONCHECKED  = 'checked';
+								$privONBTN      = 'info';
+								$privOFFACTIVE  = '';
+								$privOFFCHECKED = '';
+								$privOFFBTN     = 'secondary';
+							}
+						?>
+						<li class="nav-item py-2 d-none d-lg-inline-block" data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="bottom" data-bs-fallbackPlacement="flip" data-bs-title="Enable Privacy" data-bs-content="Protect certain sensitive information from public view.">
+							<form class="m-0 ml-auto p-0" method="post" name="navVELForm" id="navPROTECTForm">
+								<div class="xsmall text-center text-primary">Privacy</div>
+								<div class="btn-group btn-group-toggle mr-2" data-bs-toggle="buttons">
+									<label class="btn btn-<?php echo $privONBTN; ?> btn-sm xsmall <?php echo $privONACTIVE; ?>">
+										<input type="radio" name="showProtected" value="1" onclick="document.getElementById('navPROTECTForm').submit()" id="showProtectedON" <?php echo $privONCHECKED; ?>> ON
+									</label>
+									<label class="btn btn-<?php echo $privOFFBTN; ?> btn-sm xsmall <?php echo $privOFFACTIVE; ?>">
+										<input type="radio" name="showProtected" value="0" onclick="document.getElementById('navPROTECTForm').submit()" id="showProtectedOFF" <?php echo $privOFFCHECKED; ?> > OFF
+									</label>
+								</div>
+							</form>
+						</li>
 
-                    <!--standard FPA report (resets options)-->
-                    <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Basic Discovery Report" data-content="Run the basic (on-screen) FPA Discovery report (accesskey = [control] alt + f)">
-                        <a class="btn btn-outline-primary mr-1" href="<?php echo _FPA_SELF; ?>" role="button" accesskey="f" aria-label="Run the basic FPA Discovery report">
-                            <i class="fas fa-chalkboard fa-fw lead"></i>
-                        </a>
-                    </li>
+						<!--standard FPA report (resets options)-->
+						<li class="nav-item py-2" data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="bottom" data-bs-fallbackPlacement="flip" data-bs-title="FPA Basic Discovery Report" data-bs-content="Run the basic (on-screen) FPA Discovery report (accesskey = [control] alt + f)">
+							<a class="btn btn-outline-primary mr-1" href="<?php echo _FPA_SELF; ?>" role="button" accesskey="f" aria-label="Run the basic FPA Discovery report">
+								<i class="fas fa-chalkboard fa-fw lead"></i>
+							</a>
+						</li>
 
-                    <!--run a VEL report-->
-                    <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
-                        <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Vulnerable Extension List" data-content="Run a vulnerable extension check (accesskey = [control] alt + v)">
-                            <form class="m-0 ml-auto p-0" method="post" name="navVELForm" id="navVELForm">
-                                <input type="hidden" name="doVEL" value="1" />
-                                <button class="btn btn-outline-warning mr-1" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
-                                    <i class="fas fa-biohazard fa-fw lead"></i>
-                                </button>
-                            </form>
-                        </li>
-                    <?php } // doVEL ?>
+						<!--run a VEL report-->
+						<?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
+							<li class="nav-item py-2 d-none d-md-inline-block" data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="bottom" data-bs-fallbackPlacement="flip" data-bs-title="Vulnerable Extension List" data-bs-content="Run a vulnerable extension check (accesskey = [control] alt + v)">
+								<form class="m-0 ml-auto p-0" method="post" name="navVELForm" id="navVELForm">
+									<input type="hidden" name="doVEL" value="1" />
+									<button class="btn btn-outline-warning mr-1" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
+										<i class="fas fa-biohazard fa-fw lead"></i>
+									</button>
+								</form>
+							</li>
+						<?php } // doVEL ?>
 
-                    <!--print to PDF-->
-                    <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Print FPA Report to PDF" data-content="Print to PDF the current FPA snapshot and discovery report.">
-                        <form class="m-0 ml-auto p-0" method="post" name="navPDFForm" id="navPDFForm">
-                            <input type="hidden" name="doPDF" value="1" />
-                            <button class="btn btn-outline-info mr-1" type="submit" accesskey="p" aria-label="Produce a PDF document of the FPA Report">
-                                <i class="fas fa-file-pdf fa-fw lead"></i>
-                            </button>
-                        </form>
-                    </li>
+						<!--print to PDF-->
+						<li class="nav-item py-2 d-none d-md-inline-block" data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="bottom" data-bs-fallbackPlacement="flip" data-bs-title="Print FPA Report to PDF" data-bs-content="Print to PDF the current FPA snapshot and discovery report.">
+							<form class="m-0 ml-auto p-0" method="post" name="navPDFForm" id="navPDFForm">
+								<input type="hidden" name="doPDF" value="1" />
+								<button class="btn btn-outline-info mr-1" type="submit" accesskey="p" aria-label="Produce a PDF document of the FPA Report">
+									<i class="fas fa-file-pdf fa-fw lead"></i>
+								</button>
+							</form>
+						</li>
 
-                    <!--download latest FPA-->
-                    <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Download FPA" data-content="<?php echo _RES_FPALATEST2; ?>">
-                        <a class="btn btn-outline-info mr-1" href="<?php echo _RES_FPALINK2; ?>" rel="noreferrer noopener" target="_blank" role="button" aria-label="<?php echo _RES_FPALATEST2; ?>">
-                            <i class="fas fa-cloud-download-alt fa-fw lead"></i>
-                        </a>
-                    </li>
+						<!--download latest FPA-->
+						<li class="nav-item py-2 d-none d-md-inline-block" data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="bottom" data-bs-fallbackPlacement="flip" data-bs-title="Download FPA" data-bs-content="<?php echo _RES_FPALATEST2; ?>">
+							<a class="btn btn-outline-info mr-1" href="<?php echo _RES_FPALINK2; ?>" rel="noreferrer noopener" target="_blank" role="button" aria-label="<?php echo _RES_FPALATEST2; ?>">
+								<i class="fas fa-cloud-download-alt fa-fw lead"></i>
+							</a>
+						</li>
 
-                    <!-- Guided FPA Tour
-                    <li class="nav-item py-2 d-none d-md-inline-block" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Guided Tour" data-content="View the FPA guided tour and learn how to reead and use the FPA">
-                        <a class="btn btn-outline-primary mr-1" href="#" role="button" aria-label="View the FPA guided tour">
-                            <i class="fas fa-shoe-prints lead"></i>
-                        </a>
-                    </li>
-                    -->
+						<!-- Guided FPA Tour
+						<li class="nav-item py-2 d-none d-md-inline-block" data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="bottom" data-bs-fallbackPlacement="flip" data-bs-title="FPA Guided Tour" data-bs-content="View the FPA guided tour and learn how to reead and use the FPA">
+							<a class="btn btn-outline-primary mr-1" href="#" role="button" aria-label="View the FPA guided tour">
+								<i class="fas fa-shoe-prints lead"></i>
+							</a>
+						</li>
+						-->
 
-                    <!--darkmode-->
-                    <?php if ( @$darkmode == '0' ) { ?>
-                        <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Switch To Night Mode" data-content="View FPA in Night Mode (accesskey = [control] alt + n)">
-                            <form class="m-0 ml-auto p-0" method="post" name="navDARKForm" id="navDARKForm">
-                                <input type="hidden" name="darkmode" value="1" />
-                                <button class="btn btn-outline-dark mr-1" type="submit" accesskey="n" aria-label="Night Mode">
-                                    <i class="fas fa-moon fa-fw lead"></i>
-                                </button>
-                            </form>
-                        </li>
-                    <?php } else { ?>
-                        <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="Switch To Light Mode" data-content="View FPA in Light Mode (accesskey = [control] alt + l)">
-                            <form class="m-0 ml-auto p-0" method="post" name="navDARKForm" id="navDARKForm">
-                                <input type="hidden" name="darkmode" value="0" />
-                                <button class="btn btn-outline-dark mr-1" type="submit" accesskey="l" aria-label="Light Mode">
-                                    <i class="fas fa-sun fa-fw lead"></i>
-                                </button>
-                            </form>
-                        </li>
-                    <?php } // darkmode ?>
+						<!--darkmode-->
+						<?php if ( @$darkmode == '0' ) { ?>
+							<li class="nav-item py-2" data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="bottom" data-bs-fallbackPlacement="flip" data-bs-title="Switch To Night Mode" data-bs-content="View FPA in Night Mode (accesskey = [control] alt + n)">
+								<form class="m-0 ml-auto p-0" method="post" name="navDARKForm" id="navDARKForm">
+									<input type="hidden" name="darkmode" value="1" />
+									<button class="btn btn-outline-dark mr-1" type="submit" accesskey="n" aria-label="Night Mode">
+										<i class="fas fa-moon fa-fw lead"></i>
+									</button>
+								</form>
+							</li>
+						<?php } else { ?>
+							<li class="nav-item py-2" data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="bottom" data-bs-fallbackPlacement="flip" data-bs-title="Switch To Light Mode" data-bs-content="View FPA in Light Mode (accesskey = [control] alt + l)">
+								<form class="m-0 ml-auto p-0" method="post" name="navDARKForm" id="navDARKForm">
+									<input type="hidden" name="darkmode" value="0" />
+									<button class="btn btn-outline-dark mr-1" type="submit" accesskey="l" aria-label="Light Mode">
+										<i class="fas fa-sun fa-fw lead"></i>
+									</button>
+								</form>
+							</li>
+						<?php } // darkmode ?>
 
-                    <!--got to docs-->
-                    <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Documentation" data-content="Visit the FPA documentation site on Github">
-                        <a class="1nav-link btn btn-outline-info mr-1" href="https://forumpostassistant.github.io/docs/" rel="noreferrer noopener" target="_blank" role="button" aria-label="Visit the FPA documentation site on Github">
-                            <i class="fas fa-book-reader lead"></i>
-                        </a>
-                    </li>
+						<!--got to docs-->
+						<li class="nav-item py-2" data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="bottom" data-bs-fallbackPlacement="flip" data-bs-title="FPA Documentation" data-bs-content="Visit the FPA documentation site on Github">
+							<a class="1nav-link btn btn-outline-info mr-1" href="https://forumpostassistant.github.io/docs/" rel="noreferrer noopener" target="_blank" role="button" aria-label="Visit the FPA documentation site on Github">
+								<i class="fas fa-book-reader lead"></i>
+							</a>
+						</li>
 
-                    <!--SPARE
-                    <li class="nav-item py-2 border-right d-none d-md-inline-block mr-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-content="Print the current FPA audit report">
-                        <a class="btn btn-info lead mr-2" href="#" role="button" aria-label="Print the current FPA audit report">
-                            <i class="fas fa-print lead"></i>
-                        </a>
-                    </li>
-                    -->
+						<!--SPARE
+						<li class="nav-item py-2 border-right d-none d-md-inline-block mr-2" data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="bottom" data-bs-fallbackPlacement="flip" data-bs-content="Print the current FPA audit report">
+							<a class="btn btn-info lead mr-2" href="#" role="button" aria-label="Print the current FPA audit report">
+								<i class="fas fa-print lead"></i>
+							</a>
+						</li>
+						-->
 
-                    <!--delete FPA-->
-                    <li class="nav-item py-2" data-container="body" data-toggle="popover" data-trigger="hover" data-placement="bottom" data-fallbackPlacement="flip" data-title="FPA Security Notice" data-content="Delete the FPA script now (accesskey = [control] alt + d)">
-                        <form class="m-0 ml-auto p-0" method="post" name="navDELForm" id="navDELForm">
-                            <input type="hidden" name="act" value="delete" />
-                            <button class="btn btn-outline-danger mr-1" type="submit" accesskey="d" aria-label="Delete FPA now">
-                                <i class="fas fa-trash-alt fa-fw lead"></i>
-                            </button>
-                        </form>
-                    </li>
+						<!--delete FPA-->
+						<li class="nav-item py-2" data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="bottom" data-bs-fallbackPlacement="flip" data-bs-title="FPA Security Notice" data-bs-content="Delete the FPA script now (accesskey = [control] alt + d)">
+							<form class="m-0 ml-auto p-0" method="post" name="navDELForm" id="navDELForm">
+								<input type="hidden" name="act" value="delete" />
+								<button class="btn btn-outline-danger mr-1" type="submit" accesskey="d" aria-label="Delete FPA now">
+									<i class="fas fa-trash-alt fa-fw lead"></i>
+								</button>
+							</form>
+						</li>
 
-                </ul><!--/.navbar-nav-->
+					</ul><!--/.navbar-nav-->
 
+				</div><!--/.container-->
             </nav>
 
             <?php
@@ -4483,8 +4485,8 @@
                                 ?>
                                 <div class="mx-lg-3">
                                     <div class="bg-white shadow text-center">
-                                        <div class="m-2 float-right" data-toggle="popover" data-trigger="hover" data-placement="top" data-fallbackPlacement="flip" data-title="Confidence Audit Help" data-content="Click the icon to review the basic audit tests and results that determine this rating">
-                                            <i class="fas fa-question-circle fa-lg text-<?php echo $helpIconColor; ?>" data-toggle="collapse" data-target="#confidenceHelp" aria-expanded="false" aria-controls="confidenceHelp" role="button" aria-label="View confidence results"></i>
+                                        <div class="m-2 float-right" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top" data-bs-fallbackPlacement="flip" data-bs-title="Confidence Audit Help" data-bs-content="Click the icon to review the basic audit tests and results that determine this rating">
+                                            <i class="fas fa-question-circle fa-lg text-<?php echo $helpIconColor; ?>" data-bs-toggle="collapse" data-bs-target="#confidenceHelp" aria-expanded="false" aria-controls="confidenceHelp" role="button" aria-label="View confidence results"></i>
                                         </div>
                                         <h2 class="h4 text-dark text-center border-bottom p-2"><?php echo _FPA_DASHBOARD_CONFIDENCE_TITLE; ?></h2>
 
@@ -8466,7 +8468,7 @@
 
                                                     if ($deftempl == 1 ) {
                                                         $isDEFTPL = 'bolder';
-                                                        $isDEFTPLMSG = '<sup><i class="fas fa-check fa-fw text-success" data-toggle="tooltip" data-placement="top" title="Default Template"></i></sup>';
+                                                        $isDEFTPLMSG = '<sup><i class="fas fa-check fa-fw text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Default Template"></i></sup>';
 
                                                     } else {
                                                         $isDEFTPL = 'normal';
@@ -8600,7 +8602,7 @@
 
                                                     if ($deftempl == 1 ) {
                                                         $isDEFTPL = 'bolder';
-                                                        $isDEFTPLMSG = '<sup><i class="fas fa-check fa-fw text-success" data-toggle="tooltip" data-placement="top" title="Default Template"></i></sup>';
+                                                        $isDEFTPLMSG = '<sup><i class="fas fa-check fa-fw text-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Default Template"></i></sup>';
 
                                                     } else {
                                                         $isDEFTPL = 'normal';
@@ -8723,12 +8725,12 @@
             }, 1000);
         </script>
 
-        <div role="alert" aria-live="assertive" aria-atomic="true" class="toast position-fixed shadow d-print-none" data-html2canvas-ignore="true" style="top: 60px; right: 20px; z-index: 9999; width: 90%; max-width: 390px;" data-delay="<?php if (@$_POST['doIT'] == '1') { echo 6000; } else { echo 20000; } ?>" data-animation="false" id="securityToast">
+        <div role="alert" aria-live="assertive" aria-atomic="true" class="toast position-fixed shadow d-print-none" data-html2canvas-ignore="true" style="top: 60px; right: 20px; z-index: 9999; width: 90%; max-width: 390px;" data-bs-delay="<?php if (@$_POST['doIT'] == '1') { echo 6000; } else { echo 20000; } ?>" data-bs-animation="false" id="securityToast">
             <div class="toast-header bg-danger text-white">
                 <i class="fas fa-exclamation-circle fa-lg mr-2"></i>
                 <span class="mr-auto">Security Notification</span>
                 <span class="text-white" id="countdown"></span>
-                <button type="button" class="ml-2 mb-1 text-white close" data-dismiss="toast" aria-label="Close">
+                <button type="button" class="ml-2 mb-1 text-white close" data-bs-dismiss="toast" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -8782,23 +8784,41 @@
         <script>
 
             /**
-             * activate BS popovers, tooltips (on hover) and toasts
-             * requires : jQuery & popper
-             * @RussW 23-May-2020
+             * activate BS5 popovers, tooltips (on hover) and toasts
+             * requires : BSJS & popper
+             * @RussW 2-Sep-2021
              *
              */
-            $(function () {
-                $('[data-toggle="popover"]').popover();
-                $('[data-toggle="tooltip"]').tooltip();
-                $('.toast').toast('show');
+			// activate scroll-spy
+			var firstScrollSpyEl = document.querySelector('[data-bs-spy="scroll"]')
+				firstScrollSpyEl.addEventListener('activate.bs.scrollspy', function () {
+				// add any options, if required...
+			});
 
-                var offset = 64;
-                $('.dropdown-menu a.dropdown-item').click(function(event) {
-                    event.preventDefault();
-                    $($(this).attr('href'))[0].scrollIntoView();
-                    scrollBy(0, -offset);
-                });
-            });
+			// enable all collapse elements
+			var collapseElementList = [].slice.call(document.querySelectorAll('[data-bs-toggle="collapse"]'))
+			var collapseList = collapseElementList.map(function (collapseEl) {
+				return new bootstrap.Collapse(collapseEl)
+				toggle: false
+			});
+
+			// enable all popovers
+			var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+			var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+				return new bootstrap.Popover(popoverTriggerEl)
+			});
+
+			// enable all tooltips
+			var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+			var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+				return new bootstrap.Tooltip(tooltipTriggerEl)
+			});
+
+			var toastElList = [].slice.call(document.querySelectorAll('.toast'))
+			var toastList = toastElList.map(function(toastEl) {
+				return new bootstrap.Toast(toastEl)
+			});
+			toastList.forEach(toast => toast.show());
 
 
             /**

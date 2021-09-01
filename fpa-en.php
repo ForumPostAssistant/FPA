@@ -2479,7 +2479,7 @@
             $database['dbHOSTSTATS']    = _FPA_U; // latest statistics
             $database['dbCOLLATION']    = _FPA_U; // database collation
             $database['dbCHARSET']      = _FPA_U; // database character-set
-        } 
+        }
 
         } else {
             $database['dbHOSTSERV']     = _FPA_U; // SQL server version
@@ -3209,26 +3209,28 @@
 		<link rel="shortcut icon" href="./<?php echo $faviconPath; ?>/favicon.ico" />
 
         <?php if (@$_POST['doPDF'] == '1' OR @$_POST['doVEL'] == '1') { ?>
-            <!--load pace progress bar if this take a while to run-->
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js" integrity="sha256-EPrkNjGEmCWyazb3A/Epj+W7Qm2pB9vnfXw+X6LImPM=" crossorigin="anonymous"></script>
+            <!--load pace progress bar if this takes a while to run-->
+			<script src="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/pace.min.js" integrity="sha512-2cbsQGdowNDPcKuoBd2bCcsJky87Mv0LEtD/nunJUgk6MOYTgVMGihS/xCEghNf04DPhNiJ4DZw5BxDd1uyOdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
             <?php if ( @$_POST['darkmode'] == 1 OR $_SESSION['darkmode'] == 1 ) { ?>
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/orange/pace-theme-flash.min.css" integrity="sha256-RGBBrgymw4elQrpU8GjEkOCxf5vE5ZvpAGnhNpDONPk=" crossorigin="anonymous" />
+				<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/orange/pace-theme-flash.min.css" integrity="sha512-GsqBhQbS8ZPWJjXGVgfiIEChWgcuqqvyqQLslvUz+/LGuX8NWYluDmLAXG8h/m8f+aAwqYre1CiPOU2qf8UgLw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
             <?php } else { ?>
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/themes/blue/pace-theme-flash.min.css" integrity="sha256-t/Bn1Mo8tYq5d8SoQoJF07C5qOrQ5B0iNPQiCmstoCo=" crossorigin="anonymous" />
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pace/1.2.4/themes/blue/pace-theme-flash.min.css" integrity="sha512-hPHdudSZUyxoMNAYUu8c/2BDg1ah3tCtdhFwWTUN4qI8Y5emCPVKwyR1tJXhL/uBx7x7MYKGvc1TbdH6mwGS8Q==" crossorigin="anonymous" referrerpolicy="no-referrer" />
             <?php } ?>
+
         <?php } // load pace for selected actions ?>
 
         <!-- bootswatch yeti theme - bootstrap core css -->
         <?php if ( @$_POST['darkmode'] == 1 OR $_SESSION['darkmode'] == 1 ) { ?>
-           <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.0/cyborg/bootstrap.min.css" integrity="sha256-04BHXjNfsJ2qy+AStQeom2QIJYU8+6AMCfcO60W0qc8=" crossorigin="anonymous" />
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.1.0/dist/cyborg/bootstrap.min.css" integrity="sha256-xkHRxheneLG0uC8ywYvvIrFdnD4XOig36+c3y3hwcf4=" crossorigin="anonymous">
         <?php } else { ?>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.0/yeti/bootstrap.min.css" integrity="sha256-99KgWr1SjvkqT7dcWV+Cj9yfsKF2j4wrVRgHJYAiEtU=" crossorigin="anonymous" />
+			<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.1.0/dist/yeti/bootstrap.min.css" integrity="sha256-Vy7yg6ZdMUDWURUMJGzWPUhImOiG4vYNdZcWquoQhdY=" crossorigin="anonymous">
         <?php } // darkmode ?>
 
         <!-- fontawesome icon css -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" integrity="sha256-h20CPZ0QyXlBuAw7A+KluUYx/3pK+c7lYEpqLTlxjYQ=" crossorigin="anonymous" />
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-        <!-- custom BS4 styling @RussW 23-May-2020 -->
+        <!-- custom BS5 styling @RussW 2-Sep-2021 -->
         <style>
             html { position: relative; min-height: 100%; }
             body { font-size: 0.98rem; color: #868ba1 !important; line-height: 1.3 !important; margin-top: 68px; scroll-behavior: smooth; }
@@ -3244,6 +3246,7 @@
             .pdf-break-before { page-break-before : always; }
             .pdf-break-after { page-break-after : always; }
             .pace .pace-progress { height: 8px !important; }
+			.dropdown-toggle::after { display: none; }
 
         <?php if ( @$darkmode != 1 ) { ?>
             /* override default BS Yeti theme to match other FPA pages */
@@ -8736,10 +8739,8 @@
         </div>
 
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.slim.min.js" integrity="sha256-pasqAKBDmFT4eHoN2ndd6lN370kFiGUFyTiUHWhU7k8=" crossorigin="anonymous"></script>
-        <!--<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>-->
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+		<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js" integrity="sha384-eMNCOe7tC1doHpGoWe/6oMVemdAVTMs2xqW4mwXrXsW0L84Iytr2wi5v2QjrP/xp" crossorigin="anonymous"></script>
+	    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.min.js" integrity="sha384-cn7l7gDp0eyniUwwAZgrzD06kc/tftFf19TOAs2zVinnD/C7E91j9yyk5//jjpt/" crossorigin="anonymous"></script>
 
         <?php if (@$_POST['doPDF'] == '1') { ?>
             <?php

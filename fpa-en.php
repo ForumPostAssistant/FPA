@@ -3366,7 +3366,7 @@
 
 								<form class="m-0 ml-auto p-0 1bg-danger small 1text-white" method="post" name="dropdownDELForm" id="dropdownDELForm">
 									<input type="hidden" name="act" value="delete" />
-									<button class="btn btn-danger text-white text-left btn-sm mr-1 w-100" type="submit" aria-label="Delete FPA now">
+									<button class="btn btn-danger text-white text-start btn-sm mr-1 w-100" type="submit" aria-label="Delete FPA now">
 										<i class="fas fa-trash-alt fa-fw text-white lead"></i> Delete FPA Now
 									</button>
 								</form>
@@ -3512,7 +3512,7 @@
             <div class="container d-none d-print-block border-bottom border-dark" id="printHeader">
                 <div>
                     <h2 class="h1 font-weight-lighter mb-1">
-                        <span class="xsmall text-right float-right"><?php echo @date('jS F Y'); ?><br /><?php echo @date('g:i a'); ?><br /><?php echo @date('e'); ?></span>
+                        <span class="xsmall text-end float-end"><?php echo @date('jS F Y'); ?><br /><?php echo @date('g:i a'); ?><br /><?php echo @date('e'); ?></span>
                             <?php
                                 if ( !empty($config->sitename) ) {
                                     echo $config->sitename;
@@ -4485,12 +4485,12 @@
                                 ?>
                                 <div class="mx-lg-3">
                                     <div class="bg-white shadow text-center">
-                                        <div class="m-2 float-right" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top" data-bs-fallbackPlacement="flip" data-bs-title="Confidence Audit Help" data-bs-content="Click the icon to review the basic audit tests and results that determine this rating">
+                                        <div class="m-2 float-end" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top" data-bs-fallbackPlacement="flip" data-bs-title="Confidence Audit Help" data-bs-content="Click the icon to review the basic audit tests and results that determine this rating">
                                             <i class="fas fa-question-circle fa-lg text-<?php echo $helpIconColor; ?>" data-bs-toggle="collapse" data-bs-target="#confidenceHelp" aria-expanded="false" aria-controls="confidenceHelp" role="button" aria-label="View confidence results"></i>
                                         </div>
                                         <h2 class="h4 text-dark text-center border-bottom p-2"><?php echo _FPA_DASHBOARD_CONFIDENCE_TITLE; ?></h2>
 
-                                        <div class="collapse text-left p-2" id="confidenceHelp">
+                                        <div class="collapse text-start p-2" id="confidenceHelp">
                                             <h3 class="h6 text-center pb-2 m-0">Basic Audit Results</h3>
                                             <?php $confidenceHelp = confidenceShowHelp($confidenceResult); ?>
                                         </div>
@@ -5929,12 +5929,12 @@
                                                                 $sefClass  = 'warning';
                                                             }
                                                         ?>
-                                                        <div class="xsmall w-100 mb-1 text-left px-1 mb-1 ">
-                                                            <?php echo _FPA_EN; ?>: <span class="text-<?php echo $sefClass; ?> text-capitalize float-right"><?php echo $instance['configSEF']; ?></span>
+                                                        <div class="xsmall w-100 mb-1 text-start px-1 mb-1 ">
+                                                            <?php echo _FPA_EN; ?>: <span class="text-<?php echo $sefClass; ?> text-capitalize float-end"><?php echo $instance['configSEF']; ?></span>
                                                         </div>
 
-                                                        <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1 ">
-                                                            Suffix: <span class="float-right text-capitalize"><?php echo $instance['configSEFSUFFIX']; ?></span>
+                                                        <div class="xsmall w-100 mb-1 border-top text-start px-1 mb-1 ">
+                                                            Suffix: <span class="float-end text-capitalize"><?php echo $instance['configSEFSUFFIX']; ?></span>
                                                         </div>
 
                                                         <?php
@@ -5954,11 +5954,11 @@
                                                                 $htwcMissing       = '';
                                                             }
                                                         ?>
-                                                        <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1 text-<?php echo $rewriteTitleClass; ?>">
-                                                            Rewrite: <span class="text-<?php echo $rewriteClass; ?> text-capitalize float-right"><?php echo $instance['configSEFRWRITE']; ?></span>
+                                                        <div class="xsmall w-100 mb-1 border-top text-start px-1 mb-1 text-<?php echo $rewriteTitleClass; ?>">
+                                                            Rewrite: <span class="text-<?php echo $rewriteClass; ?> text-capitalize float-end"><?php echo $instance['configSEFRWRITE']; ?></span>
                                                             <?php
                                                                 if ( !empty($htwcMissing) ) {
-                                                                    echo '<span class="xsmall text-'.$rewriteClass.' float-right">'. $htwcMissing .'</span>';
+                                                                    echo '<span class="xsmall text-'.$rewriteClass.' float-end">'. $htwcMissing .'</span>';
                                                                 }
                                                             ?>
                                                         </div>
@@ -5978,8 +5978,8 @@
                                                                 $gzipClass  = 'default';
                                                             }
                                                         ?>
-                                                        <div class="xsmall w-100 mb-1 text-left px-1 mb-1 ">
-                                                            GZip: <span class="text-<?php echo $gzipClass; ?> text-capitalize float-right"><?php echo $instance['configGZIP']; ?></span>
+                                                        <div class="xsmall w-100 mb-1 text-start px-1 mb-1 ">
+                                                            GZip: <span class="text-<?php echo $gzipClass; ?> text-capitalize float-end"><?php echo $instance['configGZIP']; ?></span>
                                                         </div>
 
                                                         <?php
@@ -5990,8 +5990,8 @@
                                                                 $cacheClass  = 'default';
                                                             }
                                                         ?>
-                                                        <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1 ">
-                                                            Cache: <span class="text-<?php echo $cacheClass; ?> text-capitalize float-right"><?php echo $instance['configCACHING']; ?></span>
+                                                        <div class="xsmall w-100 mb-1 border-top text-start px-1 mb-1 ">
+                                                            Cache: <span class="text-<?php echo $cacheClass; ?> text-capitalize float-end"><?php echo $instance['configCACHING']; ?></span>
                                                         </div>
 
                                                     </div>
@@ -6010,8 +6010,8 @@
                                                                 $debugClass  = 'warning';
                                                             }
                                                         ?>
-                                                        <div class="xsmall w-100 mb-1 text-left px-1 mb-1">
-                                                            Error Rep: <span class="text-<?php echo $debugClass; ?> float-right text-capitalize"><?php echo substr($instance['configERRORREP'], 0, 8); ?></span>
+                                                        <div class="xsmall w-100 mb-1 text-start px-1 mb-1">
+                                                            Error Rep: <span class="text-<?php echo $debugClass; ?> float-end text-capitalize"><?php echo substr($instance['configERRORREP'], 0, 8); ?></span>
                                                         </div>
 
                                                         <?php
@@ -6022,8 +6022,8 @@
                                                                 $debugClass  = 'info';
                                                             }
                                                         ?>
-                                                        <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
-                                                            Site Debug: <span class="text-<?php echo $debugClass; ?> text-capitalize float-right"><?php echo $instance['configSITEDEBUG']; ?></span>
+                                                        <div class="xsmall w-100 mb-1 border-top text-start px-1 mb-1">
+                                                            Site Debug: <span class="text-<?php echo $debugClass; ?> text-capitalize float-end"><?php echo $instance['configSITEDEBUG']; ?></span>
                                                         </div>
 
                                                         <?php
@@ -6034,8 +6034,8 @@
                                                                 $debugClass  = 'info';
                                                             }
                                                         ?>
-                                                        <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
-                                                            Lang Debug: <span class="text-<?php echo $debugClass; ?> text-capitalize float-right"><?php echo $instance['configLANGDEBUG']; ?></span>
+                                                        <div class="xsmall w-100 mb-1 border-top text-start px-1 mb-1">
+                                                            Lang Debug: <span class="text-<?php echo $debugClass; ?> text-capitalize float-"><?php echo $instance['configLANGDEBUG']; ?></span>
                                                         </div>
 
                                                     </div>
@@ -6046,16 +6046,16 @@
                                                 <div class="bg-white small w-100 border">
                                                         <div class="d-block xsmall bg-light text-uppercase text-dark py-1 mb-1"><?php echo _FPA_DB; ?></div>
 
-                                                        <div class="xsmall w-100 mb-1 text-left px-1 mb-1">
-                                                            Type: <span class=" float-right text-capitalize"><?php echo substr(@$instance['configDBTYPE'], 0, 8); ?></span>
+                                                        <div class="xsmall w-100 mb-1 text-start px-1 mb-1">
+                                                            Type: <span class=" float-end text-capitalize"><?php echo substr(@$instance['configDBTYPE'], 0, 8); ?></span>
                                                         </div>
 
-                                                        <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
-                                                            Version: <span class=" float-right text-capitalize"><?php echo substr(@$database['dbHOSTSERV'], 0, 6); ?></span>
+                                                        <div class="xsmall w-100 mb-1 border-top text-start px-1 mb-1">
+                                                            Version: <span class=" float-end text-capitalize"><?php echo substr(@$database['dbHOSTSERV'], 0, 6); ?></span>
                                                         </div>
 
-                                                        <div class="xsmall w-100 mb-1 border-top text-left px-1 mb-1">
-                                                            CharSet: <span class=" float-right"><?php echo substr(@$database['dbCHARSET'], 0, 7); ?></span>
+                                                        <div class="xsmall w-100 mb-1 border-top text-start px-1 mb-1">
+                                                            CharSet: <span class=" float-end"><?php echo substr(@$database['dbCHARSET'], 0, 7); ?></span>
                                                         </div>
 
                                                     </div>
@@ -6092,8 +6092,8 @@
                                                                 $sslClass  = 'warning';
                                                             }
                                                         ?>
-                                                        <div class="xsmall w-100 mb-1 text-left px-1 mb-1">
-                                                            SSL: <span class="text-<?php echo $sslClass; ?> float-right text-capitalize"><?php echo @$instance['configSSL']; ?></span>
+                                                        <div class="xsmall w-100 mb-1 text-start px-1 mb-1">
+                                                            SSL: <span class="text-<?php echo $sslClass; ?> float-end text-capitalize"><?php echo @$instance['configSSL']; ?></span>
                                                         </div>
 
                                                         <?php
@@ -6114,8 +6114,8 @@
                                                                 $accessStatus  = _FPA_U;
                                                             }
                                                         ?>
-                                                        <div class="xsmall border-top w-100 mb-1 text-left px-1 mb-1">
-                                                            Access: <span class="text-<?php echo $accessClass; ?> float-right text-capitalize"><?php echo $accessStatus; ?></span>
+                                                        <div class="xsmall border-top w-100 mb-1 text-start px-1 mb-1">
+                                                            Access: <span class="text-<?php echo $accessClass; ?> float-end text-capitalize"><?php echo $accessStatus; ?></span>
                                                         </div>
 
                                                     </div>
@@ -6134,12 +6134,12 @@
                                                                 $ftpClass  = 'info';
                                                             }
                                                         ?>
-                                                        <div class="xsmall w-100 mb-1 text-left px-1 mb-1">
-                                                            FTP: <span class="text-<?php echo $ftpClass; ?> float-right text-capitalize"><?php echo @$instance['configFTP']; ?></span>
+                                                        <div class="xsmall w-100 mb-1 text-start px-1 mb-1">
+                                                            FTP: <span class="text-<?php echo $ftpClass; ?> float-end text-capitalize"><?php echo @$instance['configFTP']; ?></span>
                                                         </div>
 
-                                                        <div class="xsmall border-top w-100 mb-1 text-left px-1 mb-1">
-                                                            Unicode Slug: <span class="float-right text-capitalize"><?php echo $instance['configUNICODE']; ?></span>
+                                                        <div class="xsmall border-top w-100 mb-1 text-start px-1 mb-1">
+                                                            Unicode Slug: <span class="float-end text-capitalize"><?php echo $instance['configUNICODE']; ?></span>
                                                         </div>
 
                                                     </div>
@@ -7690,7 +7690,7 @@
                                     <?php echo $component['ARRNAME'] .' :: '. _FPA_SITE; ?>
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
-                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" data-html2canvas-ignore="true" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
+                                        <button class="btn btn-warning xsmall float-end d-none d-md-inline-block d-print-none" data-html2canvas-ignore="true" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
                                             <i class="fas fa-biohazard fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
@@ -7918,7 +7918,7 @@
                                     <?php echo $module['ARRNAME'] .' :: '. _FPA_SITE; ?>
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
-                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" data-html2canvas-ignore="true" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
+                                        <button class="btn btn-warning xsmall float-end d-none d-md-inline-block d-print-none" data-html2canvas-ignore="true" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
                                             <i class="fas fa-biohazard fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
@@ -8146,7 +8146,7 @@
                                     <?php echo $library['ARRNAME'] .' :: '; ?>
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
-                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" data-html2canvas-ignore="true" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
+                                        <button class="btn btn-warning xsmall float-end d-none d-md-inline-block d-print-none" data-html2canvas-ignore="true" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
                                             <i class="fas fa-biohazard fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
@@ -8270,7 +8270,7 @@
                                     <?php echo $plugin['ARRNAME'] .' :: '; ?>
                                     <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                         <input type="hidden" name="doVEL" value="1" />
-                                        <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" data-html2canvas-ignore="true" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
+                                        <button class="btn btn-warning xsmall float-end d-none d-md-inline-block d-print-none" data-html2canvas-ignore="true" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
                                             <i class="fas fa-biohazard fa-sm fa-fw lead"></i> Check VEL
                                         </button>
                                     <?php } // doVEL ?>
@@ -8401,7 +8401,7 @@
                             <?php echo $template['ARRNAME'] .' :: '. _FPA_SITE; ?>
                             <?php if ( defined( '_LIVE_CHECK_VEL') AND $canDOLIVE == '1' AND $instance['instanceFOUND'] == _FPA_Y ) { ?>
                                 <input type="hidden" name="doVEL" value="1" />
-                                <button class="btn btn-warning xsmall float-right d-none d-md-inline-block d-print-none" data-html2canvas-ignore="true" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
+                                <button class="btn btn-warning xsmall float-end d-none d-md-inline-block d-print-none" data-html2canvas-ignore="true" type="submit" accesskey="v" aria-label="Run a Vulnerable Extension Check">
                                     <i class="fas fa-biohazard fa-sm fa-fw lead"></i> Check VEL
                                 </button>
                             <?php } // doVEL ?>
@@ -8734,7 +8734,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="toast-body text-dark text-left">
+            <div class="toast-body text-dark text-start">
                 <?php echo _FPA_DELNOTE_LN2; ?>
                 <?php echo _FPA_DELNOTE_LN3; ?>
             </div>
@@ -8848,9 +8848,9 @@
                     var eleCount     = document.getElementById('postOUTPUT');
                     var countMessage = '<?php echo _FPA_INS_8; ?>';
                     if ( eleCount.value.length > maxCharCount ) {
-                        document.getElementById('postCharCount').innerHTML = '<div class="alert alert-warning text-white 1bg-white small my-1 p-3"><i class="fas fa-exclamation-triangle fa-2x d-block mb-2 text-center"></i>' + countMessage + '</div><div class="text-right mb-2"><span class="xsmall text-muted">Post Length:</span> <span class="badge badge-pill badge-warning">' + document.getElementById('postOUTPUT').value.length + '</span></div>';
+                        document.getElementById('postCharCount').innerHTML = '<div class="alert alert-warning text-white 1bg-white small my-1 p-3"><i class="fas fa-exclamation-triangle fa-2x d-block mb-2 text-center"></i>' + countMessage + '</div><div class="text-end mb-2"><span class="xsmall text-muted">Post Length:</span> <span class="badge badge-pill badge-warning">' + document.getElementById('postOUTPUT').value.length + '</span></div>';
                     } else {
-                        document.getElementById('postCharCount').innerHTML = '<div class="text-right mb-2"><span class="xsmall text-muted">Post Length:</span> <span class="badge badge-pill badge-light">' + document.getElementById('postOUTPUT').value.length + '</span></div>';
+                        document.getElementById('postCharCount').innerHTML = '<div class="text-end mb-2"><span class="xsmall text-muted">Post Length:</span> <span class="badge badge-pill badge-light">' + document.getElementById('postOUTPUT').value.length + '</span></div>';
                     }
 
 

@@ -3335,7 +3335,7 @@
             <nav id="navbar-main" class="navbar navbar-expand-lg <?php echo $navbarClass; ?> fixed-top shadow d-print-none" data-html2canvas-ignore="true">
 				<div class="container>
 
-					<a class="navbar-brand mr-0 mr-md-2 text-<?php echo $navbarBrandClass; ?> py-2 lead font-weight-bolder" href="<?php echo _FPA_SELF; ?>" aria-label="<?php echo _RES; ?>">
+					<a class="navbar-brand mr-0 mr-md-2 text-<?php echo $navbarBrandClass; ?> py-2 lead fw-bolder" href="<?php echo _FPA_SELF; ?>" aria-label="<?php echo _RES; ?>">
 						<span class="d-inline-block d-sm-none" aria-hidden="true">FPA</span>
 						<span class="d-none d-sm-inline-block"><?php echo _RES; ?></span>
 						<span class="ml-1 small text-muted"><?php echo 'v'. _RES_VERSION .' ('. _RES_CODENAME; ?>)</span>
@@ -3511,7 +3511,7 @@
             ?>
             <div class="container d-none d-print-block border-bottom border-dark" id="printHeader">
                 <div>
-                    <h2 class="h1 font-weight-lighter mb-1">
+                    <h2 class="h1 fw-lighter mb-1">
                         <span class="xsmall text-end float-end"><?php echo @date('jS F Y'); ?><br /><?php echo @date('g:i a'); ?><br /><?php echo @date('e'); ?></span>
                             <?php
                                 if ( !empty($config->sitename) ) {
@@ -3605,7 +3605,7 @@
                 <section class="bg-light pt-2" id="fpa-dashboard">
                     <div class="container pt-4 pb-3">
 
-                        <h1 class="font-weight-light border-bottom"><i class="fas fa-dice-d6 fa-sm text-muted"></i> <?php echo _FPA_SNAP_TITLE; ?></h1>
+                        <h1 class="fw-light border-bottom"><i class="fas fa-dice-d6 fa-sm text-muted"></i> <?php echo _FPA_SNAP_TITLE; ?></h1>
                         <p class="text-dark mb-lg-5"><?php echo _FPA_DASHBOARD_CONFIDENCE_NOTE; ?></p>
 
                         <div class="row">
@@ -5622,7 +5622,7 @@
                 <section class="py-3 pdf-break-before" id="instance-discovery">
                     <div class="container mt-5">
 
-                        <h2 class="h1 font-weight-light border-bottom mb-4"><i class="fas fa-chalkboard fa-sm text-muted"></i> <?php echo _FPA_DISCOVERY_REPORT; ?></h2>
+                        <h2 class="h1 fw-light border-bottom mb-4"><i class="fas fa-chalkboard fa-sm text-muted"></i> <?php echo _FPA_DISCOVERY_REPORT; ?></h2>
 
                         <div class="row row-cols-1 row-cols-lg-2 print-break-after application-discovery">
                             <div class="col mb-4 d-flex align-self-stretch">
@@ -5643,7 +5643,7 @@
                                                     <?php if ( $instance['instanceFOUND'] == _FPA_Y) { ?>
 
                                                         <div class="xsmall mb-1"><?php echo @$instance['cmsPRODUCT']; ?></div>
-                                                        <div class="font-weight-bolder mb-1"><?php echo @$instance['cmsRELEASE'] .'.'. @$instance['cmsDEVLEVEL']; ?></div>
+                                                        <div class="fw-bolder mb-1"><?php echo @$instance['cmsRELEASE'] .'.'. @$instance['cmsDEVLEVEL']; ?></div>
 
                                                         <?php
                                                             if ( strtolower( @$instance['cmsDEVSTATUS'] ) == 'stable' ) {
@@ -5683,7 +5683,7 @@
                                                     <?php if ( $instance['instanceFOUND'] == _FPA_Y ) { ?>
 
                                                         <div class="xsmall mb-1"><?php echo @$instance['platformPRODUCT']; ?></div>
-                                                        <div class="font-weight-bolder mb-1"><?php echo @$instance['platformRELEASE'] .'.'. @$instance['platformDEVLEVEL']; ?></div>
+                                                        <div class="fw-bolder mb-1"><?php echo @$instance['platformRELEASE'] .'.'. @$instance['platformDEVLEVEL']; ?></div>
 
                                                         <?php
                                                             if ( strtolower( @$instance['platformDEVSTATUS'] ) == 'stable' ) {
@@ -5743,11 +5743,11 @@
 
                                                         <?php
                                                             if ( @$instance['instanceCFGVERMATCH'] == _FPA_Y ) {
-                                                                echo '<div class="font-weight-bolder mb-1">'. $instance['configVALIDFOR'] .'</div>';
+                                                                echo '<div class="fw-bolder mb-1">'. $instance['configVALIDFOR'] .'</div>';
                                                                 echo '<div class="border border-success text-success xsmall mx-auto w-75 mb-1">'. _FPA_YMATCH .' CMS</div>';
 
                                                             } elseif ( @$instance['instanceCFGVERMATCH'] == _FPA_N ) {
-                                                                echo '<div class="font-weight-bolder mb-1">'. $instance['configVALIDFOR'] .'</div>';
+                                                                echo '<div class="fw-bolder mb-1">'. $instance['configVALIDFOR'] .'</div>';
                                                                 echo '<div class="border border-success text-success xsmall mx-auto w-75">'. _FPA_NMATCH .' CMS</div>';
 
                                                             } elseif ( @$instance['configVALIDFOR'] == _FPA_U ) {
@@ -5798,7 +5798,7 @@
                                                                     $modeClass = 'border border-warning text-warning';
 
                                                                 } else {
-                                                                    $modeClass = 'font-weight-bolder';
+                                                                    $modeClass = 'fw-bolder';
                                                                 }
 
                                                             ?>
@@ -6705,7 +6705,7 @@
 
                                                         echo '<div class="col d-flex align-self-stretch">';
                                                         echo '<div class="bg-light border border-'.$border.' text-center small mb-2 w-100">';
-                                                        echo '<div class="text-'.$status.' font-weight-'.$weight.' px-1 py-2">'. $key .'</div>';
+                                                        echo '<div class="text-'.$status.' fw-'.$weight.' px-1 py-2">'. $key .'</div>';
                                                         echo '<div class="bg-white text-truncate px-1 py-2">'.$show.'</div>';
                                                         echo '</div>';
                                                         echo '</div>';
@@ -6786,7 +6786,7 @@
                                                             }
                                                             echo '<div class="col d-flex align-self-stretch">';
                                                             echo '<div class="bg-light border border-'.$border.' text-center small mb-2 w-100">';
-                                                            echo '<div class="text-'.$status.' font-weight-'.$weight.' px-1 py-2">'. $show .'</div>';
+                                                            echo '<div class="text-'.$status.' fw-'.$weight.' px-1 py-2">'. $show .'</div>';
                                                             echo '</div>';
                                                             echo '</div>';
 
@@ -8489,7 +8489,7 @@
                                                 ?>
 
                                                 <td class="text-<?php echo $typeColor; ?>">
-                                                    <span class="font-weight-<?php echo $isDEFTPL; ?>"><?php echo $show['name']; ?></span>
+                                                    <span class="fw-<?php echo $isDEFTPL; ?>"><?php echo $show['name']; ?></span>
                                                     <?php echo @$isDEFTPLMSG; ?>
                                                 </td>
 
@@ -8621,7 +8621,7 @@
                                                 ?>
 
                                                 <td class="text-<?php echo $typeColor; ?>">
-                                                    <span class="font-weight-<?php echo $isDEFTPL; ?>"><?php echo $show['name']; ?></span>
+                                                    <span class="fw-<?php echo $isDEFTPL; ?>"><?php echo $show['name']; ?></span>
                                                     <?php echo $isDEFTPLMSG; ?>
                                                 </td>
 

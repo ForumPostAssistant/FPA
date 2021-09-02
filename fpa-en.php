@@ -364,7 +364,7 @@
     // @RussW updated 23-May-2020
     define ( '_FPA_INS_7', '<p class="text-muted">To copy the contents of the Post Detail box:</p>
             <ol>
-            <li class="pb-1">Click the <span class="badge badge-warning">Copy Post Content To Clipboard</span> button</li>
+            <li class="pb-1">Click the <span class="badge bg-warning">Copy Post Content To Clipboard</span> button</li>
             <li class="text-muted p-1">Login to the Joomla! Forum and start a new post or reply</li>
             <li class="pb-1">Use <strong>CTRL-v</strong> to paste the copied text into your forum post/reply</li>
             <li class="pb-1"><em>Disable smilies to prevent charcters being converted by the forums software</em></li>
@@ -560,7 +560,7 @@
     define ( '_VER_CHECK_ATCUR', 'is up to date' );
     define ( '_VER_CHECK_ATDEV', 'is a development version' );
 
-    define ( '_FPA_WIN_LOCALHOST', '<span class="d-inline-block text-dark py-1"><span class="badge badge-info">Note:</span> Elevated permissions are expected on Windows localhost development environments.</span>' );
+    define ( '_FPA_WIN_LOCALHOST', '<span class="d-inline-block text-dark py-1"><span class="badge bg-info">Note:</span> Elevated permissions are expected on Windows localhost development environments.</span>' );
 
     define ( '_FPA_JDISCLAIMER', 'Forum Post Assistant (FPA) is not affiliated with or endorsed by The Joomla! Project<sup>&trade;</sup>. Use of the Joomla!<sup>&reg;</sup> name, symbol, logo, and related trademarks is licensed by Open Source Matters, Inc.' );
 	/** END LANGUAGE STRINGS *****************************************************************/
@@ -3077,7 +3077,7 @@
             echo 'FPA '.@$fpaVersionCheckMessage;
 
             if ( !empty($fpaVersionCheckDownload) ) {
-                echo '<a class="mt-1 py-1 badge badge-'. $fpaVersionCheckStatus .' d-block w-75 mx-auto" href="'. $fpaVersionCheckDownload .'" rel="noreferrer noopener" target="_blank">Download Latest FPA (v'.$latestFPAVER.')</a>';
+                echo '<a class="mt-1 py-1 badge bg-'. $fpaVersionCheckStatus .' d-block w-75 mx-auto" href="'. $fpaVersionCheckDownload .'" rel="noreferrer noopener" target="_blank">Download Latest FPA (v'.$latestFPAVER.')</a>';
             }
             echo '</div>';
 
@@ -3137,7 +3137,7 @@
                     echo 'Joomla! '.$joomlaVersionCheckMessage;
 
                     if ( !empty($joomlaVersionCheckDownload) ) {
-                        echo '<a class="mt-1 py-1 badge badge-'. $joomlaVersionCheckStatus .' d-block w-75 mx-auto d-print-none" data-html2canvas-ignore="true" href="'. $joomlaVersionCheckDownload .'" rel="noreferrer noopener" target="_blank">Download Latest Joomla! (v'.$latestJVER.')</a>';
+                        echo '<a class="mt-1 py-1 badge bg-'. $joomlaVersionCheckStatus .' d-block w-75 mx-auto d-print-none" data-html2canvas-ignore="true" href="'. $joomlaVersionCheckDownload .'" rel="noreferrer noopener" target="_blank">Download Latest Joomla! (v'.$latestJVER.')</a>';
                     }
                     echo '</div>';
 
@@ -3333,9 +3333,9 @@
                 }
             ?>
             <nav id="navbar-main" class="navbar navbar-expand-lg <?php echo $navbarClass; ?> fixed-top shadow d-print-none" data-html2canvas-ignore="true">
-				<div class="container>
+				<div class="container">
 
-					<a class="navbar-brand mr-0 mr-md-2 text-<?php echo $navbarBrandClass; ?> py-2 lead fw-bolder" href="<?php echo _FPA_SELF; ?>" aria-label="<?php echo _RES; ?>">
+					<a class="navbar-brand me-0 me-md-2 text-<?php echo $navbarBrandClass; ?> py-2 lead fw-bolder" href="<?php echo _FPA_SELF; ?>" aria-label="<?php echo _RES; ?>">
 						<span class="d-inline-block d-sm-none" aria-hidden="true">FPA</span>
 						<span class="d-none d-sm-inline-block"><?php echo _RES; ?></span>
 						<span class="ml-1 small text-muted"><?php echo 'v'. _RES_VERSION .' ('. _RES_CODENAME; ?>)</span>
@@ -4480,25 +4480,25 @@
                                                 $helpIcon  = 'question-circle';
                                                 $helpColor = 'light';
                                             }
-                                            echo '<tr><td class="col-8">'. $confidenceHelpDesc .'</td><td class="col-4"><i class="fas fa-'. $helpIcon .' text-'. $helpColor .'"></i></td></tr>';
+                                            echo '<tr><td class="col-9 text-start">'. $confidenceHelpDesc .'</td><td class="col-3 text-center"><i class="fas fa-'. $helpIcon .' text-'. $helpColor .'"></i></td></tr>';
                                         }
                                         echo '</table>';
 
                                         return $confidenceResult;
                                     }
                                 ?>
-                                <div class="mx-lg-3">
+                                <div class="mx-lg-3 position-relative">
                                     <div class="bg-white shadow text-center">
                                         <div class="m-2 float-end" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top" data-bs-fallbackPlacement="flip" data-bs-title="Confidence Audit Help" data-bs-content="Click the icon to review the basic audit tests and results that determine this rating">
                                             <i class="fas fa-question-circle fa-lg text-<?php echo $helpIconColor; ?>" data-bs-toggle="collapse" data-bs-target="#confidenceHelp" aria-expanded="false" aria-controls="confidenceHelp" role="button" aria-label="View confidence results"></i>
                                         </div>
                                         <h2 class="h4 text-dark text-center border-bottom p-2"><?php echo _FPA_DASHBOARD_CONFIDENCE_TITLE; ?></h2>
-
+<!--
                                         <div class="collapse text-start p-2" id="confidenceHelp">
                                             <h3 class="h6 text-center pb-2 m-0">Basic Audit Results</h3>
                                             <?php $confidenceHelp = confidenceShowHelp($confidenceResult); ?>
                                         </div>
-
+-->
                                         <?php
                                             /**
                                              * generate confidence rating
@@ -4553,11 +4553,17 @@
                                             }
                                         ?>
                                         <h2 class="text-center display-2 text-<?php echo $confidenceColor; ?> mb-0"><strong><?php echo $confidenceRating; ?></strong></h2>
-                                        <span class="badge badge-pill badge-light text-dark <?php echo $confidenceColor; ?> mx-auto position-relative" style="top:-15px;"><?php echo number_format($confidenceScore, 1); ?>%</span>
+                                        <span class="badge rounded-pill bg-light text-dark <?php echo $confidenceColor; ?> mx-auto position-relative" style="top:-15px;"><?php echo number_format($confidenceScore, 1); ?>%</span>
                                         <?php if ($confidenceMessage) { ?>
                                             <p class="xsmall text-center border-top bg-white text-<?php echo $confidenceColor; ?> p-2 mb-2"><?php echo $confidenceMessage; ?></p>
                                         <?php } ?>
                                     </div>
+
+									<div class="collapse p-2 bg-white border shadow position-absolute w-100" id="confidenceHelp" style="z-index:1;">
+										<h3 class="h6 text-center pb-2 m-0">Basic Audit Results</h3>
+										<?php $confidenceHelp = confidenceShowHelp($confidenceResult); ?>
+									</div>
+
                                     <?php showDev( $confidenceResult ); ?>
 
                                     <!--generate basic post-->
@@ -5663,7 +5669,7 @@
                                                                 $statusClass = 'warning';
                                                             }
                                                         ?>
-                                                        <div class="badge badge-<?php echo $statusClass; ?> text-uppercase w-100"><?php echo @$instance['cmsDEVSTATUS']; ?></div>
+                                                        <div class="badge bg-<?php echo $statusClass; ?> text-uppercase w-100"><?php echo @$instance['cmsDEVSTATUS']; ?></div>
 
                                                         <?php
                                                             // warning if more than one instance of version.php found
@@ -5703,7 +5709,7 @@
                                                                 $statusClass = 'warning';
                                                             }
                                                         ?>
-                                                        <div class="badge badge-<?php echo $statusClass; ?> text-uppercase w-100"><?php echo @$instance['platformDEVSTATUS']; ?></div>
+                                                        <div class="badge bg-<?php echo $statusClass; ?> text-uppercase w-100"><?php echo @$instance['platformDEVSTATUS']; ?></div>
 
                                                         <?php
                                                             // warning if more than one instance of version.php found
@@ -6039,7 +6045,7 @@
                                                             }
                                                         ?>
                                                         <div class="xsmall w-100 mb-1 border-top text-start px-1 mb-1">
-                                                            Lang Debug: <span class="text-<?php echo $debugClass; ?> text-capitalize float-"><?php echo $instance['configLANGDEBUG']; ?></span>
+                                                            Lang Debug: <span class="text-<?php echo $debugClass; ?> text-capitalize float-end"><?php echo $instance['configLANGDEBUG']; ?></span>
                                                         </div>
 
                                                     </div>
@@ -6575,7 +6581,7 @@
                                                                 $phpenv['phpAPACHESUEXEC'] = _FPA_U;
                                                                 $sColor = '';
                                                             }
-                                                            echo '<span class="badge badge-pill badge-'. $sColor .'">'. $phpenv['phpAPACHESUEXEC'] .'</span>';
+                                                            echo '<span class="badge rounded-pill bg-'. $sColor .'">'. $phpenv['phpAPACHESUEXEC'] .'</span>';
                                                         ?>
                                                     </td>
                                                     <td class="text-center lead">
@@ -6590,7 +6596,7 @@
                                                                 $phpenv['phpPHPSUEXEC'] = _FPA_U;
                                                                 $sColor = '';
                                                             }
-                                                            echo '<span class="badge badge-pill badge-'. $sColor .'">'. $phpenv['phpPHPSUEXEC'] .'</span>';
+                                                            echo '<span class="badge rounded-pill bg-'. $sColor .'">'. $phpenv['phpPHPSUEXEC'] .'</span>';
                                                         ?>
                                                     </td>
                                                     <td class="text-center xsmall">
@@ -6654,7 +6660,7 @@
 
                                                         ?>
 
-                                                        <?php echo _FPA_PERMOWN; ?> Problems&nbsp;:&nbsp;<span class="badge badge-<?php echo $suColor; ?>"><?php echo $suStatus; ?></span>&nbsp;<span class="badge badge-light"><?php echo $phpenv['phpAPI']; ?></span>
+                                                        <?php echo _FPA_PERMOWN; ?> Problems&nbsp;:&nbsp;<span class="badge bg-<?php echo $suColor; ?>"><?php echo $suStatus; ?></span>&nbsp;<span class="badge bg-light"><?php echo $phpenv['phpAPI']; ?></span>
                                                         <p class="my-1"><?php echo $suMSG; ?> <span class="text-warning"><?php echo @$elevatedMSG; ?></span></p>
                                                     </td>
                                                 </tr>
@@ -7014,7 +7020,7 @@
                                                         <?php
                                                             if ( @$database['dbPRIVS'] ) {
                                                                 if (stristr($database['dbPRIVS'], 'GRANT ALL')) {
-                                                                    echo '<span class="badge badge-success xsmall text-lowercase mb-1 mr-1">'. substr($database['dbPRIVS'], 0, 9) .'</span>';
+                                                                    echo '<span class="badge bg-success xsmall text-lowercase mb-1 mr-1">'. substr($database['dbPRIVS'], 0, 9) .'</span>';
 
                                                                 } else {
                                                                     $privPieces = explode(',', $database['dbPRIVS']);
@@ -7022,13 +7028,13 @@
                                                                     $i = 0;
                                                                     while ($i < count($privPieces)) {
                                                                         if ( stristr($privPieces[$i], 'TRIGGER') ) {
-                                                                            echo '<span class="badge badge-info xsmall text-lowercase mb-1 mr-1">'. substr($privPieces[$i], 0, 8) .'</span>';
+                                                                            echo '<span class="badge bg-info xsmall text-lowercase mb-1 mr-1">'. substr($privPieces[$i], 0, 8) .'</span>';
 
                                                                         }elseif ( stristr($privPieces[$i], 'GRANT PROXY ON') ) {
-                                                                                echo '<span class="badge badge-info xsmall text-lowercase mb-1 mr-1">'. substr($privPieces[$i], 0, 11) .'</span>';
+                                                                                echo '<span class="badge bg-info xsmall text-lowercase mb-1 mr-1">'. substr($privPieces[$i], 0, 11) .'</span>';
 
                                                                         } else {
-                                                                            echo '<span class="badge badge-info xsmall text-lowercase mb-1 mr-1">'. $privPieces[$i] .'</span>';
+                                                                            echo '<span class="badge bd-info xsmall text-lowercase mb-1 mr-1">'. $privPieces[$i] .'</span>';
                                                                         }
                                                                         $i++;
                                                                     }
@@ -8852,9 +8858,9 @@
                     var eleCount     = document.getElementById('postOUTPUT');
                     var countMessage = '<?php echo _FPA_INS_8; ?>';
                     if ( eleCount.value.length > maxCharCount ) {
-                        document.getElementById('postCharCount').innerHTML = '<div class="alert alert-warning text-white 1bg-white small my-1 p-3"><i class="fas fa-exclamation-triangle fa-2x d-block mb-2 text-center"></i>' + countMessage + '</div><div class="text-end mb-2"><span class="xsmall text-muted">Post Length:</span> <span class="badge badge-pill badge-warning">' + document.getElementById('postOUTPUT').value.length + '</span></div>';
+                        document.getElementById('postCharCount').innerHTML = '<div class="alert alert-warning text-white 1bg-white small my-1 p-3"><i class="fas fa-exclamation-triangle fa-2x d-block mb-2 text-center"></i>' + countMessage + '</div><div class="text-end mb-2"><span class="xsmall text-muted">Post Length:</span> <span class="badge rounded-pill bg-warning">' + document.getElementById('postOUTPUT').value.length + '</span></div>';
                     } else {
-                        document.getElementById('postCharCount').innerHTML = '<div class="text-end mb-2"><span class="xsmall text-muted">Post Length:</span> <span class="badge badge-pill badge-light">' + document.getElementById('postOUTPUT').value.length + '</span></div>';
+                        document.getElementById('postCharCount').innerHTML = '<div class="text-end mb-2"><span class="xsmall text-muted">Post Length:</span> <span class="badge rounded-pill bg-light">' + document.getElementById('postOUTPUT').value.length + '</span></div>';
                     }
 
 

@@ -4562,7 +4562,7 @@
 
                                     <!--generate basic post-->
                                     <input type="hidden" name="doIT" value="1" />
-                                    <input type="submit" class="btn btn-success btn-block shadow-sm my-2 d-print-none" data-html2canvas-ignore="true" name="submit" value="<?php echo _FPA_CLICK; ?>" accesskey="g" />
+                                    <input type="submit" class="btn btn-success w-100 btn-block shadow-sm my-2 d-print-none" data-html2canvas-ignore="true" name="submit" value="<?php echo _FPA_CLICK; ?>" accesskey="g" />
 
                                     <!-- access the FPA optionPanels -->
                                     <a class="d-block btn btn-outline-primary mb-1 d-print-none" data-html2canvas-ignore="true" role="button" href="javascript:toggleFPA('fpaOptions','fpaButton');" id="fpaButton" accesskey="o"><i class="fas fa-chevron-circle-right"></i> Open the FPA Options</a>
@@ -4810,9 +4810,9 @@
                                             <div class="py-3">
                                                 <input type="hidden" name="doIT" value="1" />
 
-                                                <input type="submit" class="btn btn-success btn-lg btn-block w-75 mx-auto shadow-sm" name="submit" value="<?php echo _FPA_CLICK; ?>" accesskey="g" />
+                                                <input type="submit" class="btn btn-success btn-lg d-block w-75 mx-auto shadow-sm mb-2" name="submit" value="<?php echo _FPA_CLICK; ?>" accesskey="g" />
 
-                                                <input type="reset" class="btn btn-light btn-sm btn-block w-25 mx-auto" name="reset" value="reset" />
+                                                <input type="reset" class="btn btn-light btn-sm d-block w-25 mx-auto" name="reset" value="reset" />
                                             </div>
 
 
@@ -5597,7 +5597,7 @@
                                             echo '</textarea>';
                                         ?>
 
-                                        <button class="btn btn-warning btn-lg btn-block" onclick="return false;" id="copyPOST"><i class="fas fa-copy"></i> Copy Post Content To Clipboard</button>
+                                        <button class="btn btn-warning btn-lg w-100" onclick="return false;" id="copyPOST"><i class="fas fa-copy"></i> Copy Post Content To Clipboard</button>
 
                                     </div><!--/.card-->
 

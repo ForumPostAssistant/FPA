@@ -3202,12 +3202,12 @@
 
         <?php
             if ( file_exists('templates/protostar/favicon.ico') ) {
-                $faviconPath = 'templates/protostar';
+                $faviconPath = 'templates/protostar/favicon.ico';
             } else {
-                $faviconPath = 'templates/cassiopeia';
+                $faviconPath = 'media/system/images/joomla-favicon.svg';
             }
         ?>
-		<link rel="shortcut icon" href="./<?php echo $faviconPath; ?>/favicon.ico" />
+		<link rel="shortcut icon" href="./<?php echo $faviconPath; ?>" />
 
         <?php if (@$_POST['doPDF'] == '1' OR @$_POST['doVEL'] == '1') { ?>
             <!--load pace progress bar if this takes a while to run-->

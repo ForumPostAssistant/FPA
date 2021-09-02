@@ -4621,21 +4621,21 @@
                                             <h3 class="h5 text-muted mb-0"><i class="fas fa-info-circle"></i> Optional Information</h3>
                                             <span class="xsmall"><?php  echo _FPA_POST_NOTE; ?></span>
 
-                                            <div class="form-group row mt-3">
+                                            <div class="form-group row mt-3 mb-2">
                                                 <label for="probDSC" class="col-md-4 col-form-label small"><?php echo _FPA_PROB_DSC; ?>:</label>
                                                 <div class="col-md-8">
                                                     <input class="form-control form-control-sm bg-light" type="text" name="probDSC" id="probDSC" />
                                                 </div>
                                             </div>
 
-                                            <div class="form-group row">
+                                            <div class="form-group row mb-2">
                                                 <label for="probMSG1" class="col-md-4 col-form-label small"><?php echo _FPA_PROB_MSG; ?>:</label>
                                                 <div class="col-md-8">
                                                     <input class="form-control form-control-sm bg-light" type="text" name="probMSG1" id="probMSG1" />
                                                 </div>
                                             </div>
 
-                                            <div class="form-group row">
+                                            <div class="form-group row mb-2">
                                                 <?php if ( isset($phpenv['phpLASTERR']) ) { ?>
                                                     <label for="probMSG2" class="col-md-4 col-form-label small text-warning"><?php echo _FPA_LAST .' '. _FPA_ER; ?>:</label>
                                                     <div class="col-md-8">
@@ -4650,7 +4650,7 @@
                                                 <?php } ?>
                                             </div>
 
-                                            <div class="form-group row">
+                                            <div class="form-group row mb-2">
                                                 <label for="probACT" class="col-md-4 col-form-label small"><?php echo _FPA_PROB_ACT; ?>:</label>
                                                 <div class="col-md-8">
                                                     <textarea class="form-control form-control-sm bg-light" name="probACT" id="probACT" rows="2"></textarea>
@@ -7034,7 +7034,7 @@
                                                                                 echo '<span class="badge bg-info xsmall text-lowercase mb-1 mr-1">'. substr($privPieces[$i], 0, 11) .'</span>';
 
                                                                         } else {
-                                                                            echo '<span class="badge bd-info xsmall text-lowercase mb-1 mr-1">'. $privPieces[$i] .'</span>';
+                                                                            echo '<span class="badge bg-info xsmall text-lowercase mb-1 mr-1">'. $privPieces[$i] .'</span>';
                                                                         }
                                                                         $i++;
                                                                     }
@@ -8737,10 +8737,10 @@
 
         <div role="alert" aria-live="assertive" aria-atomic="true" class="toast position-fixed shadow d-print-none" data-html2canvas-ignore="true" style="top: 60px; right: 20px; z-index: 9999; width: 90%; max-width: 390px;" data-bs-delay="<?php if (@$_POST['doIT'] == '1') { echo 6000; } else { echo 20000; } ?>" data-bs-animation="false" id="securityToast">
             <div class="toast-header bg-danger text-white">
-                <i class="fas fa-exclamation-circle fa-lg mr-2"></i>
-                <span class="mr-auto">Security Notification</span>
+                <i class="fas fa-exclamation-circle fa-lg me-2"></i>
+                <span class="me-auto">Security Notification</span>
                 <span class="text-white" id="countdown"></span>
-                <button type="button" class="ml-2 mb-1 text-white close" data-bs-dismiss="toast" aria-label="Close">
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>

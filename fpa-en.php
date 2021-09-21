@@ -3269,6 +3269,7 @@
             h1.h2, h2, h3, h4, h5, h6 { font-weight: 400; }
             .border { border-color: #97999c !important; }
             .text-muted { color: #888 !important; }
+			.text-info { color: #d37bff !important; }
             .btn { padding: 0.375rem 0.5rem; }
             .btn, .btn-sm, .btn-lg, .card, .badge { border-radius: 0px !important; }
             .form-control, .form-control-sm { border-radius: 0px; }

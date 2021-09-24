@@ -60,21 +60,17 @@
      *
      */
 
-    /**
-     * attempt to GZip the page output for performance - Added @RussW 27-May-2020
-     * added testing for zlib otherwise conflicts with gzip - updated @RussW 29-May-2020
-     *
-     */
-    if ( ini_get( 'zlib.output_compression' ) != '1' AND substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') ) {
-        ob_start('ob_gzhandler');
-    } else {
-        ob_start();
-    }
+
 
     /** SET THE FPA DEFAULTS *****************************************************************/
      #define ( '_FPA_DEV', TRUE );                 // developer-mode, displays raw array data
      #define ( '_FPA_DIAG', TRUE );                // diagnostic-mode, turns on PHP logging errors, display errors and logs error to a file
 
+     if ( defined( '_FPA_DIAG' ) ) {
+        ini_set( 'display_errors', 1 );
+     } else {
+        ini_set( 'display_errors', 0 );
+     }
 
     /**
      * DISABLE/ENABLE FPA SPECIAL FEATURES
@@ -101,6 +97,17 @@
     define ( '_LIVE_CHECK_JOOMLA', TRUE );        // enable live latest Joomla! version check
     #define ( '_LIVE_CHECK_VEL', TRUE );           // enable live VEL check
 
+
+    /**
+     * attempt to GZip the page output for performance - Added @RussW 27-May-2020
+     * added testing for zlib otherwise conflicts with gzip - updated @RussW 29-May-2020
+     *
+     */
+    if ( ini_get( 'zlib.output_compression' ) != '1' AND substr_count($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip') ) {
+        ob_start('ob_gzhandler');
+    } else {
+        ob_start();
+    }
 
 
     /**
@@ -2616,21 +2623,68 @@
 
             if (function_exists('pg_connect')) {
                 $dBconn = @pg_connect("host=".$instance['configDBHOST']." dbname=".$instance['configDBNAME']." user=". $instance['configDBUSER']." password=". $instance['configDBPASS']);
-
                 if ($dBconn) {
                     $database['dbERROR'] = '0:';
                     $postgresql = _FPA_Y;
 
                     $sql = @pg_query($dBconn, "select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template' or type='library'");
+                    if ($sql){
                     $exset = @pg_fetch_all($sql);
-
+                   
                     $sql = @pg_query($dBconn, "select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template");
                     $tmpldef = @pg_fetch_all($sql);
+
+                    // Get database user privileges
+                    $sql = @pg_query($dBconn,"select oid,rolsuper,rolcreatedb,rolinherit from pg_catalog.pg_roles where rolname = '". $instance['configDBUSER'] ."'");
+                    $pgArrUserPriv = @pg_fetch_all($sql);                                                                                                                                                 
+                    $pgDbUserOID = $pgArrUserPriv[0]['oid'];
+                    $pgDbUserIsSuper = $pgArrUserPriv[0]['rolsuper'];
+                    $pgDbUserCreateDb = $pgArrUserPriv[0]['rolcreatedb'];
+                    $pgDbUserInheritPriv = $pgArrUserPriv[0]['rolinherit'];
+
+                    // Get database owner
+                    $sql = @pg_query($dBconn,"select datdba from pg_catalog.pg_database where datname = '". $instance['configDBNAME'] ."'");
+                    $pgArrDbOwner = @pg_fetch_all($sql);                                                                                                                                                  
+                    $pgDbOwnerOID = $pgArrDbOwner[0]['datdba'];
+
+                    // Get extension table owner
+                    $sql = @pg_query($dBconn,"select tableowner from pg_catalog.pg_tables where tablename = '". $instance['configDBPREF'] ."extensions'");
+                    $pgArrTblOwner = @pg_fetch_all($sql);                                                                                                                                                 
+                    $pgExTblOwner = $pgArrTblOwner[0]['tableowner'];
+
+                    // Is user database owner?
+                    if ($pgDbUserOID == $pgDbOwnerOID) {
+                       $pgDbUserIsOwner = true;                                           
+                    } else {
+                       $pgDbUserIsOwner = false;                    
+                    }
+                    
+                    // Is user extension-table owner?
+                    if ($instance['configDBUSER'] == $pgExTblOwner) {
+                       $pgExtTblUserIsOwner = true;                                           
+                    } else {
+                       $pgExtTblUserIsOwner = false;                    
+                    }
+
+                    // Find the highest privilege
+                    if ($pgDbUserIsSuper == "t") {
+                       $pgDbUserPriv = 'SuperUser';
+                    }
+                    elseif ($pgDbUserIsOwner) {
+                       $pgDbUserPriv = 'Database Owner';
+                    }
+                    elseif ($pgExtTblUserIsOwner) {
+                       $pgDbUserPriv = 'Table Owner';
+                    }
+                    else {
+                       $pgDbUserPriv = _FPA_U;                    
+                    }
+
 
                     if ( $dBconn ) {
                         $database['dbHOSTSERV']     = pg_parameter_status($dBconn, "server_version");       // SQL server version
                         $database['dbHOSTINFO']     = _FPA_U;                                               // connection type to dB
-                        $database['dbHOSTCLIENT']   = PGSQL_LIBPQ_VERSION_STR;                              // client library version
+                        $database['dbHOSTCLIENT']   = PGSQL_LIBPQ_VERSION;									// client library version
                         $database['dbHOSTDEFCHSET'] = pg_parameter_status($dBconn, "server_encoding");      // this is the hosts default character-set
                         $database['dbHOSTSTATS']    = _FPA_U;                                               // latest statistics
                         $database['dbCHARSET']      =  pg_parameter_status($dBconn, "client_encoding");
@@ -2693,7 +2747,7 @@
                     $database['dbHOSTSTATS']    = _FPA_U; // latest statistics
                     $database['dbCOLLATION']    = _FPA_U;
                     $database['dbCHARSET']      = _FPA_U;
-                    $database['dbERROR']        = _FPA_ECON;
+                    $database['dbERROR']        = str_replace($instance['configDBPREF'],'#_', pg_last_error($dBconn));
                 }
 
             } else {
@@ -2708,7 +2762,20 @@
                 $database['dbERROR']        = _FPA_DI_PHP_FU;
             }
 
-        } elseif ( $instance['configDBTYPE'] == 'pgsql')  {
+            } else {
+                    $database['dbHOSTSERV']     = _FPA_U; // SQL server version
+                    $database['dbHOSTINFO']     = _FPA_U; // connection type to dB
+                    $database['dbHOSTPROTO']    = _FPA_U; // server protocol type
+                    $database['dbHOSTCLIENT']   = _FPA_U; // client library version
+                    $database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
+                    $database['dbHOSTSTATS']    = _FPA_U; // latest statistics
+                    $database['dbCOLLATION']    = _FPA_U;
+                    $database['dbCHARSET']      = _FPA_U;
+                    $database['dbERROR']        = _FPA_ECON;
+            }
+
+
+        } elseif ( $instance['configDBTYPE'] == 'pgsql')  {  // PDO
 
             try {
                 $dBconn = new PDO("pgsql:host=".$instance['configDBHOST'].";dbname=".$instance['configDBNAME'], $instance['configDBUSER'], $instance['configDBPASS']);
@@ -2733,9 +2800,60 @@
                     $sql->execute();
                     $tmpldef = $sql->setFetchMode(PDO::FETCH_ASSOC);
                     $tmpldef = $sql->fetchAll();
-                } catch(PDOException $e) {
-                    //
-                }
+
+                    // Get database user privileges
+                    $sql = $dBconn->prepare("select oid,rolsuper,rolcreatedb,rolinherit from pg_catalog.pg_roles where rolname = '". $instance['configDBUSER'] ."'");
+                    $sql->execute();                                                                                                                                                  
+                    $pgArrUserPriv = $sql->setFetchMode(PDO::FETCH_ASSOC);
+                    $pgArrUserPriv = $sql->fetchAll();
+                    $pgDbUserOID = $pgArrUserPriv[0]['oid'];
+                    $pgDbUserIsSuper = $pgArrUserPriv[0]['rolsuper'];
+                    $pgDbUserCreateDb = $pgArrUserPriv[0]['rolcreatedb'];
+                    $pgDbUserInheritPriv = $pgArrUserPriv[0]['rolinherit'];
+
+                    // Get database owner
+                    $sql = $dBconn->prepare("select datdba from pg_catalog.pg_database where datname = '". $instance['configDBNAME'] ."'");
+                    $sql->execute();                                                                                                                                                  
+                    $pgArrDbOwner = $sql->setFetchMode(PDO::FETCH_ASSOC);
+                    $pgArrDbOwner = $sql->fetchAll();
+                    $pgDbOwnerOID = $pgArrDbOwner[0]['datdba'];
+
+                    // Get extension table owner
+                    $sql = $dBconn->prepare("select tableowner from pg_catalog.pg_tables where tablename = '". $instance['configDBPREF'] ."extensions'");
+                    $sql->execute();                                                                                                                                                  
+                    $pgArrTblOwner = $sql->setFetchMode(PDO::FETCH_ASSOC);
+                    $pgArrTblOwner = $sql->fetchAll();
+                    $pgExTblOwner = $pgArrTblOwner[0]['tableowner'];
+
+                    // Is user database owner?
+                    if ($pgDbUserOID == $pgDbOwnerOID) {
+                       $pgDbUserIsOwner = true;                                           
+                    } else {
+                       $pgDbUserIsOwner = false;                    
+                    }
+
+                    // Is user extension-table owner?
+                    if ($instance['configDBUSER'] == $pgExTblOwner) {
+                       $pgExtTblUserIsOwner = true;                                           
+                    } else {
+                       $pgExtTblUserIsOwner = false;                    
+                    }
+ 
+                    // Find the highest privilege
+                    if ($pgDbUserIsSuper) {
+                       $pgDbUserPriv = 'SuperUser';
+                    }
+                    elseif ($pgDbUserIsOwner) {
+                       $pgDbUserPriv = 'Database Owner';
+                    }
+                    elseif ($pgExtTblUserIsOwner) {
+                       $pgDbUserPriv = 'Table Owner';
+                    }
+                    else {
+                       $pgDbUserPriv = _FPA_U;                    
+                    }
+                    
+
 
                 if ( $dBconn ) {
                     $database['dbHOSTSERV']     = $dBconn->getAttribute(constant("PDO::ATTR_SERVER_VERSION" ));       // SQL server version
@@ -2798,6 +2916,19 @@
                     $database['dbSIZE']     = $database['dbSIZE'] .' KiB';
                 }
                 $database['dbTABLECOUNT']   = $rowCount;
+
+                } catch(PDOException $e) {
+                    $database['dbHOSTSERV']     = _FPA_U; // SQL server version
+                    $database['dbHOSTINFO']     = _FPA_U; // connection type to dB
+                    $database['dbHOSTPROTO']    = _FPA_U; // server protocol type
+                    $database['dbHOSTCLIENT']   = _FPA_U; // client library version
+                    $database['dbHOSTDEFCHSET'] = _FPA_U; // this is the hosts default character-set
+                    $database['dbHOSTSTATS']    = _FPA_U; // latest statistics
+                    $database['dbCOLLATION']    = _FPA_U;
+                    $database['dbCHARSET']      = _FPA_U;
+                    $database['dbERROR']        = str_replace($instance['configDBPREF'],'#_', $e);
+                }
+
 
             } else {
                 $database['dbHOSTSERV']     = _FPA_U; // SQL server version
@@ -5037,6 +5168,13 @@
                                                 echo '[b]'. _FPA_DB .' '. _FPA_TSIZ .':[/b] '. $database['dbSIZE'] .' | [b]'. _FPA_CONF_PREF_TABLE . ':&nbsp[/b] '. $confPrefTables . ' | [b]'. _FPA_OTHER_TABLE . ':&nbsp[/b] '. $notconfPrefTables . ' | ';
                                             }
 
+                                            if ( $postgresql == _FPA_Y ) {
+                                                if (isset($pgDbUserPriv)) {
+                                                   echo '[b]'. _FPA_UPRIV .' : [/b]' . $pgDbUserPriv ;
+                                                } else {
+                                                   echo '[b]'. _FPA_UPRIV .' : [/b]' . _FPA_U ;
+                                                }
+                                            } else {
                                             if ( @$database['dbPRIVS'] ) {
                                                 if (stristr($database['dbPRIVS'], 'GRANT ALL')) {
                                                     echo '[b]'. _FPA_UPRIV .' : [/b]' . substr($database['dbPRIVS'], 0, 9);
@@ -5056,6 +5194,7 @@
                                                 }
                                             } else {
                                                 echo '[b]'. _FPA_UPRIV .' : [/b]' . _FPA_U ;
+                                                }
                                             }
                                             echo '[/size][/quote]';
 
@@ -7020,6 +7159,13 @@
                                                 <tr>
                                                     <td colspan="2">User Privileges&nbsp;
                                                         <?php
+                                                            if ( $postgresql == _FPA_Y ) {
+                                                                if (isset($pgDbUserPriv)) {
+                                                                    echo '<span class="badge badge-info xsmall text-lowercase mb-1 mr-1">'. $pgDbUserPriv .'</span>';
+                                                                } else {
+                                                                    echo '<span class="text-info">'. _FPA_U .'</span>';
+                                                                }
+                                                            } else {
                                                             if ( @$database['dbPRIVS'] ) {
                                                                 if (stristr($database['dbPRIVS'], 'GRANT ALL')) {
                                                                     echo '<span class="badge bg-success xsmall text-lowercase mb-1 mr-1">'. substr($database['dbPRIVS'], 0, 9) .'</span>';
@@ -7043,6 +7189,7 @@
                                                                 }
                                                             } else {
                                                                 echo '<span class="text-info">'. _FPA_U .'</span>';
+                                                            }
                                                             }
                                                         ?>
                                                     </td>

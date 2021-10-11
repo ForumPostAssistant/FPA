@@ -23,7 +23,7 @@
      define ( '_RES', 'Forum Post Assistant' );
      define ( '_RES_VERSION', '1.6.3' );
      define ( '_RES_CODENAME', 'loxodonta' );
-     define ( '_RES_LAST_UPDATED', '24-Sep-2021' );
+     define ( '_RES_LAST_UPDATED', '11-Oct-2021' );
      define ( '_RES_RELEASE', 'Stable' );              // can be Alpha, Beta, RC, Stable
      define ( '_RES_LANG', 'en-GB' );                 // Country/Language Code
      define ( '_RES_COPYRIGHT_STMT', ' Copyright &copy; 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );

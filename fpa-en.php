@@ -1,6 +1,6 @@
 <?php
     /**
-     * @version 1.6.3
+     * @version 1.6.4
      * @package Joomla!
      * @subpackage Forum Post Assistant
      * @category Diagnostic Tool
@@ -21,9 +21,9 @@
      *
      */
      define ( '_RES', 'Forum Post Assistant' );
-     define ( '_RES_VERSION', '1.6.3' );
-     define ( '_RES_CODENAME', 'loxodonta' );
-     define ( '_RES_LAST_UPDATED', '11-Oct-2021' );
+     define ( '_RES_VERSION', '1.6.4' );
+     define ( '_RES_CODENAME', 'Katla' );
+     define ( '_RES_LAST_UPDATED', '27-Nov-2021' );
      define ( '_RES_RELEASE', 'Stable' );              // can be Alpha, Beta, RC, Stable
      define ( '_RES_LANG', 'en-GB' );                 // Country/Language Code
      define ( '_RES_COPYRIGHT_STMT', ' Copyright &copy; 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
@@ -856,7 +856,7 @@
 	$plugin['ARRNAME']          = _FPA_EXTPLG_TITLE;
 	$template['ARRNAME']        = _FPA_TMPL_TITLE;
 	$library['ARRNAME']         = _FPA_EXTLIB_TITLE;
-
+	$instance['configDBPREF']   = '';
 
 
 	// build the developer-mode function to display the raw arrays
@@ -2231,7 +2231,8 @@
     $postgresql = _FPA_N;
     $confPrefTables = 0;
     $notconfPrefTables = 0;
-
+    $database['dbTABLECOUNT'] = _FPA_U;
+    
     if ( $instance['instanceCONFIGURED'] == _FPA_Y AND ($instance['configDBCREDOK'] == _FPA_Y OR $instance['configDBCREDOK'] == _FPA_PMISS)) {
         $database['dbDOCHECKS'] = _FPA_Y;
 
@@ -2368,6 +2369,7 @@
 
     } elseif ( $instance['configDBTYPE'] == 'mysqli' AND $phpenv['phpSUPPORTSMYSQLI'] == _FPA_Y ) { // mysqli
 
+        mysqli_report(MYSQLI_REPORT_OFF);
         if (function_exists('mysqli_connect')) {
             $dBconn              = @new mysqli( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'], $instance['configDBNAME'] );
             $database['dbERROR'] = mysqli_connect_errno() .':'. mysqli_connect_error();
@@ -3241,9 +3243,14 @@
                     $joomlaVersionCheck = '';
 
                 } else {
-                    $latestJATTR  = $jupdateXML->extension[count($jupdateXML->extension) -1];
-                    $latestJVER   = $latestJATTR->attributes()->version->__toString();
-                    //$thisJVER     = '3.9.18';
+                
+                	if (substr($thisJVER ,0 ,1) != '4') {
+                		$latestJATTR  = $jupdateXML->extension[count($jupdateXML->extension) -2];
+                		$latestJVER   = $latestJATTR->attributes()->version->__toString();
+					} else {
+                		$latestJATTR  = $jupdateXML->extension[count($jupdateXML->extension) -1];
+                		$latestJVER   = $latestJATTR->attributes()->version->__toString();
+                    } 
 
                     if (version_compare($thisJVER, $latestJVER) < 0) {
                         $joomlaVersionCheckStatus   = 'warning';
@@ -3786,13 +3793,44 @@
                                  * @PhilD 17-Mar-2017
                                  *
                                  */
-                                $input_line = @$database['dbHOSTSERV'];
-                                preg_match("/\b(\w*mariadb\w*)\b/i", $input_line, $output_array);
 
-                                if  (@$instance['cmsRELEASE'] >= '4.0') {
+                                if ( $instance['instanceFOUND'] == _FPA_Y ) {
+                                	$input_line = @$database['dbHOSTSERV'];
+                                	preg_match("/\b(\w*mariadb\w*)\b/i", $input_line, $output_array);
+								}
+
+                                if  (@$instance['cmsRELEASE'] == '4.0' AND @$instance['cmsDEVLEVEL'] > '4') {
                                     $fpa['supportENV']['minPHP']        = '7.2.5';
                                     $fpa['supportENV']['minSQL']        = '5.6.0';
-                                    $fpa['supportENV']['maxPHP']        = '8.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '8.2.0';
+                                    $fpa['supportENV']['maxSQL']        = '9.0.0';
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif  (@$instance['cmsRELEASE'] == '4.0') {
+                                    $fpa['supportENV']['minPHP']        = '7.2.5';
+                                    $fpa['supportENV']['minSQL']        = '5.6.0';
+                                    $fpa['supportENV']['maxPHP']        = '8.0.99';
+                                    $fpa['supportENV']['maxSQL']        = '9.0.0';
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif  (@$instance['cmsRELEASE'] == '3.10' AND @$instance['cmsDEVLEVEL'] > '3') {
+                                    $fpa['supportENV']['minPHP']        = '5.3.10';
+                                    $fpa['supportENV']['minSQL']        = '5.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '8.2.0';
                                     $fpa['supportENV']['maxSQL']        = '9.0.0';
                                     $fpa['supportENV']['badPHP'][0]     = '5.3.0';
                                     $fpa['supportENV']['badPHP'][1]     = '5.3.1';
@@ -3806,7 +3844,7 @@
                                 } elseif  (@$instance['cmsRELEASE'] == '3.10') {
                                     $fpa['supportENV']['minPHP']        = '5.3.10';
                                     $fpa['supportENV']['minSQL']        = '5.1.0';
-                                    $fpa['supportENV']['maxPHP']        = '8.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '8.0.99';
                                     $fpa['supportENV']['maxSQL']        = '9.0.0';
                                     $fpa['supportENV']['badPHP'][0]     = '5.3.0';
                                     $fpa['supportENV']['badPHP'][1]     = '5.3.1';
@@ -3820,7 +3858,7 @@
                                 } elseif  (@$instance['cmsRELEASE'] == '3.9' AND @$instance['cmsDEVLEVEL'] > '12') {
                                     $fpa['supportENV']['minPHP']        = '5.3.10';
                                     $fpa['supportENV']['minSQL']        = '5.1.0';
-                                    $fpa['supportENV']['maxPHP']        = '8.1.0';
+                                    $fpa['supportENV']['maxPHP']        = '8.0.99';
                                     $fpa['supportENV']['maxSQL']        = '8.5.0';
                                     $fpa['supportENV']['badPHP'][0]     = '5.3.0';
                                     $fpa['supportENV']['badPHP'][1]     = '5.3.1';
@@ -4339,7 +4377,9 @@
                                             </div>
                                         <?php } // end FPA ?>
 
-                                        <?php if ( defined( '_LIVE_CHECK_JOOMLA' ) AND $instance['instanceFOUND'] == _FPA_Y AND extension_loaded('simplexml') AND ini_get( 'allow_url_fopen' ) == '1' ) { ?>
+
+                                        <?php if ( defined( '_LIVE_CHECK_JOOMLA' )) {
+										if ($instance['instanceFOUND'] == _FPA_Y AND extension_loaded('simplexml') AND ini_get( 'allow_url_fopen' ) == '1' ) { ?>
                                             <div class="col text-center mb-2 d-flex align-self-stretch">
 
                                                 <?php
@@ -4352,12 +4392,15 @@
                                         <?php } else { ?>
                                             <div class="w-100 p-2 bg-white small border border-info text-info text-center">
                                                 <i class="fas fa-exclamation-circle fa-fw"></i>&nbsp;
-                                                Unable to check Joomla! Version <small>(SimpleXML or allow_url_fopen not available)</small>
+
+                                                <?php if ($instance['instanceFOUND'] != _FPA_Y) { ?>
+                                                         Unable to check Joomla! Version <small>(Instance Not Found)</small>
+												<?php } else { ?>
+		                                                Unable to check Joomla! Version <small>(SimpleXML or allow_url_fopen not available)</small>
+                                                <?php } ?>
                                             </div>
-                                        <?php } // end Joomla! ?>
-
+                                        <?php }} // end Joomla! ?>
                                     </div><!--/.row-->
-
                                 <?php } // end FPA & Joomla! LiveChecks ?>
 
                                 <?php
@@ -5223,12 +5266,14 @@
 
                                             }
 
-                                            if ( version_compare( $instance['cmsRELEASE'], '3.8', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
-                                                unset($phpreq['mcrypt']);
-                                            }
+                                            if ($instance['instanceFOUND'] == _FPA_Y) {
+                                            	if ( version_compare( $instance['cmsRELEASE'], '3.8', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
+                                                	unset($phpreq['mcrypt']);
+                                            	}
 
-                                            if (version_compare( $phpenv['phpVERSION'], '7.0.0', '>=' ))   {
-                                                unset($phpreq['mysql']);
+                                            	if (version_compare( $phpenv['phpVERSION'], '7.0.0', '>=' ))   {
+                                                	unset($phpreq['mysql']);
+                                            	}
                                             }
 
                                             echo "\r\n";
@@ -5837,19 +5882,25 @@
                                                         <div class="fw-bolder mb-1"><?php echo @$instance['platformRELEASE'] .'.'. @$instance['platformDEVLEVEL']; ?></div>
 
                                                         <?php
-                                                            if ( strtolower( @$instance['platformDEVSTATUS'] ) == 'stable' ) {
-                                                                $statusClass = 'success';
+                                                            if ( $instance['platformVFILE'] != _FPA_N ) {
+                                                            	if ( strtolower( @$instance['platformDEVSTATUS'] ) == 'stable' ) {
+                                                                	$statusClass = 'success';
 
-                                                            } elseif ( strtolower( substr( @$instance['platformDEVSTATUS'],0, 4 ) ) == 'alph' OR strtolower( substr( @$instance['cmsDEVSTATUS'],0, 4 ) ) == 'beta' ) {
-                                                                $statusClass = 'danger';
+                                                            	} elseif ( strtolower( substr( @$instance['platformDEVSTATUS'],0, 4 ) ) == 'alph' OR strtolower( substr( @$instance['cmsDEVSTATUS'],0, 4 ) ) == 'beta' ) {
+                                                                	$statusClass = 'danger';
 
-                                                            } elseif ( strtolower( substr( @$instance['platformDEVSTATUS'],0, 2 ) ) == 'rc' ) {
-                                                                $statusClass = 'warning';
+                                                            	} elseif ( strtolower( substr( @$instance['platformDEVSTATUS'],0, 2 ) ) == 'rc' ) {
+                                                                	$statusClass = 'warning';
 
+                                                            	} else {
+                                                                	$statusClass = 'warning';
+                                                            	}
                                                             } else {
-                                                                $statusClass = 'warning';
+                                                            	$statusClass = 'success';
+                                                            	$instance['platformDEVSTATUS'] =  _FPA_NA ;
                                                             }
                                                         ?>
+
                                                         <div class="badge bg-<?php echo $statusClass; ?> text-uppercase w-100"><?php echo @$instance['platformDEVSTATUS']; ?></div>
 
                                                         <?php
@@ -6269,8 +6320,18 @@
                                                             Access: <span class="text-<?php echo $accessClass; ?> float-end text-capitalize"><?php echo $accessStatus; ?></span>
                                                         </div>
 
-                                                    </div>
+                                                        <?php
+                                                            if ( $instance['configSITEHTWC'] == _FPA_Y ) {
+                                                                $htaccessClass  = 'success';
 
+                                                            } else {
+                                                                $htaccessClass  = 'warning';
+                                                            }
+                                                        ?>
+                                                        <div class="xsmall border-top w-100 mb-1 text-start px-1 mb-1">
+                                                            htaccess/webconf: <span class="text-<?php echo $htaccessClass; ?> float-end text-capitalize"><?php echo @$instance['configSITEHTWC']; ?></span>
+                                                        </div>
+                                                    </div>
                                                 </div><!--/.col-->
                                                 <div class="col text-center my-2 d-flex align-self-stretch">
 
@@ -6835,8 +6896,8 @@
 
                                                         // find and highlight the requirements and mark them as present or missing
                                                         if ( $key == 'libxml' OR $key == 'xml' OR $key == 'zip' OR $key == 'openssl' OR $key == 'zlib' OR $key == 'curl' OR $key == 'iconv' OR $key == 'mbstring' OR $key == 'mysql' OR $key == 'mysqli' OR $key == 'pdo_mysql' OR $key == 'mcrypt' OR $key == 'sodium' OR $key == 'suhosin' OR $key == 'cgi' OR $key == 'cgi-fcgi' ) {
-                                                            $status = 'dark';
-                                                            $border = 'dark';
+                                                            $status = 'success';
+                                                            $border = 'success';
                                                             $weight = 'bolder';
 
                                                         } elseif ( $key == 'apache2handler') {
@@ -6873,6 +6934,7 @@
                                         </div><!--row-->
 
                                         <?php
+                                        if ( $instance['instanceFOUND'] == _FPA_Y ) {
                                             if ( version_compare( @$instance['cmsRELEASE'], '3.8', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
                                                 unset($phpreq['mcrypt']);
                                             }
@@ -6893,6 +6955,7 @@
 
                                                 echo '</div>';
                                             }
+                                        }
                                         ?>
 
                                     <?php showDev( $phpextensions ); ?>
@@ -7157,6 +7220,38 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
+                                                    <td class="text">Tables With Config Prefix  
+													<?php if ( $showProtected == 0 ) {
+                                                    		echo $instance['configDBPREF']; 
+                                                        } else {														
+                                                    		echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
+                                                        }
+													?></td>	
+                                                    <td>
+                                                        <?php
+                                                            if ( $database['dbTABLECOUNT'] ) {
+                                                                echo $confPrefTables .' tables';
+
+                                                            } else {
+                                                                echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-capitalize">Other Tables</td>
+                                                    <td>
+                                                        <?php
+                                                            if ( $database['dbTABLECOUNT'] ) {
+                                                                echo $notconfPrefTables .' tables';
+
+                                                            } else {
+                                                                echo '<span class="text-warning">'. _FPA_U .'</span>';
+                                                            }
+                                                        ?>
+                                                    </td>
+                                                </tr>
+                                                <tr>
                                                     <td colspan="2">User Privileges&nbsp;
                                                         <?php
                                                             if ( $postgresql == _FPA_Y ) {
@@ -7252,8 +7347,8 @@
                                                                  */
                                                                 function uptimeToWords($seconds) {
                                                                     $days = intval(intval($seconds) / (3600*24));
-                                                                    $hours = (intval($seconds) / 3600) % 24;
-                                                                    $minutes = (intval($seconds) / 60) % 60;
+                                                                    $hours = intval((intval($seconds) / 3600)) % 24;
+                                                                    $minutes = intval((intval($seconds) / 60)) % 60;
 
                                                                     $days = $days ? $days . 'd ' : '';
                                                                     $hours = $hours ? $hours . 'h ' : '';
@@ -7319,32 +7414,6 @@
                                                         <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
                                                         <td>
                                                             <?php echo $pieces[1]; ?>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="text-capitalize">No. Tables with config prefix</td>
-                                                        <td>
-                                                            <?php
-                                                                if ( $database['dbTABLECOUNT'] ) {
-                                                                    echo $confPrefTables .' tables';
-
-                                                                } else {
-                                                                    echo '<span class="text-warning">'. _FPA_U .'</span>';
-                                                                }
-                                                            ?>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td class="text-capitalize">No. Other Tables</td>
-                                                        <td>
-                                                            <?php
-                                                                if ( $database['dbTABLECOUNT'] ) {
-                                                                    echo $notconfPrefTables .' tables';
-
-                                                                } else {
-                                                                    echo '<span class="text-warning">'. _FPA_U .'</span>';
-                                                                }
-                                                            ?>
                                                         </td>
                                                     </tr>
 
@@ -7454,10 +7523,19 @@
                                                 $pieces = explode( " ", $show['CREATED'] );
                                                 echo '<td class="xsmall text-center d-none d-md-table-cell">'. $pieces['0'] .'</td>';
 
-                                                $pieces = explode( " ", $show['UPDATED'] );
+
+                                                if (is_string($show['UPDATED'])) {
+                                                	$pieces = explode( " ", $show['UPDATED'] );
+                                                } else {                                                
+                                                	$pieces['0'] = '';
+                                                }
                                                 echo '<td class="xsmall text-center d-none d-lg-table-cell">'. $pieces['0'] .'</td>';
 
-                                                $pieces = explode( " ", $show['CHECKED'] );
+                                                if (is_string($show['CHECKED'])) {
+                                                	$pieces = explode( " ", $show['CHECKED'] );
+                                                } else {
+													$pieces['0'] = '';
+                                                }   
                                                 echo '<td class="xsmall text-center d-none d-lg-table-cell">'. $pieces['0'] .'</td>';
 
                                                 // calculate some statistics for the table footer as we iterate the database array
@@ -8958,7 +9036,6 @@
 			var collapseElementList = [].slice.call(document.querySelectorAll('[data-bs-toggle="collapse"]'))
 			var collapseList = collapseElementList.map(function (collapseEl) {
 				return new bootstrap.Collapse(collapseEl)
-				toggle: false
 			});
 
 			// enable all popovers

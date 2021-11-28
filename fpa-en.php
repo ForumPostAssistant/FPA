@@ -3408,6 +3408,7 @@
             .border { border-color: #97999c !important; }
             .text-muted { color: #888 !important; }
 			.text-info { color: #d37bff !important; }
+			.text-danger { color: #ff4d4d !important; }
             .btn { padding: 0.375rem 0.5rem; }
             .btn, .btn-sm, .btn-lg, .card, .badge { border-radius: 0px !important; }
             .form-control, .form-control-sm { border-radius: 0px; }

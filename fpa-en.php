@@ -823,12 +823,7 @@
 	$apachereq['mod_rewrite']   = '';
 	$apachereq['mod_expires']   = '';
 	$apachereq['mod_deflate']   = '';
-	$apachereq['mod_security']  = '';
-	$apachereq['mod_evasive']   = '';
-	$apachereq['mod_dosevasive'] = '';
 	$apachereq['mod_ssl']       = '';
-	$apachereq['mod_qos']       = '';
-	$apachereq['mod_userdir']  = '';
 	$database['ARRNAME']        = _FPA_DB_TITLE;
 	$tables['ARRNAME']          = _FPA_DBTBL_TITLE;
 	$modecheck['ARRNAME']       = _FPA_PERMCHK_TITLE;

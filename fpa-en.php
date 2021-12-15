@@ -23,7 +23,7 @@
      define ( '_RES', 'Forum Post Assistant' );
      define ( '_RES_VERSION', '1.6.4' );
      define ( '_RES_CODENAME', 'Katla' );
-     define ( '_RES_LAST_UPDATED', '27-Nov-2021' );
+     define ( '_RES_LAST_UPDATED', '16-Dec-2021' );
      define ( '_RES_RELEASE', 'Stable' );              // can be Alpha, Beta, RC, Stable
      define ( '_RES_LANG', 'en-GB' );                 // Country/Language Code
      define ( '_RES_COPYRIGHT_STMT', ' Copyright &copy; 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
@@ -3791,9 +3791,11 @@
                                  */
 
                                 if ( $instance['instanceFOUND'] == _FPA_Y ) {
-                                	$input_line = @$database['dbHOSTSERV'];
-                                	preg_match("/\b(\w*mariadb\w*)\b/i", $input_line, $output_array);
-								}
+                                    $input_line = @$database['dbHOSTSERV'];
+                                    if (isset($input_line)) {
+                                        preg_match("/\b(\w*mariadb\w*)\b/i", $input_line, $output_array);
+                                    }
+                                }
 
                                 if  (@$instance['cmsRELEASE'] == '4.0' AND @$instance['cmsDEVLEVEL'] > '4') {
                                     $fpa['supportENV']['minPHP']        = '7.2.5';

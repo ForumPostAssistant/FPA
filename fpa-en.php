@@ -1,6 +1,6 @@
 <?php
     /**
-     * @version 1.6.4
+     * @version 1.6.5
      * @package Joomla!
      * @subpackage Forum Post Assistant
      * @category Diagnostic Tool
@@ -9,7 +9,7 @@
      * @copyright 2011-present, GNU GPLv2 or later license
      * @see https://forumpostassistant.github.io/docs/
      * @internal Supports: All known Joomla! versions running >php5.4
-     * @internal Contributors : @RussW, @PhilD13, @mandville, @Frostmakk, @sozzled, @Webdongle, @btoplak
+     * @internal Contributors : @RussW, @PhilD13, @mandville, @frostmakk, @sozzled, @Webdongle, @btoplak
      * @since 24-Jun-2011
      *
      * UI/UX overhauled -  @RussW Jun-2020
@@ -21,9 +21,9 @@
      *
      */
      define ( '_RES', 'Forum Post Assistant' );
-     define ( '_RES_VERSION', '1.6.4' );
-     define ( '_RES_CODENAME', 'Katla' );
-     define ( '_RES_LAST_UPDATED', '16-Dec-2021' );
+     define ( '_RES_VERSION', '1.6.5' );
+     define ( '_RES_CODENAME', 'Taygeta' );
+     define ( '_RES_LAST_UPDATED', '17-Jan-2022' );
      define ( '_RES_RELEASE', 'Stable' );              // can be Alpha, Beta, RC, Stable
      define ( '_RES_LANG', 'en-GB' );                 // Country/Language Code
      define ( '_RES_COPYRIGHT_STMT', ' Copyright &copy; 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
@@ -296,8 +296,8 @@
 	define ( '_LICENSE_LINK', '<a href="https://www.gnu.org/licenses/" target="_blank" rel="noopener noreferrer">https://www.gnu.org/licenses/</a>' ); // link to GPL license
 	define ( '_LICENSE_FOOTER', ' The FPA comes with ABSOLUTELY NO WARRANTY. <br> This is free software,
 	and covered under the GNU GPLv2 or later license. You are welcome to redistribute it under certain conditions.
-	For details read the LICENSE.txt file included in the download package with this script.
-    A copy of the license may also be obtained at ' );
+	For details read the LICENSE.txt file included in the download package with this script.<br>
+	A copy of the license may also be obtained at ' );
 	define ( '_RES_FPALINK', 'https://github.com/ForumPostAssistant/FPA/tarball/en-GB/' ); // where to get the latest 'Final Releases'
     // @RussW updated 23-May-2020
     define ( '_RES_FPALATEST', 'Download the latest FPA release (tar.gz)' );
@@ -1683,13 +1683,29 @@
 
             if ( isset($config->access ))
             {
-                $instance['configACCESS'] = $config->access;
+                switch ($config->access)
+                {
+                    case 1:
+                        $instance['configACCESS'] = 'Public';
+                        break;
+                    case 2:
+                        $instance['configACCESS'] = 'Registered';
+                        break;
+                    case 5:
+                        $instance['configACCESS'] = 'Guest';
+                        break;
+                    case 6:
+                        $instance['configACCESS'] = 'Super Users';
+                        break;
+
+                    default:
+                        $instance['configACCESS'] = $config->access;
+                }
             }
             else
             {
                 $instance['configACCESS'] = _FPA_NA;
             }
-
         }
 
         if ($instance['configDBTYPE'] == 'mysql' and $instance['cmsMAJORVERSION'] == '4') {
@@ -3797,7 +3813,21 @@
                                     }
                                 }
 
-                                if  (@$instance['cmsRELEASE'] == '4.0' AND @$instance['cmsDEVLEVEL'] > '4') {
+                                if  (@$instance['cmsRELEASE'] >= '4.1') {
+                                    $fpa['supportENV']['minPHP']        = '7.2.5';
+                                    $fpa['supportENV']['minSQL']        = '5.6.0';
+                                    $fpa['supportENV']['maxPHP']        = '9.0.0';
+                                    $fpa['supportENV']['maxSQL']        = '9.0.0';
+                                    $fpa['supportENV']['badPHP'][0]     = '5.3.0';
+                                    $fpa['supportENV']['badPHP'][1]     = '5.3.1';
+                                    $fpa['supportENV']['badPHP'][2]     = '5.3.2';
+                                    $fpa['supportENV']['badPHP'][3]     = '5.3.3';
+                                    $fpa['supportENV']['badPHP'][4]     = '5.3.4';
+                                    $fpa['supportENV']['badPHP'][5]     = '5.3.5';
+                                    $fpa['supportENV']['badPHP'][6]     = '5.3.6';
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif  (@$instance['cmsRELEASE'] == '4.0' AND @$instance['cmsDEVLEVEL'] > '4') {
                                     $fpa['supportENV']['minPHP']        = '7.2.5';
                                     $fpa['supportENV']['minSQL']        = '5.6.0';
                                     $fpa['supportENV']['maxPHP']        = '8.2.0';
@@ -3936,6 +3966,7 @@
                                     $fpa['supportENV']['badPHP'][5]     = '5.3.5';
                                     $fpa['supportENV']['badPHP'][6]     = '5.3.6';
                                     $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
                                 } elseif ( @$instance['cmsRELEASE'] == '3.2' AND @$instance['cmsDEVLEVEL'] == 0) {
                                     $fpa['supportENV']['minPHP']        = '5.3.7';
                                     $fpa['supportENV']['minSQL']        = '5.1.0';
@@ -3949,6 +3980,7 @@
                                     $fpa['supportENV']['badPHP'][5]     = '5.3.5';
                                     $fpa['supportENV']['badPHP'][6]     = '5.3.6';
                                     $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
                                 } elseif ( @$instance['cmsRELEASE'] == '3.1' ) {
                                     $fpa['supportENV']['minPHP']        = '5.3.1';
                                     $fpa['supportENV']['minSQL']        = '5.1.0';
@@ -3962,6 +3994,7 @@
                                     $fpa['supportENV']['badPHP'][5]     = '5.3.5';
                                     $fpa['supportENV']['badPHP'][6]     = '5.3.6';
                                     $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
                                 } elseif ( @$instance['cmsRELEASE'] == '3.0' ) {
                                     $fpa['supportENV']['minPHP']        = '5.3.1';
                                     $fpa['supportENV']['minSQL']        = '5.1.0';
@@ -3975,6 +4008,7 @@
                                     $fpa['supportENV']['badPHP'][5]     = '5.3.5';
                                     $fpa['supportENV']['badPHP'][6]     = '5.3.6';
                                     $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
                                 } elseif ( @$instance['cmsRELEASE'] == '2.5' ) {
                                     $fpa['supportENV']['minPHP']        = '5.2.4';
                                     $fpa['supportENV']['minSQL']        = '5.0.4';
@@ -4006,13 +4040,11 @@
                                         $fpa['supportENV']['minSQL']        = '3.23.0';
                                         $fpa['supportENV']['maxPHP']        = '5.2.17';
                                         $fpa['supportENV']['maxSQL']        = '5.5.0';  // limited by ENGINE TYPE changes in 5.5 and install sql syntax
-
                                     } else {
                                         $fpa['supportENV']['minPHP']        = '4.3.10';
                                         $fpa['supportENV']['minSQL']        = '3.23.0';
                                         $fpa['supportENV']['maxPHP']        = '5.3.6';
                                         $fpa['supportENV']['maxSQL']        = '5.5.0';  // limited by ENGINE TYPE changes in 5.5 and install sql syntax
-
                                     }
 
                                     $fpa['supportENV']['badPHP'][0]     = '4.3.9';
@@ -5094,8 +5126,13 @@
                                                 echo '[color=Green]'. _FPA_Y .'[/color] | ';
 
                                                 if ( $instance['configWRITABLE'] == _FPA_Y ) { echo '[color=Green]'. _FPA_WRITABLE .'[/color] ('; } else { echo _FPA_RO .' ('; }
-
-                                                if ( substr( $instance['configMODE'],1 ,1 ) == '7' OR substr( $instance['configMODE'],2 ,1 ) >= '5' OR substr( $instance['configMODE'],3 ,1 ) >= '5' ) { echo '[color=Red]'; } else { echo '[color=Green]'; }
+                                                    if (( substr( $instance['configMODE'],1 ,1 ) == '7' OR substr( $instance['configMODE'],2 ,1 ) >= '5' OR substr( $instance['configMODE'],3 ,1 ) >= '5') AND $isWINLOCAL == false ) {
+                                                        echo '[color=Red]';
+                                                    } else if (( substr( $instance['configMODE'],1 ,1 ) == '7' OR substr( $instance['configMODE'],2 ,1 ) >= '5' OR substr( $instance['configMODE'],3 ,1 ) >= '5') AND $isWINLOCAL == true ) {
+                                                        echo '[color=Black]';
+                                                    } else {
+                                                        echo '[color=Green]';
+                                                    }
                                                 echo $instance['configMODE'] .'[/color]) | ';
 
                                                 if ( @$instance['definesEXIST'] == _FPA_Y ) {
@@ -5115,11 +5152,26 @@
                                                 } elseif ( $instance['configSITEHTWC'] == _FPA_Y ) { echo '[color=Green]'. $instance['configSITEHTWC'] .'[/color] | ';
                                                 } elseif ( $instance['configSITEHTWC'] == _FPA_N ) { echo '[color=orange]'. $instance['configSITEHTWC'] .'[/color] | '; }
 
-                                                if ( $instance['configLIVESITE'] != _FPA_NA AND strlen($instance['configLIVESITE']) > 0) {
-                                                    echo '[b]GZip:[/b] '. $instance['configGZIP'] .' | [b]Cache:[/b] '. $instance['configCACHING'] .' | [b]CacheTime:[/b] '. $instance['configCACHETIME'] .' | [b]CacheHandler:[/b] '. $instance['configCACHEHANDLER'] .' | [b]CachePlatformPrefix:[/b] '. $instance['configCACHEPLFPFX'] .' | [b]FTP Layer:[/b] '. $instance['configFTP'] .' | [b]Proxy:[/b] '. $instance['configPROXY'] .' | [b]LiveSite:[/b] [color=orange] Is Not Empty [/color] | [b]Session lifetime:[/b] '. $instance['configLIFETIME'] .' | [b]Session handler:[/b] '. $instance['configSESSHAND'] .' | [b]Shared sessions:[/b] '. $instance['configSHASESS'] .' | [b]SSL:[/b] '. $instance['configSSL'] .' | [b]Error Reporting:[/b] '. $instance['configERRORREP'] .' | [b]Site Debug:[/b] '. $instance['configSITEDEBUG'] .' | ';
-                                                } else {
-                                                    echo '[b]GZip:[/b] '. $instance['configGZIP'] .' | [b]Cache:[/b] '. $instance['configCACHING'] .' | [b]CacheTime:[/b] '. $instance['configCACHETIME'] .' | [b]CacheHandler:[/b] '. $instance['configCACHEHANDLER'] .' | [b]CachePlatformPrefix:[/b] '. $instance['configCACHEPLFPFX'] .' | [b]FTP Layer:[/b] '. $instance['configFTP'] .' | [b]Proxy:[/b] '. $instance['configPROXY'] .' | [b]LiveSite:[/b]  | [b]Session lifetime:[/b] '. $instance['configLIFETIME'] .' | [b]Session handler:[/b] '. $instance['configSESSHAND'] .' | [b]Shared sessions:[/b] '. $instance['configSHASESS'] .' | [b]SSL:[/b] '. $instance['configSSL'] .' | [b]Error Reporting:[/b] '. $instance['configERRORREP'] .' | [b]Site Debug:[/b] '. $instance['configSITEDEBUG'] .' | ';
+ 
+                                                echo '[b]GZip:[/b] '. $instance['configGZIP'] .' | [b]Cache:[/b] '. $instance['configCACHING'] .' | [b]CacheTime:[/b] '. $instance['configCACHETIME'] .' | [b]CacheHandler:[/b] '. $instance['configCACHEHANDLER'] .' | [b]CachePlatformPrefix:[/b] '. $instance['configCACHEPLFPFX'] .' | [b]FTP Layer:[/b] '. $instance['configFTP'] .' | [b]Proxy:[/b] '. $instance['configPROXY'] .' | '; 
+
+                                                if ( $instance['configLIVESITE'] != _FPA_NA AND strlen($instance['configLIVESITE']) > 0) { 
+                                                    echo '[b]LiveSite:[/b] [color=orange] Is Not Empty [/color] | ';
+                                                } else { 
+                                                    echo '[b]LiveSite:[/b]  | '; 
                                                 }
+
+                                                echo '[b]Session lifetime:[/b] '. $instance['configLIFETIME'] .' | ';
+                                                
+
+                                                if ( $instance['cmsMAJORVERSION'] == '4' AND $instance['configSESSHAND'] == 'none') { 
+                                                    echo '[b]Session handler:[/b] [color=red]'. $instance['configSESSHAND'] .'[/color] | ';
+                                                } else { 
+                                                    echo '[b]Session handler:[/b] '. $instance['configSESSHAND'] .' | '; 
+                                                }
+
+                                                echo '[b]Shared sessions:[/b] '. $instance['configSHASESS'] .' | [b]SSL:[/b] '. $instance['configSSL'] .' | [b]Error Reporting:[/b] '. $instance['configERRORREP'] .' | [b]Site Debug:[/b] '. $instance['configSITEDEBUG'] .' | ';
+
 
                                                 if ( version_compare( $instance['cmsRELEASE'], '1.5', '>=' ) ) {
                                                     echo '[b]Language Debug:[/b] '. $instance['configLANGDEBUG'] .' | ';
@@ -5178,7 +5230,15 @@
                                             echo '[b]Session Path '. _FPA_WRITABLE .':[/b] ';
                                             if ( $phpenv['phpSESSIONPATHWRITABLE'] == _FPA_Y ) { echo '[color=Green]'. $phpenv['phpSESSIONPATHWRITABLE'] .'[/color] | '; } elseif ( $phpenv['phpSESSIONPATHWRITABLE'] == _FPA_N ) { echo '[color=Red]'. $phpenv['phpSESSIONPATHWRITABLE'] .'[/color] | '; } else { echo '[color=orange]'. $phpenv['phpSESSIONPATHWRITABLE'] .'[/color] | '; }
 
-                                            echo '[b]Display Errors:[/b] '. $phpenv['phpERRORDISPLAY'] .' | [b]Error Reporting:[/b] '. $phpenv['phpERRORREPORT'] .' | [b]Log Errors To:[/b] '. $phpenv['phpERRLOGFILE'] .' | [b]Last Known Error:[/b] '. @$phpenv['phpLASTERRDATE'] .' | [b]Register Globals:[/b] '. $phpenv['phpREGGLOBAL'] .' | [b]Magic Quotes:[/b] '. $phpenv['phpMAGICQUOTES'] .' | [b]Safe Mode:[/b] '. $phpenv['phpSAFEMODE'] .' | [b]Allow url fopen:[/b] '. $phpenv['phpURLFOPEN'] .' | [b]Open Base:[/b] '. $phpenv['phpOPENBASE'] .' | [b]Uploads:[/b] '. $phpenv['phpUPLOADS'] .' | [b]Max. Upload Size:[/b] '. $phpenv['phpMAXUPSIZE'] .' | [b]Max. POST Size:[/b] '. $phpenv['phpMAXPOSTSIZE'] .' | [b]Max. Input Time:[/b] '. $phpenv['phpMAXINPUTTIME'] .' | [b]Max. Execution Time:[/b] '. $phpenv['phpMAXEXECTIME'] .' | [b]Memory Limit:[/b] '. $phpenv['phpMEMLIMIT'];
+                                            echo '[b]Display Errors:[/b] '. $phpenv['phpERRORDISPLAY'] .' | [b]Error Reporting:[/b] '. $phpenv['phpERRORREPORT'] .' | [b]Log Errors To:[/b] '. $phpenv['phpERRLOGFILE'] .' | [b]Last Known Error:[/b] '. @$phpenv['phpLASTERRDATE'] .' | [b]Register Globals:[/b] '. $phpenv['phpREGGLOBAL'] .' | [b]Magic Quotes:[/b] '. $phpenv['phpMAGICQUOTES'] .' | [b]Safe Mode:[/b] '. $phpenv['phpSAFEMODE'] .' | ';
+
+                                            if ( $phpenv['phpURLFOPEN'] == '1' ){
+                                                echo '[b]Allow url fopen:[/b] '. $phpenv['phpURLFOPEN'] .' | ';
+                                            } else {
+                                                echo '[b]Allow url fopen:[/b][color=Red] No [/color]| ';
+                                            }
+
+                                            echo '[b]Open Base:[/b] '. $phpenv['phpOPENBASE'] .' | [b]Uploads:[/b] '. $phpenv['phpUPLOADS'] .' | [b]Max. Upload Size:[/b] '. $phpenv['phpMAXUPSIZE'] .' | [b]Max. POST Size:[/b] '. $phpenv['phpMAXPOSTSIZE'] .' | [b]Max. Input Time:[/b] '. $phpenv['phpMAXINPUTTIME'] .' | [b]Max. Execution Time:[/b] '. $phpenv['phpMAXEXECTIME'] .' | [b]Memory Limit:[/b] '. $phpenv['phpMEMLIMIT'];
 
                                             echo "\r\n\r\n";
 
@@ -5265,13 +5325,13 @@
                                             }
 
                                             if ($instance['instanceFOUND'] == _FPA_Y) {
-                                            	if ( version_compare( $instance['cmsRELEASE'], '3.8', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
-                                                	unset($phpreq['mcrypt']);
-                                            	}
+                                                if ( version_compare( $instance['cmsRELEASE'], '3.8', '>=') OR version_compare( $phpenv['phpVERSION'], '7.2.0', '>=' ))   {
+                                                    unset($phpreq['mcrypt']);
+                                                }
 
-                                            	if (version_compare( $phpenv['phpVERSION'], '7.0.0', '>=' ))   {
-                                                	unset($phpreq['mysql']);
-                                            	}
+                                                if (version_compare( $phpenv['phpVERSION'], '7.0.0', '>=' ))   {
+                                                    unset($phpreq['mysql']);
+                                                }
                                             }
 
                                             echo "\r\n";
@@ -5341,7 +5401,7 @@
 
                                             echo '[/size][/quote]';
 
-
+                                            // Core Folder permissions
                                             if ( $instance['instanceFOUND'] == _FPA_Y ) {
                                                 echo '[quote="Folder Permissions ::"][size=85]';
 
@@ -5350,21 +5410,29 @@
                                                     foreach ( $folders as $i => $show ) {
 
                                                         if ( $show != $folders['ARRNAME'] ) {
-
-                                                                echo $show .' (';
-
-                                                            if ( substr( $modecheck[$show]['mode'],1 ,1 ) == '7' OR substr( $modecheck[$show]['mode'],2 ,1 ) == '7' ) {
-                                                                echo '[color=Red]'. $modecheck[$show]['mode'] .'[/color]) | ';
+                                                            echo $show .' (';
+                                                            if ($isWINLOCAL) {
+                                                                if (is_writable($show)) {
+                                                                    echo '[color=Green]Writable[/color]) | ';
+                                                                } else {
+                                                                    if (!file_exists($show)) {
+                                                                        echo '[color=Orange]Does Not Exist[/color]) | ';
+                                                                    } else {
+                                                                        echo '[color=Orange]Unwritable[/color]) | ';
+                                                                    }
+                                                                }
                                                             } else {
-                                                                echo $modecheck[$show]['mode'] .') | ';
+                                                                if ( substr( $modecheck[$show]['mode'],1 ,1 ) == '7' OR substr( $modecheck[$show]['mode'],2 ,1 ) == '7' ) {
+                                                                    echo '[color=Red]'. $modecheck[$show]['mode'] .'[/color]) | ';
+                                                                } else {
+                                                                    echo $modecheck[$show]['mode'] .') | ';
+                                                                }
                                                             }
-
                                                         }
-
                                                     }
 
-
-                                                    if ( @$_POST['showElevated'] == '1' ) {
+                                                    // Elevated permissions
+                                                    if ( @$_POST['showElevated'] == '1' AND $isWINLOCAL == false) {
                                                         echo "\r\n\r\n";
 
                                                         $limitCount = '0';
@@ -5896,6 +5964,7 @@
                                                             } else {
                                                             	$statusClass = 'success';
                                                             	$instance['platformDEVSTATUS'] =  _FPA_NA ;
+																echo '<br>';
                                                             }
                                                         ?>
 
@@ -6297,17 +6366,21 @@
                                                         </div>
 
                                                         <?php
-                                                            if ( $instance['configACCESS'] == '1' ) {
+                                                            if ( $instance['configACCESS'] == 'Public' ) {
                                                                 $accessClass   = 'info';
                                                                 $accessStatus  = 'Public';
 
-                                                            } elseif ( $instance['configACCESS'] == '2' ) {
+                                                            } elseif ( $instance['configACCESS'] == 'Registered' ) {
                                                                 $accessClass   = 'info';
                                                                 $accessStatus  = 'Registered';
 
-                                                            } elseif ( $instance['configACCESS'] == '2' ) {
+                                                            } elseif ( $instance['configACCESS'] == 'Guest' ) {
                                                                 $accessClass   = 'info';
-                                                                $accessStatus  = 'Special';
+                                                                $accessStatus  = 'Guest';
+
+                                                            } elseif ( $instance['configACCESS'] == 'Super User' ) {
+                                                                $accessClass   = 'info';
+                                                                $accessStatus  = 'Super User';
 
                                                             } else {
                                                                 $accessClass  = 'warning';
@@ -8609,7 +8682,7 @@
 
                             </div><!--/.table-responsive-->
 
-                            <?php showDev( $library ); ?>
+                            <?php showDev( $plugin ); ?>
                             <?php unset ( $key, $show ); ?>
                         </div><!--/.container(plugins)-->
 

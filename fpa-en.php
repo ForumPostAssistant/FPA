@@ -3046,6 +3046,11 @@
             $database['dbERROR']    = $database['dbERROR'] .' ( '. _FPA_DBCONNNOTE .' )';
         }
 
+        // Strip away the fake MariaDB version some servers report.
+        if (substr($database['dbHOSTSERV'],0,7) == '5.5.5-1') {
+            $database['dbHOSTSERV'] = substr($database['dbHOSTSERV'],6);
+        }
+
 
     } else { // if no configuration or if configured but dBase credentials aren't valid
         $database['dbDOCHECKS']     = _FPA_N;

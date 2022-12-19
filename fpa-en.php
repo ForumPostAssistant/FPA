@@ -23,7 +23,7 @@
      define ( '_RES', 'Forum Post Assistant' );
      define ( '_RES_VERSION', '1.6.6' );
      define ( '_RES_CODENAME', 'Betelgeuse' );
-     define ( '_RES_LAST_UPDATED', '13-Dec-2022' );
+     define ( '_RES_LAST_UPDATED', '19-Dec-2022' );
      define ( '_RES_RELEASE', 'Stable' );              // can be Alpha, Beta, RC, Stable
      define ( '_RES_LANG', 'en-GB' );                 // Country/Language Code
      define ( '_RES_COPYRIGHT_STMT', ' Copyright &copy; 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );

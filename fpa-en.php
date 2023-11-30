@@ -820,7 +820,7 @@
 	$phpreq['pdo_mysql']        = '';
 	$phpreq['mcrypt']           = '';
 	$phpreq['fileinfo']         = '';
-	$phpreq['gd']               = '';    
+	$phpreq['gd']               = '';
 	$apachemodules['ARRNAME']   = _FPA_APAMOD_TITLE;
 	$apachereq['ARRNAME']       = _FPA_APAREQ_TITLE;
 	$apachereq['mod_rewrite']   = '';
@@ -2251,7 +2251,7 @@
     $confPrefTables = 0;
     $notconfPrefTables = 0;
     $database['dbTABLECOUNT'] = _FPA_U;
-    
+
     if ( $instance['instanceCONFIGURED'] == _FPA_Y AND ($instance['configDBCREDOK'] == _FPA_Y OR $instance['configDBCREDOK'] == _FPA_PMISS)) {
         $database['dbDOCHECKS'] = _FPA_Y;
 
@@ -2692,7 +2692,7 @@
                     $sql = @pg_query($dBconn, "select name,type,enabled from ". $instance['configDBPREF']."extensions where type='plugin' or type='component' or type='module' or type='template' or type='library'");
                     if ($sql){
                     $exset = @pg_fetch_all($sql);
-                   
+
                     // Get templates enabled status
                     $sql = @pg_query($dBconn, "select template, max(home) as home from ".$instance['configDBPREF']."template_styles group by template");
                     $tmpldef = @pg_fetch_all($sql);
@@ -2703,7 +2703,7 @@
 
                     // Get database user privileges
                     $sql = @pg_query($dBconn,"select oid,rolsuper,rolcreatedb,rolinherit from pg_catalog.pg_roles where rolname = '". $instance['configDBUSER'] ."'");
-                    $pgArrUserPriv = @pg_fetch_all($sql);                                                                                                                                                 
+                    $pgArrUserPriv = @pg_fetch_all($sql);
                     $pgDbUserOID = $pgArrUserPriv[0]['oid'];
                     $pgDbUserIsSuper = $pgArrUserPriv[0]['rolsuper'];
                     $pgDbUserCreateDb = $pgArrUserPriv[0]['rolcreatedb'];
@@ -2711,26 +2711,26 @@
 
                     // Get database owner
                     $sql = @pg_query($dBconn,"select datdba from pg_catalog.pg_database where datname = '". $instance['configDBNAME'] ."'");
-                    $pgArrDbOwner = @pg_fetch_all($sql);                                                                                                                                                  
+                    $pgArrDbOwner = @pg_fetch_all($sql);
                     $pgDbOwnerOID = $pgArrDbOwner[0]['datdba'];
 
                     // Get extension table owner
                     $sql = @pg_query($dBconn,"select tableowner from pg_catalog.pg_tables where tablename = '". $instance['configDBPREF'] ."extensions'");
-                    $pgArrTblOwner = @pg_fetch_all($sql);                                                                                                                                                 
+                    $pgArrTblOwner = @pg_fetch_all($sql);
                     $pgExTblOwner = $pgArrTblOwner[0]['tableowner'];
 
                     // Is user database owner?
                     if ($pgDbUserOID == $pgDbOwnerOID) {
-                       $pgDbUserIsOwner = true;                                           
+                       $pgDbUserIsOwner = true;
                     } else {
-                       $pgDbUserIsOwner = false;                    
+                       $pgDbUserIsOwner = false;
                     }
-                    
+
                     // Is user extension-table owner?
                     if ($instance['configDBUSER'] == $pgExTblOwner) {
-                       $pgExtTblUserIsOwner = true;                                           
+                       $pgExtTblUserIsOwner = true;
                     } else {
-                       $pgExtTblUserIsOwner = false;                    
+                       $pgExtTblUserIsOwner = false;
                     }
 
                     // Find the highest privilege
@@ -2744,7 +2744,7 @@
                        $pgDbUserPriv = 'Table Owner';
                     }
                     else {
-                       $pgDbUserPriv = _FPA_U;                    
+                       $pgDbUserPriv = _FPA_U;
                     }
 
 
@@ -2878,7 +2878,7 @@
 
                     // Get database user privileges
                     $sql = $dBconn->prepare("select oid,rolsuper,rolcreatedb,rolinherit from pg_catalog.pg_roles where rolname = '". $instance['configDBUSER'] ."'");
-                    $sql->execute();                                                                                                                                                  
+                    $sql->execute();
                     $pgArrUserPriv = $sql->setFetchMode(PDO::FETCH_ASSOC);
                     $pgArrUserPriv = $sql->fetchAll();
                     $pgDbUserOID = $pgArrUserPriv[0]['oid'];
@@ -2888,32 +2888,32 @@
 
                     // Get database owner
                     $sql = $dBconn->prepare("select datdba from pg_catalog.pg_database where datname = '". $instance['configDBNAME'] ."'");
-                    $sql->execute();                                                                                                                                                  
+                    $sql->execute();
                     $pgArrDbOwner = $sql->setFetchMode(PDO::FETCH_ASSOC);
                     $pgArrDbOwner = $sql->fetchAll();
                     $pgDbOwnerOID = $pgArrDbOwner[0]['datdba'];
 
                     // Get extension table owner
                     $sql = $dBconn->prepare("select tableowner from pg_catalog.pg_tables where tablename = '". $instance['configDBPREF'] ."extensions'");
-                    $sql->execute();                                                                                                                                                  
+                    $sql->execute();
                     $pgArrTblOwner = $sql->setFetchMode(PDO::FETCH_ASSOC);
                     $pgArrTblOwner = $sql->fetchAll();
                     $pgExTblOwner = $pgArrTblOwner[0]['tableowner'];
 
                     // Is user database owner?
                     if ($pgDbUserOID == $pgDbOwnerOID) {
-                       $pgDbUserIsOwner = true;                                           
+                       $pgDbUserIsOwner = true;
                     } else {
-                       $pgDbUserIsOwner = false;                    
+                       $pgDbUserIsOwner = false;
                     }
 
                     // Is user extension-table owner?
                     if ($instance['configDBUSER'] == $pgExTblOwner) {
-                       $pgExtTblUserIsOwner = true;                                           
+                       $pgExtTblUserIsOwner = true;
                     } else {
-                       $pgExtTblUserIsOwner = false;                    
+                       $pgExtTblUserIsOwner = false;
                     }
- 
+
                     // Find the highest privilege
                     if ($pgDbUserIsSuper) {
                        $pgDbUserPriv = 'SuperUser';
@@ -2925,9 +2925,9 @@
                        $pgDbUserPriv = 'Table Owner';
                     }
                     else {
-                       $pgDbUserPriv = _FPA_U;                    
+                       $pgDbUserPriv = _FPA_U;
                     }
-                    
+
 
 
                 if ( $dBconn ) {
@@ -3321,21 +3321,21 @@
                     $joomlaVersionCheck = '';
 
                 } else {
-                    // To be removed when J3 is EOL                
+                    // To be removed when J3 is EOL
                     if (substr($thisJVER ,0 ,1) != '4') {
                         $x = 0;
                         do {
                             $x++;
                             $latestJATTR  = $jupdateXML->extension[count($jupdateXML->extension) - $x];
                         } while (substr($latestJATTR->attributes()->targetplatformversion->__toString(),0 ,1) != '3');
-                        
+
                 		$latestJVER   = $latestJATTR->attributes()->version->__toString();
 
 					} else {
-                    // End of To be removed when J3 is EOL 
+                    // End of To be removed when J3 is EOL
                 		$latestJATTR  = $jupdateXML->extension[count($jupdateXML->extension) -1];
                 		$latestJVER   = $latestJATTR->attributes()->version->__toString();
-                    } 
+                    }
 
                     if (version_compare($thisJVER, $latestJVER) < 0) {
                         $joomlaVersionCheckStatus   = 'warning';
@@ -3471,6 +3471,7 @@
             .pdf-break-after { page-break-after : always; }
             .pace .pace-progress { height: 8px !important; }
 			.dropdown-toggle::after { display: none; }
+			.additional-findings-messages { display: grid; grid-template-columns: 1fr; grid-column-gap: 1rem; grid-row-gap: 0; }
 
         <?php if ( @$darkmode != 1 ) { ?>
             /* override default BS Yeti theme to match other FPA pages */
@@ -3504,7 +3505,7 @@
 
             /* increase default container widths to better suit dashboard type page */
             @media (min-width: 576px) { .container { max-width: 540px; } }
-            @media (min-width: 768px) { .container { max-width: 720px; } }
+            @media (min-width: 768px) { .container { max-width: 720px; } .additional-findings-messages { grid-template-columns: repeat(2, 1fr); } }
             @media (min-width: 992px) { .container { max-width: 960px; } }
             @media (min-width: 1200px) { .container { max-width: 1160px; } }
             @media (min-width: 1440px) { .container { max-width: 1240px; } }
@@ -3588,6 +3589,7 @@
 									<a class="dropdown-item py-1" href="#extensions">Extensions</a>
 								<?php } ?>
 								<a class="dropdown-item py-1" href="#templates">Templates</a>
+								<a class="dropdown-item py-1" href="#additionalfindings">Additional Notes</a>
 								<div class="dropdown-divider mb-0"></div>
 
 								<form class="m-0 ml-auto p-0 1bg-danger small 1text-white" method="post" name="dropdownDELForm" id="dropdownDELForm">
@@ -3887,7 +3889,16 @@
                                     }
                                 }
 
-                                if  (@$instance['cmsRELEASE'] >= '4.0') {
+								if  (@$instance['cmsRELEASE'] >= '5.0') {
+                                    $fpa['supportENV']['minPHP']        = '8.1.0';
+                                    $fpa['supportENV']['minSQL']        = '8.0.13';
+                                    $fpa['supportENV']['minMariaDbSQL'] = '10.4.0';
+                                    $fpa['supportENV']['maxPHP']        = '8.3.99';
+                                    $fpa['supportENV']['maxSQL']        = '9.0.0';
+                                    $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
+                                    $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+                                } elseif  (@$instance['cmsRELEASE'] >= '4.0') {
                                     $fpa['supportENV']['minPHP']        = '7.2.5';
                                     $fpa['supportENV']['minSQL']        = '5.6.0';
                                     $fpa['supportENV']['minMariaDbSQL'] = '10.1.0';
@@ -4254,7 +4265,7 @@
 
                                                     //Added this elseif to give the ok for MariaDB - @PhilD 17-Mar-2017
                                                     elseif (strtoupper(@$output_array[0]) == "MARIADB") {
-                                                        $mariadb = _FPA_Y;                                                                                                        
+                                                        $mariadb = _FPA_Y;
                                                         if ( ( version_compare( @$database['dbHOSTSERV'], $fpa['supportENV']['minMariaDbSQL'], '>=' ) ) ) {
                                                             echo '<span class="text-success">'. _FPA_MDB .'</span>';
                                                             $snapshot['sqlSUP4J'] = _FPA_Y;
@@ -4477,6 +4488,16 @@
                                                     doJOOMLALIVE($thisJVER);
                                                 ?>
 
+												<?php
+													if ( $instance['cmsMAJORVERSION'] < '5') {
+														echo '<div class="w-50 p-0 d-flex align-self-stretch bg-white small">';
+														echo '<a class="btn btn-warning btn-sm xsmall py-3" href="#additionalfindings">Check Joomla 5 Compatibility.</a>';
+														echo '</div>';
+													}
+												?>
+
+
+
                                             </div>
 
                                         <?php } else { ?>
@@ -4686,7 +4707,7 @@
                                     }
 
                                     // mysql or php does not support installed Joomla! version
-                                    if ($instance['instanceFOUND'] == _FPA_Y AND ($snapshot['phpSUP4J'] == _FPA_NO OR $snapshot['sqlSUP4J'] == _FPA_NO)) {
+                                    if ($instance['instanceFOUND'] == _FPA_Y AND ($snapshot['phpSUP4J'] != _FPA_Y OR $snapshot['sqlSUP4J'] != _FPA_Y)) {
                                         $confidenceScore = 0;
                                     }
 
@@ -5212,22 +5233,22 @@
                                                 } elseif ( $instance['configSITEHTWC'] == _FPA_Y ) { echo '[color=Green]'. $instance['configSITEHTWC'] .'[/color] | ';
                                                 } elseif ( $instance['configSITEHTWC'] == _FPA_N ) { echo '[color=orange]'. $instance['configSITEHTWC'] .'[/color] | '; }
 
- 
-                                                echo '[b]GZip:[/b] '. $instance['configGZIP'] .' | [b]Cache:[/b] '. $instance['configCACHING'] .' | [b]CacheTime:[/b] '. $instance['configCACHETIME'] .' | [b]CacheHandler:[/b] '. $instance['configCACHEHANDLER'] .' | [b]CachePlatformPrefix:[/b] '. $instance['configCACHEPLFPFX'] .' | [b]FTP Layer:[/b] '. $instance['configFTP'] .' | [b]Proxy:[/b] '. $instance['configPROXY'] .' | '; 
 
-                                                if ( $instance['configLIVESITE'] != _FPA_NA AND strlen($instance['configLIVESITE']) > 0) { 
+                                                echo '[b]GZip:[/b] '. $instance['configGZIP'] .' | [b]Cache:[/b] '. $instance['configCACHING'] .' | [b]CacheTime:[/b] '. $instance['configCACHETIME'] .' | [b]CacheHandler:[/b] '. $instance['configCACHEHANDLER'] .' | [b]CachePlatformPrefix:[/b] '. $instance['configCACHEPLFPFX'] .' | [b]FTP Layer:[/b] '. $instance['configFTP'] .' | [b]Proxy:[/b] '. $instance['configPROXY'] .' | ';
+
+                                                if ( $instance['configLIVESITE'] != _FPA_NA AND strlen($instance['configLIVESITE']) > 0) {
                                                     echo '[b]LiveSite:[/b] [color=orange] Is Not Empty [/color] | ';
-                                                } else { 
-                                                    echo '[b]LiveSite:[/b]  | '; 
+                                                } else {
+                                                    echo '[b]LiveSite:[/b]  | ';
                                                 }
 
                                                 echo '[b]Session lifetime:[/b] '. $instance['configLIFETIME'] .' | ';
-                                                
 
-                                                if ( $instance['cmsMAJORVERSION'] == '4' AND $instance['configSESSHAND'] == 'none') { 
+
+                                                if ( $instance['cmsMAJORVERSION'] == '4' AND $instance['configSESSHAND'] == 'none') {
                                                     echo '[b]Session handler:[/b] [color=red]'. $instance['configSESSHAND'] .'[/color] | ';
-                                                } else { 
-                                                    echo '[b]Session handler:[/b] '. $instance['configSESSHAND'] .' | '; 
+                                                } else {
+                                                    echo '[b]Session handler:[/b] '. $instance['configSESSHAND'] .' | ';
                                                 }
 
                                                 echo '[b]Shared sessions:[/b] '. $instance['configSHASESS'] .' | [b]SSL:[/b] '. $instance['configSSL'] .' | [b]Error Reporting:[/b] '. $instance['configERRORREP'] .' | [b]Site Debug:[/b] '. $instance['configSITEDEBUG'] .' | ';
@@ -7395,13 +7416,13 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text">Tables With Config Prefix  
+                                                    <td class="text">Tables With Config Prefix
 													<?php if ( $showProtected == 0 ) {
-                                                    		echo $instance['configDBPREF']; 
-                                                        } else {														
+                                                    		echo $instance['configDBPREF'];
+                                                        } else {
                                                     		echo '<span class="protected">'. _FPA_HIDDEN .'</span>';
                                                         }
-													?></td>	
+													?></td>
                                                     <td>
                                                         <?php
                                                             if ( $database['dbTABLECOUNT'] ) {
@@ -7584,7 +7605,7 @@
                                                         </td>
                                                     </tr>
 
-                                                    <?php if ($mariadb == _FPA_N) { ?> 
+                                                    <?php if ($mariadb == _FPA_N) { ?>
                                                     <?php $pieces = explode( ':', $database['dbHOSTSTATS'][7] ); ?>
                                                     <tr>
                                                         <td class="text-capitalize"><?php echo $pieces[0]; ?></td>
@@ -7703,7 +7724,7 @@
 
                                                 if (is_string($show['UPDATED'])) {
                                                 	$pieces = explode( " ", $show['UPDATED'] );
-                                                } else {                                                
+                                                } else {
                                                 	$pieces['0'] = '';
                                                 }
                                                 echo '<td class="xsmall text-center d-none d-lg-table-cell">'. $pieces['0'] .'</td>';
@@ -7712,7 +7733,7 @@
                                                 	$pieces = explode( " ", $show['CHECKED'] );
                                                 } else {
 													$pieces['0'] = '';
-                                                }   
+                                                }
                                                 echo '<td class="xsmall text-center d-none d-lg-table-cell">'. $pieces['0'] .'</td>';
 
                                                 // calculate some statistics for the table footer as we iterate the database array
@@ -9101,93 +9122,145 @@
              *
              */
             ?>
-
-            <?php if ($instance['instanceFOUND'] == _FPA_Y) { ?>
-                <section class="py-3" id="additional findings">
+            <section class="py-3" id="additionalfindings">
                 <div class="container mt-5 additional-findings">
-                <h2 class="border-bottom mb-4"><?php echo 'Additional Findings & Notes'; ?></h2>
-                <div class="table-responsive-md">
-                <tbody>
+                    <h2 class="border-bottom mb-4"><?php echo 'Additional Findings & Notes'; ?></h2>
 
-            <?php // Disabled update sites.
-            if (isset($updSites)) {
-                if (is_array($updSites)) {
-                    $updSitesPrbl = false;
-                    foreach ( $updSites as $key => $show ) {
-                        if ($updSites[$key]['enabled'] == 0){
-                            $updSitesPrbl = true;
-                            echo '<text class="text-danger"> The update site '  . $updSites[$key]['name'] . ' is disabled.'; ?> <br /> <?php
-                        }
-                    }
-                    if($updSitesPrbl) {
-                        echo '<text class="text-danger"> This will impact the update notification process of Joomla core and/or extensions.'; ?> <br /><br />  <?php
-                    }
-                }
-            }
-            ?>
+					<div class="border-bottom mb-4 additional-findings-messages">
 
-            <?php // Wrong Session_handler
-            if ( $instance['cmsMAJORVERSION'] == '4' AND $instance['configSESSHAND'] == 'none') {
-                echo '<text class="text-danger"> Session handler in configuration.php is set to none. That is not an option in Joomla 4. Use database or filesystem. Open Global Configuration and click save to update.'; ?> <br /><br />  <?php
-            }
-            ?>
+						<?php if ($instance['instanceFOUND'] == _FPA_Y) { ?>
 
-            <?php // Mix of versions
-            if ($vFileSum > 1) {
-                echo '<text class="text-danger"> More than one instance of the file version.php was found. Your Joomla file & folder structure appear to be a mix of old and new versions.'; ?> <br /><br />  <?php
-            }
-            ?>
+							<?php // Disabled update sites.
+								if ( isset($updSites) ) {
 
-            <?php // No tables in database
-            if ($database['dbTABLECOUNT'] == 0) {
-                echo '<text class="text-danger"> We can not find any tables in your database'; ?> <br /><br />  <?php
-            }
-            ?>
+									if ( is_array($updSites) ) {
 
-            <?php // No tables in database with config prefix
-            if ($confPrefTables == 0 and $notconfPrefTables > 0 ) {
-                echo '<text class="text-danger"> We can not find any tables in your database with the same dbprefix as used in the file configuration.php, but there are tables with different prefix. '; ?> <br /><br />  <?php
-            }
-            ?>
+										$updSitesPrbl = false;
+										$disabledSites= array();
+										foreach ( $updSites as $key => $show ) {
 
-            <?php  // J3 on PHP 8.1+
-            if ( $instance['cmsMAJORVERSION'] < '4'  AND  version_compare( PHP_VERSION, '8.0.99', '>' ))  {
-                echo '<text class="text-danger"> J3.xx and older versions does not work with error reporting set to maximum on PHP 8.1 and above.'; ?> <br /><br />  <?php
-            }
-            ?>
+											if ( $updSites[$key]['enabled'] == 0 ){
 
-            <?php  // J4 on PHP 8.2+    TODO: UPDATE THIS WHEN J4 IS PATCHED.
-            if ( @$instance['cmsRELEASE'] >= '4.0'  AND  version_compare( PHP_VERSION, '8.1.99', '>' ))  {
-                echo '<text class="text-danger"> J4.xx and older versions does not work with error reporting set to maximum on PHP 8.2 and above.'; ?> <br /><br />  <?php
-            }
-            ?>
+												$disabledSites[] = $updSites[$key]['name'];
 
-            <?php  // Minimum MariaDB on J4
-            if ( $instance['cmsMAJORVERSION'] == '4'  AND  $mariadb == _FPA_Y AND $snapshot['sqlSUP4J'] == _FPA_N  )  {
-                echo '<text class="text-danger"> Minimum supported version of MariaDB with J4 is ' . $fpa['supportENV']['minMariaDbSQL'] . '.'; ?> <br /><br />  <?php
-            }
-            ?>
+											}
 
-            <?php  // Minimum MariaDB for J4. One reason why the updater refuses to well.. update.
-            if ( @$instance['cmsRELEASE'] == '3.10' AND  $mariadb == _FPA_Y  AND version_compare( @$database['dbHOSTSERV'], '10.1','<' ) )  {
-                echo '<text class="text-warning"> The version of MariaDB on your site is preventing you from updating to Joomla 4.'; ?> <br />  <?php echo'The minimum supported version of MariaDB is 10.1 '; ?> <br /><br />  <?php
-            }
-            ?>
+										} //end foreach
 
-            <?php
-            /**
-            * More of the good stuff
-            *
-             */
-            ?>
+										if ( count($disabledSites) == true )
+										{
+											echo '<div class="alert alert-warning"><strong>Disabled Update Sites</strong><br />There are disabled updates sites. This will impact the update notification process of Joomla core and/or extensions.<br />';
 
+												foreach ($disabledSites as $key => $siteName)
+												{
+													echo '<span class="badge bg-white text-dark rounded-pill">'. $siteName .'</span> ';
+												}
 
+											echo '</div>';
+										}
 
-            </tbody>
-            </div><!--/.table-responsive-->
-            <br />
-            <div class="border-bottom mb-4"></div>
-            </div><!--/.container(additional-findings)-->
+									}
+
+								} // end disabled update sites
+							?>
+
+							<?php // Wrong Session_handler
+								if ( $instance['cmsMAJORVERSION'] == '4' AND $instance['configSESSHAND'] == 'none') {
+									echo '<div class="alert alert-danger"><strong>Session Handler Setting for Joomla 4</strong><br />Session handler in configuration.php is set to none. That is not an option in Joomla 4. Use database or filesystem. Open Global Configuration and click save to update.</div>';
+								}
+							?>
+
+							<?php // Mix of versions
+								if ( $vFileSum > 1 ) {
+									echo '<div class="alert alert-warning"><strong>Multiple Joomla Versions</strong><br />More than one instance of the file version.php was found. Your Joomla file & folder structure appear to be a mix of old and new versions.</div>';
+								}
+							?>
+
+							<?php // No tables in database
+								if  ($database['dbTABLECOUNT'] == 0 ) {
+									echo '<div class="alert alert-danger"><strong>Database Tables</strong><br />We can not find any tables in your database.</div>';
+								}
+							?>
+
+							<?php // No tables in database with config prefix
+								if ( $confPrefTables == 0 and $notconfPrefTables > 0 ) {
+									echo '<div class="alert alert-danger"><strong>Database Table Prefix</strong><br />We can not find any tables in your database with the same dbprefix as used in the file configuration.php, but there are tables with different prefix.</div>';
+								}
+							?>
+
+							<?php // J3 on PHP 8.1+
+								if ( $instance['cmsMAJORVERSION'] < '4'  AND  version_compare( PHP_VERSION, '8.0.99', '>' ))  {
+									echo '<div class="alert alert-warning"><strong>PHP Error Reporting for Joomla 3</strong><br />J3.xx and older versions does not work with error reporting set to maximum on PHP 8.1 and above.</div>';
+								}
+							?>
+
+							<?php // J4 on PHP 8.2+    TODO: UPDATE THIS WHEN J4 IS PATCHED.
+								if ( @$instance['cmsRELEASE'] >= '4.0'  AND  version_compare( PHP_VERSION, '8.1.99', '>' ))  {
+									echo '<div class="alert alert-warning"><strong>PHP Error Reporting for Joomla 4</strong><br />J4.xx and older versions does not work with error reporting set to maximum on PHP v8.2 and above.</div>';
+								}
+							?>
+
+							<?php  // Minimum MariaDB on J4
+								if ( $instance['cmsMAJORVERSION'] == '4'  AND  $mariadb == _FPA_Y AND $snapshot['sqlSUP4J'] == _FPA_N  )  {
+									echo '<div class="alert alert-warning"><strong>MariaDB Version for Joomla 4</strong><br />The minimum supported version of MariaDB with J4 is v10.1.0.</div>';
+								}
+							?>
+
+							<?php  // Minimum MariaDB for J4. One reason why the updater refuses to well.. update.
+								if ( @$instance['cmsRELEASE'] == '3.10' AND  $mariadb == _FPA_Y  AND version_compare( @$database['dbHOSTSERV'], '10.1','<' ) )  {
+									echo '<div class="alert alert-warning"><strong>MariaDB Version for Joomla 4</strong><br />The version of MariaDB on your site is preventing you from updating to Joomla 4.<br />The minimum supported version of MariaDB is v10.1.0</div>';
+								}
+							?>
+
+							<?php  // Minimum J5 Requirements
+								if ( $mariadb == _FPA_Y AND version_compare( @$database['dbHOSTSERV'], '10.4.0', '<' ) )
+								{
+
+									echo '<div class="alert alert-warning"><strong>MariaDB Version for Joomla 5</strong><br />Your current hosting environment <strong><u>DOES NOT SUPPORT</u> Joomla 5</strong>. The minimum supported version of MariaDB with J5 is v10.4.0.</div>';
+
+								}
+								elseif ( $mariadb == _FPA_Y AND version_compare( @$database['dbHOSTSERV'], '10.4.0', '>=' ) )
+								{
+
+									echo '<div class="alert alert-success"><strong>MariaDB Version for Joomla 5</strong><br />Your current hosting environment <strong><u>WILL SUPPORT</u> Joomla 5</strong>.</div>';
+
+								}
+
+								if ( $mariadb == _FPA_N AND version_compare( @$database['dbHOSTSERV'], '8.0.13', '<' ) )
+								{
+
+									echo '<div class="alert alert-warning"><strong>MySQL Version for Joomla 5</strong><br />Your current hosting environment <strong><u>DOES NOT SUPPORT</u> Joomla 5</strong>. The minimum supported version of MySQL with J5 is v8.0.13.</div>';
+
+								}
+								elseif ( $mariadb == _FPA_N AND version_compare( @$database['dbHOSTSERV'], '8.0.13', '>=' ) )
+								{
+
+									echo '<div class="alert alert-success"><strong>MySQL Version for Joomla 5</strong><br />Your current hosting environment <strong><u>WILL SUPPORT</u> Joomla 5</strong>.</div>';
+
+								}
+							?>
+
+						<?php } // end if instanceFound ?>
+
+						<?php // show messages even if instance not found
+
+							if ( version_compare( PHP_VERSION, '8.1.0', '<' ) )
+							{
+
+								echo '<div class="alert alert-warning"><strong>PHP Version for Joomla 5</strong><br />Your current hosting environment <strong><u>DOES NOT SUPPORT</u> Joomla 5</strong>. The minimum supported version of PHP with J5 is v8.1.0. You may also need to check your database version for comptibility.</div>';
+
+							}
+							elseif ( version_compare( PHP_VERSION, '8.1.0', '>=' ) )
+							{
+
+								echo '<div class="alert alert-success"><strong>PHP Version for Joomla 5</strong><br />Your current hosting environment <strong><u>WILL SUPPORT</u> Joomla 5</strong>. You may also need to check your database version for comptibility.</div>';
+
+							}
+
+						?>
+                    </div>
+
+                </div><!--/.container(additional-findings)-->
             </section><!--/#additional findings-->
 
 
@@ -9197,9 +9270,6 @@
             *
             */
             ?>
-
-            <?php } ?>
-
 
         </main>
 

@@ -1419,7 +1419,22 @@
 
             $instance['configERRORREP'] = $config->error_reporting;
             $instance['configDBTYPE'] = $config->dbtype;
-            $instance['configDBHOST'] = $config->host;
+
+			// FIX : GitHub Issue #126 - if dbase hostname includes port (custom or default) connection fails
+			// I couldn't recreate the OP's error, but this should overcome the issue anyway
+			// also added $instance['configDBPORT'] to $dbConn statement for mysql & mysqli
+			// RussW 01-dec-2023
+			if ( str_contains($config->host, ':') )
+			{
+				$customDBPORT 				= explode(':', $config->host);
+				$instance['configDBHOST']	= $customDBPORT[0];
+				$instance['configDBPORT']	= $customDBPORT[1];
+			}
+			else
+			{
+				$instance['configDBHOST']	= $config->host;
+			}
+
             $instance['configDBNAME'] = $config->db;
             $instance['configDBPREF'] = $config->dbprefix;
             $instance['configDBUSER'] = $config->user;
@@ -2260,7 +2275,16 @@
         if ( $instance['configDBTYPE'] == 'mysql' ) {
 
             if (@function_exists('mysql_connect')) {
-                $dBconn = @mysql_connect( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'] );
+
+				// FIX : for issue #126
+				if ( isset($instance['configDBPORT']) )
+				{
+					$dBconn = @mysql_connect( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'], $instance['configDBPORT'] );
+				}
+				else
+				{
+					$dBconn = @mysql_connect( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'] );
+				}
                 $database['dbERROR'] = mysql_errno() .':'. mysql_error();
 
                 @mysql_select_db( $instance['configDBNAME'], $dBconn );
@@ -2406,8 +2430,18 @@
 
         mysqli_report(MYSQLI_REPORT_OFF);
         if (function_exists('mysqli_connect')) {
-            $dBconn              = @new mysqli( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'], $instance['configDBNAME'] );
+
+			// FIX : for issue #126
+			if ( isset($instance['configDBPORT']) )
+			{
+	            $dBconn = @new mysqli( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'], $instance['configDBNAME'], $instance['configDBPORT'] );
+			}
+			else
+			{
+	            $dBconn = @new mysqli( $instance['configDBHOST'], $instance['configDBUSER'], $instance['configDBPASS'], $instance['configDBNAME'] );
+			}
             $database['dbERROR'] = mysqli_connect_errno() .':'. mysqli_connect_error();
+
             if ($database['dbERROR'] == '0:') {
 
             // Get extensions enabled status

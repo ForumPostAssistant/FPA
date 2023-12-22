@@ -821,6 +821,9 @@
 	$phpreq['mcrypt']           = '';
 	$phpreq['fileinfo']         = '';
 	$phpreq['gd']               = '';
+	$phpreq['json']             = '';
+	$phpreq['SimpleXML']        = '';
+	$phpreq['dom']              = '';
 	$apachemodules['ARRNAME']   = _FPA_APAMOD_TITLE;
 	$apachereq['ARRNAME']       = _FPA_APAREQ_TITLE;
 	$apachereq['mod_rewrite']   = '';
@@ -4646,10 +4649,10 @@
                                     }
 
                                     // check for XML extensions
-                                    if (array_key_exists( 'xml', $phpextensions ) OR array_key_exists( 'libxml', $phpextensions )) {
-                                        $confidenceResult['PHP xml or libxml available'] = 2;
+                                    if (array_key_exists( 'xml', $phpextensions ) OR array_key_exists( 'libxml', $phpextensions ) OR array_key_exists( 'simplexml', $phpextensions )) {
+                                        $confidenceResult['PHP xml, libxml or simplexml available'] = 2;
                                     } else {
-                                        $confidenceResult['PHP xml or libxml available'] = 1;
+                                        $confidenceResult['PHP xml, libxml or simplexml available'] = 1;
                                     }
 
                                     // check for database support
@@ -5422,12 +5425,19 @@
                                             foreach ( $phpextensions as $key => $show ) {
 
                                                 if ( $show != $phpextensions['ARRNAME'] ) {
-                                                    // find the requirements and mark them as present or missing
-                                                    if ( $key == 'libxml' OR $key == 'xml' OR $key == 'zip' OR $key == 'openssl' OR $key == 'zlib' OR $key == 'curl' OR $key == 'iconv' OR $key == 'mbstring' OR $key == 'mysql' OR $key == 'mysqli' OR $key == 'pdo_mysql' OR $key == 'mcrypt' OR $key == 'suhosin' OR $key == 'cgi' OR $key == 'cgi-fcgi' OR $key == 'fileinfo' OR $key == 'gd') {
+													// find the requirements and mark them as present or missing
+													// added J5 requirements RussW 22-dec-2023
+
+                                                    if ( $key == 'libxml' OR $key == 'xml' OR $key == 'zip' OR $key == 'openssl' OR $key == 'zlib' OR $key == 'curl' OR $key == 'iconv' OR $key == 'mbstring' OR $key == 'mysql' OR $key == 'mysqli' OR $key == 'pdo_mysql' OR $key == 'mcrypt' OR $key == 'suhosin' OR $key == 'cgi' OR $key == 'cgi-fcgi' OR $key == 'fileinfo' OR $key == 'gd' OR strtolower($key) == 'simplexml' OR $key == 'dom' OR $key == 'json')
+													{
                                                         echo '[color=Green][b]'. $key .'[/b][/color] ('. $show .') | ';
-                                                    } elseif ( $key == 'apache2handler' ) {
+                                                    }
+													elseif ( $key == 'apache2handler' )
+													{
                                                         echo '[color=orange]'. $key .'[/color] ('. $show .') | ';
-                                                    } else {
+                                                    }
+													else
+													{
                                                         echo $key .' ('. $show .') | ';
                                                     }
 
@@ -7121,20 +7131,24 @@
                                                         }
 
                                                         // find and highlight the requirements and mark them as present or missing
-                                                        if ( $key == 'libxml' OR $key == 'xml' OR $key == 'zip' OR $key == 'openssl' OR $key == 'zlib' OR $key == 'curl' OR $key == 'iconv' OR $key == 'mbstring' OR $key == 'mysql' OR $key == 'mysqli' OR $key == 'pdo_mysql' OR $key == 'mcrypt' OR $key == 'sodium' OR $key == 'suhosin' OR $key == 'cgi' OR $key == 'cgi-fcgi' OR $key == 'fileinfo' OR $key == 'gd') {
-                                                            $status = 'success';
-                                                            $border = 'success';
-                                                            $weight = 'bolder';
+														// added J5 requirements - RussW 22-dec-2023
+                                                        if ( $key == 'libxml' OR $key == 'xml' OR $key == 'zip' OR $key == 'openssl' OR $key == 'zlib' OR $key == 'curl' OR $key == 'iconv' OR $key == 'mbstring' OR $key == 'mysql' OR $key == 'mysqli' OR $key == 'pdo_mysql' OR $key == 'mcrypt' OR $key == 'sodium' OR $key == 'suhosin' OR $key == 'cgi' OR $key == 'cgi-fcgi' OR $key == 'fileinfo' OR $key == 'gd' OR strtolower($key) == 'simplexml' OR $key == 'dom' OR $key == 'json') {
+                                                            $status		= 'success';
+                                                            $border		= 'success';
+                                                            $weight		= 'bolder';
+															$required	= '<span class="position-absolute top-0 end-0 p-1 fw-normal xsmall lh-1 text-white bg-success" style="width:19px;height:19px;margin:2px;" data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover" data-bs-placement="top" data-bs-fallbackPlacement="flip" data-bs-content="Required by some Joomla! versions.">R</span>';
 
                                                         } elseif ( $key == 'apache2handler') {
-                                                            $status = 'warning';
-                                                            $border = 'warning';
-                                                            $weight = 'bold';
+                                                            $status		= 'warning';
+                                                            $border		= 'warning';
+                                                            $weight		= 'bold';
+															$required	= '';
 
                                                         } else {
-                                                            $status = 'dark';
-                                                            $border = 'default';
-                                                            $weight = 'normal';
+                                                            $status		= 'dark';
+                                                            $border		= 'default';
+                                                            $weight		= 'normal';
+															$required	= '';
                                                         }
 
                                                         if (empty($show)) {
@@ -7142,8 +7156,8 @@
                                                         }
 
                                                         echo '<div class="col d-flex align-self-stretch">';
-                                                        echo '<div class="bg-light border border-'.$border.' text-center small mb-2 w-100">';
-                                                        echo '<div class="text-'.$status.' fw-'.$weight.' px-1 py-2">'. $key .'</div>';
+                                                        echo '<div class="bg-light border border-'.$border.' text-center small mb-2 w-100 position-relative">';
+                                                        echo '<div class="text-'.$status.' fw-'.$weight.' px-1 py-2">'. $key . $required .'</div>';
                                                         echo '<div class="bg-white text-truncate px-1 py-2">'.$show.'</div>';
                                                         echo '</div>';
                                                         echo '</div>';

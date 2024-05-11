@@ -3359,20 +3359,20 @@
 
                 } else {
                     // To be removed when J3 is EOL
-                    if (substr($thisJVER ,0 ,1) != '4') {
-                        $x = 0;
-                        do {
-                            $x++;
-                            $latestJATTR  = $jupdateXML->extension[count($jupdateXML->extension) - $x];
-                        } while (substr($latestJATTR->attributes()->targetplatformversion->__toString(),0 ,1) != '3');
+                    ///if (substr($thisJVER ,0 ,1) != '4') {
+                    ///    $x = 0;
+                    ///    do {
+                    ///        $x++;
+                    ///        $latestJATTR  = $jupdateXML->extension[count($jupdateXML->extension) - $x];
+                    ///    } while (substr($latestJATTR->attributes()->targetplatformversion->__toString(),0 ,1) != '3');
 
-                		$latestJVER   = $latestJATTR->attributes()->version->__toString();
+                	///	$latestJVER   = $latestJATTR->attributes()->version->__toString();
 
-					} else {
+					///} else {
                     // End of To be removed when J3 is EOL
                 		$latestJATTR  = $jupdateXML->extension[count($jupdateXML->extension) -1];
                 		$latestJVER   = $latestJATTR->attributes()->version->__toString();
-                    }
+                    ///}
 
                     if (version_compare($thisJVER, $latestJVER) < 0) {
                         $joomlaVersionCheckStatus   = 'warning';

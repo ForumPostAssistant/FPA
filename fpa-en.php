@@ -1,6 +1,6 @@
 <?php
     /**
-     * @version 1.6.7
+     * @version 1.6.8
      * @package Joomla!
      * @subpackage Forum Post Assistant
      * @category Diagnostic Tool
@@ -21,9 +21,9 @@
      *
      */
      define ( '_RES', 'Forum Post Assistant' );
-     define ( '_RES_VERSION', '1.6.7' );
+     define ( '_RES_VERSION', '1.6.8' );
      define ( '_RES_CODENAME', 'Marvin' );
-     define ( '_RES_LAST_UPDATED', '11-May-2024' );
+     define ( '_RES_LAST_UPDATED', '9-May-2025' );
      define ( '_RES_RELEASE', 'Stable' );             // can be Alpha, Beta, RC, Stable
      define ( '_RES_LANG', 'en-GB' );                 // Country/Language Code
      define ( '_RES_COPYRIGHT_STMT', ' Copyright &copy; 2011-'. @date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen. <br>' );
@@ -3926,14 +3926,25 @@
                                     }
                                 }
 
-								if  (@$instance['cmsRELEASE'] >= '5.0') {
+								// added J5.3 break-point due to improved php8.4 support at this release (@RussW 9-may-2025)
+								// (per Toivo testing, issue #132)
+								if  (@$instance['cmsRELEASE'] >= '5.3') {
                                     $fpa['supportENV']['minPHP']        = '8.1.0';
                                     $fpa['supportENV']['minSQL']        = '8.0.13';
                                     $fpa['supportENV']['minMariaDbSQL'] = '10.4.0';
-                                    $fpa['supportENV']['maxPHP']        = '8.3.99';
+									$fpa['supportENV']['maxPHP']        = '8.4.99';
                                     $fpa['supportENV']['maxSQL']        = '9.0.0';
                                     $fpa['supportENV']['badPHP'][0]     = _FPA_NA;
                                     $fpa['supportENV']['badZND'][0]     = _FPA_NA;
+
+								} elseif  (@$instance['cmsRELEASE'] >= '5.0') {
+									$fpa['supportENV']['minPHP']        = '8.1.0';
+									$fpa['supportENV']['minSQL']        = '8.0.13';
+									$fpa['supportENV']['minMariaDbSQL'] = '10.4.0';
+									$fpa['supportENV']['maxPHP']        = '8.3.99';
+									$fpa['supportENV']['maxSQL']        = '9.0.0';
+									$fpa['supportENV']['badPHP'][0]     = _FPA_NA;
+									$fpa['supportENV']['badZND'][0]     = _FPA_NA;
 
                                 } elseif  (@$instance['cmsRELEASE'] >= '4.0') {
                                     $fpa['supportENV']['minPHP']        = '7.2.5';

@@ -1,7 +1,7 @@
 ### Forum Post Assistant (FPA) - Version 2.0.0-alpha.1
-[!NOTE]
-This is a development branch, we are tinkering and playing, most of everything currently doesn't work!
-Don't bother downloading unless you are part of the review or dev teams.
+> [!NOTE]
+> This is a development branch, we are tinkering and playing, most of everything currently doesn't work!
+> Don't bother downloading unless you are part of the review or dev teams.
 ***
 The **_Forum Post Assistant_** has been designed to assist newcomers to the forum to be able to post relevant system, instance, php and troubleshooting information directly in to a pre-formatted forum post. This should save a few hours of too'ing and fro-ing asking for, and explaining, how to acquire useful information in order to help troubleshoot a problem.
 ***

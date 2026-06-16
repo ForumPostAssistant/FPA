@@ -1,4 +1,4 @@
-### Forum Post Assistant (FPA)
+### Forum Post Assistant (FPA) - Version 2.0.0-alpha.1
 ***
 The **_Forum Post Assistant_** has been designed to assist newcomers to the forum to be able to post relevant system, instance, php and troubleshooting information directly in to a pre-formatted forum post. This should save a few hours of too'ing and fro-ing asking for, and explaining, how to acquire useful information in order to help troubleshoot a problem.
 ***
@@ -15,6 +15,6 @@ The idea is to make the information collection, and subsequent posting, as simpl
 
 #### Multilanguage Version
 
-Multilanguage support is a work-in-progress.  The FPA is available only in the English language from this repository.  If you would like to contribute to translating the FPA into other languages, 
-<a target="_blank" href="https://crowdin.com/project/miscelleanous" 
+Multilanguage support is a work-in-progress.  The FPA is available only in the English language from this repository.  If you would like to contribute to translating the FPA into other languages,
+<a target="_blank" href="https://crowdin.com/project/miscelleanous"
 title="See more information ">head over to Crowdin</a>.

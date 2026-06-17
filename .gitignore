@@ -1,29 +1,44 @@
-# OS Metadata (if not ignored globally)
-.DS_Store
-Thumbs.db
+# =========================================================================
+# FPA Project Local .gitignore
+# =========================================================================
 
-# Security & Secrets
+# 1. macOS System Artifacts (Safety catch if not configured globally)
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# 2. Local Code Editor / IDE Overrides
+.vscode/
+.idea/
+*.suo
+*.user
+*.workspace
+.history/
+
+# 3. Environment Secrets (Never commit credentials)
 .env
 .env.*
 !.env.example
 *.pem
 *.key
 
-# Common Log and Crash Files
+# 4. Diagnostics & Dependency Managers
+# (We keep composer.json, but ignore vendor packages and local caches)
+/vendor/
+/node_modules/
+.npm/
 *.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
 
-# IDEs and Editors
-.vscode/
-.idea/
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-
-# Diagnostics & Testing
-.spec/
-coverage/
-.nyc_output/
+# 5. Local Sandbox Testing
+# Ignore temporary archives generated when testing release packages locally
+test-release.zip
+/sandbox/
+/tmp/

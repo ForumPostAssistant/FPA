@@ -1,0 +1,19 @@
+# This is the top-most styling configuration file for the FPA project
+root = true
+
+# Universal rules for all files
+[*]
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+charset = utf-8
+
+# Specific rules for source PHP files
+[*.php]
+indent_style = space
+indent_size = 4
+
+# Specific rules for data configurations and documentation files
+[*.{json,yaml,yml,ini,md}]
+indent_style = space
+indent_size = 2

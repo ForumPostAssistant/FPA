@@ -5,7 +5,7 @@ return [
     'THISLANG'          => 'fr-FR',
     'FPALONG'           => 'Forum Post Assistant',
     'FPASHORT'          => 'FPA',
-    'FPADESC'           => 'Outil dassistance pour les messages de forum et daudit de diagnostic pour le CMS Joomla!.',
+    'FPADESC'           => 'Outil d\'assistance pour les messages de forum et d\'audit de diagnostic pour le CMS Joomla!.',
 
     // FPA statuses, results & descriptors
     'YES'               => 'Oui',

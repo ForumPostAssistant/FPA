@@ -1,21 +1,49 @@
-### Forum Post Assistant (FPA) - Version 2.0.0-alpha.1
-> [!NOTE]
-> This is a development branch, we are tinkering and playing, most of everything currently doesn't work!
-> Don't bother downloading unless you are part of the review or dev teams.
-***
-The **_Forum Post Assistant_** has been designed to assist newcomers to the forum to be able to post relevant system, instance, php and troubleshooting information directly in to a pre-formatted forum post. This should save a few hours of too'ing and fro-ing asking for, and explaining, how to acquire useful information in order to help troubleshoot a problem.
-***
-This process also means that consistent information is gathered and presented in every case, enabling helpers to quickly target information relevant to the specific problem observed by the user.
+# Forum Post Assistant (FPA) — Version 2 (Development)
 
-The idea is to make the information collection, and subsequent posting, as simple as possible for the end user, a simple one page script, automatically collects the information when run in a web-browser and presents the user with the option to include or exclude any site sensitive information before "generating" the post [BB]code that can then be copied and simply pasted in to a new or existing forum post with no other interaction by the user required after posting.
+The Forum Post Assistant (FPA) is a diagnostic script designed to gather information about a local server environment and a Joomla! installation. It formats this data into a standardized BBCode or Markdown block, allowing users to easily copy and paste the metrics into the Joomla! community forums for troubleshooting support.
 
-#### Full Instructions https://forumpostassistant.github.io/docs/
-***
+This repository contains the active development branch (`v2-dev`) for the completely redesigned next generation of the FPA utility.
 
-#### Joomla & PHP Version Support
- All supported Joomla! (v3.9.13 and above) versions running on **PHP v7.4 and above**
-***
+---
 
-#### Multilanguage Version
+## System Requirements
 
-Multilanguage support is a work-in-progress. The FPA is adefaults to the en-GB English language, but v2.x is planned to support contributed languages (/lang folder) dynamically from this repository.  If you would like to contribute to translating the FPA into other languages, please contact the project team.
+To run this version of the FPA, your hosting or local development environment must meet the following baseline requirements:
+
+* PHP Version: PHP 7.4, PHP 8.x, or newer stable releases.
+* CMS Support: Modern installations of Joomla! matching these PHP targets. (Generally, Joomla 3.9.13 and above)
+* Server Requirements: PHP cURL support enabled to fetch remote localization packages.
+
+Note: Legacy environments running PHP 7.3 or older are insecure and are not supported by this version of the script.
+
+---
+
+## How to Use (Development Testing)
+
+1. Download or clone the `v2-dev` branch of this repository.
+2. Upload only the core utility script `fpa-en.php` into the root folder of your Joomla! installation.
+3. Access the script via your web browser by navigating to:
+   ```text
+   https://yourdomain.com/fpa-en.php
+   ```
+
+When loaded, the FPA script automatically detects your browser language, fetches the corresponding translation package directly from the official GitHub repository via cURL, caches it locally, and dynamically overwrites the default language array.
+
+Warning: Always delete `fpa-en.php` and from your server immediately after you finish posting your forum request. Leaving diagnostic scripts on a public server poses a security risk.
+
+---
+
+## Language Localisation & Translation
+
+Version 2 introduces a dynamic translation delivery framework.
+* All source localization definitions, keys, and translation files are stored entirely within the root `/lang/` directory of this GitHub repository.
+* The script pulls these assets directly on demand based on the end-user's browser settings.
+* If you would like to help translate the FPA into your native language, please check our contribution guidelines.
+
+---
+
+## Contributing
+
+We welcome contributions from both code developers and language translators! Please read our CONTRIBUTING.md file for details on our workflow, branching models, and code standards.
+
+For security vulnerabilities, please consult our public SECURITY.md guidelines before opening an issue.

@@ -38,7 +38,7 @@ return [
     'DBASE'             => 'Base de données',
 
     // FPA titles, headings & descriptions
-    'RUNTIMEOPTIONS'    => 'Options d\'exécution',
+    'RUNTIMEOPTIONS'    => 'Options d’exécution',
     'KEYMETRICS'        => 'Indicateurs clés',
     'CONFIDENCE'        => 'Confiance',
     'CONFIGURATION'     => 'Configuration',

@@ -125,42 +125,44 @@ define ('FPA_SELF', basename(__FILE__));  // take in to account renamed FPA, ens
 // use this shortcut url to reduce link clutter and self-referencing URL code injection attacks
 $fpaSelfUrl = htmlspecialchars(FPA_SELF, ENT_QUOTES, 'UTF-8');
 
-define ('_VALID_MOS', 1);                  // for J!1.0
-define ('_JEXEC', 1);                      // for J!1.5, J!1.6 thru J!6.0
+// joomla parent flags
+define ('_VALID_MOS', 1);              // for J!1.0
+define ('_JEXEC', 1);                  // for J!1.5, J!1.6 thru J!6.0
 
 // --- fpa feature configuration ---
-const FPA_DEV = false;                     // developer-mode, displays raw array data on screen
-const FPA_DIA = true;                     // diagnostic-mode, turns on PHP logging errors, display errors and logs error to a file
-const FPA_SELF_DESTRUCT = true;           // self-destruct, attempts to self-delete on next run if file older than configured duration
-const FPA_SELF_DESTRUCT_AGE = 3;          // self-destruct filetime age duration
-const FPA_SSL_REDIRECT = true;            // SSL Redirect - when possible and if a valid SSL certificate is found FPA attempts to redirect to the SSL version of the site
+const FPA_DEV = false; // developer-mode, displays raw array data on screen
+const FPA_DIA = true;  // diagnostic-mode, turns on PHP logging errors, display errors and logs error to a file
+const FPA_SELF_DESTRUCT = true; // self-destruct, attempts to self-delete on next run if file older than configured duration
+const FPA_SELF_DESTRUCT_AGE = 3; // self-destruct filetime age duration
+const FPA_SSL_REDIRECT = true; // SSL Redirect - when possible and if a valid SSL certificate is found FPA attempts to redirect to the SSL version of the site
 
 // --- fpa live checks configuration array constants ---
-const FPA_LIVE_CHECK = [                  // enable live latest FPA version check
+// enable live latest FPA version check
+const FPA_LIVE_CHECK = [
     'enabled' => true,
     'format'  => 'json',
     'url'     => 'https://api.github.com/repos/ForumPostAssistant/FPA/releases/latest'
 ];
-
-const FPA_LIVE_CHECK_JOOMLA = [           // enable live latest Joomla! version check
+// enable live latest Joomla! version check
+const FPA_LIVE_CHECK_JOOMLA = [
     'enabled' => true,
     'format'  => 'xml',
     'url'     => 'https://update.joomla.org/core/extension.xml'
 ];
-
-const FPA_LIVE_CHECK_PHP = [              // enable live latest Joomla! version check
+// enable live latest Joomla! version check
+const FPA_LIVE_CHECK_PHP = [
     'enabled' => true,
     'format'  => 'json',
     'url'     => 'https://php.net/releases/active.php'
 ];
-
-const FPA_LIVE_CHECK_DBASE = [            // enable live latest dataBase version check (not implemented yet - TODO: need to workout how to determine DB type first)
+// enable live latest dataBase version check (not implemented yet - TODO: need to workout how to determine DB type first)
+const FPA_LIVE_CHECK_DBASE = [
     'enabled' => false,
     'format'  => 'json',
     'url'     => 'https://php.net/releases/active.php'
 ];
-
-const FPA_LIVE_CHECK_VEL = [              // enable live VEL check (not implemented yet) TODO: need to check how to exclude this from $latestVersions array
+// enable live VEL check (not implemented yet) TODO: need to check how to exclude this from $latestVersions array
+const FPA_LIVE_CHECK_VEL = [
     'enabled' => false,
     'format'  => 'xml',
     'url'     => 'https://extensions.joomla.org/vel-feed'
@@ -250,14 +252,36 @@ $lang = [
     'FPA_PHP'               => 'PHP',
     'FPA_DBASE'             => 'DataBase',
 
-    // FPA titles, headings & descriptions
-    'FPA_RUNTIMEOPTIONS'    => 'Runtime Options',
-    'FPA_KEYMETRICS'        => 'Key Metrics',
-    'FPA_CONFIDENCE'        => 'Confidence',
-    'FPA_CONFIGURATION'     => 'Configuration',
-    'FPA_CONFIG'            => 'Config',
-    'FPA_COREDIR_TITLE'     => 'Core Directory Permissions'
+    // FPA titles, headings, Labels, meta & descriptions
+    'FPA_META_VERSIONS'            => 'Live Version Status',
+    'FPA_META_APP_VERSIONS'        => 'Application Versions',
+    'FPA_META_INSTANCE_DIAG'       => 'Joomla Core Instance Diagnostics',
+    'FPA_META_SECURITY_HARDENING'  => 'Security & Hardening',
+    'FPA_META_PERFORMANCE_METRICS' => 'Performance Metrics',
+    'FPA_LANG_CORE_DIRS'           => 'Joomla Core Directories',
+    'FPA_LABEL_FPA'                => 'Forum Post Assistant',
+    'FPA_LABEL_JOOMLA'             => 'Joomla! Core',
+    'FPA_LABEL_PHP'                => 'PHP Application Engine',
+    'FPA_RUNTIMEOPTIONS'           => 'Runtime Options',
+    'FPA_KEYMETRICS'               => 'Key Metrics',
+    'FPA_CONFIDENCE'               => 'Confidence',
+    'FPA_CONFIGURATION'            => 'Configuration',
+    'FPA_CONFIG'                   => 'Config',
+    'FPA_COREDIR_TITLE'            => 'Core Directory Permissions',
 
+    'FPA_CONFIDENCE_APLUS'         => 'A+',
+    'FPA_CONFIDENCE_A'             => 'A',
+    'FPA_CONFIDENCE_B'             => 'B',
+    'FPA_CONFIDENCE_C'             => 'C',
+    'FPA_CONFIDENCE_D'             => 'D',
+    'FPA_CONFIDENCE_E'             => 'E',
+    'FPA_CONFIDENCE_F'             => 'F',
+    'FPA_CONFIDENCE_MSG_A'         => 'Joomla! should run without any problems',
+    'FPA_CONFIDENCE_MSG_B'         => 'Joomla! should run but some features may have minor problems',
+    'FPA_CONFIDENCE_MSG_C'         => 'Joomla! might run but some features will have problems',
+    'FPA_CONFIDENCE_MSG_D'         => 'Joomla! might run but many features will have problems',
+    'FPA_CONFIDENCE_MSG_E'         => 'Joomla! probably will not run or will have many problems',
+    'FPA_CONFIDENCE_MSG_F'         => 'Joomla! probably will not run and will have many problems',
     // End-user messages and textual content
 ];
 
@@ -418,7 +442,7 @@ $localIpPrefixes = [
     '::1',         // Loopback IPv6
 ];
 
-// dynamically generate the reduced 172.16.0.0/12 private range to ksave memory & cycles
+// dynamically generate the reduced 172.16.0.0/12 private range to save memory
 for ($i = 16; $i <= 31; $i++) {
     $localIpPrefixes[] = '172.' . $i . '.';
 }
@@ -478,29 +502,130 @@ function fpaLang(string $key): void
  * =============================================================================
  * SECTION: REQUIRED ARRAYS
  * =============================================================================
- * Pre-Defined arrays used by the fpa at various points in the script execution.
+ * Predefined arrays used by the fpa at various points in the script execution.
  *
+ * Why Predefine Arrays and keys where possible? (I know, it's a pain-in-the-A)
+ * Where possible it is both quicker for performance and significantly better for
+ * code quality to predefine arrays and all their expected keys at the very
+ * beginning. This practice also adheres to safer, defensive fallback defaults
+ * reducing unexpected warnings and assisting with debugging.
+ * PHP calculates the exact memory footprint needed once at the start of execution
+ * instead of pausing execution to recalculate and copy the old array. As we use
+ * quite a few arrays, this can be costly.
  */
-$latestVersions['ARRNAME'] = 'Latest Versions';
-$joomlaConfig['ARRNAME']    = 'Joomla! Config';
-$appVersions['ARRANME']    =  'Application Versions';
-// directories to be tested for permissions
-$folders['ARRNAME']        = 'Joomla Core Directories';
-$folders[]                 = 'images/';
-$folders[]                 = 'components/';
-$folders[]                 = 'modules/';
-$folders[]                 = 'plugins/';
-$folders[]                 = 'language/';
-$folders[]                 = 'templates/';
-$folders[]                 = 'cache/';
-$folders[]                 = 'logs/';
-$folders[]                 = 'tmp/';
-$folders[]                 = 'administrator/components/';
-$folders[]                 = 'administrator/modules/';
-$folders[]                 = 'administrator/language/';
-$folders[]                 = 'administrator/templates/';
-$folders[]                 = 'administrator/logs/';
-$folders[]                 = 'api/';
+// --- Basic Live Version Checks ---
+$latestVersions = [
+    'meta' => [
+        'name' => 'FPA_META_VERSIONS' // Language Key: e.g., 'Live Version Status'
+    ],
+    'fpa' => [
+        'label'   => 'FPA_LABEL_FPA', // Language Key: 'Forum Post Assistant'
+        'current' => FPA_VERSION,     // Linked to your core constant flag
+        'latest'  => 'Unknown',
+        'status'  => 'Unknown'
+    ],
+    'joomla' => [
+        'label'   => 'FPA_LABEL_JOOMLA', // Language Key: 'Joomla! Core'
+        'current' => '5.1.2',            // Populated by your version parsing loop
+        'latest'  => 'Unknown',
+        'status'  => 'Unknown'
+    ],
+    'php' => [
+        'label'   => 'FPA_LABEL_PHP', // Language Key: 'PHP Application Engine'
+        'current' => PHP_VERSION,
+        'latest'  => 'Unknown',
+        'status'  => 'Unknown'
+    ]
+];
+
+// --- Primary Application Versions ---
+$appVersions = [
+    'meta' => [
+        'name' => 'FPA_META_APP_VERSIONS' // Language Key: 'Application Versions'
+    ],
+    'targets' => [] // Populated dynamically with environment metadata during runtime
+];
+
+// --- Core Joomla Structure Diagnostics ---
+$joomlaInstance = [
+    'meta' => [
+        'name' => 'FPA_META_INSTANCE_DIAG' // Language Key: 'Joomla Core Instance Diagnostics'
+    ],
+    'found'            => $lang['FPA_NO'],
+    'installed'        => $lang['FPA_NO'],
+    'configOverride'    => false,
+    'configPath'        => $lang['FPA_UNKNOWN'],
+    'configWritable'    => $lang['FPA_NO']
+];
+
+// --- Environment Rating Metrics (Enhances and adds to v1 Confidence Rating) ---
+$fpaEnvironment = [
+    'meta' => [
+        'name' => 'FPA_META_SECURITY_HARDENING' // Language Key: 'Security & Hardening'
+    ],
+    'score'            => 100, // Starts perfect, drops as vulnerabilities are found
+    'configMode'        => $lang['FPA_UNKNOWN'],
+    'configOwner'       => $lang['FPA_UNKNOWN'],
+    'configGroup'       => $lang['FPA_UNKNOWN'],
+    'phpProcessUser'   => $lang['FPA_UNKNOWN'],
+    'ownershipConflict' => false,
+    'isWorldWritable'  => false,
+    'sslActive'        => false,
+    'displayErrors'    => false
+];
+
+// --- Environment Security Rating Metrics (New in FPA v2, adds to Confidence Rating) ---
+$fpaSecurity = [
+    'meta' => [
+        'name' => 'FPA_META_SECURITY_HARDENING' // Language Key: 'Security & Hardening'
+    ],
+    'score'            => 100, // Starts perfect, drops as vulnerabilities are found
+    'configMode'        => $lang['FPA_UNKNOWN'],
+    'configOwner'       => $lang['FPA_UNKNOWN'],
+    'configGroup'       => $lang['FPA_UNKNOWN'],
+    'phpProcessUser'   => $lang['FPA_UNKNOWN'],
+    'ownershipConflict' => false,
+    'isWorldWritable'  => false,
+    'sslActive'        => false,
+    'displayErrors'    => false
+];
+
+// --- Host, PHP & Instance Performance Rating Metrics (New in FPA v2, adds to Confidence Rating) ---
+$fpaPerformance = [
+    'meta' => [
+        'name' => 'FPA_META_PERFORMANCE_METRICS' // Language Key: 'Performance Metrics'
+    ],
+    'score'            => 100, // Starts perfect, drops as bottlenecks are found
+    'memoryLimit'      => $lang['FPA_UNKNOWN'],
+    'maxExecutionTime' => 0,
+    'opcacheEnabled'   => false,
+    'gzipEnabled'      => false
+];
+
+// --- Directories To Be Tested For Sane Permissions ---
+$joomlaFolders = [
+    'meta' => [
+        'name' => 'Joomla Core Directories'
+    ],
+    'targets' => [
+        'images/',
+        'components/',
+        'modules/',
+        'plugins/',
+        'language/',
+        'templates/',
+        'cache/',
+        'logs/',
+        'tmp/',
+        'administrator/components/',
+        'administrator/modules/',
+        'administrator/language/',
+        'administrator/templates/',
+        'administrator/logs/',
+        'api/'
+    ]
+];
+
 
 
 
@@ -544,6 +669,332 @@ $folders[]                 = 'api/';
  *   in parallel later, ensuring total page wait time equals only the single
  *   slowest feed.
  */
+
+
+
+
+/*
+ * =============================================================================
+ * SECTION: JOOMLA INSTANCE DETECTION
+ * =============================================================================
+ * Validates the presence of an active Joomla! core environment structure.
+ * - confirms the presence of known files and folders
+ * - separately inspects configuration definitions (defines.php) to isolate custom
+ *   file targets.
+ */
+/*
+$joomlaInstance = [
+    'found'             => $lang['FPA_NO'],
+    'installed'         => $lang['FPA_NO'],
+    'configOverride'     => false,
+    'configPath'         => $lang['FPA_UNKNOWN'],
+    'configWritable'     => $lang['FPA_NO'],
+    'configMode'         => $lang['FPA_UNKNOWN'],
+    'configOwner'        => $lang['FPA_UNKNOWN'],
+    'configGroup'        => $lang['FPA_UNKNOWN'],
+    'phpProcessUser'    => $lang['FPA_UNKNOWN'],
+    'ownershipConflict'  => false
+];
+*/
+
+// Core Structure Check: Maintain legacy structural validation blocks
+$hasRootDirs  = file_exists('components/') && file_exists('modules/');
+$hasAdminDirs = file_exists('administrator/components/') && file_exists('administrator/modules/');
+$hasIndexFile = file_exists('index.php');
+
+if (($hasRootDirs || $hasAdminDirs) && $hasIndexFile) {
+    // Structural presence verified (CMS footprint exists on server)
+    $joomlaInstance['found'] = $lang['FPA_YES'];
+
+    // Separate Installation Check: Determine JPATH_CONFIGURATION path rules
+    // Establish the absolute runtime baseline representing JPATH_ROOT
+    $jpathRoot = rtrim(str_replace('\\', '/', __DIR__), '/');
+    $configSearchPath = $jpathRoot; // Default configuration home directory
+
+    // Check for custom overrides mapped via local defines.php scripts
+    $definesTargets = [
+        'includes/defines.php',
+        'administrator/includes/defines.php',
+        'defines.php'
+    ];
+
+    foreach ($definesTargets as $targetFile) {
+        if (file_exists($targetFile) && is_readable($targetFile)) {
+            $fileContent = file_get_contents($targetFile);
+
+            // Catch native format: define('JPATH_CONFIGURATION', JPATH_ROOT . '/custom');
+            // Or modern format:   \define('JPATH_CONFIGURATION', JPATH_ROOT . '/custom');
+            $pattern = '/\\\\?define\s*\(\s*[\'"]JPATH_CONFIGURATION[\'"]\s*,\s*(.*?)\s*\)\s*;/i';
+
+            if (preg_match($pattern, $fileContent, $matches)) {
+                $rawExpression = trim($matches[1]);
+
+                // If it isn't strictly assigning to JPATH_ROOT, evaluate the value
+                if ($rawExpression !== 'JPATH_ROOT' && $rawExpression !== '\\JPATH_ROOT') {
+
+                    // Clean up common syntax to safely evaluate the text expression string
+                    $cleanExpression = str_replace(['JPATH_ROOT', '\\JPATH_ROOT', 'DIRECTORY_SEPARATOR', '.', '"', "'", ' '], ['', '', '/', '', '', '', ''], $rawExpression);
+                    $cleanExpression = '/' . trim($cleanExpression, '/');
+
+                    // Build absolute system override target path
+                    $configSearchPath = rtrim($jpathRoot . $cleanExpression, '/');
+
+                    // FIXED: Aligned array keys with initialization block
+                    $joomlaInstance['configOverride'] = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    // Final Verification: Check if the configuration target file exists and is active
+    $configFilePath = $configSearchPath . '/configuration.php';
+
+    if (file_exists($configFilePath) && is_readable($configFilePath) && filesize($configFilePath) > 0) {
+        $joomlaInstance['installed']  = $lang['FPA_YES'];
+        $joomlaInstance['configPath'] = $configFilePath; // Saved path safely
+
+        // Defensive: is_writable() is the standard native PHP function name alias
+        // we also check for ownership later as writeable does not always mean, writeable securely (think wheel-groups)
+        if (is_writable($configFilePath)) {
+            $joomlaInstance['configWritable'] = $lang['FPA_YES'];
+        }
+
+        // Get the configuration file permissions (Cleaned up redundant file_exists checks)
+        // Bitwise AND mask isolates ONLY the lower 9 permission bits (ignores file-type flags)
+        // and forces a zero-padded, 4-digit octal string output (e.g., '0644')
+        $joomlaInstance['configMode'] = sprintf('%04o', fileperms($configFilePath) & 0777);
+
+        // Obtain the configuration file owner and group
+        if (function_exists('posix_getpwuid') && function_exists('posix_getgrgid') && !$isWindows) {
+            // Fetch raw system info blocks safely
+            $ownerInfo = posix_getpwuid(fileowner($configFilePath));
+            $groupInfo = posix_getgrgid(filegroup($configFilePath));
+
+            // Defensive: Use Null Coalescing (??) to grab the string name or fall back to numeric ID
+            $joomlaInstance['configOwner'] = $ownerInfo['name'] ?? fileowner($configFilePath);
+            $joomlaInstance['configGroup'] = $groupInfo['name'] ?? filegroup($configFilePath);
+        } else {
+            // Windows fallback
+            $joomlaInstance['configOwner'] = fileowner($configFilePath);
+            $joomlaInstance['configGroup'] = filegroup($configFilePath);
+        }
+
+        // discover who is currently executing this PHP script run
+        // on some shared servers, wheel-groups may be used, potentially allowing other wheel-group members cross-account
+        // access to writeable files, here we check that the executing user is the ownership user
+        $phpProcessUser = 'Unknown';
+        if (function_exists('posix_getpwuid') && function_exists('posix_geteuid') && !$isWindows) {
+            $processInfo = posix_getpwuid(posix_geteuid());
+            $phpProcessUser = $processInfo['name'] ?? 'Unknown';
+        } else {
+            $phpProcessUser = get_current_user(); // Fallback identification method
+        }
+
+        // perform a defensive cross-check evaluation
+        $joomlaInstance['ownershipConflict'] = false;
+
+        if ($joomlaInstance['configOwner'] !== $phpProcessUser && $phpProcessUser !== 'Unknown') {
+            // flag an ownership conflict alert if names do not match
+            $joomlaInstance['ownershipConflict'] = true;
+        }
+
+        // save the process user name to the array for display on the dashboard
+        $joomlaInstance['phpProcessUser'] = $phpProcessUser;
+
+    }
+}
+
+
+
+
+/*
+ * =============================================================================
+ * SECTION: SYSTEM ASSESSMENT & GRADE CALCULATION
+ * =============================================================================
+ * Consolidates all gathered server and CMS metrics, processes risk scores,
+ * and determines the final environmental Confidence Rating.
+ *
+ * ARRAYS IN USE:
+ * - $joomlaInstance  : Read core targets (configPath) & writes final outputs (confidenceGrade, confidenceScore).
+ * - $fpaEnvironment  : Read/writes server application configurations.
+ * - $fpaSecurity     : Read/writes server infrastructure protection and permission configurations.
+ * - $fpaPerformance  : Read/writes server environment processing and baseline bottleneck limits.
+ * - $lang            : Pulls multi-language translation strings for user interface fallback.
+ */
+
+// Only execute the assessment if a valid Joomla installation was actually verified
+if ($joomlaInstance['found'] === $lang['FPA_YES'] && $joomlaInstance['installed'] === $lang['FPA_YES']) {
+
+    // 1. SECURITY & HARDENING ASSESSMENT
+    // -------------------------------------------------------------------------
+    $rawPerms = fileperms($joomlaInstance['configPath']);
+    $fpaSecurity['configMode'] = sprintf('%04o', $rawPerms & 0777);
+
+    // Risk: Check for dangerously loose (World-Writable) permissions
+    if (($rawPerms & 0002) !== 0) {
+        $fpaSecurity['isWorldWritable'] = true;
+        $fpaSecurity['score'] -= 40;
+    }
+
+    // Capture file owners and check identity alignment against the PHP process
+    if (function_exists('posix_getpwuid') && !$isWindows) {
+        $ownerInfo = posix_getpwuid(fileowner($joomlaInstance['configPath']));
+        $fpaSecurity['configOwner'] = $ownerInfo['name'] ?? fileowner($joomlaInstance['configPath']);
+
+        $processInfo = posix_getpwuid(posix_geteuid());
+        $fpaSecurity['phpProcessUser'] = $processInfo['name'] ?? 'Unknown';
+    } else {
+        $fpaSecurity['configOwner']    = fileowner($joomlaInstance['configPath']);
+        $fpaSecurity['phpProcessUser'] = get_current_user();
+    }
+
+    // Risk: Flag an ownership mismatch conflict
+    if ($fpaSecurity['configOwner'] !== $fpaSecurity['phpProcessUser'] && $fpaSecurity['phpProcessUser'] !== 'Unknown') {
+        $fpaSecurity['ownershipConflict'] = true;
+        $fpaSecurity['score'] -= 20;
+    }
+
+    // Risk: Production display_errors is active
+    if (filter_var(ini_get('display_errors'), FILTER_VALIDATE_BOOLEAN) || ini_get('display_errors') === '1') {
+        $fpaSecurity['displayErrors'] = true;
+        $fpaSecurity['score'] -= 15;
+    }
+
+    $fpaSecurity['score'] = max(0, $fpaSecurity['score']);
+
+
+    // 2. PERFORMANCE & BOTTLENECK ASSESSMENT
+    // -------------------------------------------------------------------------
+    $fpaPerformance['memoryLimit']      = ini_get('memory_limit');
+    $fpaPerformance['maxExecutionTime'] = (int) ini_get('max_execution_time');
+    $fpaPerformance['opcacheEnabled']   = function_exists('opcache_get_status') && opcache_get_status(false) !== false;
+
+    // Risk: Zend OPcache is completely disabled
+    if (!$fpaPerformance['opcacheEnabled']) {
+        $fpaPerformance['score'] -= 30;
+    }
+
+    // Risk: Server timeout threshold is too restrictive
+    if ($fpaPerformance['maxExecutionTime'] > 0 && $fpaPerformance['maxExecutionTime'] < 30) {
+        $fpaPerformance['score'] -= 20;
+    }
+
+    $fpaPerformance['score'] = max(0, $fpaPerformance['score']);
+
+
+    // 3. ENVIRONMENT ASSESSMENT
+    // -------------------------------------------------------------------------
+    $fpaEnvironment['memoryLimit']      = ini_get('memory_limit');
+    $fpaEnvironment['maxExecutionTime'] = (int) ini_get('max_execution_time');
+    $fpaEnvironment['opcacheEnabled']   = function_exists('opcache_get_status') && opcache_get_status(false) !== false;
+
+    // Risk: Zend OPcache is completely disabled
+    if (!$fpaEnvironment['opcacheEnabled']) {
+        $fpaEnvironment['score'] -= 30;
+    }
+
+    // Risk: Server timeout threshold is too restrictive
+    if ($fpaEnvironment['maxExecutionTime'] > 0 && $fpaEnvironment['maxExecutionTime'] < 30) {
+        $fpaEnvironment['score'] -= 20;
+    }
+
+    $fpaEnvironment['score'] = max(0, $fpaEnvironment['score']);
+
+
+    // 3. OVERALL ENVIRONMENT CONFIDENCE GRADE MAPPING
+    // -------------------------------------------------------------------------
+    $overallScore = (int) round(($fpaSecurity['score'] + $fpaPerformance['score'] + $fpaEnvironment['score']) / 3);
+
+    // TESTING ONLY
+    ///$overallScore = 100;
+
+    if ($overallScore >= 97) {
+        $fpaConfidenceGrade  = $lang['FPA_CONFIDENCE_APLUS']; // 97-100
+        $fpaConfidenceColor  = 'success';
+        $fpaConfidenceMessge = $lang['FPA_CONFIDENCE_MSG_A'];
+    } elseif ($overallScore >= 90) {
+        $fpaConfidenceGrade  = $lang['FPA_CONFIDENCE_A']; // 90-96
+        $fpaConfidenceColor  = 'success';
+        $fpaConfidenceMessge = $lang['FPA_CONFIDENCE_MSG_A'];
+    } elseif ($overallScore >= 80) {
+        $fpaConfidenceGrade  = $lang['FPA_CONFIDENCE_B']; // 80-95
+        $fpaConfidenceColor  = 'info';
+        $fpaConfidenceMessge = $lang['FPA_CONFIDENCE_MSG_B'];
+    } elseif ($overallScore >= 70) {
+        $fpaConfidenceGrade  = $lang['FPA_CONFIDENCE_C']; // 70-94
+        $fpaConfidenceColor  = 'warning';
+        $fpaConfidenceMessge = $lang['FPA_CONFIDENCE_MSG_C'];
+    } elseif ($overallScore >= 50) {
+        $fpaConfidenceGrade  = $lang['FPA_CONFIDENCE_D']; // 50-69
+        $fpaConfidenceColor  = 'warning';
+        $fpaConfidenceMessge = $lang['FPA_CONFIDENCE_MSG_D'];
+    } elseif ($overallScore >= 25) {
+        $fpaConfidenceGrade  = $lang['FPA_CONFIDENCE_E']; // 25-49
+        $fpaConfidenceColor  = 'danger';
+        $fpaConfidenceMessge = $lang['FPA_CONFIDENCE_MSG_E'];
+    } else {
+        $fpaConfidenceGrade  = $lang['FPA_CONFIDENCE_F']; // 0-24
+        $fpaConfidenceColor  = 'danger';
+        $fpaConfidenceMessge = $lang['FPA_CONFIDENCE_MSG_F'];
+    }
+
+    // Bind results back to the tracking data parameters for UI consumption
+    $joomlaInstance['confidenceGrade'] = $fpaConfidenceGrade;
+    $joomlaInstance['confidenceScore'] = $overallScore;
+
+
+
+}
+
+/**
+ * function to render ratings progress bars from the above test routines
+ * TODO: need a better comment
+ */
+function renderProgressBar($ratingValue) {
+    // Ensure the value stays between 0 and 100
+    $ratingValue = max(0, min(100, (int)$ratingValue));
+
+    // Set the threshold for switching text placement
+    $threshold = 10;
+
+    // Define Bootstrap's theme colors to match the gradient transitions accurately
+    $danger  = '#dc3545'; // Red
+    $warning = '#ffc107'; // Yellow
+    $info    = '#0dcaf0'; // Cyan
+    $success = '#198754'; // Green
+
+    // Define the full 0-100 linear gradient map
+    $gradient = "linear-gradient(to right, $danger 5%, $warning 70%, $info 80%, $success 95%)";
+
+    if ($ratingValue < $threshold) {
+        // Classes for LOW percentages (text placed outside)
+        // 'me-5' ensures the text has physical space to live without clipping outside the parent card
+
+        // add a left border when the rating is 0 (zero)
+        $borderClass = ($ratingValue < 1) ? 'border-start border-danger border-2 rounded' : '';
+
+        $parentClass = 'overflow-visible me-5 ';
+        $barClass    = 'position-relative overflow-visible bg-transparent';
+        $textClass   = 'position-absolute top-50 start-100 translate-middle-y ps-2 fw-bold text-dark ' . $borderClass;
+    } else {
+        // Classes for HIGH percentages (text placed inside at the end)
+        $parentClass = '';
+        $barClass    = 'text-end Xd-flex Xjustify-content-end Xalign-items-center bg-transparent';
+        $textClass   = 'pe-2 fw-bold text-white';
+    }
+
+    // Output the HTML
+    // 1. We put the full gradient on the '.progress' container.
+    // 2. We add a linear-gradient track mask on the '.progress' to shade the UNFILLED portion grey.
+    return '
+    <div class="progress rounded ' . $parentClass . ' w-100" role="progressbar" aria-valuenow="' . $ratingValue . '" aria-valuemin="0" aria-valuemax="100"
+         style="background: linear-gradient(to right, transparent ' . $ratingValue . '%, var(--bs-secondary-bg) ' . $ratingValue . '%), ' . $gradient . ';">
+      <div class="progress-bar progress-bar-striped rounded ' . $barClass . '" style="width: ' . $ratingValue . '%">
+        <span class="' . $textClass . '">' . $ratingValue . '%</span>
+      </div>
+    </div>';
+}
 
 
 
@@ -789,7 +1240,9 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
         //var_dump($doLiveChecks);
         //var_dump($latestVersions);
         //var_dump($folders);
+        var_dump($joomlaInstance);
         echo '</pre>';
+        echo $configFilePath;
 
         //echo sys_get_temp_dir();
     ?>
@@ -904,8 +1357,8 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                 </div>
                 <div class="col-12 col-lg-4">
 
-                    <div id="confidenceCard" class="card border-secondary w-100 Xh-100 mb-3">
-                        <div class="card-header text-bg-secondary text-center">
+                    <div id="confidenceCard" class="card border border-3 w-100 Xh-100 mb-3">
+                        <div class="card-header Xtext-bg-tertiary text-center">
                             <h3 class="fw-bold fs-4">Confidence</h3>
                         </div>
                         <div class="card-body px-1">
@@ -921,7 +1374,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                             <div class="tab-content overflow-y-auto" style="height: 220px;" id="myTabContent">
                                 <div class="tab-pane text-center fade show active" id="rating-tab-pane" role="tabpanel" aria-labelledby="rating-tab" tabindex="0">
 
-                                    <span class="text-success" style="font-size: 9em; font-weight: 700;">A+</span>
+                                    <span class="text-<?php echo $fpaConfidenceColor; ?>" style="font-size: 9em; font-weight: 700;"><?php echo $joomlaInstance['confidenceGrade']; ?></span>
 
                                 </div>
                                 <div id="rating-detail-tab-pane" class="tab-pane fade" role="tabpanel" aria-labelledby="rating-detail-tab" tabindex="0">
@@ -941,10 +1394,37 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                         </div>
                         <div class="card-footer">
 
-                            footer
+                            <p class="text-center lead mb-1"><?php echo $fpaConfidenceMessge; ?></p>
+                            <div class="">
+                                <?php echo renderProgressBar($joomlaInstance['confidenceScore']); ?>
+                            </div>
+
 
                         </div>
                     </div><!--/confidenceCard-->
+
+
+                    <?php
+                    /**
+                     * --- Render Rating Progress Bars ---
+                     *
+                     */
+                    ?>
+                    <div class="mb-3 border border-3 rounded p-3 pb-2">
+                        <h3 class="small text-center">Environment Settings</h3>
+                        <?php echo renderProgressBar($fpaEnvironment['score']); ?>
+                    </div>
+
+                    <div class="mb-3 border border-3 rounded p-3 pb-2">
+                        <h3 class="small text-center">Security Settings</h3>
+                        <?php echo renderProgressBar($fpaSecurity['score']); ?>
+                    </div>
+
+                    <div class="mb-3 border border-3 rounded p-3 pb-2">
+                        <h3 class="small text-center">Performance Settings</h3>
+                        <?php echo renderProgressBar($fpaPerformance['score']); ?>
+                    </div>
+
 
                 </div>
                 <div class="col-12 col-lg-8 mb-3">

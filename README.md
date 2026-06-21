@@ -1,6 +1,6 @@
 # Forum Post Assistant (FPA) — Version 2 (Development)
 
-The Forum Post Assistant (FPA) is a diagnostic script designed to gather information about a local server environment and a Joomla! installation. It formats this data into a standardized BBCode or Markdown block, allowing users to easily copy and paste the metrics into the Joomla! community forums for troubleshooting support.
+The Forum Post Assistant (FPA) is a diagnostic script designed to gather_FPA_ information about a local server environment and a Joomla! installation. It formats this data into a standardized BBCode or Markdown block, allowing users to easily copy and paste the metrics into the Joomla! community forums for troubleshooting support.
 
 This repository contains the active development branch (`v2-dev`) for the completely redesigned next generation of the FPA utility.
 

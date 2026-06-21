@@ -135,6 +135,10 @@ const FPA_DIA = true;  // diagnostic-mode, turns on PHP logging errors, display 
 const FPA_SELF_DESTRUCT = true; // self-destruct, attempts to self-delete on next run if file older than configured duration
 const FPA_SELF_DESTRUCT_AGE = 3; // self-destruct filetime age duration
 const FPA_SSL_REDIRECT = true; // SSL Redirect - when possible and if a valid SSL certificate is found FPA attempts to redirect to the SSL version of the site
+const FPA_PROJECT_URL = 'https://github.com/ForumPostAssistant/FPA/'; // github project/repository url
+const FPA_DOCS_URL = 'https://forumpostassistant.github.io/docs/'; // github documention site url
+const FPA_DOWNLOAD_ZIP_URL = 'https://github.com/ForumPostAssistant/FPA/zipball/en-GB/'; // github latest download url (zip file)
+const FPA_DOWNLOAD_TAR_URL = 'https://github.com/ForumPostAssistant/FPA/tarball/en-GB/'; // github latest download url (tar file)
 
 // --- fpa live checks configuration array constants ---
 // enable live latest FPA version check
@@ -206,6 +210,46 @@ if (defined('FPA_DIA') && FPA_DIA) {
 
 /*
  * =============================================================================
+ * SECTION: PHP SESSION MANAGEMENT
+ * =============================================================================
+ */
+// Start session if not already active to preserve choices across reloads
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+/**
+ * Privacy Switch Setting & Redaction.
+ * Automagically reloads the page upon privacy setting change, redacting any
+ * privacy enabled elements.
+ *
+ * USAGE:
+ * echo $_SESSION['privacy_enabled'] ? '<span class="privacy-mask">[ ' . $lang['FPA_REDACTED'] . ' ]</span>' : $someDataArray['some_element'];
+ *
+ */
+// Default layout setting if no choice has been made yet
+if (!isset($_SESSION['privacy_enabled'])) {
+    $_SESSION['privacy_enabled'] = true;
+}
+
+// Background handler processing the switch toggles
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['privacy_ajax'])) {
+    $_SESSION['privacy_enabled'] = ($_POST['privacy'] === '1');
+
+    header('Content-Type: application/json');
+    echo json_encode(['success' => true]);
+    exit;
+}
+
+// Value to render the switch graphic in its proper initial position on reload
+$isPrivacyChecked = $_SESSION['privacy_enabled'] ? 'checked' : '';
+
+
+
+
+
+/*
+ * =============================================================================
  * SECTION: LANGUAGE STRINGS & TRANSLATIONS
  * =============================================================================
  * Default (en-GB) language array (well, kinda Australian English actually!)
@@ -237,12 +281,14 @@ $lang = [
     'FPA_FALSE'             => 'False',
     'FPA_MAYBE'             => 'Maybe',
     'FPA_DEFUNCT'           => 'Defunct',
+    'FPA_REDACTED'          => 'REDACTED',
     'FPA_STATUS'            => 'Status',
     'FPA_CURRENT'           => 'Current',
     'FPA_LATEST'            => 'Latest',
     'FPA_DEVBUILD'          => 'Dev Build',
     'FPA_UPTODATE'          => 'Up To Date',
     'FPA_UPDATEAVAIL'       => 'Update Available',
+    'FPA_DOWNLOADLATEST'    => 'Download Latest',
     'FPA_PLATFORM'          => 'Platform',
     'FPA_ENVIRONMENT'       => 'Environment',
     'FPA_HOST'              => 'Host',
@@ -251,13 +297,16 @@ $lang = [
     'FPA_WEB'               => 'Web',
     'FPA_PHP'               => 'PHP',
     'FPA_DBASE'             => 'DataBase',
+    'FPA_PDF'               => 'PDF',
+    'FPA_DOCUMENTATION'     => 'Documentation',
 
     // FPA titles, headings, Labels, meta & descriptions
     'FPA_META_VERSIONS'            => 'Live Version Status',
     'FPA_META_APP_VERSIONS'        => 'Application Versions',
     'FPA_META_INSTANCE_DIAG'       => 'Joomla Core Instance Diagnostics',
-    'FPA_META_SECURITY_HARDENING'  => 'Security & Hardening',
+    'FPA_META_SECURITY_METRICS'    => 'Security & Hardening Metrics',
     'FPA_META_PERFORMANCE_METRICS' => 'Performance Metrics',
+    'FPA_META_ENVIRONMENT_METRICS' => 'Environment Metrics',
     'FPA_LANG_CORE_DIRS'           => 'Joomla Core Directories',
     'FPA_LABEL_FPA'                => 'Forum Post Assistant',
     'FPA_LABEL_JOOMLA'             => 'Joomla! Core',
@@ -561,7 +610,7 @@ $joomlaInstance = [
 // --- Environment Rating Metrics (Enhances and adds to v1 Confidence Rating) ---
 $fpaEnvironment = [
     'meta' => [
-        'name' => 'FPA_META_SECURITY_HARDENING' // Language Key: 'Security & Hardening'
+        'name' => $lang['FPA_META_ENVIRONMENT_METRICS'] // Language Key: 'Environment Metrics'
     ],
     'score'            => 100, // Starts perfect, drops as vulnerabilities are found
     'configMode'        => $lang['FPA_UNKNOWN'],
@@ -574,10 +623,10 @@ $fpaEnvironment = [
     'displayErrors'    => false
 ];
 
-// --- Environment Security Rating Metrics (New in FPA v2, adds to Confidence Rating) ---
+// --- Security Rating Metrics (New in FPA v2, adds to Confidence Rating) ---
 $fpaSecurity = [
     'meta' => [
-        'name' => 'FPA_META_SECURITY_HARDENING' // Language Key: 'Security & Hardening'
+        'name' => $lang['FPA_META_SECURITY_METRICS'] // Language Key: 'Security & Hardening Metrics'
     ],
     'score'            => 100, // Starts perfect, drops as vulnerabilities are found
     'configMode'        => $lang['FPA_UNKNOWN'],
@@ -593,7 +642,7 @@ $fpaSecurity = [
 // --- Host, PHP & Instance Performance Rating Metrics (New in FPA v2, adds to Confidence Rating) ---
 $fpaPerformance = [
     'meta' => [
-        'name' => 'FPA_META_PERFORMANCE_METRICS' // Language Key: 'Performance Metrics'
+        'name' => $lang['FPA_META_PERFORMANCE_METRICS'] // Language Key: 'Performance Metrics'
     ],
     'score'            => 100, // Starts perfect, drops as bottlenecks are found
     'memoryLimit'      => $lang['FPA_UNKNOWN'],
@@ -1113,6 +1162,14 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
             transition: display 0.3s ease-in-out;
         }
 
+
+        .privacy-mask {
+            color: var(--bs-info-text-emphasis) !important;
+            background-color: rgba(var(--bs-info-rgb), 0.15) !important;
+            padding: 2px 5px ;
+            font-size: 0.8rem;
+        }
+
         /* WCAG 2.1 AA: visible keyboard focus (2.4.7); prefers-reduced-motion */
         a:focus-visible,
         button:focus-visible,
@@ -1158,7 +1215,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
         <nav class="navbar navbar-expand-md navbar-dark bg-dark bg-fpa fixed-top d-flex flex-column shadow Xshadow-fpa Xpb-0 w-100" aria-label="Primary">
             <div class="container">
 
-                <a class="navbar-brand fw-semibold d-flex align-items-center gap-2" href="<?php echo $fpaSelfUrl; ?>">
+                <a class="navbar-brand fw-semibold d-flex align-items-center gap-2" href="<?php echo $fpaSelfUrl; ?>" aria-label="<?php fpaLang('FPA_LONG'); ?>">
                     <span class="text-white-50 fw-bold d-none d-md-block" aria-hidden="true"><i class="bi bi-chat-right-dots"></i></span>
                     <span class="d-none d-md-block"><?php fpaLang('FPA_LONG'); ?></span>
                     <span class="d-sm-block d-md-none"><?php fpaLang('FPA_SHORT'); ?>
@@ -1166,25 +1223,59 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 
                 <div class="navbar-nav ms-md-auto">
 
-                    <div class="btn-toolbar Xms-md-auto" role="toolbar" aria-label="Toolbar with button groups">
+                    <div class="btn-toolbar Xms-md-auto" role="toolbar" aria-label="FPA tools & options toolbar groups">
 
-                        <div class="btn-group me-2" role="group" aria-label="Privacy Group" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="bottom" data-bs-title="Data Privacy" data-bs-content="Enable or Disable data privacy protection.">
-                            <input type="radio" class="btn-check" name="privacyBtnRadio" id="privacyBtnRadioOn" autocomplete="off" checked>
-                            <label class="btn btn-outline-light text-success" for="privacyBtnRadioOn">On</label>
+                        <?php
+                        /**
+                         * Toolbar forms
+                         * FPA navigation option & action forms for the tools & options groups toolbar
+                         */
+                        ?>
+                        <form class="d-none" method="post" action="<?php echo $fpaSelfUrl; ?>" name="nav-pdf-form" id="nav-pdf-form">
+                            <input type="hidden" name="doPDF" value="1" />
+                        </form>
 
-                            <input type="radio" class="btn-check" name="privacyBtnRadio" id="privacyBtnRadioOff" autocomplete="off">
-                            <label class="btn btn-outline-light text-warning" for="privacyBtnRadioOff">Off</label>
+                        <form class="d-none" method="post" action="<?php echo $fpaSelfUrl; ?>" name="nav-delete-form" id="nav-delete-form">
+                            <input type="hidden" name="act" value="delete" />
+                        </form>
+
+                        <div class="btn-group me-2" role="group" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="bottom" data-bs-title="Data Privacy" data-bs-content="Enable or Disable data privacy protection." aria-label="Privacy Tools Group">
+                            <!-- Sensitive data privacy switch (ajax - No page reload) -->
+                            <form class="m-0 ml-auto p-0" method="post" id="nav-privacy-form">
+                                <div class="form-check form-switch p-0 d-flex flex-column align-items-center">
+                                    <label class="form-check-label m-0 small" for="nav-privacy-switch">
+                                        <small>Privacy</small>
+                                    </label>
+                                    <input class="form-check-input m-0" type="checkbox" role="switch" name="privacy" id="nav-privacy-switch" <?php echo $isPrivacyChecked; ?>>
+                                </div>
+                            </form>
+
                         </div>
 
-                        <div class="btn-group me-2" role="group" aria-label="Tools Group" data-bs-toggle="popover" data-bs-trigger="focus" data-bs-title="FPA Support & Tools" data-bs-content="Housekeeping and support tools for the Forum Post Assistant.">
-                            <button type="button" class="btn btn-outline-light"><i class="bi bi-filetype-pdf"></i></button>
-                            <button type="button" class="btn btn-outline-light"><i class="bi bi-book-half"></i></button>
-                            <button type="button" class="btn btn-outline-light"><i class="bi bi-cloud-download-fill"></i></button>
+                        <div class="btn-group me-2" role="group" aria-label="FPA Tools Group">
+                            <!-- FPA options & tools -->
+                            <button form="nav-pdf-form" class="btn btn-outline-light" type="submit" accesskey="p" data-bs-toggle="tooltip" data-bs-trigger="hover focus" data-bs-placement="bottom" data-bs-title="PDF Report" aria-label="Generate a PDF report of the FPA">
+                                <i class="bi bi-filetype-pdf"></i>
+                            </button>
+
+                            <a role="button" class="btn btn-outline-light" rel="noreferrer noopener" href="<?php echo FPA_DOCS_URL; ?>" target="_blank" data-bs-toggle="tooltip" data-bs-trigger="hover focus" data-bs-placement="bottom" data-bs-title="<?php echo $lang['FPA_SHORT'] . ' ' . $lang['FPA_DOCUMENTATION']; ?>" aria-label="<?php echo $lang['FPA_DOCUMENTATION']; ?>">
+                                <i class="bi bi-book-half"></i>
+                            </a>
+
+                            <a role="button" class="btn btn-outline-light" rel="noreferrer noopener" href="<?php echo FPA_DOWNLOAD_ZIP_URL; ?>" target="_blank" data-bs-toggle="tooltip" data-bs-trigger="hover focus" data-bs-placement="bottom" data-bs-title="<?php echo $lang['FPA_DOWNLOADLATEST'] .' ' . $lang['FPA_SHORT']; ?>" aria-label="<?php echo $lang['FPA_DOWNLOADLATEST'] .' ' . $lang['FPA_SHORT']; ?>">
+                                <i class="bi bi-cloud-download-fill"></i>
+                            </a>
+
+                            <button class="btn btn-outline-light" type="button" data-bs-toggle="collapse" data-bs-target="#runtimeOptionPanel" aria-expanded="true" aria-controls="runtimeOptionPanel" aria-label="FPA Options">
+                                <span data-bs-toggle="tooltip" data-bs-trigger="hover focus" data-bs-placement="bottom" data-bs-title="FPA Runtime Options.">
+                                    <i class="bi bi-sliders"></i>
+                                </span>
+                            </button>
                         </div>
 
-                        <div id="themeSwitcher" class="btn-group me-2" role="group" aria-label="Options Group">
-                            <button class="btn btn-outline-light" type="button" data-bs-toggle="collapse" data-bs-target="#runtimeOptionPanel" aria-expanded="true" aria-controls="runtimeOptionPanel"><i class="bi bi-sliders"></i></button>
-                            <button class="btn btn- btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="XthemeSwitcher">
+                        <div id="themeSwitcher" class="btn-group me-2" role="group" aria-label="Theme Switcher Group">
+                            <!-- switch themes -->
+                            <button class="btn btn- btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Switch Theme">
                                 <i class="theme-icon-active bi bi-sun-fill" aria-hidden="true"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
@@ -1206,8 +1297,11 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                             </ul>
                         </div>
 
-                        <div class="btn-group" role="group" aria-label="Third group">
-                            <a href="#" role="button" class="btn btn-danger" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="Delete the FPA script."><i class="bi bi-trash3-fill"></i></a>
+                        <div class="btn-group" role="group" aria-label="FPA Actions Group">
+                            <!-- delete FPA -->
+                            <button form="nav-delete-form" class="btn btn-danger" type="submit" data-bs-toggle="tooltip" data-bs-title="Delete the FPA script" data-bs-placement="bottom" aria-label="Delete the FPA script.">
+                                <i class="bi bi-trash3-fill"></i>
+                            </button>
                         </div>
                     </div>
 
@@ -1235,16 +1329,18 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
         //echo $doLiveChecks;
         //if ($doLiveChecks) { echo 'DO LIVE CHECKS'; }
 
-        echo '<pre>';
+        //echo '<pre>';
         //var_dump($activeFeeds);
         //var_dump($doLiveChecks);
         //var_dump($latestVersions);
         //var_dump($folders);
-        var_dump($joomlaInstance);
-        echo '</pre>';
-        echo $configFilePath;
+        //var_dump($joomlaInstance);
+        //echo '</pre>';
+        //echo $configFilePath;
 
         //echo sys_get_temp_dir();
+        //echo $isPrivacyChecked ;
+        echo $_SESSION['privacy_enabled'] ? '<span class="privacy-masked">[ ' . $lang['FPA_REDACTED'] . ' ]</span>' : $joomlaInstance['configPath'];
     ?>
     <!-- /TESTING -->
 
@@ -1344,7 +1440,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
          */
         ?>
         <div id="keyMetricsPanel" class="container p-2 p-md-3 my-3">
-            <div class="row">
+            <div class="row gx-5">
                 <div class="col-12">
 
                     <h2 class="border-bottom">
@@ -1355,13 +1451,13 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                     </p>
 
                 </div>
-                <div class="col-12 col-lg-4">
+                <div class="col-12 col-lg-4 p-3 border border-3 rounded">
 
-                    <div id="confidenceCard" class="card border border-3 w-100 Xh-100 mb-3">
-                        <div class="card-header Xtext-bg-tertiary text-center">
+                    <div id="confidenceCard" class="card border Xborder-3 w-100 Xh-100 mb-3">
+                        <div class="card-header text-center Xborder-3">
                             <h3 class="fw-bold fs-4">Confidence</h3>
                         </div>
-                        <div class="card-body px-1">
+                        <div class="card-body p-0 pt-2">
 
                             <ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
                                 <li class="nav-item" role="presentation">
@@ -1392,7 +1488,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                             </div>
 
                         </div>
-                        <div class="card-footer">
+                        <div class="card-footer Xborder-3">
 
                             <p class="text-center lead mb-1"><?php echo $fpaConfidenceMessge; ?></p>
                             <div class="">
@@ -1410,20 +1506,20 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                      *
                      */
                     ?>
-                    <div class="mb-3 border border-3 rounded p-3 pb-2">
-                        <h3 class="small text-center">Environment Settings</h3>
+                    <div id="environmentRating" class="mb-3 border border-3 rounded p-3 pb-2">
+                        <h3 class="small text-center"><?php echo $fpaEnvironment['meta']['name']; ?></h3>
                         <?php echo renderProgressBar($fpaEnvironment['score']); ?>
-                    </div>
+                    </div><!-- /environmentRating -->
 
-                    <div class="mb-3 border border-3 rounded p-3 pb-2">
-                        <h3 class="small text-center">Security Settings</h3>
+                    <div id="securityRating" class="mb-3 border border-3 rounded p-3 pb-2">
+                        <h3 class="small text-center"><?php echo $fpaSecurity['meta']['name']; ?></h3>
                         <?php echo renderProgressBar($fpaSecurity['score']); ?>
-                    </div>
+                    </div><!--/ securityRating -->
 
-                    <div class="mb-3 border border-3 rounded p-3 pb-2">
-                        <h3 class="small text-center">Performance Settings</h3>
+                    <div id="performanceRating" class="mb-3 border border-3 rounded p-3 pb-2">
+                        <h3 class="small text-center"><?php echo $fpaPerformance['meta']['name']; ?></h3>
                         <?php echo renderProgressBar($fpaPerformance['score']); ?>
-                    </div>
+                    </div><!--/ performanceRating -->
 
 
                 </div>
@@ -1652,6 +1748,71 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
             const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 
         });
+
+
+        /**
+         * privacy redacion functin to capture the privacy switch change and
+         * automagically reload the page appropriately using the PHP SESSION
+         * data (checked (readacted) / unchecked (un-redacted)
+         *
+         */
+        document.addEventListener('DOMContentLoaded', function () {
+            const privacySwitch = document.getElementById('nav-privacy-switch');
+
+            privacySwitch.addEventListener('change', function () {
+                // 1. Package the current state of the switch toggle
+                const formData = new FormData();
+                formData.append('privacy_ajax', '1');
+                formData.append('privacy', this.checked ? '1' : '0');
+
+                // 2. Transmit the configuration change to PHP silently
+                fetch('<?php echo $fpaSelfUrl; ?>', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // 3. SECURE RELOAD: Instantly refresh the page to pull the redacted HTML from the server
+                        window.location.reload();
+                    }
+                })
+                .catch(error => console.error('Network security error:', error));
+            });
+        });
+        /*
+        document.addEventListener('DOMContentLoaded', function () {
+            const privacySwitch = document.getElementById('nav-privacy-switch');
+
+            privacySwitch.addEventListener('change', function () {
+                // 1. Prepare form data payload dynamically
+                const formData = new FormData();
+                formData.append('privacy_ajax', '1');
+                formData.append('privacy', this.checked ? '1' : '0');
+
+                // 2. Transmit the state to the backend silently
+                fetch('<?php echo $fpaSelfUrl; ?>', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Privacy preference saved:', data.state);
+                        // Pro tip: You can call a custom function here to instantly
+                        // hide/blur your text data fields on the page layout!
+                    }
+                })
+                .catch(error => console.error('Error saving preference:', error));
+            });
+        });
+        */
+
+
 
     </script>
 

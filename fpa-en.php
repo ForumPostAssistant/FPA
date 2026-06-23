@@ -218,6 +218,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+
 /**
  * Privacy Switch Setting & Redaction.
  * Automagically reloads the page upon privacy setting change, redacting any
@@ -243,7 +244,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['privacy_ajax'])) {
 
 // Value to render the switch graphic in its proper initial position on reload
 $isPrivacyChecked = $_SESSION['privacy_enabled'] ? 'checked' : '';
-
 
 
 
@@ -279,12 +279,17 @@ $lang = [
     'FPA_OK'                => 'OK',
     'FPA_TRUE'              => 'True',
     'FPA_FALSE'             => 'False',
+    'FPA_COMPACT'           => 'Compact',
+    'FPA_DEFAULT'           => 'Default',
+    'FPA_DETAILED'          => 'Detailed',
     'FPA_MAYBE'             => 'Maybe',
     'FPA_DEFUNCT'           => 'Defunct',
     'FPA_REDACTED'          => 'REDACTED',
     'FPA_STATUS'            => 'Status',
     'FPA_CURRENT'           => 'Current',
     'FPA_LATEST'            => 'Latest',
+    'FPA_ENABLED'           => 'Enabled',
+    'FPA_DISABLED'          => 'Disabled',
     'FPA_DEVBUILD'          => 'Dev Build',
     'FPA_UPTODATE'          => 'Up To Date',
     'FPA_UPDATEAVAIL'       => 'Update Available',
@@ -525,6 +530,20 @@ $isWinLocal = ($isLocalhost && $isWindows);
 
 
 /**
+ * Privacy - data masking
+ *
+ * USAGE:
+ *
+ *
+ */
+/* TODO: check this later, if its worth doing compared to existing methos
+function maskData($realValue, $mask = '••••••••') {
+    return $_SESSION['privacy_enabled'] ? $mask : $realValue;
+}
+*/
+
+
+/**
  * --- Safely escape and echo a language string ---
  * Use this function to echo language strings as a belt and braces protection
  * against user contributed translations maicious code injections
@@ -534,6 +553,7 @@ $isWinLocal = ($isLocalhost && $isWindows);
  * @param string $key The key from the translation array.
  * @return void
  */
+/* not sure this is worth the hassle */
 function fpaLang(string $key): void
 {
     global $lang;
@@ -1137,6 +1157,11 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
             box-shadow: var(--bs-box-shadow) !important;
             transition: all 0.3s ease-in-out;
         }
+        .form-switch-success {
+            --bs-primary: var(--bs-success) !important;
+            --bs-focus-ring-color: rgba(25, 135, 84, 0.25) !important;
+        }
+
         /* preset options hover help text */
         .row:has(.card.basicPreset:hover) .presetHelp,
         .row:has(.card.defaultPreset:hover) .presetHelp,
@@ -1169,6 +1194,46 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
             padding: 2px 5px ;
             font-size: 0.8rem;
         }
+
+/* The semi-circle viewing window */
+.gauge-wrapper {
+    position: relative;
+    width: 160px;
+    height: 80px; /* Exactly half the width */
+    overflow: hidden;
+}
+
+/* The physical track ring */
+.gauge-body {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 200%; /* Forms a perfect circle inside the hidden overflow */
+    border: 16px solid var(--bs-secondary-bg); /* Bootstrap 5 theme-aware gray track */
+    border-bottom-color: transparent;
+    border-right-color: transparent;
+    border-radius: 50%;
+    transform: rotate(45deg); /* Baseline start at 0% */
+}
+
+/* The dynamic colored fill indicator */
+.gauge-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 200%;
+    border: 16px solid var(--bs-primary); /* Bootstrap primary colored indicator */
+    border-bottom-color: transparent;
+    border-right-color: transparent;
+    border-radius: 50%;
+    transform-origin: center center;
+    transform: rotate(45deg); /* Default 0% position */
+    transition: transform 0.4s ease-out; /* Smooth movement transition animation */
+}
+
+
 
         /* WCAG 2.1 AA: visible keyboard focus (2.4.7); prefers-reduced-motion */
         a:focus-visible,
@@ -1239,18 +1304,19 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                             <input type="hidden" name="act" value="delete" />
                         </form>
 
-                        <div class="btn-group me-2" role="group" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-placement="bottom" data-bs-title="Data Privacy" data-bs-content="Enable or Disable data privacy protection." aria-label="Privacy Tools Group">
-                            <!-- Sensitive data privacy switch (ajax - No page reload) -->
-                            <form class="m-0 ml-auto p-0" method="post" id="nav-privacy-form">
-                                <div class="form-check form-switch p-0 d-flex flex-column align-items-center">
-                                    <label class="form-check-label m-0 small" for="nav-privacy-switch">
-                                        <small>Privacy</small>
-                                    </label>
-                                    <input class="form-check-input m-0" type="checkbox" role="switch" name="privacy" id="nav-privacy-switch" <?php echo $isPrivacyChecked; ?>>
-                                </div>
-                            </form>
-
-                        </div>
+                        <ul class="navbar-nav">
+                            <li class="nav-item px-3 py-0 border-start border-secondary">
+                                <!-- Sensitive data privacy switch -->
+                                <form class="m-0 p-0" method="post" id="nav-privacy-form">
+                                    <div class="form-check form-switch p-0 d-flex flex-column align-items-center form-switch-success">
+                                        <label class="form-check-label m-0 text-white" for="nav-privacy-switch" style="font-size: 0.75rem;">
+                                            Privacy
+                                        </label>
+                                        <input class="form-check-input m-0" type="checkbox" role="switch" name="privacy" id="nav-privacy-switch" <?php echo $isPrivacyChecked; ?>>
+                                    </div>
+                                </form>
+                            </li>
+                        </ul>
 
                         <div class="btn-group me-2" role="group" aria-label="FPA Tools Group">
                             <!-- FPA options & tools -->
@@ -1266,11 +1332,19 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                                 <i class="bi bi-cloud-download-fill"></i>
                             </a>
 
-                            <button class="btn btn-outline-light" type="button" data-bs-toggle="collapse" data-bs-target="#runtimeOptionPanel" aria-expanded="true" aria-controls="runtimeOptionPanel" aria-label="FPA Options">
+                            <button class="btn btn-outline-light" type="button" data-bs-toggle="collapse" data-bs-target="#runtimeOptionPanel" aria-expanded="<?php echo $_SESSION['options_panel_open'] ? 'true' : 'false'; ?>" aria-controls="runtimeOptionPanel" aria-label="FPA Runtime Options">
                                 <span data-bs-toggle="tooltip" data-bs-trigger="hover focus" data-bs-placement="bottom" data-bs-title="FPA Runtime Options.">
                                     <i class="bi bi-sliders"></i>
                                 </span>
                             </button>
+
+                            <!--
+                            <button class="btn btn-outline-light" type="button" data-bs-toggle="collapse" data-bs-target="#runtimeOptionPanel" aria-expanded="<?php echo $_SESSION['options_panel_open'] ? 'true' : 'false'; ?>" aria-controls="runtimeOptionPanel" aria-label="FPA Runtime Options">
+                                <span data-bs-toggle="tooltip" data-bs-trigger="hover focus" data-bs-placement="bottom" data-bs-title="FPA Runtime Options.">
+                                    <i class="bi bi-sliders"></i>
+                                </span>
+                            </button>
+                            -->
                         </div>
 
                         <div id="themeSwitcher" class="btn-group me-2" role="group" aria-label="Theme Switcher Group">
@@ -1314,7 +1388,8 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                 <div class="container-fluid text-center">
                     <small class="opacity-75">🚀 Limited Offer: Get 50% off your first month with code HALFOFF!</small>
                 </div>
-            </div>--/navSubBar-->
+            </div>--/navSubBar
+            -->
 
         </nav>
 
@@ -1339,8 +1414,8 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
         //echo $configFilePath;
 
         //echo sys_get_temp_dir();
-        //echo $isPrivacyChecked ;
-        echo $_SESSION['privacy_enabled'] ? '<span class="privacy-masked">[ ' . $lang['FPA_REDACTED'] . ' ]</span>' : $joomlaInstance['configPath'];
+        echo $isPrivacyChecked ;
+        echo $_SESSION['privacy_enabled'] ? '<span class="privacy-mask">[ ' . $lang['FPA_REDACTED'] . ' ]</span>' : $joomlaInstance['configPath'];
     ?>
     <!-- /TESTING -->
 
@@ -1353,81 +1428,263 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
          *
          */
         ?>
+<div id="runtimeOptionPanel" class="container p-0 my-4 collapse">
+    <!-- Main Card Body Container -->
+    <div class="card border-secondary shadow overflow-hidden">
+
+        <!-- Header Panel Section -->
+        <div class="card-header bg-dark text-white Xbg-text-dark border-secondary Xbg-opacity-10 Xbg-white Xp-3 Xp-md-4">
+            <div class="row align-items-center">
+                <div class="col-12 col-md-9">
+                    <h2 class="mb-2 d-flex align-items-center gap-2 Xbg-text-white">
+                        <i class="bi bi-sliders text-secondary"></i> <?php echo $lang['FPA_RUNTIMEOPTIONS']; ?>
+                    </h2>
+                    <p class="small mb-0">
+                        Not all issues require complete information disclosure or full diagnosis routines, therefore you may choose to run preset reports, or if required, manually select which area or feature to include in the report.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-3 p-md-4 bg-transparent">
+
+            <!-- 1. PRESETS SECTION -->
+            <div class="mb-4">
+
+                <h3 class="tracking-wider fs-5 mb-3 d-block">Preset Profiles</h3>
+
+                <div class="btn-group Xbtn-group-lg d-flex d-md-inline-flex w-100 w-md-auto" role="group" aria-label="Preset Profiles">
+
+                    <button type="button" class="btn btn-outline-secondary fw-bold flex-fill px-4 py-3 <?php echo ($_SESSION['current_preset_profile'] === 'compact') ? 'active' : ''; ?>">
+                        <i class="bi bi-layers mb-0 d-block fs-1"></i>
+                        <?php echo $lang['FPA_COMPACT'] ?? 'Compact'; ?>
+                    </button>
+
+                    <button type="button" class="btn btn-outline-secondary fw-bold flex-fill px-4 py-3 <?php echo ($_SESSION['current_preset_profile'] === 'default') ? 'active' : ''; ?>">
+                        <i class="bi bi-layers-half mb-0 d-block fs-1"></i>
+                        <?php echo $lang['FPA_DEFAULT'] ?? 'Default'; ?>
+                    </button>
+
+                    <button type="button" class="btn btn-outline-secondary fw-bold flex-fill px-4 py-3 <?php echo ($_SESSION['current_preset_profile'] === 'detailed') ? 'active' : ''; ?>">
+                        <i class="bi bi-layers-fill mb-0 d-block fs-1"></i>
+                        <?php echo $lang['FPA_DETAILED'] ?? 'Detailed'; ?>
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- Centred "OR" Divider with locked 25% width lines -->
+             <!--
+            <div class="d-flex align-items-center justify-content-center mt-5 mb-4">
+                <hr class="w-25 text-secondary opacity-50 m-0">
+                <span class="px-3 text-secondary text-uppercase small fw-bold" style="font-size: 1.2rem; letter-spacing: 0.05em;">
+                    <?php echo $lang['FPA_OR'] ?? 'OR'; ?>
+                </span>
+                <hr class="w-25 text-secondary opacity-50 m-0">
+            </div>
+            -->
+
+            <!-- 2. Custom PROFILE MODIFIERS SECTION -->
+            <div class="mt-4">
+                <div class="d-flex align-items-center mb-3">
+
+                    <h3 class="tracking-wider fs-5 m-0">Profile Modifiers</h3>
+                    <span id="custom-badge" class="badge bg-warning text-dark ms-2 d-none">Customised</span>
+
+                </div>
+
+                <!-- Structured Option Switch Column Rows -->
+                <div class="row row-cols-1 row-cols-md-3 g-4 Xg-3">
+
+                    <div class="col Xcol-12 Xcol-md-4">
+
+                        <div class="card Xp-3 bg-text-dark Xbg-opacity-5 Xrounded Xborder border-secondary border-opacity-50 h-100">
+                            <div class="card-body">
+
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" form="runtime-profile" role="switch" id="switch-show-components" checked>
+                                    <label class="form-check-label" for="switch-show-components">Show Components</label>
+                                </div>
+
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" form="runtime-profile" name="show_modules" value="true" role="switch" id="switch-show-modules" checked>
+                                    <label class="form-check-label" for="switch-show-modules">Show Modules</label>
+                                </div>
+
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" form="runtime-profile" name="show_plugins" value="true" role="switch" id="switch-show-plugins" checked>
+                                    <label class="form-check-label" for="switch-show-plugins">Show Plugins</label>
+                                </div>
+
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" form="runtime-profile" name="show_libraries" value="true" role="switch" id="switch-libraries">
+                                    <label class="form-check-label" for="switch-libraries">Show Libraries</label>
+                                </div>
+
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" form="runtime-profile" name="show_languages" value="true" role="switch" id="switch-show-languages">
+                                    <label class="form-check-label" for="switch-show-languages">Show Languages</label>
+                                </div>
+
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" form="runtime-profile" name="show_templates" value="true" role="switch" id="switch-show-templates" checked>
+                                    <label class="form-check-label" for="switch-show-templates">Show Templates</label>
+                                </div>
+
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" form="runtime-profile" name="show_database" value="true" role="switch" id="switch-show-database" checked>
+                                    <label class="form-check-label" for="switch-show-database">Show Database</label>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div><!-- /column1 -->
+                    <div class="col Xcol-12 Xcol-md-4">
+
+                        <div class="card Xp-3 bg-text-dark Xbg-opacity-5 Xrounded Xborder border-secondary border-opacity-50 h-100">
+                            <div class="card-body">
+
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" form="runtime-profile" name="show_extended_host" value="true" role="switch" id="switch-extended-host">
+                                    <label class="form-check-label" for="switch-extended-host">Extended Host</label>
+                                </div>
+
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" form="runtime-profile" name="show_extended_php" value="true" role="switch" id="switch-extended-php">
+                                    <label class="form-check-label" for="switch-extended-php">Extended PHP</label>
+                                </div>
+
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" form="runtime-profile" name="show_extended_applications" value="true" role="switch" id="switch-extend-applications">
+                                    <label class="form-check-label" for="switch-extended-applications">Extended Applications</label>
+                                </div>
+
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" form="runtime-profile" name="show_extended_database" value="true" role="switch" id="switch-extended-database">
+                                    <label class="form-check-label" for="switch-extended-database">Extended DataBase</label>
+                                </div>
+
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" form="runtime-profile" name="show_extended_permissions" value="true" role="switch" id="switch-extended-permissions">
+                                    <label class="form-check-label" for="switch-extended-permisisons">Extended Permissions</label>
+                                </div>
+
+                            </div>
+                            <div class="card-footer bg-transparent border-top-0 Xpx-1 Xpy-3">
+
+                                <div class="form-check form-switch Xmb-3">
+                                    <input class="form-check-input" type="checkbox" form="runtime-profile" name="show_core_extensions" value="true" role="switch" id="switch-show-core-extensions">
+                                    <label class="form-check-label" for="switch-show-core-extensions">Show Core Extensions</label>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div><!-- /column2 -->
+                    <div class="col Xcol-12 Xcol-md-4">
+
+                        <div class="card Xp-3 bg-text-dark Xbg-opacity-5 Xrounded Xborder border-secondary border-opacity-50 h-100">
+                            <div class="card-body">
+
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" form="runtime-profile" name="include_content_stats" value="true" role="switch" id="switch-include-content-stats">
+                                    <label class="form-check-label" for="switch-include-content-stats">Include Content Stats</label>
+                                </div>
+
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" form="runtime-profile" name="include_perf_stats" value="true" role="switch" id="switch-include-performance">
+                                    <label class="form-check-label" for="switch-include-performance">Include Performance Stats</label>
+                                </div>
+
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" form="runtime-profile" name="include_security_review" value="true" role="switch" id="switch-include-security-review">
+                                    <label class="form-check-label" for="switch-include-security-review">Include Security Review</label>
+                                </div>
+
+                                <div class="form-check form-switch mb-2">
+                                    <input class="form-check-input" type="checkbox" form="runtime-profile" name="include_graphics" value="true" role="switch" id="switch-show-graphics">
+                                    <label class="form-check-label" for="switch-show-graphics">Show Graphics</label>
+                                </div>
+
+                            </div>
+                            <div class="card-footer bg-transparent border-top-0 Xpx-1 Xpy-3">
+
+                                <p class="small fw-bold Xmt-3 mb-0">White screen or memory errors?</p>
+                                <div class="form-check form-switch Xmb-3">
+                                    <input class="form-check-input" type="checkbox" form="runtime-profile" name="increase_runtime" value="true" role="switch" id="switch-increase-runtime">
+                                    <label class="form-check-label" for="switch-eruntime">Increase Runtime</label>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div><!-- /column3 -->
+                </div><!-- /row -->
+            </div>
+
+            <div class="d-flex justify-content-center justify-content-md-end mt-4">
+                <div class="btn-group">
+
+                    <button type="submit" form="runtime-profile" name="action" value="fpa" class="btn btn-outline-primary Xflex-fill">
+                        <i class="bi bi-pc-display-horizontal mb-0 Xd-block fs-3"></i>
+                        <?php echo $lang['FPA_SHORT'] ?? 'FPA'; ?>
+                    </button>
+
+                    <button type="submit" form="runtime-profile" name="action" value="post" class="btn btn-outline-primary Xflex-fill">
+                        <i class="bi bi-file-post mb-0 Xd-block fs-4"></i>
+                        <?php echo $lang['FPA_POST'] ?? 'Post'; ?>
+                    </button>
+
+                    <button type="submit" form="runtime-profile" name="action" value="text" class="btn btn-outline-primary Xflex-fill">
+                        <i class="bi bi-filetype-txt mb-0 Xd-block fs-3"></i>
+                        <?php echo $lang['FPA_TEXT'] ?? 'Text'; ?>
+                    </button>
+
+                </div>
+            </div>
+
+        </div><!-- /card-body -->
+    </div><!-- /card -->
+</div><!--/container runtimeOptionPanel-->
+
+
+
+
+
+
+        <!--
         <div id="runtimeOptionPanel" class="container p-2 p-md-3 my-3 collapse">
 
             <div class="row align-items-end">
+
                 <div class="col-12 col-md-9 me-auto">
 
                     <h2 class="border-bottom">
-                        <i class="bi bi-sliders text-secondary"></i> <?php fpaLang('FPA_RUNTIMEOPTIONS'); ?>
+                        <i class="bi bi-sliders text-secondary"></i> <?php echo $lang['FPA_RUNTIMEOPTIONS']; ?>
                     </h2>
                     <p>
                         Not all issues require complete information disclosure or full diagnosis routines, therefore you may choose to run preset reports, or if required, manually select which area or feature to include in the report.
                     </p>
 
                 </div>
-                <div class="col-12 col-md-auto align-self-end">
+                <div class="col-12">
 
-                    <div class="btn-group mb-2 align-self-end" role="group" aria-label="Runtime Option Group">
-                        <input id="runtimePresetBtn" class="btn-check" name="runtimeOption" type="radio" autocomplete="off" aria-expanded="true" aria-controls="runtimeOptionPreset" data-bs-toggle="collapse" data-bs-target="#runtimeOptionPreset" checked>
-                        <label class="btn btn-outline-secondary" for="runtimePresetBtn">Preset</label>
-
-                        <input id="runtimeManualBtn" class="btn-check" name="runtimeOption" type="radio" autocomplete="off" aria-expanded="false" aria-controls="runtimeOptionManual" data-bs-toggle="collapse" data-bs-target="#runtimeOptionManual">
-                        <label class="btn btn-outline-secondary" for="runtimeManualBtn">Manual</label>
+                    -- PRESETS --
+                    <div>
+                        <h5 class="m-0 me-2">1. Preset Configurations</h5>
                     </div>
 
-                </div>
+                    -- Manual Configuration Form Group --
+                    <div class="d-flex align-items-center mb-2">
+                        <h5 class="m-0 me-2">2. Manual Modifiers</h5>
+                    </div>
+
+                </div>-- /col--
             </div>
 
-            <div id="runtimeOptionCollapseGroup">
+        </div>--/container runtimeOptionPanel-->
 
-                <div class="collapse show" data-bs-parent="#runtimeOptionCollapseGroup" id="runtimeOptionPreset">
-                    <div class="border rounded-2 p-3">
-                        <h2 class="h5">Preset Runtime Options</h2>
-
-                        <div class="row">
-                            <div class="col-6 col-lg-2 mb-3 position-relative">
-                                <i class="bi bi-info-circle-fill d-block fs-4 m-2 position-absolute" style="top:-20px;right:-5px;z-index:1;" aria-hidden="true"></i>
-                                <a href="#" class="card border basicPreset actionable w-100 text-center pb-2 shadow-sm"><i class="bi bi-grid-1x2 d-block fs-1" aria-hidden="true"></i>Basic</a>
-                            </div>
-                            <div class="col-6 col-lg-2 mb-3 position-relative">
-                                <i class="bi bi-info-circle-fill d-block fs-4 m-2 position-absolute" style="top:-20px;right:-5px;z-index:1;" aria-hidden="true"></i>
-                                <a href="#" class="card border defaultPreset actionable w-100 text-center pb-2 shadow-sm"><i class="bi bi-grid-1x2-fill d-block fs-1" aria-hidden="true"></i>Default</a>
-                            </div>
-                            <div class="col-6 col-lg-2 mb-3 position-relative">
-                                <i class="bi bi-info-circle-fill d-block fs-4 m-2 position-absolute" style="top:-20px;right:-5px;z-index:1;" aria-hidden="true"></i>
-                                <a href="#" class="card border enhancedPreset actionable w-100 text-center pb-2 shadow-sm"><i class="bi bi-grid-1x2 d-block fs-1" aria-hidden="true"></i>Enhanced</a>
-                            </div>
-                            <div class="col-6 col-lg-2 mb-3 position-relative">
-                                <i class="bi bi-info-circle-fill d-block fs-4 m-2 position-absolute" style="top:-20px;right:-5px;z-index:1;" aria-hidden="true"></i>
-                                <a href="#" class="card border maximumPreset actionable w-100 text-center pb-2 shadow-sm"><i class="bi bi-grid-1x2 d-block fs-1" aria-hidden="true"></i>Maximum</a>
-                            </div>
-                            <div class="col-md-12 col-lg-4 order-first">
-                                <p class="presetHelp">This is just some dummy descriptive text.</p>
-                                <p class="basicPresetHelp d-none">this is for the basic preset</p>
-                                <p class="defaultPresetHelp d-none">this is for the default preset</p>
-                                <p class="enhancedPresetHelp d-none">this is for the enhanced preset</p>
-                                <p class="maximumPresetHelp d-none">this is for the maximum preset</p>
-                            </div>
-                        </div><!--/row-->
-                    </div>
-                </div>
-
-                <div class="collapse" data-bs-parent="#runtimeOptionCollapseGroup" id="runtimeOptionManual">
-                    <div class="border rounded-2 p-3">
-                        <h2 class="h5"><i class="bi bi-gear-wide text-secondary"></i> Manual Runtime Options</h2>
-                        <p>will contain manual runtime settings</p>
-                        <div class="row">
-                            <div class="col-12">
-                                fpaPresetOptionsManual
-                            </div>
-                        </div><!--/row-->
-                    </div>
-                </div>
-
-            </div><!--/runtimeOptionGroup-->
-
-        </div><!--/container runtimeOptionPanel-->
 
 
         <?php
@@ -1471,6 +1728,34 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                                 <div class="tab-pane text-center fade show active" id="rating-tab-pane" role="tabpanel" aria-labelledby="rating-tab" tabindex="0">
 
                                     <span class="text-<?php echo $fpaConfidenceColor; ?>" style="font-size: 9em; font-weight: 700;"><?php echo $joomlaInstance['confidenceGrade']; ?></span>
+
+                                    <!-- TESTING -->
+
+<?php
+// include if GRAPHICAL METRICS
+// TODO: change the bar colours though
+// Sample Rating value (Replace with your database rating variable)
+$ratingValue = $joomlaInstance['confidenceScore'];
+
+// Mathematical scale transform calculation: Maps 0-100 straight to 45-225 degrees
+$degreesRotation = 45 + ($ratingValue * 1.8);
+?>
+
+<div class="d-flex flex-column align-items-center my-3">
+    <!-- The Semi-Circle Gauge -->
+    <div class="gauge-wrapper">
+        <div class="gauge-body"></div>
+        <div class="gauge-fill" style="transform: rotate(<?php echo $degreesRotation; ?>deg);"></div>
+    </div>
+
+    <!-- Centred Rating Value Label Display -->
+    <div class="text-center mt-2">
+        <span class="fs-4 fw-bold text-primary"><?php echo $ratingValue; ?></span>
+        <span class="small text-secondary d-block">Overall Score</span>
+    </div>
+</div>
+
+                                    <!-- TESTING -->
 
                                 </div>
                                 <div id="rating-detail-tab-pane" class="tab-pane fade" role="tabpanel" aria-labelledby="rating-detail-tab" tabindex="0">
@@ -1751,7 +2036,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 
 
         /**
-         * privacy redacion functin to capture the privacy switch change and
+         * privacy redaction functin to capture the privacy switch change and
          * automagically reload the page appropriately using the PHP SESSION
          * data (checked (readacted) / unchecked (un-redacted)
          *
@@ -1811,9 +2096,6 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
             });
         });
         */
-
-
-
     </script>
 
 </body>

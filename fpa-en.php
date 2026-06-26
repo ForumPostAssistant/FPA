@@ -302,6 +302,8 @@ $lang = [
     'FPA_WEB'               => 'Web',
     'FPA_PHP'               => 'PHP',
     'FPA_DBASE'             => 'DataBase',
+    'FPA_PERFORMANCE'       => 'Performance',
+    'FPA_SECURITY'          => 'Security',
     'FPA_PDF'               => 'PDF',
     'FPA_DOCUMENTATION'     => 'Documentation',
 
@@ -309,33 +311,35 @@ $lang = [
     'FPA_META_VERSIONS'            => 'Live Version Status',
     'FPA_META_APP_VERSIONS'        => 'Application Versions',
     'FPA_META_INSTANCE_DIAG'       => 'Joomla Core Instance Diagnostics',
-    'FPA_META_SECURITY_METRICS'    => 'Security & Hardening Metrics',
-    'FPA_META_PERFORMANCE_METRICS' => 'Performance Metrics',
-    'FPA_META_ENVIRONMENT_METRICS' => 'Environment Metrics',
+    'FPA_META_SYSTEMSASSURANCE'    => 'Systems Assurance',      // Environmental
+    'FPA_META_PLATFORMINTEGRITY'   => 'Platform Integrity',     // Security & Safeguards
+    'FPA_META_TUNINGOPTIMISATION'  => 'Tuning & Optimisation',  // Perfomance
     'FPA_LANG_CORE_DIRS'           => 'Joomla Core Directories',
     'FPA_LABEL_FPA'                => 'Forum Post Assistant',
     'FPA_LABEL_JOOMLA'             => 'Joomla! Core',
     'FPA_LABEL_PHP'                => 'PHP Application Engine',
     'FPA_RUNTIMEOPTIONS'           => 'Runtime Options',
     'FPA_KEYMETRICS'               => 'Key Metrics',
-    'FPA_CONFIDENCE'               => 'Confidence',
+    'FPA_READINESS'                => 'Readiness',
+    //'FPA_CONFIDENCE'               => 'Confidence',
     'FPA_CONFIGURATION'            => 'Configuration',
     'FPA_CONFIG'                   => 'Config',
-    'FPA_COREDIR_TITLE'            => 'Core Directory Permissions',
+//    'FPA_CORE_PERM_TITLE'          => 'Core Permissions',
+    'FPA_META_CORE_FOLDERS'        => 'Core Folders',
 
-    'FPA_CONFIDENCE_APLUS'         => 'A+',
-    'FPA_CONFIDENCE_A'             => 'A',
-    'FPA_CONFIDENCE_B'             => 'B',
-    'FPA_CONFIDENCE_C'             => 'C',
-    'FPA_CONFIDENCE_D'             => 'D',
-    'FPA_CONFIDENCE_E'             => 'E',
-    'FPA_CONFIDENCE_F'             => 'F',
-    'FPA_CONFIDENCE_MSG_A'         => 'Joomla! should run without any problems',
-    'FPA_CONFIDENCE_MSG_B'         => 'Joomla! should run but some features may have minor problems',
-    'FPA_CONFIDENCE_MSG_C'         => 'Joomla! might run but some features will have problems',
-    'FPA_CONFIDENCE_MSG_D'         => 'Joomla! might run but many features will have problems',
-    'FPA_CONFIDENCE_MSG_E'         => 'Joomla! probably will not run or will have many problems',
-    'FPA_CONFIDENCE_MSG_F'         => 'Joomla! probably will not run and will have many problems',
+    'FPA_READINESS_APLUS'          => 'A+',
+    'FPA_READINESS_A'              => 'A',
+    'FPA_READINESS_B'              => 'B',
+    'FPA_READINESS_C'              => 'C',
+    'FPA_READINESS_D'              => 'D',
+    'FPA_READINESS_E'              => 'E',
+    'FPA_READINESS_F'              => 'F',
+    'FPA_READINESS_MSG_A'          => 'Joomla! should run without any problems',
+    'FPA_READINESS_MSG_B'          => 'Joomla! should run but some features may have minor problems',
+    'FPA_READINESS_MSG_C'          => 'Joomla! might run but some features will have problems',
+    'FPA_READINESS_MSG_D'          => 'Joomla! might run but many features will have problems',
+    'FPA_READINESS_MSG_E'          => 'Joomla! probably will not run or will have many problems',
+    'FPA_READINESS_MSG_F'          => 'Joomla! probably will not run and will have many problems',
     // End-user messages and textual content
 ];
 
@@ -630,7 +634,7 @@ $joomlaInstance = [
 // --- Environment Rating Metrics (Enhances and adds to v1 Confidence Rating) ---
 $fpaEnvironment = [
     'meta' => [
-        'name' => $lang['FPA_META_ENVIRONMENT_METRICS'] // Language Key: 'Environment Metrics'
+        'name' => $lang['FPA_META_SYSTEMSASSURANCE'] // Language Key: 'Environment Metrics'
     ],
     'score'            => 100, // Starts perfect, drops as vulnerabilities are found
     'configMode'        => $lang['FPA_UNKNOWN'],
@@ -646,7 +650,7 @@ $fpaEnvironment = [
 // --- Security Rating Metrics (New in FPA v2, adds to Confidence Rating) ---
 $fpaSecurity = [
     'meta' => [
-        'name' => $lang['FPA_META_SECURITY_METRICS'] // Language Key: 'Security & Hardening Metrics'
+        'name' => $lang['FPA_META_PLATFORMINTEGRITY'] // Language Key: 'Security & Hardening Metrics'
     ],
     'score'            => 100, // Starts perfect, drops as vulnerabilities are found
     'configMode'        => $lang['FPA_UNKNOWN'],
@@ -662,7 +666,7 @@ $fpaSecurity = [
 // --- Host, PHP & Instance Performance Rating Metrics (New in FPA v2, adds to Confidence Rating) ---
 $fpaPerformance = [
     'meta' => [
-        'name' => $lang['FPA_META_PERFORMANCE_METRICS'] // Language Key: 'Performance Metrics'
+        'name' => $lang['FPA_META_TUNINGOPTIMISATION'] // Language Key: 'Performance Metrics'
     ],
     'score'            => 100, // Starts perfect, drops as bottlenecks are found
     'memoryLimit'      => $lang['FPA_UNKNOWN'],
@@ -674,26 +678,117 @@ $fpaPerformance = [
 // --- Directories To Be Tested For Sane Permissions ---
 $joomlaFolders = [
     'meta' => [
-        'name' => 'Joomla Core Directories'
+        'name' => $lang['FPA_META_CORE_FOLDERS']
     ],
     'targets' => [
-        'images/',
-        'components/',
-        'modules/',
-        'plugins/',
-        'language/',
-        'templates/',
-        'cache/',
-        'logs/',
-        'tmp/',
-        'administrator/components/',
-        'administrator/modules/',
-        'administrator/language/',
-        'administrator/templates/',
-        'administrator/logs/',
-        'api/'
+        'images/' => [
+            'owner'    => 'unknown',
+            'group'    => 'unknown',
+            'perms'    => '0000',
+            'writable' => false,
+            'required' => true // Must be writable for media uploads
+        ],
+        'components/' => [
+            'owner'    => 'unknown',
+            'group'    => 'unknown',
+            'perms'    => '0000',
+            'writable' => false,
+            'required' => true // Must be writable for extensions
+        ],
+        'modules/' => [
+            'owner'    => 'unknown',
+            'group'    => 'unknown',
+            'perms'    => '0000',
+            'writable' => false,
+            'required' => true
+        ],
+        'plugins/' => [
+            'owner'    => 'unknown',
+            'group'    => 'unknown',
+            'perms'    => '0000',
+            'writable' => false,
+            'required' => true
+        ],
+        'language/' => [
+            'owner'    => 'unknown',
+            'group'    => 'unknown',
+            'perms'    => '0000',
+            'writable' => false,
+            'required' => true
+        ],
+        'templates/' => [
+            'owner'    => 'unknown',
+            'group'    => 'unknown',
+            'perms'    => '0000',
+            'writable' => false,
+            'required' => true
+        ],
+        'cache/' => [
+            'owner'    => 'unknown',
+            'group'    => 'unknown',
+            'perms'    => '0000',
+            'writable' => false,
+            'required' => true // Core caching
+        ],
+        'logs/' => [
+            'owner'    => 'unknown',
+            'group'    => 'unknown',
+            'perms'    => '0000',
+            'writable' => false,
+            'required' => true
+        ],
+        'tmp/' => [
+            'owner'    => 'unknown',
+            'group'    => 'unknown',
+            'perms'    => '0000',
+            'writable' => false,
+            'required' => true // Extension installation
+        ],
+        'administrator/components/' => [
+            'owner'    => 'unknown',
+            'group'    => 'unknown',
+            'perms'    => '0000',
+            'writable' => false,
+            'required' => true
+        ],
+        'administrator/modules/' => [
+            'owner'    => 'unknown',
+            'group'    => 'unknown',
+            'perms'    => '0000',
+            'writable' => false,
+            'required' => true
+        ],
+        'administrator/language/' => [
+            'owner'    => 'unknown',
+            'group'    => 'unknown',
+            'perms'    => '0000',
+            'writable' => false,
+            'required' => true
+        ],
+        'administrator/templates/' => [
+            'owner'    => 'unknown',
+            'group'    => 'unknown',
+            'perms'    => '0000',
+            'writable' => false,
+            'required' => true
+        ],
+        'administrator/logs/' => [
+            'owner'    => 'unknown',
+            'group'    => 'unknown',
+            'perms'    => '0000',
+            'writable' => false,
+            'required' => true
+        ],
+        'api/' => [
+            'owner'    => 'unknown',
+            'group'    => 'unknown',
+            'perms'    => '0000',
+            'writable' => false,
+            'required' => true
+        ]
     ]
 ];
+
 
 
 
@@ -885,7 +980,7 @@ if (($hasRootDirs || $hasAdminDirs) && $hasIndexFile) {
  * and determines the final environmental Confidence Rating.
  *
  * ARRAYS IN USE:
- * - $joomlaInstance  : Read core targets (configPath) & writes final outputs (confidenceGrade, confidenceScore).
+ * - $joomlaInstance  : Read core targets (configPath) & writes final outputs (readinessGrade, readinessScore).
  * - $fpaEnvironment  : Read/writes server application configurations.
  * - $fpaSecurity     : Read/writes server infrastructure protection and permission configurations.
  * - $fpaPerformance  : Read/writes server environment processing and baseline bottleneck limits.
@@ -979,38 +1074,38 @@ if ($joomlaInstance['found'] === $lang['FPA_YES'] && $joomlaInstance['installed'
     ///$overallScore = 100;
 
     if ($overallScore >= 97) {
-        $fpaConfidenceGrade  = $lang['FPA_CONFIDENCE_APLUS']; // 97-100
-        $fpaConfidenceColor  = 'success';
-        $fpaConfidenceMessge = $lang['FPA_CONFIDENCE_MSG_A'];
+        $fpaReadinessGrade   = $lang['FPA_READINESS_APLUS']; // 97-100
+        $fpaReadinessColor   = 'success';
+        $fpaReadinessSummary = $lang['FPA_READINESS_MSG_A'];
     } elseif ($overallScore >= 90) {
-        $fpaConfidenceGrade  = $lang['FPA_CONFIDENCE_A']; // 90-96
-        $fpaConfidenceColor  = 'success';
-        $fpaConfidenceMessge = $lang['FPA_CONFIDENCE_MSG_A'];
+        $fpaReadinessGrade   = $lang['FPA_READINESS_A']; // 90-96
+        $fpaReadinessColor   = 'success';
+        $fpaReadinessSummary = $lang['FPA_READINESS_MSG_A'];
     } elseif ($overallScore >= 80) {
-        $fpaConfidenceGrade  = $lang['FPA_CONFIDENCE_B']; // 80-95
-        $fpaConfidenceColor  = 'info';
-        $fpaConfidenceMessge = $lang['FPA_CONFIDENCE_MSG_B'];
+        $fpaReadinessGrade   = $lang['FPA_READINESS_B']; // 80-95
+        $fpaReadinessColor   = 'info';
+        $fpaReadinessSummary = $lang['FPA_READINESS_MSG_B'];
     } elseif ($overallScore >= 70) {
-        $fpaConfidenceGrade  = $lang['FPA_CONFIDENCE_C']; // 70-94
-        $fpaConfidenceColor  = 'warning';
-        $fpaConfidenceMessge = $lang['FPA_CONFIDENCE_MSG_C'];
+        $fpaReadinessGrade   = $lang['FPA_READINESS_C']; // 70-94
+        $fpaReadinessColor   = 'warning';
+        $fpaReadinessSummary = $lang['FPA_READINESS_MSG_C'];
     } elseif ($overallScore >= 50) {
-        $fpaConfidenceGrade  = $lang['FPA_CONFIDENCE_D']; // 50-69
-        $fpaConfidenceColor  = 'warning';
-        $fpaConfidenceMessge = $lang['FPA_CONFIDENCE_MSG_D'];
+        $fpaReadinessGrade   = $lang['FPA_READINESS_D']; // 50-69
+        $fpaReadinessColor   = 'warning';
+        $fpaReadinessSummary = $lang['FPA_READINESS_MSG_D'];
     } elseif ($overallScore >= 25) {
-        $fpaConfidenceGrade  = $lang['FPA_CONFIDENCE_E']; // 25-49
-        $fpaConfidenceColor  = 'danger';
-        $fpaConfidenceMessge = $lang['FPA_CONFIDENCE_MSG_E'];
+        $fpaReadinessGrade   = $lang['FPA_READINESS_E']; // 25-49
+        $fpaReadinessColor   = 'danger';
+        $fpaReadinessSummary = $lang['FPA_READINESS_MSG_E'];
     } else {
-        $fpaConfidenceGrade  = $lang['FPA_CONFIDENCE_F']; // 0-24
-        $fpaConfidenceColor  = 'danger';
-        $fpaConfidenceMessge = $lang['FPA_CONFIDENCE_MSG_F'];
+        $fpaReadinessGrade   = $lang['FPA_READINESS_F']; // 0-24
+        $fpaReadinessColor   = 'danger';
+        $fpaReadinessSummary = $lang['FPA_READINESS_MSG_F'];
     }
 
     // Bind results back to the tracking data parameters for UI consumption
-    $joomlaInstance['confidenceGrade'] = $fpaConfidenceGrade;
-    $joomlaInstance['confidenceScore'] = $overallScore;
+    $joomlaInstance['readinessGrade'] = $fpaReadinessGrade;
+    $joomlaInstance['readinessScore'] = $overallScore;
 
 
 
@@ -1187,6 +1282,12 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
             transition: display 0.3s ease-in-out;
         }
 
+        .style-label {
+            font-size: 0.72rem;
+            font-weight: 500;
+            cursor: pointer;
+            padding-top: 2px;
+        }
 
         .privacy-mask {
             color: var(--bs-info-text-emphasis) !important;
@@ -1198,8 +1299,8 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 /* The semi-circle viewing window */
 .gauge-wrapper {
     position: relative;
-    width: 160px;
-    height: 80px; /* Exactly half the width */
+    width: 125px;
+    height: 62px; /* Exactly half the width */
     overflow: hidden;
 }
 
@@ -1210,7 +1311,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
     left: 0;
     width: 100%;
     height: 200%; /* Forms a perfect circle inside the hidden overflow */
-    border: 16px solid var(--bs-secondary-bg); /* Bootstrap 5 theme-aware gray track */
+    border: 16px solid var(--bs-primary); /* Bootstrap 5 theme-aware gray track --bs-secondary-bg */
     border-bottom-color: transparent;
     border-right-color: transparent;
     border-radius: 50%;
@@ -1224,7 +1325,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
     left: 0;
     width: 100%;
     height: 200%;
-    border: 16px solid var(--bs-primary); /* Bootstrap primary colored indicator */
+    border: 16px solid var(--bs-secondary-bg); /* Bootstrap primary colored indicator --bs-primary */
     border-bottom-color: transparent;
     border-right-color: transparent;
     border-radius: 50%;
@@ -1256,13 +1357,36 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
             }
         }
 
-        /* optimize layout width for laptops & larger monitors to improve screen real-estate for technical/diagnostic views */
+
+        /* Optimised container sizes for dashboard style screen real-estate, reduced container margins */
+        /* small devices (landscape phones) */
+        @media (min-width: 576px) {
+          .container {
+            max-width: 560px; /* Default is 540px */
+          }
+        }
+
+        /* medium devices (tablets) */
+        @media (min-width: 768px) {
+          .container {
+            max-width: 752px; /* Default is 720px */
+          }
+        }
+
+        /* large devices (desktops) */
+        @media (min-width: 992px) {
+          .container {
+            max-width: 980px; /* Default is 960px */
+          }
+        }
+
+        /* large monitors (laptops and monitors) */
         @media (min-width: 1200px) {
             .container {
                 max-width: 1240px; /* desktop standard (Up from 1140px) */
             }
         }
-
+        /* larger monitors (large monitors) */
         @media (min-width: 1400px) {
             .container {
                 max-width: 1440px; /* larger laptop/desktop (Up from 1320px) */
@@ -1399,6 +1523,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
     <main id="main" class="flex-grow-1" tabindex="-1" style="margin-top: 56px;">
 
 
+
     <!-- TESTING -->
     <?php
         //echo $doLiveChecks;
@@ -1414,8 +1539,8 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
         //echo $configFilePath;
 
         //echo sys_get_temp_dir();
-        echo $isPrivacyChecked ;
-        echo $_SESSION['privacy_enabled'] ? '<span class="privacy-mask">[ ' . $lang['FPA_REDACTED'] . ' ]</span>' : $joomlaInstance['configPath'];
+        //echo $isPrivacyChecked ;
+        //echo $_SESSION['privacy_enabled'] ? '<span class="privacy-mask">[ ' . $lang['FPA_REDACTED'] . ' ]</span>' : $joomlaInstance['configPath'];
     ?>
     <!-- /TESTING -->
 
@@ -1472,17 +1597,6 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                 </div>
 
             </div>
-
-            <!-- Centred "OR" Divider with locked 25% width lines -->
-             <!--
-            <div class="d-flex align-items-center justify-content-center mt-5 mb-4">
-                <hr class="w-25 text-secondary opacity-50 m-0">
-                <span class="px-3 text-secondary text-uppercase small fw-bold" style="font-size: 1.2rem; letter-spacing: 0.05em;">
-                    <?php echo $lang['FPA_OR'] ?? 'OR'; ?>
-                </span>
-                <hr class="w-25 text-secondary opacity-50 m-0">
-            </div>
-            -->
 
             <!-- 2. Custom PROFILE MODIFIERS SECTION -->
             <div class="mt-4">
@@ -1650,6 +1764,152 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 
 
 
+<!-- TESTING -->
+
+
+
+
+        <?php
+        /**
+         * Key Metrics Panel
+         * This panel provides a quick snapshot of key or important elements that will effect all installations, allowing
+         * an instant determination that minimum core requirements are met and offering a confidence level in the basic host,
+         * environment and instance configutation.
+         *
+         */
+        ?>
+<?php
+// include if GRAPHICAL METRICS
+// TODO: change the bar colours though
+// Sample Rating value (Replace with your database rating variable)
+$ratingValue = $joomlaInstance['readinessScore'];
+
+// Mathematical scale transform calculation: Maps 0-100 straight to 45-225 degrees
+$degreesRotation = 45 + ($ratingValue * 1.8);
+?>
+
+<div class="container my-4" id="keyMetricsPanel">
+    <!-- Combined flex row on MD+, standard stacked row on SM and below -->
+    <div class="row g-4 d-md-flex align-items-md-stretch">
+
+        <!-- TEXT COLUMN -->
+        <!-- Full width below MD (col-12) | Takes up remaining space next to cards on LG+ (col-lg) -->
+        <div class="col-12 col-sm-12 col-md-5 col-lg d-flex flex-column Xjustify-content-center">
+            <div class="pe-xl-3 mb-2 mb-md-0">
+
+                <h2 class="h3 border-bottom">
+                    <i class="bi bi-speedometer text-secondary"></i> <?php fpaLang('FPA_KEYMETRICS'); ?>
+                </h2>
+                <h3 class="fs-6 fw-black text-secondary text-uppercase tracking-wider mb-2">Readiness Summary</h3>
+                <p class="text-secondary Xsmall Xmb-0">
+                    <?php echo $fpaReadinessSummary; ?>
+                </p>
+            </div>
+        </div>
+
+        <!-- CARDS CONTAINER COLUMN -->
+        <!-- Full width below MD (col-12) | 50% width on MD | 75% width on LG+ (col-lg-9) -->
+        <div class="col-12 col-sm-12 col-md-7 col-lg-9">
+            <!-- Inner Grid: 1 column on XS | 2 columns on SM and MD | 4 columns straight across on LG -->
+            <div class="row row-cols-2 Xrow-cols-sm-2 row-cols-lg-4 g-3 h-100">
+
+                <!-- CARD 1 -->
+                <div class="col-">
+                    <div class="card h-100 shadow-sm text-center border-<?php echo $fpaReadinessColor; ?> Xbg-<?php echo $fpaReadinessColor; ?>-subtle" style="border-left-width: 10px;">
+                        <div class="card-body p-3 d-flex flex-column justify-content-between">
+
+                            <div class="d-flex justify-content-center align-items-baseline Xmt-2">
+
+                                <!--  if not using graphical UI setting
+                                <span class="text-<?php echo $fpaReadinessColor; ?> fw-semibold" style="font-size: 4em; Xfont-weight: 700; line-height: 1;"><?php echo $joomlaInstance['readinessGrade']; ?></span>
+                                -->
+
+                                <!-- TODO : if GraphicalUI option selected -->
+                                <div class="d-flex flex-column align-items-center">
+                                    <!-- The Semi-Circle Gauge -->
+                                    <div class="gauge-wrapper mb-1">
+                                        <div class="gauge-body border-<?php echo $fpaReadinessColor; ?>"></div>
+                                        <div class="gauge-fill" style="transform: rotate(<?php echo $degreesRotation; ?>deg);"></div>
+                                    </div>
+
+                                    <!-- Centred Rating Value Label Display -->
+                                    <div class="text-center Xmt-2 position-absolute" style="top: 35%;">
+                                        <span class="fs-3 fw-bold tracking-tight"><?php echo $ratingValue; ?>%</span>
+                                    </div>
+                                </div>
+
+
+                                <!--
+                                <span class="fs-3 fw-bold tracking-tight">42%</span>
+                                <span class="badge bg-success-subtle text-success ms-2 font-monospace" style="font-size: 0.7rem;">-3%</span>
+                                -->
+                            </div>
+                            <h3 class="fs-6 Xtext-center fw-bold text-uppercase m-0" style="Xfont-size: 0.7rem;"><?php echo $lang['FPA_READINESS']; ?></h3>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 2 -->
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-warning bg-warning-subtle" style="border-left-width: 10px;">
+                        <div class="card-body p-3 d-flex flex-column justify-content-between">
+
+                            <div class="d-flex align-items-baseline mt-2">
+                                <span class="fs-3 fw-bold tracking-tight"><?php echo $fpaEnvironment['score']; ?>%</span>
+                                <span class="badge bg-success-subtle text-success ms-2 font-monospace" style="font-size: 0.7rem;">Stable</span>
+                            </div>
+                            <small class="fw-semibold text-uppercase d-block" style="font-size: 0.7rem;"><?php echo $fpaEnvironment['meta']['name']; ?></small>
+                            <?php echo renderProgressBar($fpaEnvironment['score']); ?>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 3 -->
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-warning bg-warning-subtle" style="border-left-width: 10px;">
+                        <div class="card-body p-3 d-flex flex-column justify-content-between">
+
+                            <div class="d-flex align-items-baseline mt-2">
+                                <span class="fs-3 fw-bold tracking-tight"><?php echo $fpaPerformance['score']; ?>%</span>
+                                <span class="badge bg-danger-subtle text-danger ms-2 font-monospace" style="font-size: 0.7rem;">+14%</span>
+                            </div>
+                            <small class="fw-semibold text-uppercase d-block" style="font-size: 0.7rem;">Tuning & Optimisation<?php //echo $fpaPerformance['meta']['name']; ?></small>
+                            <?php echo renderProgressBar($fpaPerformance['score']); ?>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 4 -->
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-info bg-info-subtle" style="border-left-width: 10px;">
+                        <div class="card-body p-3 d-flex flex-column justify-content-between">
+
+                            <div class="d-flex align-items-baseline mt-2">
+                                <span class="fs-3 fw-bold tracking-tight"><?php echo $fpaSecurity['score']; ?>%</span>
+                                <span class="badge bg-success-subtle text-success ms-2 font-monospace" style="font-size: 0.7rem;">+2%</span>
+                            </div>
+                            <small class="fw-semibold text-uppercase d-block" style="font-size: 0.7rem;"><?php echo $fpaSecurity['meta']['name']; ?></small>
+                            <?php echo renderProgressBar($fpaSecurity['score']); ?>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- TESTING -->
+
+
+
+
+
+
+
 
 
 
@@ -1696,7 +1956,17 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
          *
          */
         ?>
-        <div id="keyMetricsPanel" class="container p-2 p-md-3 my-3">
+        <?php
+        // include if GRAPHICAL METRICS
+        // TODO: change the bar colours though
+        // Sample Rating value (Replace with your database rating variable)
+        $ratingValue = $joomlaInstance['readinessScore'];
+
+        // Mathematical scale transform calculation: Maps 0-100 straight to 45-225 degrees
+        $degreesRotation = 45 + ($ratingValue * 1.8);
+        ?>
+<!--
+        <div id="keyMetricsPanelOLD" class="container p-2 p-md-3 my-3">
             <div class="row gx-5">
                 <div class="col-12">
 
@@ -1708,6 +1978,68 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                     </p>
 
                 </div>
+
+                -- TESTING --
+                </div>
+                <div class="row">
+
+                    <div class="col-12 col-sm-6 col-lg-3 mb-4">
+
+                        <div class="card border-warning text-center w-100 h-100" style="border-left-width: 10px;">
+                            <div class="card-body Xd-flex Xflex-column">
+                                <h5 class="card-title fw-bold">Confidence</h5>
+                                <span class="text-<?php echo $fpaReadinessColor; ?>" style="font-size: 9em; font-weight: 700; line-height: 1;"><?php echo $joomlaInstance['readinessGrade']; ?></span>
+                            </div>
+                        </div>
+
+                    </div>-- /confidence --
+
+                    <div class="col-12 col-sm-6 col-lg-3 mb-4">
+
+                        <div class="card border-warning bg-warning-subtle w-100 h-100 mb-3" style="border-left-width: 10px;">
+                            <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold"><?php echo $fpaEnvironment['meta']['name']; ?></h5>
+                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+                                <div class="mt-auto">
+                                    <?php echo renderProgressBar($fpaPerformance['score']); ?>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-lg-3 mb-4">
+
+                        <div class="card border-success bg-success-subtle w-100 h-100 mb-3" style="border-left-width: 10px;">
+                            <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold"><?php echo $fpaSecurity['meta']['name']; ?></h5>
+                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+                                <div class="mt-auto">
+                                    <?php echo renderProgressBar($fpaSecurity['score']); ?>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-lg-3 mb-4">
+
+                        <div class="card border-danger bg-danger-subtle w-100 h-100 mb-3" style="border-left-width: 10px;">
+                            <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold"><?php echo $fpaPerformance['meta']['name']; ?></h5>
+                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+                                <div class="mt-auto">
+                                    <?php echo renderProgressBar($fpaPerformance['score']); ?>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="row">
+                -- TESTING --
+
                 <div class="col-12 col-lg-4 p-3 border border-3 rounded">
 
                     <div id="confidenceCard" class="card border Xborder-3 w-100 Xh-100 mb-3">
@@ -1727,35 +2059,27 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                             <div class="tab-content overflow-y-auto" style="height: 220px;" id="myTabContent">
                                 <div class="tab-pane text-center fade show active" id="rating-tab-pane" role="tabpanel" aria-labelledby="rating-tab" tabindex="0">
 
-                                    <span class="text-<?php echo $fpaConfidenceColor; ?>" style="font-size: 9em; font-weight: 700;"><?php echo $joomlaInstance['confidenceGrade']; ?></span>
+                                    <span class="text-<?php echo $fpaReadinessColor; ?>" style="font-size: 9em; font-weight: 700;"><?php echo $joomlaInstance['readinessGrade']; ?></span>
 
-                                    <!-- TESTING -->
+                                    -- TESTING --
 
-<?php
-// include if GRAPHICAL METRICS
-// TODO: change the bar colours though
-// Sample Rating value (Replace with your database rating variable)
-$ratingValue = $joomlaInstance['confidenceScore'];
 
-// Mathematical scale transform calculation: Maps 0-100 straight to 45-225 degrees
-$degreesRotation = 45 + ($ratingValue * 1.8);
-?>
 
 <div class="d-flex flex-column align-items-center my-3">
-    <!-- The Semi-Circle Gauge -->
+    -- The Semi-Circle Gauge --
     <div class="gauge-wrapper">
         <div class="gauge-body"></div>
         <div class="gauge-fill" style="transform: rotate(<?php echo $degreesRotation; ?>deg);"></div>
     </div>
 
-    <!-- Centred Rating Value Label Display -->
+    -- Centred Rating Value Label Display --
     <div class="text-center mt-2">
         <span class="fs-4 fw-bold text-primary"><?php echo $ratingValue; ?></span>
         <span class="small text-secondary d-block">Overall Score</span>
     </div>
 </div>
 
-                                    <!-- TESTING -->
+                                    -- TESTING --
 
                                 </div>
                                 <div id="rating-detail-tab-pane" class="tab-pane fade" role="tabpanel" aria-labelledby="rating-detail-tab" tabindex="0">
@@ -1775,14 +2099,14 @@ $degreesRotation = 45 + ($ratingValue * 1.8);
                         </div>
                         <div class="card-footer Xborder-3">
 
-                            <p class="text-center lead mb-1"><?php echo $fpaConfidenceMessge; ?></p>
+                            <p class="text-center lead mb-1"><?php echo $fpaReadinessMessge; ?></p>
                             <div class="">
-                                <?php echo renderProgressBar($joomlaInstance['confidenceScore']); ?>
+                                <?php echo renderProgressBar($joomlaInstance['readinessScore']); ?>
                             </div>
 
 
                         </div>
-                    </div><!--/confidenceCard-->
+                    </div>--/readinessCard--
 
 
                     <?php
@@ -1794,23 +2118,68 @@ $degreesRotation = 45 + ($ratingValue * 1.8);
                     <div id="environmentRating" class="mb-3 border border-3 rounded p-3 pb-2">
                         <h3 class="small text-center"><?php echo $fpaEnvironment['meta']['name']; ?></h3>
                         <?php echo renderProgressBar($fpaEnvironment['score']); ?>
-                    </div><!-- /environmentRating -->
+                    </div>-- /environmentRating --
 
                     <div id="securityRating" class="mb-3 border border-3 rounded p-3 pb-2">
                         <h3 class="small text-center"><?php echo $fpaSecurity['meta']['name']; ?></h3>
                         <?php echo renderProgressBar($fpaSecurity['score']); ?>
-                    </div><!--/ securityRating -->
+                    </div>--/ securityRating --
 
                     <div id="performanceRating" class="mb-3 border border-3 rounded p-3 pb-2">
                         <h3 class="small text-center"><?php echo $fpaPerformance['meta']['name']; ?></h3>
                         <?php echo renderProgressBar($fpaPerformance['score']); ?>
-                    </div><!--/ performanceRating -->
+                    </div>--/ performanceRating --
 
 
                 </div>
                 <div class="col-12 col-lg-8 mb-3">
 
                     <div class="row row-cols-1 row-cols-md-2 g-4">
+
+                            -- TESTING --
+                        <div class="col-md-4">
+
+                            <div class="card border-warning bg-warning-subtle w-100 h-100 mb-3" style="border-left-width: 10px;">
+                                <div class="card-body d-flex flex-column">
+                                <h5 class="card-title fw-bold"><?php echo $fpaEnvironment['meta']['name']; ?></h5>
+                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+                                    <div class="mt-auto">
+                                        <?php echo renderProgressBar($fpaPerformance['score']); ?>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <div class="card border-success bg-success-subtle w-100 h-100 mb-3" style="border-left-width: 10px;">
+                                <div class="card-body d-flex flex-column">
+                                <h5 class="card-title fw-bold"><?php echo $fpaSecurity['meta']['name']; ?></h5>
+                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+                                    <div class="mt-auto">
+                                        <?php echo renderProgressBar($fpaSecurity['score']); ?>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-4">
+
+                            <div class="card border-danger bg-danger-subtle w-100 h-100 mb-3" style="border-left-width: 10px;">
+                                <div class="card-body d-flex flex-column">
+                                <h5 class="card-title fw-bold"><?php echo $fpaPerformance['meta']['name']; ?></h5>
+                                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
+                                    <div class="mt-auto">
+                                        <?php echo renderProgressBar($fpaPerformance['score']); ?>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                            -- TESTING --
+
                         <div class="col">
 
                             <div class="card border w-100 h-100 mb-3">
@@ -1873,11 +2242,11 @@ $degreesRotation = 45 + ($ratingValue * 1.8);
                             </div>
 
                         </div>
-                    </div><!--/row-->
+                    </div>--/row--
 
                 </div>
-            </div><!--/row-->
-        </div><!--/container keyMetricsPanel-->
+            </div>--/row--
+        </div>-- /container keyMetricsPanelOLD -->
 
 
 
@@ -1906,6 +2275,42 @@ $degreesRotation = 45 + ($ratingValue * 1.8);
             <h2><i class="bi bi-pc-display text-secondary"></i> Discovery Report</h2>
         </div>
 
+
+
+
+
+
+
+<div class="container my-4" id="permissionsPanel">
+    <!-- Combined flex row on MD+, standard stacked row on SM and below -->
+    <div class="row g-4 d-md-flex align-items-md-stretch">
+
+        <!-- TEXT COLUMN -->
+        <!-- Full width below MD (col-12) | Takes up remaining space next to cards on LG+ (col-lg) -->
+        <div class="col-12 col-sm-12 col-md-5 col-lg d-flex flex-column Xjustify-content-center">
+            <div class="pe-xl-3 mb-2 mb-md-0">
+
+                <h2 class="h3 border-bottom">
+                    <i class="bi bi-folder-check text-secondary"></i> <?php fpaLang('FPA_META_CORE_FOLDERS'); ?>
+                </h2>
+                <h3 class="fs-6 fw-black text-secondary text-uppercase tracking-wider mb-2">Permissions Report</h3>
+                <p class="text-secondary Xsmall Xmb-0">
+                    <?php echo $fpaReadinessSummary; ?>
+                </p>
+            </div>
+        </div>
+
+        <!-- CARDS CONTAINER COLUMN -->
+        <!-- Full width below MD (col-12) | 50% width on MD | 75% width on LG+ (col-lg-9) -->
+        <div class="col-12 col-sm-12 col-md-7 col-lg-9">
+            content container
+        </div>
+
+    </div>
+</div>
+
+
+
     </main>
 
 
@@ -1928,6 +2333,119 @@ $degreesRotation = 45 + ($ratingValue * 1.8);
         </div>
 
     </footer>
+
+
+<!-- Right-aligned Compact Offcanvas with Integrated Floating Handle -->
+<div class="offcanvas offcanvas-end shadow" tabindex="-1" id="settingsOffcanvas" aria-labelledby="settingsOffcanvasLabel" style="width: 340px; visibility: visible;">
+
+    <!-- FLOATING HANDLE BUTTON (Moves natively with the canvas) -->
+    <button class="btn btn-primary bg-fpa position-absolute d-flex align-items-center justify-content-center shadow-sm"
+            type="button"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#settingsOffcanvas"
+            aria-controls="settingsOffcanvas"
+            style="top: 120px; left: -52px; width: 52px; height: 54px; border-color: var(--fpa-primary-color); border-radius: 8px 0 0 8px; border-right: 0; z-index: 1060;">
+        <i class="bi bi-gear-wide-connected fs-3"></i>
+    </button>
+
+    <!-- Header -->
+    <div class="offcanvas-header bg-fpa border-bottom py-2 px-3">
+        <h6 class="offcanvas-title fw-bold text-uppercase tracking-wider m-0" id="settingsOffcanvasLabel">
+           <?php echo $lang['FPA_RUNTIMEOPTIONS']; ?>
+        </h6>
+        <button type="button" class="btn-close text-reset btn-sm" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+
+    <!-- Body -->
+    <div class="offcanvas-body d-flex flex-column justify-content-between p-3" style="overflow-y: auto;">
+
+        <!-- Top Section: Presets & 18 Switches -->
+        <div>
+            <!-- Preset Profiles Section -->
+            <small class="text-muted fw-bold d-block text-uppercase mb-2" style="font-size: 0.72rem; letter-spacing: 0.5px;">Profiles</small>
+            <div class="row g-2 mb-3">
+                <div class="col-4">
+                    <button type="button" class="btn btn-outline-secondary btn-sm fw-bold w-100 py-2 d-flex flex-column align-items-center justify-content-center <?php echo ($_SESSION['current_preset_profile'] === 'compact') ? 'active' : ''; ?>">
+                        <i class="bi bi-layers mb-1 fs-5"></i>
+                        <span style="font-size: 0.7rem;"><?php echo $lang['FPA_COMPACT'] ?? 'Compact'; ?></span>
+                    </button>
+                </div>
+                <div class="col-4">
+                    <button type="button" class="btn btn-outline-secondary btn-sm fw-bold w-100 py-2 d-flex flex-column align-items-center justify-content-center <?php echo ($_SESSION['current_preset_profile'] === 'default') ? 'active' : ''; ?>">
+                        <i class="bi bi-layers-half mb-1 fs-5"></i>
+                        <span style="font-size: 0.7rem;"><?php echo $lang['FPA_DEFAULT'] ?? 'Default'; ?></span>
+                    </button>
+                </div>
+                <div class="col-4">
+                    <button type="button" class="btn btn-outline-secondary btn-sm fw-bold w-100 py-2 d-flex flex-column align-items-center justify-content-center <?php echo ($_SESSION['current_preset_profile'] === 'detailed') ? 'active' : ''; ?>">
+                        <i class="bi bi-layers-fill mb-1 fs-5"></i>
+                        <span style="font-size: 0.7rem;"><?php echo $lang['FPA_DETAILED'] ?? 'Detailed'; ?></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- GROUP 1: SYSTEM SETTINGS -->
+            <small class="text-muted fw-bold d-block text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">1. System Settings</small>
+            <div class="Xbg-light p-2 rounded border mb-3">
+                <div class="row g-1">
+                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw1" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw1">Live Engine</label></div></div>
+                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw2"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw2">Debug Mode</label></div></div>
+                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw3" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw3">Auto Cache</label></div></div>
+                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw4"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw4">Strict Sync</label></div></div>
+                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw5" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw5">SSL Force</label></div></div>
+                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw6"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw6">Dev Tools</label></div></div>
+                </div>
+            </div>
+
+            <!-- GROUP 2: DISPLAY OPTIONS -->
+            <small class="text-muted fw-bold d-block text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">2. Display Options</small>
+            <div class="Xbg-light p-2 rounded border mb-3">
+                <div class="row g-1">
+                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw7" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw7">Dark Theme</label></div></div>
+                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw8" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw8">Fluid Grid</label></div></div>
+                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw9"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw9">Compact UI</label></div></div>
+                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw10" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw10">Animations</label></div></div>
+                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw11"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw11">Tooltips</label></div></div>
+                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw12" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw12">High Contrast</label></div></div>
+                </div>
+            </div>
+
+            <!-- GROUP 3: FILTERS & LOGGING -->
+            <small class="text-muted fw-bold d-block text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">3. Filters & Logging</small>
+            <div class="Xbg-light p-2 rounded border mb-3">
+                <div class="row g-1">
+                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw13" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw13">Log Queries</label></div></div>
+                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw14"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw14">Track Errors</label></div></div>
+                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw15" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw15">Deep Audit</label></div></div>
+                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw16" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw16">Metrics API</label></div></div>
+                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw17"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw17">Geo Filters</label></div></div>
+                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw18"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw18">IP Masking</label></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Section: Sticky Form Submit Actions -->
+        <div class="pt-2 border-top mt-2">
+            <small class="text-muted fw-bold d-block text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">Apply Profile</small>
+            <div class="btn-group w-100" role="group">
+
+                <button type="submit" form="runtime-profile" name="action" value="fpa" class="btn btn-outline-success py-2 btn-sm d-flex flex-column align-items-center">
+                    <i class="bi bi-pc-display-horizontal mb-0 fs-5"></i>
+                    <span style="Xfont-size: 0.68rem; font-weight: 600;"><?php echo $lang['FPA_SHORT'] ?? 'FPA'; ?></span>
+                </button>
+
+                <button type="submit" form="runtime-profile" name="action" value="post" class="btn btn-outline-success py-2 btn-sm d-flex flex-column align-items-center">
+                    <i class="bi bi-file-post mb-0 fs-5"></i>
+                    <span style="Xfont-size: 0.68rem; font-weight: 600;"><?php echo $lang['FPA_POST'] ?? 'Post'; ?></span>
+                </button>
+
+                <button type="submit" form="runtime-profile" name="action" value="post" class="btn btn-outline-success py-2 btn-sm d-flex flex-column align-items-center">
+                    <i class="bi bi-file-post mb-0 fs-5"></i>
+                    <span style="Xfont-size: 0.68rem; font-weight: 600;"><?php echo $lang['FPA_TEXT'] ?? 'Text'; ?></span>
+                </button>
+
+            </div>
+        </div>
 
 
     <?php

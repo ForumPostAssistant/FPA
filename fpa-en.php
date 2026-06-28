@@ -586,6 +586,19 @@ function fpaLang(string $key): void
  * instead of pausing execution to recalculate and copy the old array. As we use
  * quite a few arrays, this can be costly.
  */
+// Initialize an empty issues queue
+// this is updated throughout the fpa script adding any discovered issues
+//
+// if ($some_error_crieria) {
+//    $issueQueue[] = [
+//        'type'        => 'danger', // Bootstrap color code
+//        'text'        => 'Graphical metrics are enabled but data source is unavailable.',
+//        'solution'    => 'Disable Graphical Metrics or upload a valid system data log source file.',
+//        'target_id'   => 'show_graphics' // Matches the ID of the checkbox in your offcanvas layout!
+//    ];
+// }
+$issueQueue = [];
+
 // --- Basic Live Version Checks ---
 $latestVersions = [
     'meta' => [
@@ -678,114 +691,231 @@ $fpaPerformance = [
 // --- Directories To Be Tested For Sane Permissions ---
 $joomlaFolders = [
     'meta' => [
-        'name' => $lang['FPA_META_CORE_FOLDERS']
+        'name'         => $lang['FPA_META_CORE_FOLDERS'],
+        'php_user'     => 'unknown',
     ],
     'targets' => [
-        'images/' => [
-            'owner'    => 'unknown',
-            'group'    => 'unknown',
-            'perms'    => '0000',
-            'writable' => false,
-            'required' => true // Must be writable for media uploads
+        'api/' => [
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
         ],
-        'components/' => [
-            'owner'    => 'unknown',
-            'group'    => 'unknown',
-            'perms'    => '0000',
-            'writable' => false,
-            'required' => true // Must be writable for extensions
+        'cache/' => [ // Core caching
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
         ],
-        'modules/' => [
-            'owner'    => 'unknown',
-            'group'    => 'unknown',
-            'perms'    => '0000',
-            'writable' => false,
-            'required' => true
+        'components/' => [ // Must be writable for extensions
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
         ],
-        'plugins/' => [
-            'owner'    => 'unknown',
-            'group'    => 'unknown',
-            'perms'    => '0000',
-            'writable' => false,
-            'required' => true
+        'images/' => [ // Must be writable for media uploads
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
         ],
         'language/' => [
-            'owner'    => 'unknown',
-            'group'    => 'unknown',
-            'perms'    => '0000',
-            'writable' => false,
-            'required' => true
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
         ],
-        'templates/' => [
-            'owner'    => 'unknown',
-            'group'    => 'unknown',
-            'perms'    => '0000',
-            'writable' => false,
-            'required' => true
-        ],
-        'cache/' => [
-            'owner'    => 'unknown',
-            'group'    => 'unknown',
-            'perms'    => '0000',
-            'writable' => false,
-            'required' => true // Core caching
+        'libraries/' => [
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
         ],
         'logs/' => [
-            'owner'    => 'unknown',
-            'group'    => 'unknown',
-            'perms'    => '0000',
-            'writable' => false,
-            'required' => true
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
         ],
-        'tmp/' => [
-            'owner'    => 'unknown',
-            'group'    => 'unknown',
-            'perms'    => '0000',
-            'writable' => false,
-            'required' => true // Extension installation
+        'media/' => [
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
+        ],
+        'media/cache/' => [
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
+        ],
+        'modules/' => [
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
+        ],
+        'plugins/' => [
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
+        ],
+        'templates/' => [
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
+        ],
+        'tmp/' => [ // Extension installation
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
+        ],
+        'administrator/cache/' => [
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
         ],
         'administrator/components/' => [
-            'owner'    => 'unknown',
-            'group'    => 'unknown',
-            'perms'    => '0000',
-            'writable' => false,
-            'required' => true
-        ],
-        'administrator/modules/' => [
-            'owner'    => 'unknown',
-            'group'    => 'unknown',
-            'perms'    => '0000',
-            'writable' => false,
-            'required' => true
-        ],
-        'administrator/language/' => [
-            'owner'    => 'unknown',
-            'group'    => 'unknown',
-            'perms'    => '0000',
-            'writable' => false,
-            'required' => true
-        ],
-        'administrator/templates/' => [
-            'owner'    => 'unknown',
-            'group'    => 'unknown',
-            'perms'    => '0000',
-            'writable' => false,
-            'required' => true
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
         ],
         'administrator/logs/' => [
-            'owner'    => 'unknown',
-            'group'    => 'unknown',
-            'perms'    => '0000',
-            'writable' => false,
-            'required' => true
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
         ],
-        'api/' => [
-            'owner'    => 'unknown',
-            'group'    => 'unknown',
-            'perms'    => '0000',
-            'writable' => false,
-            'required' => true
+        'administrator/manifests/' => [
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
+        ],
+        'administrator/modules/' => [
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
+        ],
+        'administrator/language/' => [
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
+        ],
+        'administrator/templates/' => [
+            'owner'       => 'unknown',
+            'group'       => 'unknown',
+            'perms'       => '0000',
+            'writable'    => false,
+            'required'    => true,
+            'exists'      => false,
+            'sane'        => true,
+            'warning'     => false,
+            'owner_match' => true
         ]
+
     ]
 ];
 
@@ -968,6 +1098,90 @@ if (($hasRootDirs || $hasAdminDirs) && $hasIndexFile) {
 
     }
 }
+
+
+
+/*
+ * FOLDER & PERMISSIONS CHECK
+ */
+// Define your framework base root folder path
+// =========================================================================
+// 1. ANCHOR BASE PATH TO SCRIPT POSITION (Joomla Root)
+// =========================================================================
+$basePath = __DIR__;
+
+// =========================================================================
+// 2. DISCOVER ACTIVE PHP PROCESS SYSTEM USER
+// =========================================================================
+$phpUser = 'unknown';
+if (function_exists('posix_getpwuid') && function_exists('posix_geteuid')) {
+    $processInfo = posix_getpwuid(posix_geteuid());
+    $phpUser = $processInfo['name'] ?? 'unknown';
+} elseif (function_exists('get_current_user')) {
+    $phpUser = get_current_user();
+}
+
+
+
+
+// =========================================================================
+// 4. LIVE RELATIVE PROCESSING LOOP (UPDATED FOR DANGER & WARNING TIERS)
+// =========================================================================
+foreach ($joomlaFolders['targets'] as $path => &$details) {
+    $fullPath = $basePath . '/' . $path;
+
+    if (file_exists($fullPath) && is_dir($fullPath)) {
+        $details['exists'] = true;
+
+        // 1. Read octal numeric modes (e.g. 0755)
+        $filePerms = fileperms($fullPath);
+        $details['perms'] = substr(sprintf('%o', $filePerms), -4); // e.g., "0755"
+
+        // 2. Check writable engine flag status
+        $details['writable'] = is_writable($fullPath);
+
+        // 3. SECURE PERMISSION ANALYSIS ENGINE
+        // Split the 4-digit octal string into individual position characters
+        $digits = str_split($details['perms']); // [0, Owner, Group, World]
+        $ownerBit = isset($digits[1]) ? (int)$digits[1] : 0;
+        $groupBit = isset($digits[2]) ? (int)$digits[2] : 0;
+        $worldBit = isset($digits[3]) ? (int)$digits[3] : 0;
+
+        // CRITICAL DANGER CHECK: World-Writable (Ends in 7 or 6) or global 777
+        if ($worldBit === 7 || $worldBit === 6 || $details['perms'] === '0777') {
+            $details['sane'] = false;
+            $details['warning'] = false; // Danger takes priority
+        }
+        // WARNING CHECK: Group-Writable (x7x) (REMOVED)or Loose Owner configurations (7xx)
+        elseif ($groupBit === 7) {
+        //elseif ($groupBit === 7 || $ownerBit === 7) {
+            $details['sane'] = true;     // Not critically broken/world-open
+            $details['warning'] = true;  // Flag as a configuration warning
+        } else {
+            $details['sane'] = true;
+            $details['warning'] = false; // Safe standard compliance mode (e.g., 0755)
+        }
+
+        // 4. Resolve OS profile statistics info via POSIX helper extensions
+        if (function_exists('posix_getpwuid')) {
+            $ownerData = posix_getpwuid(fileowner($fullPath));
+            $details['owner'] = $ownerData['name'] ?? 'unknown';
+
+            $groupData = posix_getgrgid(filegroup($fullPath));
+            $details['group'] = $groupData['name'] ?? 'unknown';
+
+            if ($phpUser !== 'unknown' && $details['owner'] !== 'unknown') {
+                $details['owner_match'] = ($details['owner'] === $phpUser);
+            }
+        }
+    }
+}
+unset($details);
+
+
+
+
+
 
 
 
@@ -1335,6 +1549,12 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 }
 
 
+/* message queue */
+.extra-small-text { font-size: 0.78rem; line-height: 1.25; }
+.notification-card-link:hover { background-color: rgba(0,0,0,0.02); }
+.dropdown-toggle.hide-caret::after {
+    display: none !important;
+}
 
         /* WCAG 2.1 AA: visible keyboard focus (2.4.7); prefers-reduced-motion */
         a:focus-visible,
@@ -1456,11 +1676,13 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                                 <i class="bi bi-cloud-download-fill"></i>
                             </a>
 
+                            <!--
                             <button class="btn btn-outline-light" type="button" data-bs-toggle="collapse" data-bs-target="#runtimeOptionPanel" aria-expanded="<?php echo $_SESSION['options_panel_open'] ? 'true' : 'false'; ?>" aria-controls="runtimeOptionPanel" aria-label="FPA Runtime Options">
                                 <span data-bs-toggle="tooltip" data-bs-trigger="hover focus" data-bs-placement="bottom" data-bs-title="FPA Runtime Options.">
                                     <i class="bi bi-sliders"></i>
                                 </span>
                             </button>
+                            -->
 
                             <!--
                             <button class="btn btn-outline-light" type="button" data-bs-toggle="collapse" data-bs-target="#runtimeOptionPanel" aria-expanded="<?php echo $_SESSION['options_panel_open'] ? 'true' : 'false'; ?>" aria-controls="runtimeOptionPanel" aria-label="FPA Runtime Options">
@@ -1471,9 +1693,26 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                             -->
                         </div>
 
+    <!-- NOTIFICATION DROPDOWN BLOCK -->
+    <!-- The 'd-none' class ensures it stays completely invisible until JS updates it -->
+    <div class="dropdown me-2 d-none" id="notification-wrapper">
+      <button class="btn btn-outline-light position-relative dropdown-toggle hide-caret" type="button" data-bs-toggle="dropdown">
+        <i class="bi bi-chat-right-dots-fill"></i>
+        <!-- Red Bootstrap Badge Counter -->
+        <span class="position-absolute bottom-10 start-100 translate-middle badge rounded-pill bg-danger" id="queue-count">
+          0
+        </span>
+      </button>
+
+      <!-- Dropdown Items list menu -->
+      <ul class="dropdown-menu dropdown-menu-end shadow-sm" id="queue-dropdown-items" style="width: 320px; max-height: 400px; overflow-y: auto;">
+        <!-- JS will populate these dynamically -->
+      </ul>
+    </div>
+
                         <div id="themeSwitcher" class="btn-group me-2" role="group" aria-label="Theme Switcher Group">
                             <!-- switch themes -->
-                            <button class="btn btn- btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Switch Theme">
+                            <button class="btn btn- btn-outline-light dropdown-toggle hide-caret" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Switch Theme">
                                 <i class="theme-icon-active bi bi-sun-fill" aria-hidden="true"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end">
@@ -1529,14 +1768,15 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
         //echo $doLiveChecks;
         //if ($doLiveChecks) { echo 'DO LIVE CHECKS'; }
 
-        //echo '<pre>';
+        echo '<pre>';
         //var_dump($activeFeeds);
         //var_dump($doLiveChecks);
         //var_dump($latestVersions);
-        //var_dump($folders);
+        //var_dump($joomlaFolders);
         //var_dump($joomlaInstance);
-        //echo '</pre>';
-        //echo $configFilePath;
+        var_dump($issueQueue);
+        echo '</pre>';
+        // echo $configFilePath;
 
         //echo sys_get_temp_dir();
         //echo $isPrivacyChecked ;
@@ -1794,7 +2034,7 @@ $degreesRotation = 45 + ($ratingValue * 1.8);
 
         <!-- TEXT COLUMN -->
         <!-- Full width below MD (col-12) | Takes up remaining space next to cards on LG+ (col-lg) -->
-        <div class="col-12 col-sm-12 col-md-5 col-lg d-flex flex-column Xjustify-content-center">
+        <div class="col-12 col-sm-12 Xcol-md-5 col-lg d-flex flex-column Xjustify-content-center">
             <div class="pe-xl-3 mb-2 mb-md-0">
 
                 <h2 class="h3 border-bottom">
@@ -1809,7 +2049,7 @@ $degreesRotation = 45 + ($ratingValue * 1.8);
 
         <!-- CARDS CONTAINER COLUMN -->
         <!-- Full width below MD (col-12) | 50% width on MD | 75% width on LG+ (col-lg-9) -->
-        <div class="col-12 col-sm-12 col-md-7 col-lg-9">
+        <div class="col-12 col-sm-12 Xcol-md-7 col-lg-9">
             <!-- Inner Grid: 1 column on XS | 2 columns on SM and MD | 4 columns straight across on LG -->
             <div class="row row-cols-2 Xrow-cols-sm-2 row-cols-lg-4 g-3 h-100">
 
@@ -2287,7 +2527,7 @@ $degreesRotation = 45 + ($ratingValue * 1.8);
 
         <!-- TEXT COLUMN -->
         <!-- Full width below MD (col-12) | Takes up remaining space next to cards on LG+ (col-lg) -->
-        <div class="col-12 col-sm-12 col-md-5 col-lg d-flex flex-column Xjustify-content-center">
+        <div class="col-12 col-sm-12 Xcol-md-5 col-lg d-flex flex-column Xjustify-content-center">
             <div class="pe-xl-3 mb-2 mb-md-0">
 
                 <h2 class="h3 border-bottom">
@@ -2302,8 +2542,163 @@ $degreesRotation = 45 + ($ratingValue * 1.8);
 
         <!-- CARDS CONTAINER COLUMN -->
         <!-- Full width below MD (col-12) | 50% width on MD | 75% width on LG+ (col-lg-9) -->
-        <div class="col-12 col-sm-12 col-md-7 col-lg-9">
-            content container
+        <div class="col-12 col-sm-12 Xcol-md-7 col-lg-9">
+
+
+
+<div class="card Xshadow-sm border-light my-4">
+    <div class="card-header Xbg-white py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <!--
+        <h5 class="m-0 fw-bold text-dark d-flex align-items-center">
+            <i class="bi bi-folder-check text-primary me-2"></i>
+            <?php echo htmlspecialchars($joomlaFolders['meta']['name']); ?>
+        </h5>
+        -->
+        <span class="badge bg-body-tertiary text-secondary border fw-medium font-monospace ms-auto" style="font-size: 0.72rem;">
+            PHP User: <strong class="Xtext-dark"><?php echo htmlspecialchars($phpUser); //htmlspecialchars($joomlaFolders['meta']['php_user']); ?></strong>
+        </span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover table-striped align-middle table-bordered mb-0" style="Xfont-size: 0.9rem;">
+            <thead class="Xtable-light text-uppercase tracking-wider" style="font-size: 0.72rem; font-weight: 700;">
+                <tr>
+                    <th scope="col" class="ps-3">Path</th>
+                    <th scope="col" class="d-none d-md-table-cell text-end">Owner</th>
+                    <th scope="col" class="d-none d-md-table-cell">Group</th>
+                    <th scope="col" class="text-center" style="width: 68px;">Mode</th>
+                    <th scope="col" class="text-center Xpe-3" style="width: 100px;">Writable</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($joomlaFolders['targets'] as $path => $permsInfo): ?>
+                    <tr>
+                        <td class="ps-3 Xfont-monospace Xfw-semibold Xtext-secondary text-break" style="Xfont-size: 0.82rem;">
+                            <?php echo htmlspecialchars($path); ?>
+                        </td>
+
+
+                        <td class="d-none d-md-table-cell text-muted text-end">
+                            <?php if (@!$permsInfo['owner_match'] && $permsInfo['exists']): ?>
+                                <i class="bi bi-exclamation-diamond-fill text-info me-1" style="font-size: 0.85rem;" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Ownership Mismatch: This directory is owned by a different user than the account executing PHP code."></i>
+                            <?php endif; ?>
+                            <span class="<?php echo !$permsInfo['owner_match'] ? 'text-secondary fw-medium' : ''; ?>">
+                                <?php echo htmlspecialchars($permsInfo['owner']); ?>
+                            </span>
+                        </td>
+
+                        <td class="d-none d-md-table-cell text-muted">
+                            <?php echo htmlspecialchars($permsInfo['group']); ?>
+                        </td>
+
+                        <!--
+                        <td class="text-center">
+                            <?php if (!$permsInfo['exists']): ?>
+                                <span class="badge bg-secondary-subtle text-secondary fw-bold px-2.5 py-1.5 text-uppercase" style="font-size: 0.72rem;">Missing</span>
+                            <?php elseif (!$permsInfo['sane']): ?>
+                                <span class="badge bg-danger fw-black px-2.5 py-1.5 shadow-sm" style="font-size: 0.72rem;" title="Dangerous Mode Detected!">
+                                    <i class="bi bi-exclamation-triangle-fill me-1"></i><?php echo $permsInfo['perms']; ?>
+                                </span>
+                            <?php else: ?>
+                                <span class="badge bg-light text-dark border fw-bold px-2.5 py-1.5" style="font-size: 0.72rem;">
+                                    <?php echo $permsInfo['perms']; ?>
+                                </span>
+                            <?php endif; ?>
+                        </td>
+                        -->
+
+                        <!-- Permissions Column with Conditional Tier Warning Badges -->
+                        <td class="text-center">
+                            <?php if (!$permsInfo['exists']): ?>
+                                <span class="badge bg-secondary-subtle text-secondary fw-bold px-2.5 py-1.5 text-uppercase w-100" style="font-size: 0.72rem;">
+                                    Missing
+                                </span>
+                            <?php elseif (!$permsInfo['sane']): ?>
+                                <!-- CRITICAL DANGER BADGE (World Writable / 777) -->
+                                <span class="badge bg-danger fw-black px-2.5 py-1.5 shadow-sm text-white w-100" style="font-size: 0.72rem;" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Critical: World-writable or insecure mode detected!">
+                                    <i class="bi bi-shield-slash-fill me-1"></i><?php echo $permsInfo['perms']; ?>
+                                </span>
+
+
+                                <!-- TESTING issues -->
+
+    <?php
+    $issueQueue[] = [
+        'type'        => 'danger', // Bootstrap color code
+        'text'        => 'At least one folder has world writable permissions.',
+        'solution'    => 'Reset permissions to to the system default (usually 755).',
+        'target_id'   => 'permissionsPanel' // Matches the ID of the checkbox in your offcanvas layout!
+    ];
+    ?>
+
+                                <!-- TESTING issues -->
+
+                            <?php elseif (isset($permsInfo['warning']) && $permsInfo['warning']): ?>
+                                <!-- SECURITY WARNING BADGE (Group Writable / Loose Permissions) -->
+                                <span class="badge bg-warning text-dark border border-warning-subtle fw-bold px-2.5 py-1.5 shadow-sm w-100" style="font-size: 0.72rem;" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Warning: Loose group or owner permissions detected.">
+                                    <i class="bi bi-exclamation-triangle-fill me-1"></i><?php echo $permsInfo['perms']; ?>
+                                </span>
+
+    <?php
+    $issueQueue[] = [
+        'type'        => 'warning', // Bootstrap color code
+        'text'        => 'At least one folder has group writable permissions.',
+        'solution'    => 'Reset permissions to to the system default (usually 755).',
+        'target_id'   => 'permissionsPanel' // Matches the ID of the checkbox in your offcanvas layout!
+    ];
+    ?>
+
+                            <?php else: ?>
+                                <!-- CLEAN STANDARD SAFE BADGE (e.g., 0755) -->
+                                <span class="badge bg-light text-dark border fw-bold px-2.5 py-1.5 w-100" style="font-size: 0.72rem;">
+                                    <?php echo $permsInfo['perms']; ?>
+                                </span>
+                            <?php endif; ?>
+                        </td>
+
+                        <td class="text-center Xtext-end Xpe-3">
+                            <?php if (!$permsInfo['exists']): ?>
+                                <i class="bi bi-dash-circle-dotted text-secondary" style="font-size: 20px;"></i>
+                            <?php elseif ($permsInfo['writable']): ?>
+
+                                <?php
+                                    // warn about being writable if perms aren't sane, else success
+                                    if (!$permsInfo['sane'] || (isset($permsInfo['warning']) && $permsInfo['warning'])) {
+                                        $writableColor = "warning";
+                                    } else {
+                                        $writableColor = "success";
+                                    }
+                                ?>
+                                <!--<i class="bi bi-check-square-fill text-<?php echo $writableColor; ?> fs-5"></i>-->
+                                <span class="badge bg-<?php echo $writableColor; ?>-subtle text-<?php echo $writableColor; ?> border border-<?php echo $writableColor; ?>-subtle fw-semibold px-2 py-1 text-uppercase Xw-100" style="font-size: 0.68rem; letter-spacing: 0.3px; width: 66px;"><?php echo $lang['FPA_YES']; ?></span>
+                            <?php else: ?>
+                                <!--<i class="bi bi-x-square-fill text-danger fs-5"></i>-->
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle fw-semibold px-2 py-1 text-uppercase Xw-100" style="font-size: 0.68rem; letter-spacing: 0.3px; width: 66px;"><?php echo $lang['FPA_NO']; ?></span>
+
+    <?php
+    $issueQueue[] = [
+        'type'        => 'warning', // Bootstrap color code
+        'text'        => 'At least one folder is not writable to your account user.',
+        'solution'    => 'Reset permissions to to the system default (usually 755).',
+        'target_id'   => 'permissionsPanel' // Matches the ID of the checkbox in your offcanvas layout!
+    ];
+    ?>
+
+                            <?php endif; ?>
+
+                        </td>
+
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+
         </div>
 
     </div>
@@ -2335,117 +2730,120 @@ $degreesRotation = 45 + ($ratingValue * 1.8);
     </footer>
 
 
-<!-- Right-aligned Compact Offcanvas with Integrated Floating Handle -->
-<div class="offcanvas offcanvas-end shadow" tabindex="-1" id="settingsOffcanvas" aria-labelledby="settingsOffcanvasLabel" style="width: 340px; visibility: visible;">
+    <!-- Right-aligned Compact Offcanvas with Integrated Floating Handle -->
+    <div class="offcanvas offcanvas-end shadow" tabindex="-1" id="settingsOffcanvas" aria-labelledby="settingsOffcanvasLabel" style="width: 340px; visibility: visible;">
 
-    <!-- FLOATING HANDLE BUTTON (Moves natively with the canvas) -->
-    <button class="btn btn-primary bg-fpa position-absolute d-flex align-items-center justify-content-center shadow-sm"
-            type="button"
-            data-bs-toggle="offcanvas"
-            data-bs-target="#settingsOffcanvas"
-            aria-controls="settingsOffcanvas"
-            style="top: 120px; left: -52px; width: 52px; height: 54px; border-color: var(--fpa-primary-color); border-radius: 8px 0 0 8px; border-right: 0; z-index: 1060;">
-        <i class="bi bi-gear-wide-connected fs-3"></i>
-    </button>
+        <!-- FLOATING HANDLE BUTTON (Moves natively with the canvas) -->
+        <button class="btn btn-primary bg-fpa position-absolute d-flex align-items-center justify-content-center shadow-sm"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#settingsOffcanvas"
+                aria-controls="settingsOffcanvas"
+                style="top: 120px; left: -52px; width: 52px; height: 54px; border-color: var(--fpa-primary-color); border-radius: 8px 0 0 8px; border-right: 0; z-index: 1060;">
+            <i class="bi bi-gear-wide-connected fs-3"></i>
+        </button>
 
-    <!-- Header -->
-    <div class="offcanvas-header bg-fpa border-bottom py-2 px-3">
-        <h6 class="offcanvas-title fw-bold text-uppercase tracking-wider m-0" id="settingsOffcanvasLabel">
-           <?php echo $lang['FPA_RUNTIMEOPTIONS']; ?>
-        </h6>
-        <button type="button" class="btn-close text-reset btn-sm" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <!-- Header -->
+        <div class="offcanvas-header bg-fpa border-bottom py-2 px-3">
+            <h6 class="offcanvas-title fw-bold text-uppercase tracking-wider m-0" id="settingsOffcanvasLabel">
+               <?php echo $lang['FPA_RUNTIMEOPTIONS']; ?>
+            </h6>
+            <button type="button" class="btn-close text-reset btn-sm" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+
+        <!-- Body -->
+        <div class="offcanvas-body d-flex flex-column justify-content-between p-3" style="overflow-y: auto;">
+
+            <!-- Top Section: Presets & 18 Switches -->
+            <div>
+                <!-- Preset Profiles Section -->
+                <small class="text-muted fw-bold d-block text-uppercase mb-2" style="font-size: 0.72rem; letter-spacing: 0.5px;">Profiles</small>
+                <div class="row g-2 mb-3">
+                    <div class="col-4">
+                        <button type="button" class="btn btn-outline-secondary btn-sm fw-bold w-100 py-2 d-flex flex-column align-items-center justify-content-center <?php echo ($_SESSION['current_preset_profile'] === 'compact') ? 'active' : ''; ?>">
+                            <i class="bi bi-layers mb-1 fs-5"></i>
+                            <span style="font-size: 0.7rem;"><?php echo $lang['FPA_COMPACT'] ?? 'Compact'; ?></span>
+                        </button>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-outline-secondary btn-sm fw-bold w-100 py-2 d-flex flex-column align-items-center justify-content-center <?php echo ($_SESSION['current_preset_profile'] === 'default') ? 'active' : ''; ?>">
+                            <i class="bi bi-layers-half mb-1 fs-5"></i>
+                            <span style="font-size: 0.7rem;"><?php echo $lang['FPA_DEFAULT'] ?? 'Default'; ?></span>
+                        </button>
+                    </div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-outline-secondary btn-sm fw-bold w-100 py-2 d-flex flex-column align-items-center justify-content-center <?php echo ($_SESSION['current_preset_profile'] === 'detailed') ? 'active' : ''; ?>">
+                            <i class="bi bi-layers-fill mb-1 fs-5"></i>
+                            <span style="font-size: 0.7rem;"><?php echo $lang['FPA_DETAILED'] ?? 'Detailed'; ?></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- GROUP 1: SYSTEM SETTINGS -->
+                <small class="text-muted fw-bold d-block text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">1. System Settings</small>
+                <div class="Xbg-light p-2 rounded border mb-3">
+                    <div class="row g-1">
+                        <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw1" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw1">Live Engine</label></div></div>
+                        <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw2"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw2">Debug Mode</label></div></div>
+                        <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw3" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw3">Auto Cache</label></div></div>
+                        <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw4"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw4">Strict Sync</label></div></div>
+                        <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw5" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw5">SSL Force</label></div></div>
+                        <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw6"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw6">Dev Tools</label></div></div>
+                    </div>
+                </div>
+
+                <!-- GROUP 2: DISPLAY OPTIONS -->
+                <small class="text-muted fw-bold d-block text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">2. Display Options</small>
+                <div class="Xbg-light p-2 rounded border mb-3">
+                    <div class="row g-1">
+                        <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw7" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw7">Dark Theme</label></div></div>
+                        <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw8" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw8">Fluid Grid</label></div></div>
+                        <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw9"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw9">Compact UI</label></div></div>
+                        <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw10" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw10">Animations</label></div></div>
+                        <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw11"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw11">Tooltips</label></div></div>
+                        <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw12" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw12">High Contrast</label></div></div>
+                    </div>
+                </div>
+
+                <!-- GROUP 3: FILTERS & LOGGING -->
+                <small class="text-muted fw-bold d-block text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">3. Filters & Logging</small>
+                <div class="Xbg-light p-2 rounded border mb-3">
+                    <div class="row g-1">
+                        <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw13" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw13">Log Queries</label></div></div>
+                        <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw14"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw14">Track Errors</label></div></div>
+                        <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw15" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw15">Deep Audit</label></div></div>
+                        <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw16" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw16">Metrics API</label></div></div>
+                        <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw17"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw17">Geo Filters</label></div></div>
+                        <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw18"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw18">IP Masking</label></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Section: Sticky Form Submit Actions -->
+            <div class="pt-2 border-top mt-2">
+                <small class="text-muted fw-bold d-block text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">Apply Profile</small>
+                <div class="btn-group w-100" role="group">
+
+                    <button type="submit" form="runtime-profile" name="action" value="fpa" class="btn btn-outline-success py-2 btn-sm d-flex flex-column align-items-center">
+                        <i class="bi bi-pc-display-horizontal mb-0 fs-5"></i>
+                        <span style="Xfont-size: 0.68rem; font-weight: 600;"><?php echo $lang['FPA_SHORT'] ?? 'FPA'; ?></span>
+                    </button>
+
+                    <button type="submit" form="runtime-profile" name="action" value="post" class="btn btn-outline-success py-2 btn-sm d-flex flex-column align-items-center">
+                        <i class="bi bi-file-post mb-0 fs-5"></i>
+                        <span style="Xfont-size: 0.68rem; font-weight: 600;"><?php echo $lang['FPA_POST'] ?? 'Post'; ?></span>
+                    </button>
+
+                    <button type="submit" form="runtime-profile" name="action" value="post" class="btn btn-outline-success py-2 btn-sm d-flex flex-column align-items-center">
+                        <i class="bi bi-file-post mb-0 fs-5"></i>
+                        <span style="Xfont-size: 0.68rem; font-weight: 600;"><?php echo $lang['FPA_TEXT'] ?? 'Text'; ?></span>
+                    </button>
+
+                </div>
+            </div>
+
+        </div>
     </div>
-
-    <!-- Body -->
-    <div class="offcanvas-body d-flex flex-column justify-content-between p-3" style="overflow-y: auto;">
-
-        <!-- Top Section: Presets & 18 Switches -->
-        <div>
-            <!-- Preset Profiles Section -->
-            <small class="text-muted fw-bold d-block text-uppercase mb-2" style="font-size: 0.72rem; letter-spacing: 0.5px;">Profiles</small>
-            <div class="row g-2 mb-3">
-                <div class="col-4">
-                    <button type="button" class="btn btn-outline-secondary btn-sm fw-bold w-100 py-2 d-flex flex-column align-items-center justify-content-center <?php echo ($_SESSION['current_preset_profile'] === 'compact') ? 'active' : ''; ?>">
-                        <i class="bi bi-layers mb-1 fs-5"></i>
-                        <span style="font-size: 0.7rem;"><?php echo $lang['FPA_COMPACT'] ?? 'Compact'; ?></span>
-                    </button>
-                </div>
-                <div class="col-4">
-                    <button type="button" class="btn btn-outline-secondary btn-sm fw-bold w-100 py-2 d-flex flex-column align-items-center justify-content-center <?php echo ($_SESSION['current_preset_profile'] === 'default') ? 'active' : ''; ?>">
-                        <i class="bi bi-layers-half mb-1 fs-5"></i>
-                        <span style="font-size: 0.7rem;"><?php echo $lang['FPA_DEFAULT'] ?? 'Default'; ?></span>
-                    </button>
-                </div>
-                <div class="col-4">
-                    <button type="button" class="btn btn-outline-secondary btn-sm fw-bold w-100 py-2 d-flex flex-column align-items-center justify-content-center <?php echo ($_SESSION['current_preset_profile'] === 'detailed') ? 'active' : ''; ?>">
-                        <i class="bi bi-layers-fill mb-1 fs-5"></i>
-                        <span style="font-size: 0.7rem;"><?php echo $lang['FPA_DETAILED'] ?? 'Detailed'; ?></span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- GROUP 1: SYSTEM SETTINGS -->
-            <small class="text-muted fw-bold d-block text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">1. System Settings</small>
-            <div class="Xbg-light p-2 rounded border mb-3">
-                <div class="row g-1">
-                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw1" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw1">Live Engine</label></div></div>
-                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw2"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw2">Debug Mode</label></div></div>
-                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw3" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw3">Auto Cache</label></div></div>
-                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw4"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw4">Strict Sync</label></div></div>
-                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw5" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw5">SSL Force</label></div></div>
-                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw6"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw6">Dev Tools</label></div></div>
-                </div>
-            </div>
-
-            <!-- GROUP 2: DISPLAY OPTIONS -->
-            <small class="text-muted fw-bold d-block text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">2. Display Options</small>
-            <div class="Xbg-light p-2 rounded border mb-3">
-                <div class="row g-1">
-                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw7" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw7">Dark Theme</label></div></div>
-                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw8" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw8">Fluid Grid</label></div></div>
-                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw9"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw9">Compact UI</label></div></div>
-                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw10" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw10">Animations</label></div></div>
-                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw11"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw11">Tooltips</label></div></div>
-                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw12" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw12">High Contrast</label></div></div>
-                </div>
-            </div>
-
-            <!-- GROUP 3: FILTERS & LOGGING -->
-            <small class="text-muted fw-bold d-block text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">3. Filters & Logging</small>
-            <div class="Xbg-light p-2 rounded border mb-3">
-                <div class="row g-1">
-                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw13" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw13">Log Queries</label></div></div>
-                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw14"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw14">Track Errors</label></div></div>
-                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw15" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw15">Deep Audit</label></div></div>
-                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw16" checked><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw16">Metrics API</label></div></div>
-                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw17"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw17">Geo Filters</label></div></div>
-                    <div class="col-6"><div class="form-check form-switch m-0"><input class="form-check-input" type="checkbox" id="sw18"><label class="form-check-label text-truncate w-100 fallback-sm style-label" for="sw18">IP Masking</label></div></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bottom Section: Sticky Form Submit Actions -->
-        <div class="pt-2 border-top mt-2">
-            <small class="text-muted fw-bold d-block text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.5px;">Apply Profile</small>
-            <div class="btn-group w-100" role="group">
-
-                <button type="submit" form="runtime-profile" name="action" value="fpa" class="btn btn-outline-success py-2 btn-sm d-flex flex-column align-items-center">
-                    <i class="bi bi-pc-display-horizontal mb-0 fs-5"></i>
-                    <span style="Xfont-size: 0.68rem; font-weight: 600;"><?php echo $lang['FPA_SHORT'] ?? 'FPA'; ?></span>
-                </button>
-
-                <button type="submit" form="runtime-profile" name="action" value="post" class="btn btn-outline-success py-2 btn-sm d-flex flex-column align-items-center">
-                    <i class="bi bi-file-post mb-0 fs-5"></i>
-                    <span style="Xfont-size: 0.68rem; font-weight: 600;"><?php echo $lang['FPA_POST'] ?? 'Post'; ?></span>
-                </button>
-
-                <button type="submit" form="runtime-profile" name="action" value="post" class="btn btn-outline-success py-2 btn-sm d-flex flex-column align-items-center">
-                    <i class="bi bi-file-post mb-0 fs-5"></i>
-                    <span style="Xfont-size: 0.68rem; font-weight: 600;"><?php echo $lang['FPA_TEXT'] ?? 'Text'; ?></span>
-                </button>
-
-            </div>
-        </div>
 
 
     <?php
@@ -2456,6 +2854,11 @@ $degreesRotation = 45 + ($ratingValue * 1.8);
      */
     ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous" nonce="<?php echo $fpaNonce; ?>"></script>
+
+<!-- 📦 SAFE DATA BRIDGE: Safely output PHP array to JSON for JS to read -->
+<script nonce="<?php echo $fpaNonce; ?>" id="php-queue-data" type="application/json">
+  <?php echo json_encode($issueQueue); ?>
+</script>
 
     <script nonce="<?php echo $fpaNonce; ?>">
 
@@ -2525,15 +2928,59 @@ $degreesRotation = 45 + ($ratingValue * 1.8);
         })()
 
 
+
+document.addEventListener("DOMContentLoaded", () => {
+  const rawData = document.getElementById("php-queue-data").textContent;
+  const issueQueue = JSON.parse(rawData || "[]");
+
+  const wrapper = document.getElementById("notification-wrapper");
+  const countBadge = document.getElementById("queue-count");
+  const itemsContainer = document.getElementById("queue-dropdown-items");
+
+  if (issueQueue.length === 0) return;
+
+  countBadge.textContent = issueQueue.length;
+
+  let listHtml = '';
+  issueQueue.forEach(issue => {
+    // Generate a secure list item that functions as a rich link card
+    listHtml += `
+      <li class="border-bottom">
+        <a href="#${issue.target_id}" class="dropdown-item p-3 text-wrap notification-card-link" data-target="${issue.target_id}">
+          <div class="d-flex align-items-start">
+            <span class="badge bg-${issue.type} me-2 mt-1">&nbsp;</span>
+            <div>
+              <div class="fw-bold Xtext-dark small mb-1">${issue.text}</div>
+              <div class="text-muted extra-small-text Xbg-light p-2 rounded border border-light">
+                <strong> <i class="bi bi-magic me-2"></i> Action:</strong> ${issue.solution}
+              </div>
+            </div>
+          </div>
+        </a>
+      </li>
+    `;
+  });
+
+  itemsContainer.innerHTML = listHtml;
+  wrapper.classList.remove("d-none");
+
+  // Hook up our smart scroll helper function
+  initNotificationScroller();
+});
+
+
+
+
+
         /**
          * runtimeOptionPanel, located at the top of the page is opened via a button on the main navbar, this function
          * scrolls the page back to the top to view the panel if the runtimeOptionPanel is initiated after scrolling.
          *
          */
-        var optionCollapseEl = document.getElementById('runtimeOptionPanel');
-        optionCollapseEl.addEventListener('show.bs.collapse', function () {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
+        /// var optionCollapseEl = document.getElementById('runtimeOptionPanel');
+        /// optionCollapseEl.addEventListener('show.bs.collapse', function () {
+        ///     window.scrollTo({ top: 0, behavior: 'smooth' });
+        /// });
 
 
         /**
@@ -2554,7 +3001,7 @@ $degreesRotation = 45 + ($ratingValue * 1.8);
 
 
         /**
-         * privacy redaction functin to capture the privacy switch change and
+         * privacy redaction function to capture the privacy switch change and
          * automagically reload the page appropriately using the PHP SESSION
          * data (checked (readacted) / unchecked (un-redacted)
          *

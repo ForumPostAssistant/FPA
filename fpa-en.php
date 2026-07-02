@@ -1,47 +1,50 @@
 <?php
 /**
- * English (en) HTML5 page shell for Forum Post Assistant.
+ * English (en-GB) HTML5 page shell for Forum Post Assistant.
  *
  * Application foreword and notes
  * -----------------------------
- * As you may have noticed, the FPA is quite a large standalone PHP application and unique diagnostic tool to assist
+ * As you may have noticed, the FPA is quite a large standalone PHP application and a unique diagnostic tool to assist
  * forum support staff in troubleshooting end-user Joomla! issues and errors. It enables less technical users to view
- * and produce consistant technical information of their server, application and instance, saving time and reducing
- * frustration on both parties. As such, many of its methods could be construed as breaking traditional conventions and
+ * and produce consistent technical information regarding their server, application, and instance, saving time and reducing
+ * frustration for both parties. As such, many of its methods could be construed as breaking traditional conventions and
  * norms. Where possible, we try to maintain up-to-date best practices, but by its very nature, old or non-standard
  * practices, formatting, and methods may occasionally be employed to ensure backward compatibility and functionality.
  *
- * Code standards
- * --------------
- * 1.  PHP: PSR-12.
+ * Code standards & best practices
+ * -------------------------------
+ * 1.  PHP: PSR-12 compliant formatting.
  * 2.  PHP: Minimum 7.4; stay compatible with current stable PHP releases. Use syntax and APIs supported in 7.4 unless
  *     the documented minimum is raised.
  * 3.  PHP: strict_types. In an effort to produce cleaner and more robust runtime code, we have implemented this PHP
  *     directive. PHP now enforces strict data type matching for function arguments and return values. Type juggling
  *     (automatic type casting) is disabled, forcing the engine to throw a TypeError if a value does not exactly
- *     match the declared type hint. Watch your single, double, and boolean quoting.
- * 4.  Defensive Programming: Due to the nature of the fpa operating in differing, unknown and potentially problematic
- *     environments, we operate on the Defensive Programming principle of assuming that anything that can go wrong will
- *     go wrong. Therefore, where possible pre-fill elements with defaults, validate return data before using and create
- *     routines that fail gracefully rather than crashing catastrophically.
- * 5.  HTML: HTML5.
- * 6.  HTML: Attribute Ordering. While this offers no performance gain, our preferred hierarchy is:
+ *     match the declared type hint. Watch your single and double quoting, as well as strict boolean expressions.
+ * 4.  HTML: W3C valid HTML5 structure.
+ * 5.  HTML: Attribute Ordering. While this offers no performance gain, our preferred hierarchy is:
  *     id, class, name, src, type, aria, data/content
- * 7.  CSS: Modern CSS (Level 3 modules and newer where appropriate).
- * 8.  JavaScript & Assets: Vanilla JS (ES6+ preferred). Remote CDNs are permitted for performance, but
- *     core asset delivery must include a local fallback or fail gracefully if an internet connection is unavailable.
- * 9.  Security: Never output raw passwords, hashes, or secret keys. All sensitive system paths must be masked.
- * 10. Error Handling: Wrap environment-sensitive diagnostics in try/catch blocks to ensure graceful degradation.
- * 11. Internationalisation: All UI text must utilise the core translation arrays; do not hardcode text strings directly
+ * 6.  CSS: Modern CSS (Level 3 modules and newer where appropriate).
+ * 7.  JavaScript & Assets: Vanilla JS (ES6+ preferred). Remote CDNs are permitted for performance, but
+ *     visual UI layouts must fail gracefully to semantic unstyled text if an internet connection is unavailable.
+ * 8.  Security: Never output raw passwords, hashes, or secret keys. All sensitive system paths must be masked.
+ * 9.  Error Handling: Wrap environment-sensitive diagnostics in try/catch blocks to ensure graceful degradation.
+ * 10. Defensive Programming: Due to the nature of the FPA operating in differing, unknown, and potentially problematic
+ *     environments, we operate on the Defensive Programming principle of assuming that anything that can go wrong will
+ *     go wrong. Therefore, where possible, pre-fill elements with defaults, validate return data before using, and create
+ *     routines that fail gracefully rather than crashing catastrophically.
+ * 11. Report-By-Exception (RBE): Where feasible and sensible, display or report only exceptions/errors/issues instead
+ *     of long lists of good/pass/success results. If all results are good, then simply display a single message reflecting
+ *     this status.
+ * 12. Internationalisation: All UI text must utilise the core translation arrays; do not hardcode text strings directly
  *     into the DOM.
- * 12. Accessibility: Endeavor to adhere to WCAG 2.1 Level AA.
- * 13. Commenting: In an effort to improve maintainability, DOM cleanliness, performance, and security, we comment
+ * 13. Accessibility: Endeavor to adhere to WCAG 2.1 Level AA guidelines.
+ * 14. Commenting: In an effort to improve maintainability, DOM cleanliness, performance, and security, we comment
  *     extensively. While HTML comments are acceptable, PHP/JS comment styles are preferred for larger blocks as
  *     they are stripped out at execution and are not visible in the frontend at runtime.
- * 14. Logical Separation: Even though it is one file, maintain a strict logical separation. Structural logic, utility
+ * 15. Logical Separation: Even though it is one file, maintain a strict logical separation. Structural logic, utility
  *     functions, configuration, and data processing arrays sit at the top of the file. The visual UI/HTML rendering
  *     sections sit at the bottom.
- * 15. Namespace Simulation: To avoid variable or function name collisions, prefix all global helper functions, classes,
+ * 16. Namespace Simulation: To avoid variable or function name collisions, prefix all global helper functions, classes,
  *     and global variables with fpa_ (e.g., fpa_get_server_info()).
  *
  * Target environment: Joomla! CMS sites on PHP 7.4 or newer (all known Joomla! versions (from v3.9.13) meeting that requirement).
@@ -52,12 +55,12 @@
  * @category DiagnosticTools
  * @since 2.0.0
  * @version 2.0.0-alpha.1
- * @license GPL-2.0-or-later https://www.gnu.org/licenses/gpl-2.0-standalone.html
+ * @license GPL-2.0-or-later https://gnu.org
  * @copyright Copyright (c) 2011-2026 Forum Post Assistant
  * @author RussW
  * @author PhilD13
- * @link https://github.com/ForumPostAssistant/FPA/ Project website
- * @see https://forumpostassistant.github.io/docs/ Further documentation
+ * @link https://github.com Project website
+ * @see https://github.io Further documentation
  * @see docs/accessibility.md WCAG 2.1 Level AA guidelines
  *
  */
@@ -306,6 +309,9 @@ $lang = [
     'FPA_SECURITY'          => 'Security',
     'FPA_PDF'               => 'PDF',
     'FPA_DOCUMENTATION'     => 'Documentation',
+    'FPA_CONFIGURATION'     => 'Configuration',
+    'FPA_CONFIG'            => 'Config',
+    'FPA_SUMMARY'           => 'Summary',
 
     // FPA titles, headings, Labels, meta & descriptions
     'FPA_META_VERSIONS'            => 'Live Version Status',
@@ -314,6 +320,8 @@ $lang = [
     'FPA_META_SYSTEMSASSURANCE'    => 'Systems Assurance',      // Environmental
     'FPA_META_PLATFORMINTEGRITY'   => 'Platform Integrity',     // Security & Safeguards
     'FPA_META_TUNINGOPTIMISATION'  => 'Tuning & Optimisation',  // Perfomance
+    'FPA_META_CORE_FOLDERS'        => 'Core Folders',
+    'FPA_HEADING_PERMISSIONS'      => 'Permissions Report',
     'FPA_LANG_CORE_DIRS'           => 'Joomla Core Directories',
     'FPA_LABEL_FPA'                => 'Forum Post Assistant',
     'FPA_LABEL_JOOMLA'             => 'Joomla! Core',
@@ -322,10 +330,7 @@ $lang = [
     'FPA_KEYMETRICS'               => 'Key Metrics',
     'FPA_READINESS'                => 'Readiness',
     //'FPA_CONFIDENCE'               => 'Confidence',
-    'FPA_CONFIGURATION'            => 'Configuration',
-    'FPA_CONFIG'                   => 'Config',
-//    'FPA_CORE_PERM_TITLE'          => 'Core Permissions',
-    'FPA_META_CORE_FOLDERS'        => 'Core Folders',
+
 
     'FPA_READINESS_APLUS'          => 'A+',
     'FPA_READINESS_A'              => 'A',
@@ -590,14 +595,14 @@ function fpaLang(string $key): void
 // this is updated throughout the fpa script adding any discovered issues
 //
 // if ($some_error_crieria) {
-//    $issueQueue[] = [
+//    $exceptionQueue[] = [
 //        'type'        => 'danger', // Bootstrap color code
 //        'text'        => 'Graphical metrics are enabled but data source is unavailable.',
 //        'solution'    => 'Disable Graphical Metrics or upload a valid system data log source file.',
 //        'target_id'   => 'show_graphics' // Matches the ID of the checkbox in your offcanvas layout!
 //    ];
 // }
-$issueQueue = [];
+$exceptionQueue = [];
 
 // --- Basic Live Version Checks ---
 $latestVersions = [
@@ -637,11 +642,16 @@ $joomlaInstance = [
     'meta' => [
         'name' => 'FPA_META_INSTANCE_DIAG' // Language Key: 'Joomla Core Instance Diagnostics'
     ],
-    'found'            => $lang['FPA_NO'],
-    'installed'        => $lang['FPA_NO'],
-    'configOverride'    => false,
-    'configPath'        => $lang['FPA_UNKNOWN'],
-    'configWritable'    => $lang['FPA_NO']
+    'found'               => $lang['FPA_NO'],
+    'installed'           => $lang['FPA_NO'],
+    'configOverride'       => false,
+    'configPath'           => $lang['FPA_UNKNOWN'],
+    'configMode'           => $lang['FPA_UNKNOWN'],
+    'configOwner'          => $lang['FPA_UNKNOWN'],
+    'configGroup'          => $lang['FPA_UNKNOWN'],
+    'configWritable'       => $lang['FPA_NO'],
+    'configWorldWritable'  => false,
+    'configOwnerConflict'   => false
 ];
 
 // --- Environment Rating Metrics (Enhances and adds to v1 Confidence Rating) ---
@@ -649,15 +659,11 @@ $fpaEnvironment = [
     'meta' => [
         'name' => $lang['FPA_META_SYSTEMSASSURANCE'] // Language Key: 'Environment Metrics'
     ],
-    'score'            => 100, // Starts perfect, drops as vulnerabilities are found
-    'configMode'        => $lang['FPA_UNKNOWN'],
-    'configOwner'       => $lang['FPA_UNKNOWN'],
-    'configGroup'       => $lang['FPA_UNKNOWN'],
-    'phpProcessUser'   => $lang['FPA_UNKNOWN'],
-    'ownershipConflict' => false,
-    'isWorldWritable'  => false,
-    'sslActive'        => false,
-    'displayErrors'    => false
+    'score'           => 100, // Starts perfect, drops as vulnerabilities are found
+    'phpProcessUser'  => $lang['FPA_UNKNOWN'],
+    'umask'           => '00',
+    'sslActive'       => false,
+    'displayErrors'   => false
 ];
 
 // --- Security Rating Metrics (New in FPA v2, adds to Confidence Rating) ---
@@ -666,12 +672,7 @@ $fpaSecurity = [
         'name' => $lang['FPA_META_PLATFORMINTEGRITY'] // Language Key: 'Security & Hardening Metrics'
     ],
     'score'            => 100, // Starts perfect, drops as vulnerabilities are found
-    'configMode'        => $lang['FPA_UNKNOWN'],
-    'configOwner'       => $lang['FPA_UNKNOWN'],
-    'configGroup'       => $lang['FPA_UNKNOWN'],
     'phpProcessUser'   => $lang['FPA_UNKNOWN'],
-    'ownershipConflict' => false,
-    'isWorldWritable'  => false,
     'sslActive'        => false,
     'displayErrors'    => false
 ];
@@ -919,8 +920,8 @@ $joomlaFolders = [
     ]
 ];
 
-
-
+// Elevated Permisisons Folder Checks
+//$elevatedFolders = [];
 
 
 
@@ -1086,15 +1087,15 @@ if (($hasRootDirs || $hasAdminDirs) && $hasIndexFile) {
         }
 
         // perform a defensive cross-check evaluation
-        $joomlaInstance['ownershipConflict'] = false;
+        $joomlaInstance['configOwnerConflict'] = false;
 
         if ($joomlaInstance['configOwner'] !== $phpProcessUser && $phpProcessUser !== 'Unknown') {
             // flag an ownership conflict alert if names do not match
-            $joomlaInstance['ownershipConflict'] = true;
+            $joomlaInstance['configOwnerConflict'] = true;
         }
 
         // save the process user name to the array for display on the dashboard
-        $joomlaInstance['phpProcessUser'] = $phpProcessUser;
+        $joomlaSecurity['phpProcessUser'] = $phpProcessUser;
 
     }
 }
@@ -1181,7 +1182,151 @@ unset($details);
 
 
 
+// =========================================================================
+// 4. ELEVATED PERMISSIONS TESTS
+// =========================================================================
+// exits upon finding 10 folders with elevated permissions to save excessive runtime with a massive error list
+function auditDirectoryPermissions(string $basePath, array $excludeList): array {
+    $elevatedFolders = [];
+    $maxViolations = 10;
 
+    // 1. Identify the environment user running this PHP process (e.g. www-data)
+    // Fallback securely to the file owner of the script if POSIX isn't available
+    $phpUserUid = function_exists('posix_getuid') ? posix_getuid() : fileowner(__FILE__);
+
+    // Ensure directory path trailing slash is structured uniformly
+    $basePath = rtrim($basePath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+
+    if (!is_dir($basePath)) {
+        return [];
+    }
+
+    // 2. Instantiate a recursive directory scanner
+    $directory = new RecursiveDirectoryIterator($basePath, RecursiveDirectoryIterator::SKIP_DOTS);
+    $iterator  = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::SELF_FIRST);
+
+    foreach ($iterator as $item) {
+        // Enforce the execution breaker instantly if limits are reached
+        if (count($elevatedFolders) >= $maxViolations) {
+            break;
+        }
+
+        // Only scan directories
+        if ($item->isDir()) {
+            $realPath = $item->getRealPath();
+
+            // 👇 UPDATED: Check the array keys ($folderKey) instead of nested array values
+            foreach ($excludeList as $folderKey => $folderData) {
+                // Combine the site root with the target key (e.g., "/var/www/html/" + "api/")
+                $cleanExcluded = realpath($basePath . $folderKey);
+
+                if ($cleanExcluded && (strpos($realPath, $cleanExcluded) === 0)) {
+                    continue 2; // Path is in the exclude list; skip checking this folder
+                }
+            }
+
+
+
+            // Check if this path matches or resides inside an entry in the exclude list
+            /*
+            foreach ($excludeList as $excluded) {
+                $cleanExcluded = realpath($excluded);
+                if ($cleanExcluded && (strpos($realPath, $cleanExcluded) === 0)) {
+                    continue 2; // Skip checking this folder and move to next file item
+                }
+            }
+            */
+
+            /*
+            foreach ($excludeList as $excluded) {
+                if (isset($excluded['path'])) {
+                    $cleanExcluded = realpath($excluded['path']);
+                    if ($cleanExcluded && (strpos($realPath, $cleanExcluded) === 0)) {
+                        continue 2; // Path is excluded; skip checking this folder
+                    }
+                }
+            }
+            */
+
+
+            // 3. Extract UNIX mode permissions
+            $perms = $item->getPerms();
+
+            /**
+             * Check the Standard Modes/Permissions
+             * Owner | Group | World
+             */
+            // Check if the folder is World-Writable (e.g. xx2, xx3, xx6, xx7)
+            $isWorldWritable = (bool)($perms & 0x0002);
+
+            // Check if the folder is Group-Writable (e.g. x2x, x3x, x6x, x7x)
+            $isGroupWritable = (bool)($perms & 0x0010);
+
+            /**
+             * Check the Special Modes/Permissions
+             * 4000 = SUID
+             * 2000 = SGID
+             * 1000 = Sticky Bit
+             */
+            // If an executable file inside a folder has this bit active, it runs with the
+            // privileges of the file owner (often root) rather than the user executing it.
+            $hasSUID         = (bool)($perms & 0x0800);
+
+            // Files created inside directories with this bit active inherit the group
+            // configuration of the parent folder rather than the group of the creating user.
+            $hasSGID         = (bool)($perms & 0x0400);
+
+            // Restricts deletion privileges. In a directory with the sticky bit set,
+            // a user can only delete or rename files they personally own.
+            $hasStickyBit    = (bool)($perms & 0x0200);
+
+            // 4. Test ownership matches
+            $folderOwnerUid = $item->getOwner();
+            $ownerMismatch  = ($folderOwnerUid !== $phpUserUid);
+
+            // 5. Audit if folder permissions cross standard 755 boundaries or set & sticky bits
+            if ($isWorldWritable || $isGroupWritable || $ownerMismatch || $hasSUID || $hasSGID || $hasStickyBit) {
+
+                // Calculate the relative path by removing the basePath string
+                $relativePath = str_replace($basePath, '', $realPath). '/';
+
+                $elevatedFolders[] = [
+                    'path'          => $relativePath,
+                    'permissions'   => substr(sprintf('%o', $perms), -4), // e.g. "0777"
+                    'is_world_w'    => $isWorldWritable,
+                    'is_group_w'    => $isGroupWritable,
+                    'uid_mismatch'  => $ownerMismatch,
+                    'has_suid'      => $hasSUID, // Set UserID bit set
+                    'has_sgid'      => $hasSGID, // Set GroupID bit set
+                    'has_sticky'    => $hasStickyBit // Sticky Bit Set
+                ];
+            }
+        }
+    }
+
+    return $elevatedFolders;
+}
+
+// --- Dynamic Workflow Execution Example ---
+//$excludeList     = $joomlaFolders['targets'] ?? [];
+//$elevatedFolders = auditDirectoryPermissions('.', $excludeList);
+
+// Extract the targets array which now holds the nested path sub-arrays
+$siteRoot = __DIR__;
+$excludeList     = $joomlaFolders['targets'] ?? [];
+$elevatedFolders = auditDirectoryPermissions($siteRoot, $excludeList);
+
+
+// Only raise a single exceptionQueue entry if $elevatedFolders is not empty
+if (!empty($elevatedFolders)) {
+    $exceptionQueue[] = [
+        'category'    => 'Elevated Permissions',
+        'type'        => 'danger', // Bootstrap color code
+        'text'        => 'At least one folder has elevated permissions or Set bits.',
+        'solution'    => 'Reset permissions or Set bits to the system default.',
+        'target_id'   => 'elevatedPermissions' // Matches the ID of the UI Panel
+    ];
+}
 
 
 
@@ -1207,29 +1352,29 @@ if ($joomlaInstance['found'] === $lang['FPA_YES'] && $joomlaInstance['installed'
     // 1. SECURITY & HARDENING ASSESSMENT
     // -------------------------------------------------------------------------
     $rawPerms = fileperms($joomlaInstance['configPath']);
-    $fpaSecurity['configMode'] = sprintf('%04o', $rawPerms & 0777);
+    $joomlaInstance['configMode'] = sprintf('%04o', $rawPerms & 0777);
 
     // Risk: Check for dangerously loose (World-Writable) permissions
     if (($rawPerms & 0002) !== 0) {
-        $fpaSecurity['isWorldWritable'] = true;
+        $joomlaInstance['isWorldWritable'] = true;
         $fpaSecurity['score'] -= 40;
     }
 
     // Capture file owners and check identity alignment against the PHP process
     if (function_exists('posix_getpwuid') && !$isWindows) {
         $ownerInfo = posix_getpwuid(fileowner($joomlaInstance['configPath']));
-        $fpaSecurity['configOwner'] = $ownerInfo['name'] ?? fileowner($joomlaInstance['configPath']);
+        $joomlaInstance['configOwner'] = $ownerInfo['name'] ?? fileowner($joomlaInstance['configPath']);
 
         $processInfo = posix_getpwuid(posix_geteuid());
         $fpaSecurity['phpProcessUser'] = $processInfo['name'] ?? 'Unknown';
     } else {
-        $fpaSecurity['configOwner']    = fileowner($joomlaInstance['configPath']);
+        $joomlaInstance['configOwner']    = fileowner($joomlaInstance['configPath']);
         $fpaSecurity['phpProcessUser'] = get_current_user();
     }
 
     // Risk: Flag an ownership mismatch conflict
-    if ($fpaSecurity['configOwner'] !== $fpaSecurity['phpProcessUser'] && $fpaSecurity['phpProcessUser'] !== 'Unknown') {
-        $fpaSecurity['ownershipConflict'] = true;
+    if ($joomlaInstance['configOwner'] !== $fpaSecurity['phpProcessUser'] && $fpaSecurity['phpProcessUser'] !== 'Unknown') {
+        $joomlaInstance['configOwnerConflict'] = true;
         $fpaSecurity['score'] -= 20;
     }
 
@@ -1266,6 +1411,27 @@ if ($joomlaInstance['found'] === $lang['FPA_YES'] && $joomlaInstance['installed'
     $fpaEnvironment['memoryLimit']      = ini_get('memory_limit');
     $fpaEnvironment['maxExecutionTime'] = (int) ini_get('max_execution_time');
     $fpaEnvironment['opcacheEnabled']   = function_exists('opcache_get_status') && opcache_get_status(false) !== false;
+
+
+    if (function_exists('umask')) {
+        try {
+            // Calling umask() with no arguments fetches the active system state
+            // without altering or mutating server parameters.
+            $raw_mask = @umask();
+
+            if ($raw_mask !== false && $raw_mask !== null) {
+                // Convert integer to a standard 4-character octal string format (e.g., 0022)
+                $fpaEnvironment['umask'] = str_pad(decoct($raw_mask), 4, '0', STR_PAD_LEFT);
+            } else {
+                $fpaEnvironment['umask'] = 'unknown (execution failed)';
+            }
+        } catch (\Throwable $e) {
+            $fpaEnvironment['umask'] = 'restricted (exception caught)';
+        }
+    } else {
+        // Graceful fallback for hardened servers or Windows runtime setups
+        $fpaEnvironment['umask'] = 'unavailable (disabled/unsupported)';
+    }
 
     // Risk: Zend OPcache is completely disabled
     if (!$fpaEnvironment['opcacheEnabled']) {
@@ -1433,11 +1599,15 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css" integrity="sha512-t7Few9xlddEmgd3oKZQahkNI4dS6l80+eGEzFQiqtyVYdvcSG2D3Iub77R20BdotfRPA9caaRkg1tyaJiPmO0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
+        :root, [data-bs-theme=light] {}
+        :root, [data-bs-theme=dark] {}
         :root {
             --fpa-primary-color: #660066;
             --fpa-primary-text: #ffffff; /* accessible text contrast for fpa-primary-color backgrounds */
         }
-
+        :target {
+            scroll-margin-top: 50px;
+        }
         /* custom fpa css */
         .text-fpa {
             color: var(--fpa-primary-color) !important;
@@ -1510,51 +1680,51 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
             font-size: 0.8rem;
         }
 
-/* The semi-circle viewing window */
-.gauge-wrapper {
-    position: relative;
-    width: 125px;
-    height: 62px; /* Exactly half the width */
-    overflow: hidden;
-}
+        /* The semi-circle viewing window */
+        .gauge-wrapper {
+            position: relative;
+            width: 125px;
+            height: 62px; /* Exactly half the width */
+            overflow: hidden;
+        }
 
-/* The physical track ring */
-.gauge-body {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 200%; /* Forms a perfect circle inside the hidden overflow */
-    border: 16px solid var(--bs-primary); /* Bootstrap 5 theme-aware gray track --bs-secondary-bg */
-    border-bottom-color: transparent;
-    border-right-color: transparent;
-    border-radius: 50%;
-    transform: rotate(45deg); /* Baseline start at 0% */
-}
+        /* The physical track ring */
+        .gauge-body {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 200%; /* Forms a perfect circle inside the hidden overflow */
+            border: 16px solid var(--bs-primary); /* Bootstrap 5 theme-aware gray track --bs-secondary-bg */
+            border-bottom-color: transparent;
+            border-right-color: transparent;
+            border-radius: 50%;
+            transform: rotate(45deg); /* Baseline start at 0% */
+        }
 
-/* The dynamic colored fill indicator */
-.gauge-fill {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 200%;
-    border: 16px solid var(--bs-secondary-bg); /* Bootstrap primary colored indicator --bs-primary */
-    border-bottom-color: transparent;
-    border-right-color: transparent;
-    border-radius: 50%;
-    transform-origin: center center;
-    transform: rotate(45deg); /* Default 0% position */
-    transition: transform 0.4s ease-out; /* Smooth movement transition animation */
-}
+        /* The dynamic colored fill indicator */
+        .gauge-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 200%;
+            border: 16px solid var(--bs-secondary-bg); /* Bootstrap primary colored indicator --bs-primary */
+            border-bottom-color: transparent;
+            border-right-color: transparent;
+            border-radius: 50%;
+            transform-origin: center center;
+            transform: rotate(45deg); /* Default 0% position */
+            transition: transform 0.4s ease-out; /* Smooth movement transition animation */
+        }
 
 
-/* message queue */
-.extra-small-text { font-size: 0.78rem; line-height: 1.25; }
-.notification-card-link:hover { background-color: rgba(0,0,0,0.02); }
-.dropdown-toggle.hide-caret::after {
-    display: none !important;
-}
+        /* message queue */
+        .extra-small-text { font-size: 0.78rem; line-height: 1.25; }
+        .notification-card-link:hover { background-color: rgba(0,0,0,0.02); }
+        .dropdown-toggle.hide-caret::after {
+            display: none !important;
+        }
 
         /* WCAG 2.1 AA: visible keyboard focus (2.4.7); prefers-reduced-motion */
         a:focus-visible,
@@ -1693,29 +1863,12 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                             -->
                         </div>
 
-    <!-- NOTIFICATION DROPDOWN BLOCK -->
-    <!-- The 'd-none' class ensures it stays completely invisible until JS updates it -->
-    <div class="dropdown me-2 d-none" id="notification-wrapper">
-      <button class="btn btn-outline-light position-relative dropdown-toggle hide-caret" type="button" data-bs-toggle="dropdown">
-        <i class="bi bi-chat-right-dots-fill"></i>
-        <!-- Red Bootstrap Badge Counter -->
-        <span class="position-absolute bottom-10 start-100 translate-middle badge rounded-pill bg-danger" id="queue-count">
-          0
-        </span>
-      </button>
-
-      <!-- Dropdown Items list menu -->
-      <ul class="dropdown-menu dropdown-menu-end shadow-sm" id="queue-dropdown-items" style="width: 320px; max-height: 400px; overflow-y: auto;">
-        <!-- JS will populate these dynamically -->
-      </ul>
-    </div>
-
                         <div id="themeSwitcher" class="btn-group me-2" role="group" aria-label="Theme Switcher Group">
                             <!-- switch themes -->
                             <button class="btn btn- btn-outline-light dropdown-toggle hide-caret" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Switch Theme">
                                 <i class="theme-icon-active bi bi-sun-fill" aria-hidden="true"></i>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
+                            <ul class="dropdown-menu dropdown-menu-end position-absolute">
                                 <li>
                                     <button class="dropdown-item" type="button" data-theme-value="light">
                                         <i class="bi bi-sun-fill me-2 opacity-50" aria-hidden="true"></i> Light
@@ -1734,15 +1887,35 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                             </ul>
                         </div>
 
+                        <div class="btn-group" role="group" aria-label="Notifications Group">
+                            <!-- NOTIFICATION DROPDOWN BLOCK -->
+                            <!-- The 'd-none' class ensures it stays completely invisible until JS updates it -->
+                            <div class="dropdown me-2 d-none" id="notification-wrapper">
+                              <button class="btn btn-outline-warning position-relative dropdown-toggle hide-caret" type="button" data-bs-toggle="dropdown" Xdata-bs-display="static" data-bs-reference="parent">
+                                <i class="bi bi-chat-right-dots-fill"></i>
+                                <!-- Red Bootstrap Badge Counter -->
+                                <span class="position-absolute bottom-10 start-0 translate-middle badge rounded-pill bg-danger" id="queue-count">
+                                  0
+                                </span>
+                              </button>
+
+                              <!-- Dropdown Items list menu -->
+                              <ul class="dropdown-menu dropdown-menu-end shadow-sm position-absolute" id="queue-dropdown-items" style="width: 320px; max-height: 500px; overflow-y: auto;" data-bs-boundary="body">
+                                <!-- JS will populate these dynamically -->
+                              </ul>
+                            </div>
+                        </div>
+
                         <div class="btn-group" role="group" aria-label="FPA Actions Group">
                             <!-- delete FPA -->
-                            <button form="nav-delete-form" class="btn btn-danger" type="submit" data-bs-toggle="tooltip" data-bs-title="Delete the FPA script" data-bs-placement="bottom" aria-label="Delete the FPA script.">
+                            <button form="nav-delete-form" class="btn btn-danger me-2" type="submit" data-bs-toggle="tooltip" data-bs-title="Delete the FPA script" data-bs-placement="bottom" aria-label="Delete the FPA script.">
                                 <i class="bi bi-trash3-fill"></i>
                             </button>
                         </div>
-                    </div>
 
-                </div> <!--/btn-toolbar-->
+                    </div><!--/btn-toolbar-->
+
+                </div><!--/navbar-->
 
             </div><!--/nav container-->
 
@@ -1774,7 +1947,10 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
         //var_dump($latestVersions);
         //var_dump($joomlaFolders);
         //var_dump($joomlaInstance);
-        var_dump($issueQueue);
+        var_dump($exceptionQueue);
+        //var_dump($fpaSecurity);
+        //var_dump($fpaEnvironment);
+        var_dump($elevatedFolders);
         echo '</pre>';
         // echo $configFilePath;
 
@@ -2018,129 +2194,141 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
          *
          */
         ?>
-<?php
-// include if GRAPHICAL METRICS
-// TODO: change the bar colours though
-// Sample Rating value (Replace with your database rating variable)
-$ratingValue = $joomlaInstance['readinessScore'];
 
-// Mathematical scale transform calculation: Maps 0-100 straight to 45-225 degrees
-$degreesRotation = 45 + ($ratingValue * 1.8);
-?>
+<div class="container-fluid bg-secondary bg-opacity-10 pt-3 pb-5 border-bottom">
 
-<div class="container my-4" id="keyMetricsPanel">
-    <!-- Combined flex row on MD+, standard stacked row on SM and below -->
-    <div class="row g-4 d-md-flex align-items-md-stretch">
+    <?php
+    // include if GRAPHICAL METRICS
+    // TODO: change the bar colours though
+    // Sample Rating value (Replace with your database rating variable)
+    $ratingValue = $joomlaInstance['readinessScore'];
 
-        <!-- TEXT COLUMN -->
-        <!-- Full width below MD (col-12) | Takes up remaining space next to cards on LG+ (col-lg) -->
-        <div class="col-12 col-sm-12 Xcol-md-5 col-lg d-flex flex-column Xjustify-content-center">
-            <div class="pe-xl-3 mb-2 mb-md-0">
+    // Mathematical scale transform calculation: Maps 0-100 straight to 45-225 degrees
+    $degreesRotation = 45 + ($ratingValue * 1.8);
+    ?>
 
-                <h2 class="h3 border-bottom">
-                    <i class="bi bi-speedometer text-secondary"></i> <?php fpaLang('FPA_KEYMETRICS'); ?>
-                </h2>
-                <h3 class="fs-6 fw-black text-secondary text-uppercase tracking-wider mb-2">Readiness Summary</h3>
-                <p class="text-secondary Xsmall Xmb-0">
-                    <?php echo $fpaReadinessSummary; ?>
-                </p>
+    <div class="container my-4 pt-0" id="keyMetricsPanel">
+
+        <h2 class="Xfs-3 Xbg-secondary border-bottom border-secondary p-2 Xmb-4 Xfw-light" style="X--bs-bg-opacity: .08;" XXclass="h3 border-bottom fw-light">
+            <i class="bi bi-speedometer text-secondary"></i> <?php echo htmlspecialchars($lang['FPA_KEYMETRICS']); ?>
+        </h2>
+
+        <!-- Combined flex row on MD+, standard stacked row on SM and below -->
+        <div class="row g-4 d-md-flex align-items-md-stretch mt-2">
+
+
+            <!-- TEXT COLUMN -->
+            <!-- Full width below MD (col-12) | Takes up remaining space next to cards on LG+ (col-lg) -->
+            <div class="col-12 col-sm-12 Xcol-md-5 col-lg d-flex flex-column Xjustify-content-center">
+
+                <div class="pe-xl-3 mb-2 mb-md-0">
+
+                    <h3 class="fs-5 fw-light Xtext-secondary text-uppercase tracking-wider mb-2">
+                        <span class="fw-bold"><?php echo htmlspecialchars($lang['FPA_READINESS']); ?></span> <?php echo htmlspecialchars($lang['FPA_SUMMARY']); ?>
+                    </h3>
+
+                    <p class="Xtext-secondary Xsmall Xmb-0">
+                        <?php echo htmlspecialchars($fpaReadinessSummary); ?>
+                    </p>
+                </div>
+
             </div>
-        </div>
 
-        <!-- CARDS CONTAINER COLUMN -->
-        <!-- Full width below MD (col-12) | 50% width on MD | 75% width on LG+ (col-lg-9) -->
-        <div class="col-12 col-sm-12 Xcol-md-7 col-lg-9">
-            <!-- Inner Grid: 1 column on XS | 2 columns on SM and MD | 4 columns straight across on LG -->
-            <div class="row row-cols-2 Xrow-cols-sm-2 row-cols-lg-4 g-3 h-100">
+            <!-- CARDS CONTAINER COLUMN -->
+            <!-- Full width below MD (col-12) | 50% width on MD | 75% width on LG+ (col-lg-9) -->
+            <div class="col-12 col-sm-12 Xcol-md-7 col-lg-9">
+                <!-- Inner Grid: 1 column on XS | 2 columns on SM and MD | 4 columns straight across on LG -->
+                <div class="row row-cols-2 Xrow-cols-sm-2 row-cols-lg-4 g-3 h-100">
 
-                <!-- CARD 1 -->
-                <div class="col-">
-                    <div class="card h-100 shadow-sm text-center border-<?php echo $fpaReadinessColor; ?> Xbg-<?php echo $fpaReadinessColor; ?>-subtle" style="border-left-width: 10px;">
-                        <div class="card-body p-3 d-flex flex-column justify-content-between">
+                    <!-- CARD 1 -->
+                    <div class="col-">
+                        <div class="card h-100 shadow-sm text-center border-<?php echo $fpaReadinessColor; ?> Xbg-<?php echo $fpaReadinessColor; ?>-subtle" style="border-left-width: 10px;">
+                            <div class="card-body p-3 d-flex flex-column justify-content-between">
 
-                            <div class="d-flex justify-content-center align-items-baseline Xmt-2">
+                                <div class="d-flex justify-content-center align-items-baseline Xmt-2">
 
-                                <!--  if not using graphical UI setting
-                                <span class="text-<?php echo $fpaReadinessColor; ?> fw-semibold" style="font-size: 4em; Xfont-weight: 700; line-height: 1;"><?php echo $joomlaInstance['readinessGrade']; ?></span>
-                                -->
+                                    <!--  if not using graphical UI setting
+                                    <span class="text-<?php echo $fpaReadinessColor; ?> fw-semibold" style="font-size: 4em; Xfont-weight: 700; line-height: 1;"><?php echo $joomlaInstance['readinessGrade']; ?></span>
+                                    -->
 
-                                <!-- TODO : if GraphicalUI option selected -->
-                                <div class="d-flex flex-column align-items-center">
-                                    <!-- The Semi-Circle Gauge -->
-                                    <div class="gauge-wrapper mb-1">
-                                        <div class="gauge-body border-<?php echo $fpaReadinessColor; ?>"></div>
-                                        <div class="gauge-fill" style="transform: rotate(<?php echo $degreesRotation; ?>deg);"></div>
+                                    <!-- TODO : if GraphicalUI option selected -->
+                                    <div class="d-flex flex-column align-items-center">
+                                        <!-- The Semi-Circle Gauge -->
+                                        <div class="gauge-wrapper mb-1">
+                                            <div class="gauge-body border-<?php echo $fpaReadinessColor; ?>"></div>
+                                            <div class="gauge-fill" style="transform: rotate(<?php echo $degreesRotation; ?>deg);"></div>
+                                        </div>
+
+                                        <!-- Centred Rating Value Label Display -->
+                                        <div class="text-center Xmt-2 position-absolute" style="top: 35%;">
+                                            <span class="fs-3 fw-bold tracking-tight"><?php echo $ratingValue; ?>%</span>
+                                        </div>
                                     </div>
 
-                                    <!-- Centred Rating Value Label Display -->
-                                    <div class="text-center Xmt-2 position-absolute" style="top: 35%;">
-                                        <span class="fs-3 fw-bold tracking-tight"><?php echo $ratingValue; ?>%</span>
-                                    </div>
+
+                                    <!--
+                                    <span class="fs-3 fw-bold tracking-tight">42%</span>
+                                    <span class="badge bg-success-subtle text-success ms-2 font-monospace" style="font-size: 0.7rem;">-3%</span>
+                                    -->
                                 </div>
+                                <h3 class="fs-6 Xtext-center fw-bold text-uppercase m-0" style="Xfont-size: 0.7rem;"><?php echo $lang['FPA_READINESS']; ?></h3>
 
-
-                                <!--
-                                <span class="fs-3 fw-bold tracking-tight">42%</span>
-                                <span class="badge bg-success-subtle text-success ms-2 font-monospace" style="font-size: 0.7rem;">-3%</span>
-                                -->
                             </div>
-                            <h3 class="fs-6 Xtext-center fw-bold text-uppercase m-0" style="Xfont-size: 0.7rem;"><?php echo $lang['FPA_READINESS']; ?></h3>
-
                         </div>
                     </div>
-                </div>
 
-                <!-- CARD 2 -->
-                <div class="col">
-                    <div class="card h-100 shadow-sm border-warning bg-warning-subtle" style="border-left-width: 10px;">
-                        <div class="card-body p-3 d-flex flex-column justify-content-between">
+                    <!-- CARD 2 -->
+                    <div class="col">
+                        <div class="card h-100 shadow-sm border-warning bg-warning-subtle" style="border-left-width: 10px;">
+                            <div class="card-body p-3 d-flex flex-column justify-content-between">
 
-                            <div class="d-flex align-items-baseline mt-2">
-                                <span class="fs-3 fw-bold tracking-tight"><?php echo $fpaEnvironment['score']; ?>%</span>
-                                <span class="badge bg-success-subtle text-success ms-2 font-monospace" style="font-size: 0.7rem;">Stable</span>
+                                <div class="d-flex align-items-baseline mt-2">
+                                    <span class="fs-3 fw-bold tracking-tight"><?php echo $fpaEnvironment['score']; ?>%</span>
+                                    <span class="badge bg-success-subtle text-success ms-2 font-monospace" style="font-size: 0.7rem;">Stable</span>
+                                </div>
+                                <small class="fw-semibold text-uppercase d-block" style="font-size: 0.7rem;"><?php echo $fpaEnvironment['meta']['name']; ?></small>
+                                <?php echo renderProgressBar($fpaEnvironment['score']); ?>
                             </div>
-                            <small class="fw-semibold text-uppercase d-block" style="font-size: 0.7rem;"><?php echo $fpaEnvironment['meta']['name']; ?></small>
-                            <?php echo renderProgressBar($fpaEnvironment['score']); ?>
                         </div>
                     </div>
-                </div>
 
-                <!-- CARD 3 -->
-                <div class="col">
-                    <div class="card h-100 shadow-sm border-warning bg-warning-subtle" style="border-left-width: 10px;">
-                        <div class="card-body p-3 d-flex flex-column justify-content-between">
+                    <!-- CARD 3 -->
+                    <div class="col">
+                        <div class="card h-100 shadow-sm border-warning bg-warning-subtle" style="border-left-width: 10px;">
+                            <div class="card-body p-3 d-flex flex-column justify-content-between">
 
-                            <div class="d-flex align-items-baseline mt-2">
-                                <span class="fs-3 fw-bold tracking-tight"><?php echo $fpaPerformance['score']; ?>%</span>
-                                <span class="badge bg-danger-subtle text-danger ms-2 font-monospace" style="font-size: 0.7rem;">+14%</span>
+                                <div class="d-flex align-items-baseline mt-2">
+                                    <span class="fs-3 fw-bold tracking-tight"><?php echo $fpaPerformance['score']; ?>%</span>
+                                    <span class="badge bg-danger-subtle text-danger ms-2 font-monospace" style="font-size: 0.7rem;">+14%</span>
+                                </div>
+                                <small class="fw-semibold text-uppercase d-block" style="font-size: 0.7rem;">Tuning & Optimisation<?php //echo $fpaPerformance['meta']['name']; ?></small>
+                                <?php echo renderProgressBar($fpaPerformance['score']); ?>
                             </div>
-                            <small class="fw-semibold text-uppercase d-block" style="font-size: 0.7rem;">Tuning & Optimisation<?php //echo $fpaPerformance['meta']['name']; ?></small>
-                            <?php echo renderProgressBar($fpaPerformance['score']); ?>
                         </div>
                     </div>
-                </div>
 
-                <!-- CARD 4 -->
-                <div class="col">
-                    <div class="card h-100 shadow-sm border-info bg-info-subtle" style="border-left-width: 10px;">
-                        <div class="card-body p-3 d-flex flex-column justify-content-between">
+                    <!-- CARD 4 -->
+                    <div class="col">
+                        <div class="card h-100 shadow-sm border-info bg-info-subtle" style="border-left-width: 10px;">
+                            <div class="card-body p-3 d-flex flex-column justify-content-between">
 
-                            <div class="d-flex align-items-baseline mt-2">
-                                <span class="fs-3 fw-bold tracking-tight"><?php echo $fpaSecurity['score']; ?>%</span>
-                                <span class="badge bg-success-subtle text-success ms-2 font-monospace" style="font-size: 0.7rem;">+2%</span>
+                                <div class="d-flex align-items-baseline mt-2">
+                                    <span class="fs-3 fw-bold tracking-tight"><?php echo $fpaSecurity['score']; ?>%</span>
+                                    <span class="badge bg-success-subtle text-success ms-2 font-monospace" style="font-size: 0.7rem;">+2%</span>
+                                </div>
+                                <small class="fw-semibold text-uppercase d-block" style="font-size: 0.7rem;"><?php echo $fpaSecurity['meta']['name']; ?></small>
+                                <?php echo renderProgressBar($fpaSecurity['score']); ?>
                             </div>
-                            <small class="fw-semibold text-uppercase d-block" style="font-size: 0.7rem;"><?php echo $fpaSecurity['meta']['name']; ?></small>
-                            <?php echo renderProgressBar($fpaSecurity['score']); ?>
                         </div>
                     </div>
-                </div>
 
+                </div>
             </div>
+
         </div>
-
     </div>
-</div>
 
+</div><!--/container-fluid-->
 
 <!-- TESTING -->
 
@@ -2241,7 +2429,7 @@ $degreesRotation = 45 + ($ratingValue * 1.8);
                             <h5 class="card-title fw-bold"><?php echo $fpaEnvironment['meta']['name']; ?></h5>
                                 <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card’s content.</p>
                                 <div class="mt-auto">
-                                    <?php echo renderProgressBar($fpaPerformance['score']); ?>
+                                    <?php echo renderProgressBar($fpaEnvironment['score']); ?>
                                 </div>
                             </div>
                         </div>
@@ -2521,188 +2709,433 @@ $degreesRotation = 45 + ($ratingValue * 1.8);
 
 
 
-<div class="container my-4" id="permissionsPanel">
+<div class="container pt-5 mb-3" id="permissionsPanel">
+
+    <h2 class="Xfs-3 Xbg-secondary border-bottom border-secondary p-2 Xmb-4 Xfw-light" style="X--bs-bg-opacity: .08;" XXclass="h3 border-bottom fw-light">
+        <i class="bi bi-shield-lock-fill text-secondary"></i> <?php echo htmlspecialchars($lang['FPA_HEADING_PERMISSIONS']); ?>
+    </h2>
+
     <!-- Combined flex row on MD+, standard stacked row on SM and below -->
-    <div class="row g-4 d-md-flex align-items-md-stretch">
+    <div id="standardPermissions" class="row g-4 d-md-flex align-items-md-stretch mt-2">
 
         <!-- TEXT COLUMN -->
         <!-- Full width below MD (col-12) | Takes up remaining space next to cards on LG+ (col-lg) -->
         <div class="col-12 col-sm-12 Xcol-md-5 col-lg d-flex flex-column Xjustify-content-center">
-            <div class="pe-xl-3 mb-2 mb-md-0">
 
-                <h2 class="h3 border-bottom">
-                    <i class="bi bi-folder-check text-secondary"></i> <?php fpaLang('FPA_META_CORE_FOLDERS'); ?>
-                </h2>
-                <h3 class="fs-6 fw-black text-secondary text-uppercase tracking-wider mb-2">Permissions Report</h3>
+            <div class="pe-xl-3 mb-2 mb-md-0">
+                <h3 class="fs-5 fw-light Xtext-secondary text-uppercase tracking-wider mb-2">
+                    <span class="fw-bold"><?php echo htmlspecialchars($joomlaFolders['meta']['name']); ?></span> <?php echo htmlspecialchars($lang['FPA_SUMMARY']); ?>
+                </h3>
                 <p class="text-secondary Xsmall Xmb-0">
                     <?php echo $fpaReadinessSummary; ?>
                 </p>
             </div>
+
         </div>
 
         <!-- CARDS CONTAINER COLUMN -->
         <!-- Full width below MD (col-12) | 50% width on MD | 75% width on LG+ (col-lg-9) -->
         <div class="col-12 col-sm-12 Xcol-md-7 col-lg-9">
 
+            <div class="d-flex flex-wrap">
+                <span class="badge bg-body-tertiary text-secondary border fw-medium font-monospace ms-auto mb-2" style="font-size: 0.72rem;">
+                    PHP User: <strong class="Xtext-dark"><?php echo htmlspecialchars($fpaSecurity['phpProcessUser']); ?></strong>
+                    &nbsp;|&nbsp;System umask: <strong class="Xtext-dark"><?php echo htmlspecialchars($fpaEnvironment['umask']); ?></strong>
+                </span>
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle table-striped table-bordered mb-0" style="Xfont-size: 0.9rem;">
+                    <thead class="Xtable-light table-dark text-uppercase tracking-wider" style="font-size: 0.8rem; font-weight: 700;">
+                        <tr>
+                            <th scope="col" class="ps-3">Path</th>
+                            <th scope="col" class="d-none d-md-table-cell text-end">Owner</th>
+                            <th scope="col" class="d-none d-md-table-cell">Group</th>
+                            <th scope="col" class="text-center" style="width: 68px;">Mode</th>
+                            <th scope="col" class="text-center Xpe-3" style="width: 100px;">Writable</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($joomlaFolders['targets'] as $path => $permsInfo): ?>
+                            <tr>
+                                <td class="ps-3 Xfont-monospace Xfw-semibold Xtext-secondary text-break" style="Xfont-size: 0.82rem;">
+                                    <?php echo htmlspecialchars($path); ?>
+                                </td>
 
 
-<div class="card Xshadow-sm border-light my-4">
-    <div class="card-header Xbg-white py-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
-        <!--
-        <h5 class="m-0 fw-bold text-dark d-flex align-items-center">
-            <i class="bi bi-folder-check text-primary me-2"></i>
-            <?php echo htmlspecialchars($joomlaFolders['meta']['name']); ?>
-        </h5>
-        -->
-        <span class="badge bg-body-tertiary text-secondary border fw-medium font-monospace ms-auto" style="font-size: 0.72rem;">
-            PHP User: <strong class="Xtext-dark"><?php echo htmlspecialchars($phpUser); //htmlspecialchars($joomlaFolders['meta']['php_user']); ?></strong>
-        </span>
-    </div>
+                                <td class="d-none d-md-table-cell text-muted text-end">
+                                    <?php if (@!$permsInfo['owner_match'] && $permsInfo['exists']): ?>
+                                        <i class="bi bi-exclamation-diamond-fill text-info me-1" style="font-size: 0.85rem;" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Ownership Mismatch: This directory is owned by a different user than the account executing PHP code."></i>
+                                    <?php endif; ?>
+                                    <span class="<?php echo !$permsInfo['owner_match'] ? 'text-secondary fw-medium' : ''; ?>">
+                                        <?php echo htmlspecialchars($permsInfo['owner']); ?>
+                                    </span>
+                                </td>
 
-    <div class="table-responsive">
-        <table class="table table-hover table-striped align-middle table-bordered mb-0" style="Xfont-size: 0.9rem;">
-            <thead class="Xtable-light text-uppercase tracking-wider" style="font-size: 0.72rem; font-weight: 700;">
-                <tr>
-                    <th scope="col" class="ps-3">Path</th>
-                    <th scope="col" class="d-none d-md-table-cell text-end">Owner</th>
-                    <th scope="col" class="d-none d-md-table-cell">Group</th>
-                    <th scope="col" class="text-center" style="width: 68px;">Mode</th>
-                    <th scope="col" class="text-center Xpe-3" style="width: 100px;">Writable</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($joomlaFolders['targets'] as $path => $permsInfo): ?>
-                    <tr>
-                        <td class="ps-3 Xfont-monospace Xfw-semibold Xtext-secondary text-break" style="Xfont-size: 0.82rem;">
-                            <?php echo htmlspecialchars($path); ?>
-                        </td>
+                                <td class="d-none d-md-table-cell text-muted">
+                                    <?php echo htmlspecialchars($permsInfo['group']); ?>
+                                </td>
 
+                                <!--
+                                <td class="text-center">
+                                    <?php if (!$permsInfo['exists']): ?>
+                                        <span class="badge bg-secondary-subtle text-secondary fw-bold px-2.5 py-1.5 text-uppercase" style="font-size: 0.72rem;">Missing</span>
+                                    <?php elseif (!$permsInfo['sane']): ?>
+                                        <span class="badge bg-danger fw-black px-2.5 py-1.5 shadow-sm" style="font-size: 0.72rem;" title="Dangerous Mode Detected!">
+                                            <i class="bi bi-exclamation-triangle-fill me-1"></i><?php echo $permsInfo['perms']; ?>
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="badge bg-light text-dark border fw-bold px-2.5 py-1.5" style="font-size: 0.72rem;">
+                                            <?php echo $permsInfo['perms']; ?>
+                                        </span>
+                                    <?php endif; ?>
+                                </td>
+                                -->
 
-                        <td class="d-none d-md-table-cell text-muted text-end">
-                            <?php if (@!$permsInfo['owner_match'] && $permsInfo['exists']): ?>
-                                <i class="bi bi-exclamation-diamond-fill text-info me-1" style="font-size: 0.85rem;" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Ownership Mismatch: This directory is owned by a different user than the account executing PHP code."></i>
-                            <?php endif; ?>
-                            <span class="<?php echo !$permsInfo['owner_match'] ? 'text-secondary fw-medium' : ''; ?>">
-                                <?php echo htmlspecialchars($permsInfo['owner']); ?>
-                            </span>
-                        </td>
-
-                        <td class="d-none d-md-table-cell text-muted">
-                            <?php echo htmlspecialchars($permsInfo['group']); ?>
-                        </td>
-
-                        <!--
-                        <td class="text-center">
-                            <?php if (!$permsInfo['exists']): ?>
-                                <span class="badge bg-secondary-subtle text-secondary fw-bold px-2.5 py-1.5 text-uppercase" style="font-size: 0.72rem;">Missing</span>
-                            <?php elseif (!$permsInfo['sane']): ?>
-                                <span class="badge bg-danger fw-black px-2.5 py-1.5 shadow-sm" style="font-size: 0.72rem;" title="Dangerous Mode Detected!">
-                                    <i class="bi bi-exclamation-triangle-fill me-1"></i><?php echo $permsInfo['perms']; ?>
-                                </span>
-                            <?php else: ?>
-                                <span class="badge bg-light text-dark border fw-bold px-2.5 py-1.5" style="font-size: 0.72rem;">
-                                    <?php echo $permsInfo['perms']; ?>
-                                </span>
-                            <?php endif; ?>
-                        </td>
-                        -->
-
-                        <!-- Permissions Column with Conditional Tier Warning Badges -->
-                        <td class="text-center">
-                            <?php if (!$permsInfo['exists']): ?>
-                                <span class="badge bg-secondary-subtle text-secondary fw-bold px-2.5 py-1.5 text-uppercase w-100" style="font-size: 0.72rem;">
-                                    Missing
-                                </span>
-                            <?php elseif (!$permsInfo['sane']): ?>
-                                <!-- CRITICAL DANGER BADGE (World Writable / 777) -->
-                                <span class="badge bg-danger fw-black px-2.5 py-1.5 shadow-sm text-white w-100" style="font-size: 0.72rem;" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Critical: World-writable or insecure mode detected!">
-                                    <i class="bi bi-shield-slash-fill me-1"></i><?php echo $permsInfo['perms']; ?>
-                                </span>
+                                <!-- Permissions Column with Conditional Tier Warning Badges -->
+                                <td class="text-center">
+                                    <?php if (!$permsInfo['exists']): ?>
+                                        <span class="badge bg-secondary-subtle text-secondary fw-bold px-2.5 py-1.5 text-uppercase w-100" style="font-size: 0.72rem;">
+                                            Missing
+                                        </span>
+                                    <?php elseif (!$permsInfo['sane']): ?>
+                                        <!-- CRITICAL DANGER BADGE (World Writable / 777) -->
+                                        <span class="badge bg-danger fw-black px-2.5 py-1.5 shadow-sm text-white w-100" style="font-size: 0.72rem;" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Critical: World-writable or insecure mode detected!">
+                                            <i class="bi bi-shield-slash-fill me-1"></i><?php echo $permsInfo['perms']; ?>
+                                        </span>
 
 
-                                <!-- TESTING issues -->
+                                        <!-- TESTING issues -->
+                                        <?php
+                                        $exceptionQueue[] = [
+                                            'category'    => 'Permissions',
+                                            'type'        => 'danger', // Bootstrap color code
+                                            'text'        => 'At least one folder has world writable permissions.',
+                                            'solution'    => 'Reset permissions to to the system default (usually 755).',
+                                            'target_id'   => 'standardPermissions' // Matches the ID of the checkbox in your offcanvas layout!
+                                        ];
+                                        ?>
+                                        <!-- TESTING issues -->
 
-    <?php
-    $issueQueue[] = [
-        'type'        => 'danger', // Bootstrap color code
-        'text'        => 'At least one folder has world writable permissions.',
-        'solution'    => 'Reset permissions to to the system default (usually 755).',
-        'target_id'   => 'permissionsPanel' // Matches the ID of the checkbox in your offcanvas layout!
-    ];
-    ?>
+                                    <?php elseif (isset($permsInfo['warning']) && $permsInfo['warning']): ?>
+                                        <!-- SECURITY WARNING BADGE (Group Writable / Loose Permissions) -->
+                                        <span class="badge bg-warning text-dark border border-warning-subtle fw-bold px-2.5 py-1.5 shadow-sm w-100" style="font-size: 0.72rem;" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Warning: Loose group or owner permissions detected.">
+                                            <i class="bi bi-exclamation-triangle-fill me-1"></i><?php echo $permsInfo['perms']; ?>
+                                        </span>
 
-                                <!-- TESTING issues -->
+                                        <!-- TESTING issues -->
+                                        <?php
+                                        $exceptionQueue[] = [
+                                            'category'    => 'Permissions',
+                                            'type'        => 'warning', // Bootstrap color code
+                                            'text'        => 'At least one folder has group writable permissions.',
+                                            'solution'    => 'Reset permissions to to the system default (usually 755).',
+                                            'target_id'   => 'standardPermissions' // Matches the ID of the checkbox in your offcanvas layout!
+                                        ];
+                                        ?>
+                                        <!-- TESTING issues -->
 
-                            <?php elseif (isset($permsInfo['warning']) && $permsInfo['warning']): ?>
-                                <!-- SECURITY WARNING BADGE (Group Writable / Loose Permissions) -->
-                                <span class="badge bg-warning text-dark border border-warning-subtle fw-bold px-2.5 py-1.5 shadow-sm w-100" style="font-size: 0.72rem;" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Warning: Loose group or owner permissions detected.">
-                                    <i class="bi bi-exclamation-triangle-fill me-1"></i><?php echo $permsInfo['perms']; ?>
-                                </span>
+                                    <?php else: ?>
+                                        <!-- CLEAN STANDARD SAFE BADGE (e.g., 0755) -->
+                                        <span class="badge bg-light text-dark border fw-bold px-2.5 py-1.5 w-100" style="font-size: 0.72rem;">
+                                            <?php echo $permsInfo['perms']; ?>
+                                        </span>
+                                    <?php endif; ?>
+                                </td>
 
-    <?php
-    $issueQueue[] = [
-        'type'        => 'warning', // Bootstrap color code
-        'text'        => 'At least one folder has group writable permissions.',
-        'solution'    => 'Reset permissions to to the system default (usually 755).',
-        'target_id'   => 'permissionsPanel' // Matches the ID of the checkbox in your offcanvas layout!
-    ];
-    ?>
+                                <td class="text-center Xtext-end Xpe-3">
+                                    <?php if (!$permsInfo['exists']): ?>
+                                        <i class="bi bi-dash-circle-dotted text-secondary" style="font-size: 1.04rem;"></i>
+                                    <?php elseif ($permsInfo['writable']): ?>
 
-                            <?php else: ?>
-                                <!-- CLEAN STANDARD SAFE BADGE (e.g., 0755) -->
-                                <span class="badge bg-light text-dark border fw-bold px-2.5 py-1.5 w-100" style="font-size: 0.72rem;">
-                                    <?php echo $permsInfo['perms']; ?>
-                                </span>
-                            <?php endif; ?>
-                        </td>
+                                        <?php
+                                            // warn about being writable if perms aren't sane, else success
+                                            if (!$permsInfo['sane'] || (isset($permsInfo['warning']) && $permsInfo['warning'])) {
+                                                $writableColor = "warning";
+                                            } else {
+                                                $writableColor = "success";
+                                            }
+                                        ?>
+                                        <!--<i class="bi bi-check-square-fill text-<?php echo $writableColor; ?> fs-5"></i>-->
+                                        <span class="badge bg-<?php echo $writableColor; ?>-subtle text-<?php echo $writableColor; ?> border border-<?php echo $writableColor; ?>-subtle fw-semibold px-2 py-1 text-uppercase Xw-100" style="font-size: 0.68rem; letter-spacing: 0.3px; width: 66px;"><?php echo $lang['FPA_YES']; ?></span>
+                                    <?php else: ?>
+                                        <!--<i class="bi bi-x-square-fill text-danger fs-5"></i>-->
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle fw-semibold px-2 py-1 text-uppercase Xw-100" style="font-size: 0.68rem; letter-spacing: 0.3px; width: 66px;"><?php echo $lang['FPA_NO']; ?></span>
 
-                        <td class="text-center Xtext-end Xpe-3">
-                            <?php if (!$permsInfo['exists']): ?>
-                                <i class="bi bi-dash-circle-dotted text-secondary" style="font-size: 20px;"></i>
-                            <?php elseif ($permsInfo['writable']): ?>
+                                        <!-- TESTING issues -->
+                                        <?php
+                                        $exceptionQueue[] = [
+                                            'type'        => 'warning', // Bootstrap color code
+                                            'text'        => 'At least one folder is not writable to your account user.',
+                                            'solution'    => 'Reset permissions to to the system default (usually 755).',
+                                            'target_id'   => 'standardPermissions' // Matches the ID of the checkbox in your offcanvas layout!
+                                        ];
+                                        ?>
+                                        <!-- TESTING issues -->
 
-                                <?php
-                                    // warn about being writable if perms aren't sane, else success
-                                    if (!$permsInfo['sane'] || (isset($permsInfo['warning']) && $permsInfo['warning'])) {
-                                        $writableColor = "warning";
-                                    } else {
-                                        $writableColor = "success";
-                                    }
-                                ?>
-                                <!--<i class="bi bi-check-square-fill text-<?php echo $writableColor; ?> fs-5"></i>-->
-                                <span class="badge bg-<?php echo $writableColor; ?>-subtle text-<?php echo $writableColor; ?> border border-<?php echo $writableColor; ?>-subtle fw-semibold px-2 py-1 text-uppercase Xw-100" style="font-size: 0.68rem; letter-spacing: 0.3px; width: 66px;"><?php echo $lang['FPA_YES']; ?></span>
-                            <?php else: ?>
-                                <!--<i class="bi bi-x-square-fill text-danger fs-5"></i>-->
-                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle fw-semibold px-2 py-1 text-uppercase Xw-100" style="font-size: 0.68rem; letter-spacing: 0.3px; width: 66px;"><?php echo $lang['FPA_NO']; ?></span>
+                                    <?php endif; ?>
 
-    <?php
-    $issueQueue[] = [
-        'type'        => 'warning', // Bootstrap color code
-        'text'        => 'At least one folder is not writable to your account user.',
-        'solution'    => 'Reset permissions to to the system default (usually 755).',
-        'target_id'   => 'permissionsPanel' // Matches the ID of the checkbox in your offcanvas layout!
-    ];
-    ?>
+                                </td>
 
-                            <?php endif; ?>
-
-                        </td>
-
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-
-
-
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
 
         </div>
 
     </div>
-</div>
+
+    <!-- Combined flex row on MD+, standard stacked row on SM and below -->
+    <div id="elevatedPermissions" class="row g-4 d-md-flex align-items-md-stretch mt-2">
+
+        <!-- TEXT COLUMN -->
+        <!-- Full width below MD (col-12) | Takes up remaining space next to cards on LG+ (col-lg) -->
+        <div class="col-12 col-sm-12 Xcol-md-5 col-lg d-flex flex-column Xjustify-content-center">
+
+            <div class="pe-xl-3 mb-2 mb-md-0">
+                <h3 class="fs-5 fw-light Xtext-secondary text-uppercase tracking-wider mb-2">
+                    <span class="fw-bold"><?php echo htmlspecialchars($joomlaFolders['meta']['name']); ?></span> <?php echo htmlspecialchars($lang['FPA_SUMMARY']); ?>
+                </h3>
+                <p class="text-secondary Xsmall Xmb-0">
+                    <?php echo $fpaReadinessSummary; ?>
+                </p>
+            </div>
+
+        </div>
+
+        <!-- CARDS CONTAINER COLUMN -->
+        <!-- Full width below MD (col-12) | 50% width on MD | 75% width on LG+ (col-lg-9) -->
+        <div class="col-12 col-sm-12 Xcol-md-7 col-lg-9">
+
+            <div class="d-flex flex-wrap">
+                <span class="badge bg-body-tertiary text-secondary border fw-medium font-monospace ms-auto mb-2" style="font-size: 0.72rem;">
+                    PHP User: <strong class="Xtext-dark"><?php echo htmlspecialchars($fpaSecurity['phpProcessUser']); ?></strong>
+                    &nbsp;|&nbsp;System umask: <strong class="Xtext-dark"><?php echo htmlspecialchars($fpaEnvironment['umask']); ?></strong>
+                </span>
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle table-striped table-bordered mb-0" style="Xfont-size: 0.9rem;">
+                    <thead class="Xtable-light table-dark text-uppercase tracking-wider" style="font-size: 0.8rem; font-weight: 700;">
+                        <tr>
+                            <th scope="col" class="ps-3" rowspan="2">Path</th>
+                            <th scope="col" class="text-center Xps-3" colspan="3">Special Permissions</th>
+                            <th scope="col" class="text-center" style="width: 84px;" rowspan="2">Mode</th>
+                            <th scope="col" class="text-center" style="width: 68px;" rowspan="2">Owner Mismatch</th>
+                            <th scope="col" class="text-center Xpe-3" colspan="2">Writable</th>
+                        </tr>
+                        <tr>
+                            <th class="text-center small" style="width: 84px;">SUID</th>
+                            <th class="text-center small" style="width: 84px;">GUID</th>
+                            <th class="text-center small" style="width: 84px;">Sticky</th>
+                            <th class="text-center small" style="width: 84px;">Group</th>
+                            <th class="text-center small" style="width: 84px;">World</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($elevatedFolders as $epermsInfo): ?>
+                            <tr>
+                                <td class="ps-3 Xfont-monospace Xfw-semibold Xtext-secondary text-break" style="Xfont-size: 0.82rem;">
+                                    <?php echo htmlspecialchars($epermsInfo['path']); ?>
+                                </td>
+
+                                <td class="text-center">
+                                    <?php
+                                    if ($epermsInfo['has_suid']) {
+                                        $badgeColor = 'danger';
+                                        $badgeText  = $lang['FPA_YES'];
+                                    } else {
+                                        $badgeColor = 'success';
+                                        $badgeText  = $lang['FPA_NO'];
+                                    }
+                                    ?>
+                                    <span class="badge bg-<? echo $badgeColor; ?>-subtle text-<? echo $badgeColor; ?> border border-<? echo $badgeColor; ?> fw-semibold px-2 py-1 text-uppercase Xw-100" style="font-size: 0.68rem; letter-spacing: 0.3px; width: 66px;"><? echo $badgeText; ?></span>
+                                </td>
+                                <td class="text-center">
+                                    <?php
+                                    if ($epermsInfo['has_sgid']) {
+                                        $badgeColor = 'danger';
+                                        $badgeText  = $lang['FPA_YES'];
+                                    } else {
+                                        $badgeColor = 'success';
+                                        $badgeText  = $lang['FPA_NO'];
+                                    }
+                                    ?>
+                                    <span class="badge bg-<? echo $badgeColor; ?>-subtle text-<? echo $badgeColor; ?> border border-<? echo $badgeColor; ?> fw-semibold px-2 py-1 text-uppercase Xw-100" style="font-size: 0.68rem; letter-spacing: 0.3px; width: 66px;"><? echo $badgeText; ?></span>
+                                </td>
+                                <td class="text-center">
+                                    <?php
+                                    if ($epermsInfo['has_sticky']) {
+                                        $badgeColor = 'danger';
+                                        $badgeText  = $lang['FPA_YES'];
+                                    } else {
+                                        $badgeColor = 'success';
+                                        $badgeText  = $lang['FPA_NO'];
+                                    }
+                                    ?>
+                                    <span class="badge bg-<? echo $badgeColor; ?>-subtle text-<? echo $badgeColor; ?> border border-<? echo $badgeColor; ?> fw-semibold px-2 py-1 text-uppercase Xw-100" style="font-size: 0.68rem; letter-spacing: 0.3px; width: 66px;"><? echo $badgeText; ?></span>
+                                </td>
+
+                                <td class="text-center">
+                                    <?php
+                                    if ($epermsInfo['is_world_w'] || $epermsInfo['is_group_w']) {
+
+                                        if ($epermsInfo['is_world_w']) {
+                                           $badgeColor    = 'danger';
+                                            $badgeIcon    = 'shield-slash-fill';
+                                            $tooltipTitle = 'Critical: World-writable or insecure mode detected!';
+                                        } elseif ($epermsInfo['is_group_w']) {
+                                            $badgeColor   = 'warning';
+                                            $badgeIcon    = 'exclamation-triangle-fill';
+                                            $tooltipTitle = 'Warning: Loose Group-writable or insecure mode detected!';
+                                        }
+
+                                    } else {
+                                        $badgeColor = 'success';
+                                        $badgeIcon  = 'check-circle';
+                                        $tooltipTitle = 'No World or Group open rights detected!';
+                                    }
+                                    ?>
+                                        <span class="badge bg-<? echo $badgeColor; ?> fw-black px-2.5 py-1.5 text-white w-100" style="font-size: 0.72rem;" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="<?php echo $tooltipTitle; ?>">
+                                            <i class="bi bi-<?php echo $badgeIcon; ?> me-1"></i><?php echo $epermsInfo['permissions']; ?>
+                                        </span>
+
+
+                                </td>
+
+
+
+                                <td class="d-none d-md-table-cell text-muted text-end">
+                                    <?php if (@!$permsInfo['owner_match'] && $permsInfo['exists']): ?>
+                                        <i class="bi bi-exclamation-diamond-fill text-info me-1" style="font-size: 0.85rem;" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Ownership Mismatch: This directory is owned by a different user than the account executing PHP code."></i>
+                                    <?php endif; ?>
+                                    <span class="<?php echo !$permsInfo['owner_match'] ? 'text-secondary fw-medium' : ''; ?>">
+                                        <?php echo htmlspecialchars($permsInfo['owner']); ?>
+                                    </span>
+                                </td>
+
+                                <td class="d-none d-md-table-cell text-muted">
+                                    <?php echo htmlspecialchars($permsInfo['group']); ?>
+                                </td>
+
+                                <!--
+                                <td class="text-center">
+                                    <?php if (!$permsInfo['exists']): ?>
+                                        <span class="badge bg-secondary-subtle text-secondary fw-bold px-2.5 py-1.5 text-uppercase" style="font-size: 0.72rem;">Missing</span>
+                                    <?php elseif (!$permsInfo['sane']): ?>
+                                        <span class="badge bg-danger fw-black px-2.5 py-1.5 shadow-sm" style="font-size: 0.72rem;" title="Dangerous Mode Detected!">
+                                            <i class="bi bi-exclamation-triangle-fill me-1"></i><?php echo $permsInfo['perms']; ?>
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="badge bg-light text-dark border fw-bold px-2.5 py-1.5" style="font-size: 0.72rem;">
+                                            <?php echo $permsInfo['perms']; ?>
+                                        </span>
+                                    <?php endif; ?>
+                                </td>
+                                -->
+
+                                <!-- Permissions Column with Conditional Tier Warning Badges --
+                                <td class="text-center">
+                                    <?php if (!$permsInfo['exists']): ?>
+                                        <span class="badge bg-secondary-subtle text-secondary fw-bold px-2.5 py-1.5 text-uppercase w-100" style="font-size: 0.72rem;">
+                                            Missing
+                                        </span>
+                                    <?php elseif (!$permsInfo['sane']): ?>
+                                        -- CRITICAL DANGER BADGE (World Writable / 777) --
+                                        <span class="badge bg-danger fw-black px-2.5 py-1.5 shadow-sm text-white w-100" style="font-size: 0.72rem;" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Critical: World-writable or insecure mode detected!">
+                                            <i class="bi bi-shield-slash-fill me-1"></i><?php echo $permsInfo['perms']; ?>
+                                        </span>
+
+
+                                        -- TESTING issues --
+                                        <?php
+                                        $exceptionQueue[] = [
+                                            'category'    => 'Permissions',
+                                            'type'        => 'danger', // Bootstrap color code
+                                            'text'        => 'At least one folder has world writable permissions.',
+                                            'solution'    => 'Reset permissions to to the system default (usually 755).',
+                                            'target_id'   => 'permissionsPanel' // Matches the ID of the checkbox in your offcanvas layout!
+                                        ];
+                                        ?>
+                                        -- TESTING issues --
+
+                                    <?php elseif (isset($permsInfo['warning']) && $permsInfo['warning']): ?>
+                                        -- SECURITY WARNING BADGE (Group Writable / Loose Permissions) --
+                                        <span class="badge bg-warning text-dark border border-warning-subtle fw-bold px-2.5 py-1.5 shadow-sm w-100" style="font-size: 0.72rem;" data-bs-toggle="tooltip" data-bs-placement="left" data-bs-title="Warning: Loose group or owner permissions detected.">
+                                            <i class="bi bi-exclamation-triangle-fill me-1"></i><?php echo $permsInfo['perms']; ?>
+                                        </span>
+
+                                        -- TESTING issues --
+                                        <?php
+                                        $exceptionQueue[] = [
+                                            'category'    => 'Permissions',
+                                            'type'        => 'warning', // Bootstrap color code
+                                            'text'        => 'At least one folder has group writable permissions.',
+                                            'solution'    => 'Reset permissions to to the system default (usually 755).',
+                                            'target_id'   => 'permissionsPanel' // Matches the ID of the checkbox in your offcanvas layout!
+                                        ];
+                                        ?>
+                                        -- TESTING issues --
+
+                                    <?php else: ?>
+                                        -- CLEAN STANDARD SAFE BADGE (e.g., 0755) --
+                                        <span class="badge bg-light text-dark border fw-bold px-2.5 py-1.5 w-100" style="font-size: 0.72rem;">
+                                            <?php echo $permsInfo['perms']; ?>
+                                        </span>
+                                    <?php endif; ?>
+                                </td>
+                                -->
+
+
+                                <td class="text-center Xtext-end Xpe-3">
+                                    <?php if (!$permsInfo['exists']): ?>
+                                        <i class="bi bi-dash-circle-dotted text-secondary" style="font-size: 1.04rem;"></i>
+                                    <?php elseif ($permsInfo['writable']): ?>
+
+                                        <?php
+                                            // warn about being writable if perms aren't sane, else success
+                                            if (!$permsInfo['sane'] || (isset($permsInfo['warning']) && $permsInfo['warning'])) {
+                                                $writableColor = "warning";
+                                            } else {
+                                                $writableColor = "success";
+                                            }
+                                        ?>
+                                        <!--<i class="bi bi-check-square-fill text-<?php echo $writableColor; ?> fs-5"></i>-->
+                                        <span class="badge bg-<?php echo $writableColor; ?>-subtle text-<?php echo $writableColor; ?> border border-<?php echo $writableColor; ?>-subtle fw-semibold px-2 py-1 text-uppercase Xw-100" style="font-size: 0.68rem; letter-spacing: 0.3px; width: 66px;"><?php echo $lang['FPA_YES']; ?></span>
+                                    <?php else: ?>
+                                        <!--<i class="bi bi-x-square-fill text-danger fs-5"></i>-->
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle fw-semibold px-2 py-1 text-uppercase Xw-100" style="font-size: 0.68rem; letter-spacing: 0.3px; width: 66px;"><?php echo $lang['FPA_NO']; ?></span>
+
+                                        <!-- TESTING issues -->
+                                        <?php
+                                        $exceptionQueue[] = [
+                                            'type'        => 'warning', // Bootstrap color code
+                                            'text'        => 'At least one folder is not writable to your account user.',
+                                            'solution'    => 'Reset permissions to to the system default (usually 755).',
+                                            'target_id'   => 'permissionsPanel' // Matches the ID of the checkbox in your offcanvas layout!
+                                        ];
+                                        ?>
+                                        <!-- TESTING issues -->
+
+                                    <?php endif; ?>
+
+                                </td>
+
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div><!--/elevatedPermissions-->
+
+</div><!--/permissionPanel-->
 
 
 
@@ -2857,7 +3290,7 @@ $degreesRotation = 45 + ($ratingValue * 1.8);
 
 <!-- 📦 SAFE DATA BRIDGE: Safely output PHP array to JSON for JS to read -->
 <script nonce="<?php echo $fpaNonce; ?>" id="php-queue-data" type="application/json">
-  <?php echo json_encode($issueQueue); ?>
+  <?php echo json_encode($exceptionQueue); ?>
 </script>
 
     <script nonce="<?php echo $fpaNonce; ?>">
@@ -2930,42 +3363,42 @@ $degreesRotation = 45 + ($ratingValue * 1.8);
 
 
 document.addEventListener("DOMContentLoaded", () => {
-  const rawData = document.getElementById("php-queue-data").textContent;
-  const issueQueue = JSON.parse(rawData || "[]");
+    const rawData = document.getElementById("php-queue-data").textContent;
+    const exceptionQueue = JSON.parse(rawData || "[]");
 
-  const wrapper = document.getElementById("notification-wrapper");
-  const countBadge = document.getElementById("queue-count");
-  const itemsContainer = document.getElementById("queue-dropdown-items");
+    const wrapper = document.getElementById("notification-wrapper");
+    const countBadge = document.getElementById("queue-count");
+    const itemsContainer = document.getElementById("queue-dropdown-items");
 
-  if (issueQueue.length === 0) return;
+    if (exceptionQueue.length === 0) return;
 
-  countBadge.textContent = issueQueue.length;
+    countBadge.textContent = exceptionQueue.length;
 
-  let listHtml = '';
-  issueQueue.forEach(issue => {
+    let listHtml = '';
+    exceptionQueue.forEach(issue => {
     // Generate a secure list item that functions as a rich link card
     listHtml += `
-      <li class="border-bottom">
-        <a href="#${issue.target_id}" class="dropdown-item p-3 text-wrap notification-card-link" data-target="${issue.target_id}">
-          <div class="d-flex align-items-start">
-            <span class="badge bg-${issue.type} me-2 mt-1">&nbsp;</span>
-            <div>
-              <div class="fw-bold Xtext-dark small mb-1">${issue.text}</div>
-              <div class="text-muted extra-small-text Xbg-light p-2 rounded border border-light">
-                <strong> <i class="bi bi-magic me-2"></i> Action:</strong> ${issue.solution}
-              </div>
-            </div>
-          </div>
-        </a>
-      </li>
+        <li class="border-bottom">
+            <a href="#${issue.target_id}" class="dropdown-item p-3 text-wrap notification-card-link" data-target="${issue.target_id}">
+                <div class="d-flex align-items-start">
+                    <span class="badge bg-${issue.type} me-1 mt-0 small">&nbsp;</span>
+                <div>
+                <div class="small mb-1 lh-sm"><strong>${issue.category}:</strong> ${issue.text}</div>
+                <div class="text-muted extra-small-text p-2 rounded border border-light">
+                    <strong> <i class="bi bi-magic me-1"></i>Action:</strong> ${issue.solution}
+                </div>
+                </div>
+                </div>
+            </a>
+        </li>
     `;
-  });
+    });
 
-  itemsContainer.innerHTML = listHtml;
-  wrapper.classList.remove("d-none");
+    itemsContainer.innerHTML = listHtml;
+    wrapper.classList.remove("d-none");
 
-  // Hook up our smart scroll helper function
-  initNotificationScroller();
+    // Hook up our smart scroll helper function
+    initNotificationScroller();
 });
 
 

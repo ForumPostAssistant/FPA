@@ -139,7 +139,7 @@ const FPA_DEV = false; // developer-mode, displays raw array data on screen
 const FPA_DIA = true;  // diagnostic-mode, turns on PHP logging errors, display errors and logs error to a file
 const FPA_SELF_DESTRUCT = true; // self-destruct, attempts to self-delete on next run if file older than configured duration
 const FPA_SELF_DESTRUCT_AGE = 3; // self-destruct filetime age duration
-const FPA_SSL_REDIRECT = true; // SSL Redirect - when possible and if a valid SSL certificate is found FPA attempts to redirect to the SSL version of the site
+const FPA_SSL_REDIRECT = false; // SSL Redirect - when possible and if a valid SSL certificate is found FPA attempts to redirect to the SSL version of the site
 const FPA_PROJECT_URL = 'https://github.com/ForumPostAssistant/FPA/'; // github project/repository url
 const FPA_DOCS_URL = 'https://forumpostassistant.github.io/docs/'; // github documention site url
 const FPA_DOWNLOAD_ZIP_URL = 'https://github.com/ForumPostAssistant/FPA/zipball/en-GB/'; // github latest download url (zip file)
@@ -180,6 +180,164 @@ const FPA_LIVE_CHECK_VEL = [
 
 
 
+
+
+/*
+ * =============================================================================
+ * SECTION: SSL DETECTION & AUTO REDIRECT
+ * =============================================================================
+ * If FPA_SSL_REDIRECT is enabled (true) in the configuration above, we will
+ * attempt to detect a valid SSL Certificate and it's current state. If a
+ * http: environment is detected and a valid certificate is available we'll
+ * redirect to the https: site instead.
+ */
+// initiate the ssl details array, will be merged in to $fpa_security later
+
+/**
+ * DISABLED CONST NOT_SURE_IF_WORKING TODO: need to test online to see if working
+ * TODO: update localhost detection to comprehensive one below
+ */
+$fpa_ssl = [];
+if (defined('FPA_SSL_REDIRECT') && FPA_SSL_REDIRECT) {
+
+    /**
+     * Detect and audit the SSL Certificate state of the current running environment.
+     *
+     * @return array Contain keys: [is_valid, is_localhost, error, details]
+     */
+    function fpa_audit_ssl(): array {
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+
+        // Strip port numbers from host if present (e.g. domain.com:8080)
+        $host_clean = parse_url('http://' . $host, PHP_URL_HOST);
+
+        $result = [
+            'is_valid'     => false,
+            'is_localhost' => false,
+            'error'        => null,
+            'details'      => []
+        ];
+
+        // Instantly exclude local environments
+        $local_hosts = ['localhost', '127.0.0.1', '[::1]'];
+        // TESTING
+        //$local_hosts = ['000.000.000.000', 'russw.dev'];
+
+        if (in_array($host_clean, $local_hosts) || substr($host_clean, -6) === '.local') {
+            $result['is_localhost'] = true;
+            $result['error']        = 'Localhost environment detected.';
+            return $result;
+        }
+
+        // Build a strict TLS verification stream envelope
+        $context = stream_context_create([
+            'ssl' => [
+                'capture_peer_cert' => true,  // Extract the raw cert resource
+                'verify_peer'       => true,  // Enforce trust chain validation
+                'verify_peer_name'  => true,  // Enforce domain name matching
+                'allow_self_signed' => false, // Disallow untrusted certs
+            ]
+        ]);
+
+        // Attempt a brief loopback connection to port 443
+        // We use a short 3-second timeout so pages don't hang if a firewall blocks it.
+        $remote_socket = "tls://{$host_clean}:443";
+        $client = @stream_socket_client(
+            $remote_socket,
+            $errno,
+            $errstr,
+            3,
+            STREAM_CLIENT_CONNECT,
+            $context
+        );
+
+        if (!$client) {
+            $result['error'] = "SSL Handshake failure: {$errstr} (Code: {$errno})";
+            return $result;
+        }
+
+        // Retrieve and parse the verified certificate data parameter
+        $params = stream_context_get_options($context);
+        if (isset($params['ssl']['peer_certificate'])) {
+            $cert_resource = $params['ssl']['peer_certificate'];
+            $cert_info = openssl_x509_parse($cert_resource);
+
+            if ($cert_info) {
+                $result['is_valid'] = true;
+                $result['details'] = [
+                    'subject' => $cert_info['subject']['CN'] ?? 'Unknown',
+                    'issuer'  => $cert_info['issuer']['CN'] ?? 'Unknown',
+                    'valid_from' => date('Y-m-d H:i:s', $cert_info['validFrom_time_t']),
+                    'valid_to'   => date('Y-m-d H:i:s', $cert_info['validTo_time_t']),
+                    'days_left'  => ceil(($cert_info['validTo_time_t'] - time()) / 86400)
+                ];
+            }
+        }
+
+        fclose($client);
+        return $result;
+
+    }
+
+    // Check if the user is already on https: and only run the certificate audit if not
+    $is_https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || ($_SERVER['SERVER_PORT'] == 443);
+
+    if ($is_https) {
+        // The server is already secure! You can grab basic details instantly:
+        $fpa_ssl['ssl_status'] = [
+            'is_valid'     => true,
+            'is_localhost' => false,
+            'redirected' => false,
+            'error'        => null,
+            'details'      => [
+                'protocol' => $_SERVER['SSL_PROTOCOL'] ?? 'xTLSv1.3', // Native server variable
+                'cipher'   => $_SERVER['SSL_CIPHER'] ?? 'Unknown'
+            ]
+        ];
+    } else {
+        // User is on HTTP! Run the loopback audit function to check if we can redirect them
+        $ssl_audit = fpa_audit_ssl();
+
+        // Add the clean data object right into your primary reference array
+        $fpa_ssl['ssl_status'] = $ssl_audit;
+
+
+        /**
+         * check for an http: connection and redirect to https:, if possible
+         */
+        $is_http = (empty($_SERVER['HTTPS']) || $_SERVER['HTTPS'] === 'off');
+
+        if ($is_http) {
+            if ($ssl_audit['is_valid']) {
+                // Safe to redirect: A valid certificate exists, and it's not localhost!
+                $fpa_ssl['redirected'] = true;
+                $secure_url = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+                header("Location: " . $secure_url, true, 301);
+                exit();
+            } else {
+                // Enforce fallback: No cert found or on localhost.
+                // We add an alert notification straight to our UI issue queue array!
+                if (!$ssl_audit['is_localhost']) {
+                    $fpa_exception_queue[] = [
+                        'category'        => 'SSL Warning',
+                        'type'      => 'warning',
+                        'text'      => 'Insecure Connection Detected.',
+                        'solution'  => 'Your browser session is unencrypted. The system searched for a valid SSL Certificate to secure your session automatically, but encountered an error: ' . $ssl_audit['error'],
+                        'target_id' => 'notification-wrapper'
+                    ];
+                }
+            }
+        }
+
+    } // if user is_https
+
+} // end FPA_SSL_REDIRECT
+
+
+
+
+
+
 /*
  * =============================================================================
  * SECTION: FPA TROUBLESHOOTING
@@ -209,6 +367,14 @@ if (defined('FPA_DIA') && FPA_DIA) {
     ini_set('display_errors', '0');
     ini_set('display_startup_errors', '0');
 }
+
+
+
+
+
+
+
+
 
 
 
@@ -274,6 +440,7 @@ $lang = [
     // FPA statuses, results & descriptors
     'FPA_YES'               => 'Yes',
     'FPA_NO'                => 'No',
+    'FPA_NONE'              => 'None',
     'FPA_UNKNOWN'           => 'Unknown',
     'FPA_NA'                => 'N/A',
     'FPA_WARNING'           => 'Warning',
@@ -647,16 +814,19 @@ $fpa_joomla_instance = [
     'meta' => [
         'name' => 'FPA_META_INSTANCE_DIAG' // Language Key: 'Joomla Core Instance Diagnostics'
     ],
-    'found'               => $lang['FPA_NO'],
-    'installed'           => $lang['FPA_NO'],
-    'configOverride'       => false,
-    'configPath'           => $lang['FPA_UNKNOWN'],
-    'configMode'           => $lang['FPA_UNKNOWN'],
-    'configOwner'          => $lang['FPA_UNKNOWN'],
-    'configGroup'          => $lang['FPA_UNKNOWN'],
-    'configWritable'       => $lang['FPA_NO'],
-    'configWorldWritable'  => false,
-    'configOwnerConflict'   => false
+    'found'              => $lang['FPA_NO'],
+    'installed'          => $lang['FPA_NO'],
+    'config_override'     => $lang['FPA_UNKNOWN'],
+    'config_path'         => $lang['FPA_UNKNOWN'],
+    'config_writable'     => $lang['FPA_UNKNOWN'],
+    'config_world_w'      => $lang['FPA_UNKNOWN'],
+    'config_mode'         => $lang['FPA_UNKNOWN'],
+    'config_owner'        => $lang['FPA_UNKNOWN'],
+    'config_group'        => $lang['FPA_UNKNOWN'],
+    'config_owner_match'  => $lang['FPA_UNKNOWN'],
+    'readiness_grade'    => $lang['FPA_UNKNOWN'],
+    'readiness_score'    => $lang['FPA_UNKNOWN'],
+    'jconfig'             => []
 ];
 
 // --- Environment Rating Metrics (Enhances and adds to v1 Confidence Rating) ---
@@ -666,7 +836,7 @@ $fpa_environment = [
     ],
     'score'           => 100, // Starts perfect, drops as vulnerabilities are found
     'phpProcessUser'  => $lang['FPA_UNKNOWN'],
-    'umask'           => '00',
+    'umask'           => '0000',
     'sslActive'       => false,
     'displayErrors'   => false
 ];
@@ -987,12 +1157,22 @@ $fpa_reference = [
                             : (getenv('USER') ?: getenv('USERNAME')),
         'process_uid'    => function_exists('posix_getuid') ? posix_getuid() : fileowner(__FILE__),
         'process_gid'    => function_exists('posix_getgid') ? posix_getgid() : filegroup(__FILE__),
+        'disabled_functions' => ini_get('disable_functions') ?: $lang['FPA_NONE'],
     ],
     'server' => [
         'os_family'      => PHP_OS_FAMILY, // Returns "Windows", "Linux", "Darwin", etc.
+	    'os_family_short'       => strtolower(substr( PHP_OS, 0, 3)), // WIN, DAR, LIN, SOL
         'os_release'     => php_uname('r'),
-        'software'       => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown/Direct',
+        'hostname'     => function_exists('gethostname') ? gethostname() : (php_uname('n') ?: $lang['FPA_UNKNOWN']),
+        'host_ip' => gethostbyname(gethostname()),
+        'technology'     => php_uname('m'),
+        'web_server'       => $_SERVER['SERVER_SOFTWARE'] ?? $lang['FPA_UNKNOWN'],
+	'web_server_short'      => strtolower(substr( $_SERVER['SERVER_SOFTWARE'], 0, 3 )), // apa = Apache, mic = Microsoft IIS, lit = LiteSpeed etc
+    'web_server_encoding' => $_SERVER["HTTP_ACCEPT_ENCODING"],
         'umask'          => sprintf('%04o', umask()), // e.g. "0022"
+
+
+        //'site_domain' => strtolower($_SERVER['HTTP_HOST'] ?? ($_SERVER['SERVER_NAME'] ?? $lang['FPA_UNKNOWN'])),
     ],
     'environment' => [
         'max_execution'  => (int)ini_get('max_execution_time'),
@@ -1001,8 +1181,116 @@ $fpa_reference = [
     ]
 ];
 
+/**
+ * --- Get Networking Information ---
+ * collect and aggregate the network environment and infrastructure tier of the
+ * host and domain, then append it to the $fpa_reference array (above) under the
+ * $fpa_reference['site'] key
+ *
+ * @return array The compiled system network architecture identity.
+ *
+ */
+function fpa_get_network_environment(array $fpa_ref): array
+{
+    global $lang; // access the current language array
+
+    // --- Existing Network Variable Extractions ---
+    $raw_domain = $_SERVER['HTTP_HOST'] ?? ($_SERVER['SERVER_NAME'] ?? $lang['FPA_UNKNOWN']);
+    $domain_name = strtolower(strtok($raw_domain, ':'));
+    //$server_hostname = function_exists('gethostname') ? gethostname() : (php_uname('n') ?: $lang['FPA_UNKNOWN']);
+    $server_port  = isset($_SERVER['SERVER_PORT']) ? (int)$_SERVER['SERVER_PORT'] : 0;
+    $visitor_port = isset($_SERVER['REMOTE_PORT']) ? (int)$_SERVER['REMOTE_PORT'] : 0;
+    //$server_software = $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown';
+
+    // --- Attempt Proxy & Reverse Pathway Detection ---
+    $proxy_detected = 'Direct Connection';
+
+    // Scan headers for active signatures
+    if (isset($_SERVER['HTTP_CF_RAY']) || isset($_SERVER['HTTP_CF_CONNECTING_IP'])) {
+        $proxy_detected = 'Cloudflare Reverse Proxy'; // 👈 Cloudflare confirmed
+    } elseif (isset($_SERVER['HTTP_X_SUCURI_CLIENTIP'])) {
+        $proxy_detected = 'Sucuri Firewall Proxy';
+    } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR']) || isset($_SERVER['HTTP_VIA'])) {
+        $proxy_detected = 'Generic Reverse Proxy / Load Balancer';
+    }
+
+    // --- Infrastructure Tier Inference Engine ---
+    // this is a little bit of guess-work, absolutely no science involved
+    $infra_tier = 'VPS / Cloud / Dedicated (Private Node)'; // Default baseline assumption
+
+    // Check for known Shared Hosting cluster hostname structures
+    if (preg_match('/(shared|hcp|cpanel|plesk|box|cluster|grid|sgvps|unified|hostgator|bluehost|secureserver)/i', $fpa_ref['server']['hostname'])) {
+        $infra_tier = 'Shared Hosting (Inferred via Node Identity)';
+    }
+
+    // Check environment user accounts
+    // On isolated private VPS nodes, PHP often runs as 'root', 'ubuntu', 'vagrant', or 'admin'
+    // On shared platforms, users are allocated random string hashes (e.g., 'u38291aa')
+    // TODO: change to use $fpa_reference user
+    ///$system_user = function_exists('posix_getpwuid') && function_exists('posix_getuid')
+    ///               ? posix_getpwuid(posix_getuid())['name']
+    ///               : (getenv('USER') ?: 'unknown');
+
+    if ($infra_tier !== 'Shared Hosting (Inferred via Node Identity)') {
+        if (preg_match('/^(root|ubuntu|debian|centos|admin|apache|www-data)$/', $fpa_ref['php']['process_user'])) {
+             $infra_tier = 'VPS / Cloud Server Infrastructure (Dedicated OS Image)';
+        } else {
+             // Randomly generated hosting usernames imply shared isolation partitions
+             $infra_tier = 'Shared Hosting (Inferred via System Isolation User)';
+        }
+    }
+
+    // Check available execution utilities
+    // Shared environments strictly disable low-level hardware or loop control execution parameters
+    $disabled_functions = explode(',', ini_get('disable_functions') ?: '');
+    $disabled_functions = array_map('trim', $disabled_functions);
+
+    if (in_array('shell_exec', $disabled_functions) || in_array('exec', $disabled_functions)) {
+        $infra_tier = 'Shared Hosting (Confirmed via Function Disabling)';
+    }
+
+    return [
+        'domain_name'      => $domain_name,
+        'domain_ip' => gethostbyname($_SERVER['SERVER_NAME']),
+        //'server_hostname'  => $server_hostname,
+        'server_port'      => $server_port,
+        'visitor_port'     => $visitor_port,
+        'proxy_layer'      => $proxy_detected,
+        'infrastructure'   => $infra_tier,
+        //'system_user'      => $system_user,
+        //'server_software'  => $server_software
+    ];
+}
+// run the networking function and append to the $fpa_reference array, also
+// using the existing $fpa_reference keys ini [php] & [server]
+$fpa_reference['site'] = fpa_get_network_environment($fpa_reference);
 
 
+
+/*
+    $phpenv['phpVERSION'] = phpversion();
+    $system['sysPLATFUL'] = php_uname('a');
+    $system['sysPLATOS'] = php_uname('s');
+    $system['sysPLATREL'] = php_uname('r');
+    $system['sysPLATFORM'] = php_uname('v');
+    $system['sysPLATNAME'] = php_uname('n');
+    $system['sysPLATTECH'] = php_uname('m');
+    $system['sysSERVNAME'] = $_SERVER['SERVER_NAME'];
+    $system['sysSERVIP'] = gethostbyname($_SERVER['SERVER_NAME']);
+    $system['sysSERVSIG'] = $_SERVER['SERVER_SOFTWARE'];
+    $system['sysENCODING'] = $_SERVER["HTTP_ACCEPT_ENCODING"];
+    $system['sysCURRUSER'] = get_current_user(); // current process user
+    $system['sysSERVIP'] = gethostbyname($_SERVER['SERVER_NAME']);
+
+	$phpenv['phpERRORDISPLAY']  = ini_get( 'display_errors' );
+	$phpenv['phpERRORREPORT']   = ini_get( 'error_reporting' );
+	$fpa['ORIGphpMEMLIMIT']     = ini_get( 'memory_limit' );
+	$fpa['ORIGphpMAXEXECTIME']  = ini_get( 'max_execution_time' );
+	$phpenv['phpERRLOGFILE']    = ini_get( 'error_log' );
+	$system['sysSHORTOS']       = strtoupper( substr( PHP_OS, 0, 3 ) ); // WIN, DAR, LIN, SOL
+	$system['sysSHORTWEB']      = strtoupper( substr( $_SERVER['SERVER_SOFTWARE'], 0, 3 ) ); // APA = Apache, MIC = MS IIS, LIT = LiteSpeed etc
+
+*/
 
 /*
  * =============================================================================
@@ -1091,6 +1379,7 @@ if (($has_root_dirs || $has_admin_dirs) && $has_index_file) {
         'defines.php'
     ];
 
+    // Find the configuration.php loction via the defines.php
     foreach ($defines_targets as $target_file) {
         if (file_exists($target_file) && is_readable($target_file)) {
             $file_content = file_get_contents($target_file);
@@ -1165,17 +1454,31 @@ if (($has_root_dirs || $has_admin_dirs) && $has_index_file) {
         }
 
         // perform a defensive cross-check evaluation
-        $fpa_joomla_instance['config_owner_conflict'] = false;
+        $fpa_joomla_instance['config_owner_match'] = true;
 
         if ($fpa_joomla_instance['config_owner'] !== $php_process_user && $php_process_user !== 'Unknown') {
             // flag an ownership conflict alert if names do not match
-            $fpa_joomla_instance['config_owner_conflict'] = true;
+            $fpa_joomla_instance['config_owner_match'] = false;
         }
 
         // save the process user name to the array for display on the dashboard
-        $fpa_joomla_security['php_process_user'] = $php_process_user;
+        // - moved to $fpa_reference array
+        ///$fpa_joomla_security['php_process_user'] = $php_process_user;
 
     }
+}
+
+
+
+
+/*
+ * SECTION: IMPORT JOOMLA CONFIGURATION
+ */
+if ($fpa_joomla_instance['config_path'] &&
+    is_readable($fpa_joomla_instance['config_path']) &&
+    filesize($fpa_joomla_instance['config_path']) > 0) {
+    $includeconfig = require_once($fpa_joomla_instance['config_path']);
+    $fpa_joomla_instance['jconfig'] = new JConfig();
 }
 
 
@@ -1264,20 +1567,22 @@ foreach ($fpa_joomla_folders['folders'] as $path => &$details) {
 unset($details);
 
 
-
-
-// =========================================================================
-// 4. ELEVATED PERMISSIONS TESTS
-// =========================================================================
-// exits upon finding 10 folders with elevated permissions to save excessive runtime with a massive error list
+/*
+ * =========================================================================
+ * 4. ELEVATED PERMISSIONS TESTS
+ * =========================================================================
+ * Iterate through the file-system folders checking for insecure and dangerous
+ * standard and special mode permissions, exits upon finding $max_violations of
+ * folders with elevated permissions to save excessive runtime with a massive
+ * error list output
+ */
 function fpa_audit_permissions(string $base_path, array $exclude_list, array $ref): array {
 
-    // $fpa_reference
+    $fpa_elevated_permissions['folders'] = []; // output array
+    $max_violations = 20; // number of exceptions before exiting
 
-    $fpa_elevated_permissions['folders'] = [];
-    $max_violations = 20;
-
-    // 1. Identify the environment user running this PHP process (e.g. www-data)
+    // Identify the environment user running this PHP process (e.g. www-data)
+    // TODO: check if needed still, if using $ref array for comparison data
     // Fallback securely to the file owner of the script if POSIX isn't available
     //$php_user_uid = function_exists('posix_getuid') ? posix_getuid() : fileowner(__FILE__);
     $php_process_user = 'unknown';
@@ -1298,65 +1603,56 @@ function fpa_audit_permissions(string $base_path, array $exclude_list, array $re
         return [];
     }
 
-    // 2. Instantiate a recursive directory scanner
+    // Instantiate a recursive directory scanner
     $directory = new RecursiveDirectoryIterator($base_path, RecursiveDirectoryIterator::SKIP_DOTS);
     $iterator  = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::SELF_FIRST);
 
     foreach ($iterator as $item) {
-        // Enforce the execution breaker instantly if limits are reached
+        // Enforce the execution break instantly if limits are reached
         if (count($fpa_elevated_permissions['folders']) >= $max_violations) {
             break;
         }
 
         // Only scan directories
         if ($item->isDir()) {
-            ///$real_path = $item->getRealPath();
+            $real_path = $item->getRealPath();
 
-            // Resolve absolute server paths
-            ///$full_path = is_dir($raw_path) ? realpath($raw_path) : realpath($base_path . $raw_path);
-
-            // Skip entry evaluation if the directory simply does not exist on this environment
-            ///if (!$full_path || !is_dir($full_path)) {
-                // (Your missing folder handling code goes here...)
-            ///    continue;
-            ///}
-
-$real_path = $item->getRealPath();
-// Uses the existing $real_path variable safely
-$full_path = is_dir($real_path) ? realpath($real_path) : realpath($base_path . $real_path);
+            // Use the existing $real_path variable safely
+            $full_path = is_dir($real_path) ? realpath($real_path) : realpath($base_path . $real_path);
 
             // Evaluate path boundaries against the exclusions dictionary
             foreach ($exclude_list as $folder_key => $folder_data) {
                 // Combine base path with the exclusion key (e.g., "/var/www/html/" . "administrator/")
                 $clean_excluded = realpath($base_path . $folder_key);
 
-                // 👍 CORRECTED: Both variables are now perfectly aligned using lowercase snake_case
                 if ($clean_excluded && ($full_path === $clean_excluded)) {
                     continue 2; // Only skip if it is exactly the core folder itself
                 }
             }
 
-            // 3. Extract UNIX mode permissions
+            // Extract UNIX mode permissions
             $perms = $item->getPerms();
 
             /**
              * Check the Standard Modes/Permissions
              * Owner | Group | World
+             *
              */
             // Check if the folder is Owner-Writable (e.g. 2xx, 3xx, 6xx, 7xx)
             $is_owner_writable = (bool)($perms & 0x0080);
 
-            // Check if the folder is World-Writable (e.g. xx2, xx3, xx6, xx7)
-            $is_world_writable = (bool)($perms & 0x0002);
-
             // Check if the folder is Group-Writable (e.g. x2x, x3x, x6x, x7x)
             $is_group_writable = (bool)($perms & 0x0010);
+
+            // Check if the folder is World-Writable (e.g. xx2, xx3, xx6, xx7)
+            $is_world_writable = (bool)($perms & 0x0002);
 
             /**
              * Check the Special Modes/Permissions
              * 4000 = SUID
              * 2000 = SGID
              * 1000 = Sticky Bit
+             *
              */
             // If an executable file inside a folder has this bit active, it runs with the
             // privileges of the file owner (often root) rather than the user executing it.
@@ -1370,15 +1666,12 @@ $full_path = is_dir($real_path) ? realpath($real_path) : realpath($base_path . $
             // a user can only delete or rename files they personally own.
             $has_sticky_bit    = (bool)($perms & 0x0200);
 
-            // 4. Test ownership matches
+            // Test ownership matches
             $folder_owner_uid = $item->getOwner();
             $owner_match      = ($folder_owner_uid === $ref['php']['process_uid']);
-            ////$owner_match  = ($folder_owner_uid !== $fpa_reference['php']['user_uid']);
-            ///$owner_match  = ($folder_owner_uid !== $php_user_uid);
-            //$owner_match  = ($folder_owner_uid === $php_process_uid);
 
-            // 5. Audit if folder permissions cross standard 755 boundaries or set & sticky bits
-            if ($is_world_writable || $is_group_writable || $owner_match || $has_suid || $has_sgid || $has_sticky_bit) {
+            // Audit if folder permissions cross standard 755 boundaries or set & sticky bits
+            if ($is_world_writable || $is_group_writable || !$owner_match || $has_suid || $has_sgid || $has_sticky_bit) {
 
                 // Calculate the relative path by removing the basePath string
                 $relative_path = str_replace($base_path, '', $real_path). '/';
@@ -1392,8 +1685,8 @@ $full_path = is_dir($real_path) ? realpath($real_path) : realpath($base_path . $
                     'owner_match' => $owner_match,
                     'owner_uid'   => $folder_owner_uid,
                     'process_uid' => $php_process_uid,
-                    'has_suid'    => $has_suid, // Set UserID bit set
-                    'has_sgid'    => $has_sgid, // Set GroupID bit set
+                    'has_suid'    => $has_suid, // Set UserID bit
+                    'has_sgid'    => $has_sgid, // Set GroupID bit
                     'has_sticky'  => $has_sticky_bit // Sticky Bit Set
                 ];
             }
@@ -1403,24 +1696,22 @@ $full_path = is_dir($real_path) ? realpath($real_path) : realpath($base_path . $
     return $fpa_elevated_permissions['folders'];
 }
 
-// --- Dynamic Workflow Execution Example ---
-//$excludeList     = $joomlaFolders['targets'] ?? [];
-//$elevatedFolders = fpa_audit_permissions('.', $excludeList);
 
-// Extract the targets array which now holds the nested path sub-arrays
+// --- Dynamic Workflow Execution & Arguments ---
+// TODO: try to remove the need to enter the site root in the arguments
 $site_root = __DIR__;
 $exclude_list     = $fpa_joomla_folders['folders'] ?? [];
 $fpa_elevated_permissions['folders'] = fpa_audit_permissions($site_root, $exclude_list, $fpa_reference);
 
 
-// Only raise a single exceptionQueue entry if $elevatedFolders is not empty
+// Only raise a single $fpa_exception_queue entry if $fpa_elevated_permissions is NOT empty
 if (!empty($fpa_elevated_permissions['folders'])) {
     $fpa_exception_queue[] = [
         'category'    => 'Elevated Permissions',
-        'type'        => 'danger', // Bootstrap color code
+        'type'        => 'danger', // Bootstrap color code / severity: dager/warning/info
         'text'        => 'At least one folder has elevated permissions or Set bits.',
         'solution'    => 'Reset permissions or Set bits to the system default.',
-        'target_id'   => 'elevatedPermissions' // Matches the ID of the UI Panel
+        'target_id'   => 'elevatedPermissions' // Matches the ID of the desired UI Panel element
     ];
 }
 
@@ -2036,18 +2327,19 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 
         //echo '-[ ' . get_current_user() . ']-';
 
-        //echo '<pre>';
+        echo '<pre>';
+        //var_dump($fpa_reference);
         //var_dump($fpa_active_feeds);
         //var_dump($do_live_checks);
         //var_dump($fpa_latest_versions);
         //var_dump($fpa_joomla_folders);
         //var_dump($fpa_joomla_instance);
-        //var_dump($fpa_reference);
         //var_dump($fpa_exception_queue);
         //var_dump($fpa_security);
+        //var_dump($fpa_ssl);
         //var_dump($fpa_environment);
         //var_dump($fpa_elevated_permissions);
-        //echo '</pre>';
+        echo '</pre>';
         // echo $configFilePath;
 
         //echo sys_get_temp_dir();
@@ -2243,13 +2535,52 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
          * This panel provides a more detailed view the Joomla! environment elements and configuration
          */
         ?>
-        <div class="container pt-5 mb-3">
+        <div id="applicationDiscovery" class="container pt-5 mb-3">
 
             <h2 class="border-bottom border-secondary p-2">
                 <i class="bi bi-pc-display text-secondary"></i> Discovery Report
             </h2>
 
-        </div>
+            <div id="instanceDiscovery" class="row g-4 d-md-flex align-items-md-stretch mt-2">
+
+                <div class="col-12 col-sm-12 Xcol-md-5 col-lg-3 d-flex flex-column Xjustify-content-center">
+                    instanceDiscovery text
+                </div>
+                <div class="col-12 col-sm-12 Xcol-md-7 col-lg-9">
+
+                    <div class="card w-100 h-100">
+                        <div class="card-header">
+                            instanceDiscovery content
+                        </div>
+                        <div class="card-body">
+                            body text
+                        </div>
+                    </div>
+
+                </div>
+
+                </div>
+                <div id="configDiscovery" class="row g-4 d-md-flex align-items-md-stretch mt-2">
+
+                <div class="col-12 col-sm-12 Xcol-md-5 col-lg-3 d-flex flex-column Xjustify-content-center">
+                    configDiscovery text
+                </div>
+                <div class="col-12 col-sm-12 Xcol-md-7 col-lg-9">
+
+                    <div class="card w-100 h-100">
+                        <div class="card-header">
+                            configeDiscovery content
+                        </div>
+                        <div class="card-body">
+                            body text
+                        </div>
+                    </div>
+
+                </div>
+
+            </div><!-- /row -->
+
+        </div><!-- /container #discoveryReport -->
 
 
 
@@ -2308,7 +2639,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                             <span class="fw-bold"><?php echo htmlspecialchars($fpa_joomla_folders['meta']['name']); ?></span> <?php echo htmlspecialchars($lang['FPA_SUMMARY']); ?>
                         </h3>
                         <p class="text-secondary Xsmall Xmb-0">
-                            <?php echo $fpa_readiness_summary; ?>
+                            Joomla! required folders audit, including prescence, ownership, prescence, standard and permission (mode) exception report displays up to 10 folders not conforming to normal or excepted sane standard and special permissions.
                         </p>
 
                         <button type="button" class="btn btn-outline-secondary btn-sm Xmb-3 Xms-auto" id="toggle_corefolders_btn" data-fpa-toggle="corefolders">
@@ -2900,6 +3231,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
          *
          * Usage:
          * select light, dark, auto from navbar icon dropdown
+         *
          */
         (() => {
             'use strict'
@@ -3026,6 +3358,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
          *
          * Usage:
          * add standard bootstrap tooltip & popover options to an element
+         *
          */
         document.addEventListener('DOMContentLoaded', () => {
             // select and initialise all tooltips

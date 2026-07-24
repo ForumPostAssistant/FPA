@@ -31,6 +31,6 @@ composer.lock export-ignore
 package.json export-ignore
 
 # Exclude testing environments (adjust paths if your folders are named differently)
-/simulation-datasets/ export-ignore
+/fpa-simulation-datasets/ export-ignore
 /tests/ export-ignore
 phpunit.xml export-ignore

@@ -1,101 +1,124 @@
 <?php
 /**
- * English (en-GB) HTML5 page shell for Forum Post Assistant.
+ * Forum Post Assistant v2.x (FPA) — Executive Environment Diagnostic Engine.
  *
- * Application foreword and notes
- * -----------------------------
- * As you may have noticed, the FPA is quite a large standalone PHP application and a unique diagnostic tool to assist
- * forum support staff in troubleshooting end-user Joomla! issues and errors. It enables less technical users to view
- * and produce consistent technical information regarding their server, application, and instance, saving time and reducing
- * frustration for both parties. As such, many of its methods could be construed as breaking traditional conventions and
- * norms. Where possible, we try to maintain up-to-date best practices, but by its very nature, old or non-standard
- * practices, formatting, and methods may occasionally be employed to ensure backward compatibility and functionality.
+ * Compliance Layer: PER 3.0 / PSR-12 Clean Procedural Paradigm.
  *
- * Code standards & best practices
- * -------------------------------
- * 1.  PHP: This application is written in adherence to modern PHP standards:
- *          - PSR-1 (Basic Coding Standard Baseline Guidelines)
- *          - PSR-12 / PER 3.0 (PHP Coding Standards Evolution Layer)
- *          All internal logic structures, trailing spaces, function definitions,
- *          array shorthand layout structures, and type-hint naming schemas conform
- *          to universal modern PHP-FIG specifications.
- * 2.  PHP: Minimum 7.4; stay compatible with current stable PHP releases. Use syntax and APIs supported in 7.4 unless
- *     the documented minimum is raised.
- * 3.  PHP: strict_types. In an effort to produce cleaner and more robust runtime code, we have implemented this PHP
- *     directive. PHP now enforces strict data type matching for function arguments and return values. Type juggling
- *     (automatic type casting) is disabled, forcing the engine to throw a TypeError if a value does not exactly
- *     match the declared type hint. Watch your single and double quoting, as well as strict boolean expressions.
- * 4.  HTML: W3C valid HTML5 structure.
- * 5.  HTML: Attribute Ordering. While this offers no performance gain, our preferred hierarchy is:
- *     id, class, name, src, type, aria, data/content
- * 6.  CSS: Modern CSS (Level 3 modules and newer where appropriate).
- * 7.  JavaScript & Assets: Vanilla JS (ES6+ preferred). Remote CDNs are permitted for performance, but
- *     visual UI layouts must fail gracefully to semantic unstyled text if an internet connection is unavailable.
- * 8.  Security: Never output raw passwords, hashes, or secret keys. All sensitive system paths must be masked.
- * 9.  Error Handling: Wrap environment-sensitive diagnostics in try/catch blocks to ensure graceful degradation.
- * 10. Defensive Programming: Due to the nature of the FPA operating in differing, unknown, and potentially problematic
- *     environments, we operate on the Defensive Programming principle of assuming that anything that can go wrong will
- *     go wrong. Therefore, where possible, pre-fill elements with defaults, validate return data before using, and create
- *     routines that fail gracefully rather than crashing catastrophically.
- * 11. Report-By-Exception (RBE): Where feasible and sensible, display or report only exceptions/errors/issues instead
- *     of long lists of good/pass/success results. If all results are good, then simply display a single message reflecting
- *     this status.
- * 12. Internationalisation: All UI text must utilise the core translation arrays; do not hardcode text strings directly
- *     into the DOM.
- * 13. Accessibility: Endeavor to adhere to WCAG 2.1 Level AA guidelines.
- * 14. Commenting: In an effort to improve maintainability, DOM cleanliness, performance, and security, we comment
- *     extensively. While HTML comments are acceptable, PHP/JS comment styles are preferred for larger blocks as
- *     they are stripped out at execution and are not visible in the frontend at runtime.
- * 15. Logical Separation: Even though it is one file, maintain a strict logical separation. Structural logic, utility
- *     functions, configuration, and data processing arrays sit at the top of the file. The visual UI/HTML rendering
- *     sections sit at the bottom.
- * 16. Namespace Simulation: To avoid variable or function name collisions, prefix all global helper functions, classes,
- *     and global variables with fpa_ (e.g., fpa_get_server_info()).
- * 17. Naming Conventions (Case Style): To maximize readability for non-professional developers, volunteer contributors,
- *     and non-native English speakers, all global variables, tracking arrays, and freestanding helper functions must
- *     strictly utilise lowercase snake_case (e.g., $fpa_system_reference, $fpa_issue_queue). This reduces capitalisation
- *     typos, lowers cognitive load, and maintains a uniform file style.
+ * APPLICATION FOREWORD & DEPLOYMENT PARADIGM
+ * -----------------------------------------
+ * The FPA is a self-contained, single-file environment auditor that assists
+ * support personnel when they troubleshoot infrastructure dependencies. It
+ * allows non-technical operators to capture and output standard server and
+ * application metrics. This process minimises diagnostic overhead.
  *
- * Target environment: Joomla! CMS sites on PHP 7.4 or newer (all known Joomla! versions (from v3.9.13) meeting that requirement).
- * Contributors include RussW, PhilD13, mandville, frostmakk, sozzled, Webdongle, and btoplak.
+ * Because this script is monolithic, certain architectural procedures diverge
+ * from standard multi-file framework norms. The system balances backward
+ * compatibility constraints with modern defensive execution practices to ensure
+ * fallback security across diverse hosting environments.
  *
- * @package Joomla!
+ * CODE STANDARDS & INFRASTRUCTURE MANDATES
+ * ----------------------------------------
+ * 1. PHP Compliance: The code adheres strictly to FIG formatting rules:
+ * - PSR-1: Basic Coding Standard Common Baseline Parameters.
+ * - PER 3.0 / PSR-12: Structural Layout Standards Layer.
+ * All functional braced blocks, parameter schemas, and indentation patterns
+ * conform natively to universal modern PHP engineering specifications.
+ *
+ * 2. Global Scope Architecture: The application operates entirely within the
+ * native global workspace. This design eliminates the complex overhead of
+ * namespace sandboxing, which ensures that runtime configuration variables
+ * remain simple and compatible.
+ *
+ * 3. PHP Environment Target: The minimum baseline runtime is PHP 7.4. The
+ * script maintains full operational stability across all modern stable
+ * releases. It restricts syntax features to native PHP 7.4 APIs unless the
+ * global system execution floor is explicitly incremented.
+ *
+ * 4. PHP Type Rigor: The script enforces strict data-type matching via the
+ * directive declare(strict_types=1). It disables automatic type juggling
+ * across all internal function signatures and return paths to eliminate
+ * unexpected logic side effects.
+ *
+ * 5. HTML Structural Validity: The script outputs valid, semantic W3C HTML5
+ * markup blocks.
+ *
+ * 6. HTML Attribute Hierarchy: The layout uses a standardised ordering grid:
+ * id -> class -> name -> src -> type -> aria -> data-* / content
+ *
+ * 7. CSS Architecture: The design leverages modern, responsive Bootstrap 5
+ * utility modules.
+ *
+ * 8. JavaScript Layer: The tool implements native, non-intrusive Vanilla JS
+ * (ES6+) blocks. Assets must fail gracefully to semantic, unstyled,
+ * high-contrast text paths if firewalls block external Content Delivery
+ * Networks (CDNs).
+ *
+ * 9. Security Hardening: The system never outputs plain passwords,
+ * cryptographic hashes, or private keys. The application masks all internal
+ * sensitive directory paths.
+ *
+ * 10. Fault Isolation: The architecture wraps external network and file I/O
+ * operations inside try/catch blocks to ensure graceful degradation.
+ *
+ * 11. Defensive Engineering: The script assumes that host environments are
+ * inherently unstable. It pre-fills variables with immutable fallbacks and
+ * validates arrays before execution to prevent catastrophic script crashes.
+ *
+ * 12. Report-By-Exception (RBE): The engine prioritises high-utility,
+ * actionable risk logs. It hides successful checks inside summary dashboard
+ * metrics cards and highlights only operational threshold or configuration
+ * compliance failures.
+ *
+ * 13. Internationalisation (i18n): The script translates all interface text
+ * elements via centralised $lang dictionaries. Hardcoded DOM strings are
+ * prohibited.
+ *
+ * 14. Accessibility (a11y): The application targets strict compliance with
+ * Web Content Accessibility Guidelines (WCAG) 2.1 Level AA parameters.
+ *
+ * 15. Code Documentation: Internal developer guidance must use PHP/JS comment
+ * blocks (//, /*, /**) so that the engine strips annotations at execution
+ * time. This keeps the runtime DOM footprint lean and hidden from public view.
+ *
+ * 16. Logical Separation: The script enforces strict layout boundaries within
+ * the file. Configuration constants, utilities, and processing arrays occupy
+ * the top section. Frontend HTML presentation layout views are isolated at the
+ * bottom.
+ *
+ * 17. Unique Naming Conventions: To guarantee that zero collision errors
+ * occur across the global environment space, all variables, arrays, and
+ * functions utilize the explicit structural lowercase snake_case prefix
+ * signature: fpa_
+ *
+ * 18. AI-Assisted Code: Developers must human-verify all AI-generated code. This
+ * review ensures that all contributions maintain GPL-2.0-or-later licensing
+ * integrity. Human review also enforces accountability for code correctness,
+ * performance, and security.
+ *
+ * Target Environment: Joomla! CMS deployments on PHP 7.4 or newer. It supports
+ * all core releases from version 3.9.13 that satisfy this hosting baseline.
+ *
+ * @package    Joomla!
  * @subpackage ForumPostAssistant
- * @category DiagnosticTools
- * @since 2.0.0
- * @version 2.0.0-alpha.1
- * @license GPL-2.0-or-later https://gnu.org
- * @copyright Copyright (c) 2011-2026 Forum Post Assistant
- * @author RussW
- * @author PhilD13
- * @link https://github.com Project website
- * @see https://github.io Further documentation
- * @see docs/accessibility.md WCAG 2.1 Level AA guidelines
- *
+ * @category   DiagnosticTools
+ * @since      2.0.0
+ * @version    2.0.0-alpha.1
+ * @license    GPL-2.0-or-later https://gnu.org
+ * @copyright  Copyright (c) 2011-2026 Forum Post Assistant
+ * @author     RussW, PhilD13, mandville, frostmakk, sozzled, Webdongle, btoplak
+ * @link       https://github.com Project Website
+ * @see        https://forumpostassistant.github.io/docs/ Documentation Manual
+ * @see        docs/accessibility.md Accessibility Compliance Logs
  */
 declare(strict_types = 1);
 
-namespace ForumPostAssistant;
-
-// TEMPORARY COMPILER UNMASKER
-\ini_set('display_errors', '1');
-\ini_set('display_startup_errors', '1');
-\error_reporting(\E_ALL);
-
-// Import global objects
-use Throwable;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-
-
 /*
  * =============================================================================
- * SECTION: SECURITY
+ * SECTION: BASIC SECURITY
  * =============================================================================
  * The following items are primarily concerned with securing the FPA and it's
  * output as much as humanly possible whilst maintaining it's functionality and
  * flexibility for the greater end-user base.
- *
  */
 // Generate a runtime cryptographic nonce for secure inline execution checks
 $fpa_nonce = bin2hex(random_bytes(16));
@@ -118,12 +141,44 @@ if (!headers_sent()) {
     header("Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-{$fpa_nonce}' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src-elem 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self' https://cdn.jsdelivr.net; form-action 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none';");
     ///header("Content-Security-Policy: default-src 'self'; script-src 'self' 'nonce-{$fpa_nonce}' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; img-src 'self' data:; connect-src 'self' https://cdn.jsdelivr.net; frame-ancestors 'none';");
 }
+// =============================================================================
+//  END SECTION: BASIC SECURITY
+// =============================================================================
 
-// Reset PHP OPCache to avoid observing delayed changed data during troubleshooting
-// otherwise on aggressively cached servers it can take 3-5 minutes to see changes
+
+/*
+ * =============================================================================
+ * SECTION: CACHE & ENVIRONMENT MANAGEMENT
+ * =============================================================================
+ * Attempt to reset or clear any caching (if available) on every run to avoid
+ * observing misleading delayed changed data after users may have applied an issue
+ * resolution. On aggressively cached servers it can take up to 3-5
+ * minutes to see changes or updates.
+ */
+// Force fresh file system, size, permission, and symlink details
+clearstatcache(true);
+
+// Disable PHP's internal realpath caching for this execution
+ini_set('realpath_cache_size', '0B');
+
+// Reset OPcache to ensure fresh script execution state
 if (function_exists('opcache_reset')) {
-    \opcache_reset();
+    opcache_reset();
 }
+
+// Force immediate output delivery (bypass web server buffers)
+while (ob_get_level() > 0) {
+    ob_end_clean();
+}
+ob_implicit_flush(1);
+
+// Trigger garbage collection to clear memory loops
+if (function_exists('gc_collect_cycles')) {
+    gc_collect_cycles();
+}
+// =============================================================================
+//  END SECTION: CACHE AND ENVIRONMENT MANAGEMENT
+// =============================================================================
 
 
 /*
@@ -132,43 +187,60 @@ if (function_exists('opcache_reset')) {
  * =============================================================================
  *
  * Special Notes
- * Live Checks: make use of constant arrays in order to be able to configure multiple immutable data elements, allowing
- * for less complex determination of the $doLiveChecks (which checks can be achieved) routine and the later getRemoteData
- * multi_cURL dataa retrival function. (I know it sounds more complex, but you'll get it when you see the doLiveCheck and
- * cURL routines)
+ * Live Checks: make use of constant arrays in order to be able to configure multiple
+ * immutable data elements, allowing for less complex determination of the
+ * $doLiveChecks (which checks can be achieved) routine and the later
+ * get_remote_data multi_cURL data retrival function. (I know it sounds more complex,
+ * but you'll get it when you see the do_live_checks and cURL routines).
  *
- * FPA v1 maintainters, please note; the configuration and language strings have changed tremendously in an attempt to
- * address the previous FPA architecural design configuration and translation limitions and performance. Default FPA strings
- * are defined at runtime, configuration elements are now compile time constants and language strings are now a $lang array.
- *
+ * FPA v1 maintainters: Please note; the configuration and language strings have
+ * changed tremendously in an attempt to address the previous FPA architecural
+ * design configuration and translation limitions and performance. Default FPA
+ * strings are defined at runtime, configuration elements are now compile time
+ * constants and language strings are now a $lang array.
  */
-// --- fpa & Joomla! parent flag and constants ---
-define (__NAMESPACE__ . '\\FPA_VERSION', '2.0.0-alpha.1');
-define (__NAMESPACE__ . '\\FPA_CODENAME', 'Wasabi');
-define (__NAMESPACE__ . '\\FPA_LAST_UPDATED', 'June-2026');
-define (__NAMESPACE__ . '\\FPA_COPYRIGHT_STMT', ' Copyright &copy; 2011-'. date("Y").  ' Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen.');
-define (__NAMESPACE__ . '\\FPA_SELF', basename(__FILE__));  // take in to account renamed FPA, ensure all local links still work
 
+/*
+ * =============================================================================
+ *  GLOBAL APPLICATION VERSION CONFIGURATIONS
+ * =============================================================================
+ */
+define('FPA_VERSION', '2.0.0-alpha.1');
+define('FPA_CODENAME', 'Wasabi');
+define('FPA_LAST_UPDATED', 'June-2026');
+define('FPA_COPYRIGHT_STMT', 'Copyright &copy; 2011-2026 Russell Winter, Phil DeGruy, Bernard Toplak, Claire Mandville, Sveinung Larsen.');
+define('FPA_SELF', basename(__FILE__));
 // use this shortcut url to reduce link clutter and self-referencing URL code injection attacks
 $fpa_self_url = htmlspecialchars(FPA_SELF, ENT_QUOTES, 'UTF-8');
-
-// joomla parent flags
-define ('_VALID_MOS', 1); // for J!1.0
-define ('_JEXEC', 1);     // for J!1.5, >= J!1.6
-
 // =============================================================================
-//  GLOBAL FPA DEVELOPMENT CONFIGURATION
+
+/*
+ * =============================================================================
+ *  JOOMLA PARENT FLAGS
+ * =============================================================================
+ */
+define('_VALID_MOS', 1); // Legacy - for J!1.0 thru' J!1.4
+define('_JEXEC', 1);     // for >= J!1.5
 // =============================================================================
-define(__NAMESPACE__ . '\\FPA_DEV', false); // true = Enables backend array print_r debug logs
-define(__NAMESPACE__ . '\\FPA_DIA', false); // true = Enforces local ini_set php error profiling
-define(__NAMESPACE__ . '\\FPA_SIM', true);  // true = Activates mock dataset injection pipelines,
+
+
+/*
+ * =============================================================================
+ *  GLOBAL FPA DEVELOPMENT & DIAGNOSTIC CONFIGURATION
+ * =============================================================================
+ */
+define('FPA_DEV', true); // true = Enables backend array print_r & debug logs
+define('FPA_DIA', false); // true = Enforces local ini_set php error profiling
+define('FPA_SIM', true);  // true = Activates mock dataset injection pipelines,
                          // dataset selection below master runner function.
 // =============================================================================
 
 
-// =============================================================================
-//  GLOBAL FPA APPLICATION FEATURE CONFIGURATION
-// =============================================================================
+/*
+ * =============================================================================
+ *  GLOBAL FPA APPLICATION FEATURE CONFIGURATION
+ * =============================================================================
+ */
 const FPA_SELF_DESTRUCT     = true;  // self-destruct, attempts to self-delete on next run if file older than configured duration
 const FPA_SELF_DESTRUCT_AGE = 3;     // self-destruct filetime age duration
 const FPA_SSL_REDIRECT      = false; // SSL Redirect - when possible and if a valid SSL certificate is found FPA attempts to redirect to the SSL version of the site
@@ -220,17 +292,29 @@ const FPA_LIVE_CHECK_VEL = [
  * http: environment is detected and a valid certificate is available we'll
  * redirect to the https: site instead.
  */
+// =============================================================================
+//  END SECTION: SSL DETECTION & AUTO REDIRECT
+// =============================================================================
 
 
 /*
  * =============================================================================
- * SECTION: FPA TROUBLESHOOTING
+ * SECTION: FPA DEVELOPER & TROUBLESHOOTING UTILITIES
  * =============================================================================
- * Internal FPA diagnostic, error display and logging
- * if enabled in the FPA Configuration, attempt verbose localised php & diagnostic
- * output to stdout and to an fpa logfile
+ * Diagnostic and Developer utilities enabling on-screen FPA error and
+ * troubleshooting tools, data export facility for simulator end-user and
+ * edge-case data collection.
  */
-if (defined(__NAMESPACE__ . '\\FPA_DIA') && \ForumPostAssistant\FPA_DIA) {
+
+/*
+ * =============================================================================
+ * DEVELOPER UTILITY: DIAGNOSTIC & LOGGING
+ * =============================================================================
+ * Internal FPA diagnostic, error display and logging. If enabled in the FPA
+ * Configuration, attempt verbose localised php & diagnostic output to stdout
+ * and to an fpa logfile
+ */
+if (defined('FPA_DIA') && FPA_DIA) {
     error_reporting(E_ALL);
     ini_set('display_errors', '1');
     ini_set('display_startup_errors', '1');
@@ -251,7 +335,9 @@ if (defined(__NAMESPACE__ . '\\FPA_DIA') && \ForumPostAssistant\FPA_DIA) {
     ini_set('display_errors', '0');
     ini_set('display_startup_errors', '0');
 }
-
+// =============================================================================
+//  END SECTION: FPA DEVELOPER & TROUBLESHOOTING UTILITIES
+// =============================================================================
 
 /*
  * =============================================================================
@@ -264,16 +350,24 @@ if (session_status() === PHP_SESSION_NONE) {
     session_cache_limiter('nocache');
     session_start();
 }
+// =============================================================================
+//  END SECTION: PHP SESSION MANAGEMENT
+// =============================================================================
 
 
-/**
+/*
+ * =============================================================================
+ * SECTION: FPA UTILITIES
+ * =============================================================================
+ */
+
+/*
  * Privacy Switch Setting & Redaction.
  * Automagically reloads the page upon privacy setting change, redacting any
  * privacy enabled elements.
  *
  * USAGE:
  * echo $_SESSION['privacy_enabled'] ? '<span class="privacy-mask">[ ' . $lang['FPA_REDACTED'] . ' ]</span>' : $someDataArray['some_element'];
- *
  */
 // Default layout setting if no choice has been made yet
 if (!isset($_SESSION['privacy_enabled'])) {
@@ -291,19 +385,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['privacy_ajax'])) {
 
 // Value to render the switch graphic in its proper initial position on reload
 $is_privacy_checked = $_SESSION['privacy_enabled'] ? 'checked' : '';
+// end: privacy evaluation
+
+// =============================================================================
+//  END SECTION: FPA UTILITIES
+// =============================================================================
 
 
 /**
  * =============================================================================
- * SECTION: LANGUAGE STRINGS & TRANSLATIONS
+ * SECTION: LANGUAGE STRINGS, TRANSLATIONS & BROWSER LANGUAGE DETECTION
  * =============================================================================
  * Default (en-GB) language array (well, kinda Australian English actually!)
- * any translated strings will be overwritten by remote internationalisation
+ * Any translated strings will be overwritten by remote internationalisation
  * files once a language is determinded from the browser.
  *
  * @var array<string, string> $lang Associative array mapping localisation keys to English text.
  */
-// --- default en-GB language strings ---
+// --- Default en-GB language strings ---
 $lang = [
     // FPA Core
     'FPA_THISLANG'          => 'en-GB',
@@ -369,6 +468,9 @@ $lang = [
     'FPA_TXT_EXCEPTION'             => 'Exception',
     'FPA_TXT_ASSESSMENT'             => 'Assessment',
 
+    // FPA Native Strings
+    'FPA_TITLE_DEBUG_NODE'           => 'Debug Node',
+    'FPA_BTN_EXPORT_SIM_FILE'     => 'Export Simulation File',
     // FPA titles, headings, Labels, meta & descriptions
     'FPA_META_VERSIONS'            => 'Live Version Status',  // OLD
     'FPA_META_APP_VERSIONS'        => 'Application Versions', // OLD
@@ -386,10 +488,8 @@ $lang = [
     'FPA_META_TITLE_REF'        => 'Reference Data',
 
     'FPA_META_CORE_FOLDERS'        => 'Core Folders',  // OLD
-    'FPA_META_TITLE_CORE_FOLDERS'        => 'Core Folders',
     'FPA_META_FOLDER_PERMS'        => 'Permissions', // OLD
-    'FPA_META_TITLE_FOLDER_PERMS'        => 'Permissions',
-    'FPA_HEADING_PERMISSIONS'      => 'Permissions Report',
+
     //'FPA_LANG_CORE_DIRS'           => 'Joomla Core Directories',
 
     'FPA_META_TITLE_PHP_DISCOVERY'               => 'PHP Discovery',
@@ -399,6 +499,12 @@ $lang = [
     'FPA_LABEL_PHP_LOADED_EXTENSIONS'               => 'Loaded Extensions',
     'FPA_LABEL_PHP_INI_SETTINGS'               => 'ini Settings',  // OLD
     'FPA_SUB_TITLE_PHP_INI_SETTINGS'               => 'PHP ini Settings',  // OLD
+
+    'FPA_META_TITLE_CORE_FOLDERS'        => 'Core Folders',
+    'FPA_META_TITLE_FOLDER_PERMS'        => 'Permissions',
+    'FPA_HEADING_PERMISSIONS'      => 'Permissions Report',
+    'FPA_WARNING_GROUP_WRITE'           => 'Warning: This directory allows write access to any user inside the server Group. If you are on a standard shared host, this is insecure and should be changed to 0755. If your site runs inside an isolated cloud cluster or container (such as AWS or Docker) where group membership is strictly managed, this layout is acceptable.',
+    'FPA_CRITICAL_WORLD_WRITE'              =>'Critical Danger: This directory is set to 0777 (World-Writable). Any script running on the server can execute code or inject files here. Change this permission structure immediately to 0755 via FTP or your hosting control panel.',
 
     'FPA_LABEL_FPA'                => 'Forum Post Assistant',
     'FPA_LABEL_JOOMLA'             => 'Joomla! Core',
@@ -567,7 +673,7 @@ if ($browser_lang !== 'en-GB') {
             }
         }
         // END: CODE/PAYLOAD HARDENING INTEGRITY LAYER
-    }
+    } // end: foreach (language file targets)
 
     // If we have a valid local cache file verified by our queue loop, load and merge it in to $lang array
     if ($fetched_successfully && $local_cache_file !== null && file_exists($local_cache_file)) {
@@ -576,13 +682,16 @@ if ($browser_lang !== 'en-GB') {
         if (is_array($overrides)) {
             $lang = array_replace($lang, $overrides);
         }
-    }
-}
+    } // end: if (cached version available)
+} // end: browser language detection
+// =============================================================================
+// END SECTION: LANGUAGE STRINGS, TRANSLATIONS & BROWSER LANGUAGE DETECTION
+// =============================================================================
 
 
 /*
  * =============================================================================
- *  SECTION: CORE SYSTEM UTILITIES & AUXILIARY HELPERS
+ *  SECTION: CORE UTILITY & AUXILIARY HELPERS
  * =============================================================================
  *  COMPLIANCE LAYER: PSR-1 / PER 3.0 Standard Functional Architecture
  *
@@ -597,7 +706,7 @@ if ($browser_lang !== 'en-GB') {
  */
 
 /**
- * CORE HELPER: Converts PHP ini shorthand notation strings (e.g. '256M', '1G')
+ * UTILITY HELPER: Converts PHP ini shorthand notation strings (e.g. '256M', '1G')
  * into raw integers (bytes).
  *
  * @param string $value The raw shorthand string from ini settings
@@ -624,7 +733,7 @@ function fpa_convert_to_bytes_helper(string $value): int {
 } // end: fpa_convert_to_bytes_helper()
 
 /**
- * CORE HELPER: Formats raw integer bytes into a clean, human-readable data size string.
+ * UTILITY HELPER: Formats raw integer bytes into a clean, human-readable data size string.
  *
  * @param int $bytes The raw number of bytes in memory
  * @return string The formatted output string (e.g. '15.42 MB')
@@ -809,24 +918,125 @@ function fpa_is_localhost_helper(array $fpa_results): bool {
 } // end: fpa_is_localhost_helper()
 
 /**
- * UTILITY HELPER: Verifies if the underlying hosting infrastructure is running a
- * Microsoft Windows architecture.
+ * UTILITY HELPER: Verifies if the underlying hosting infrastructure is running
+ * a native Microsoft Windows architecture.
  *
  * @param array $fpa_results The current working master array data structure
  * @return bool True if Windows ecosystem detected, false if Linux/Unix/Darwin
  */
 function fpa_is_windows_helper(array $fpa_results): bool {
-    $family = strtoupper($fpa_results['ref']['data']['server']['os_family'] ?? PHP_OS_FAMILY);
-    return (strpos($family, 'WIN') !== false);
+    // Read directly from the immutable, native PHP environment constant
+    $family = strtoupper(PHP_OS_FAMILY);
+
+    // Explicitly lock down the check to the definitive 'WINDOWS' token string
+    if ($family === 'WINDOWS') {
+        return true;
+    }
+
+    // Secondary fallback validation layer targeting the raw OS name string
+    $os_name = strtoupper(substr(PHP_OS, 0, 3));
+    return ($os_name === 'WIN');
 } // end: fpa_is_windows_helper()
+
+/**
+ * UTILITY HELPER: Recursively crawls the file structure from a base path
+ * downwards to gather a flat list of all subdirectory pathways.
+ * Called internally by optional filesystem audit modules.
+ *
+ * @param string $base_path The absolute starting directory path string
+ * @return array Flat sequential list of all discovered absolute folder paths
+ */
+function fpa_glob_recursive_utility(string $base_path): array {
+    $directories = [];
+
+    // Defensive check: abort instantly if the folder is unreadable
+    if (!file_exists($base_path) || !is_readable($base_path)) {
+        return $directories;
+    }
+
+    try {
+        // Core native directory iterators are the fastest way to crawl trees
+        $dir_iterator = new RecursiveDirectoryIterator(
+            $base_path,
+            RecursiveDirectoryIterator::SKIP_DOTS
+        );
+
+        $iterator = new RecursiveIteratorIterator(
+            $dir_iterator,
+            RecursiveIteratorIterator::SELF_FIRST
+        );
+
+        foreach ($iterator as $item) {
+            if ($item->isDir()) {
+                $directories[] = $item->getRealPath();
+            }
+        }
+    } catch (Throwable $e) {
+        // Fail gracefully to an empty array if permissions block the iterator
+        return $directories;
+    }
+
+    return $directories;
+} // fpa_glob_recurive_utility()
+
+// TODO: REVIEW AND DECIDE WHETHER TO USE THIS TO REMOVE ALL THE TEXT
+// DEFENSIVE STRINGS IN LOGIC
+/**
+ * DEFENSIVE UTILITY: Looks up localized text from the global array,
+ * returning a standardized fallback block if the string key is missing.
+ *
+ * @param array $lang The active global translation dictionary
+ * @param string $key The target dictionary pointer string to fetch
+ * @return string The translated output or a structured language error notice
+ */
+function fpa_translate(array $lang, string $key): string {
+    if (isset($lang[$key]) && $lang[$key] !== '') {
+        return $lang[$key];
+    }
+
+    // Enforces strict visual conformity across all missing string scenarios
+    return '[MISSING_STRING: ' . htmlspecialchars($key) . ']';
+} // fpa_translate()
+
+/**
+ * UTILITY HELPER: Sorts the issue queue dynamically by technical severity weight.
+ * Ensures that critical danger blocks bubble to the absolute top of the user
+ * interface layout, followed by warnings, and then informational notes.
+ *
+ * @param array $rows The raw, sequential issue queue rows collection to sort
+ * @return array The triaged issue queue array ordered by high-priority severity
+ */
+function fpa_triage_issue_queue(array $rows): array {
+    // Severity Wieight Map: Define static priorities using integers.
+    // Assigning a higher integer ensures the status bubbles to the top.
+    $severity_weights = [
+        'danger'  => 3,
+        'warning' => 2,
+        'info'    => 1
+    ];
+
+    // Execute native binary comparison sorting pass
+    \usort($rows, function (array $a, array $b) use ($severity_weights): int {
+        $type_a = $a['type'] ?? 'info';
+        $type_b = $b['type'] ?? 'info';
+
+        $weight_a = $severity_weights[$type_a] ?? 0;
+        $weight_b = $severity_weights[$type_b] ?? 0;
+
+        // Use the native spaceship operator for rapid descending order sorting
+        return $weight_b <=> $weight_a;
+    });
+
+    return $rows;
+}
 // =============================================================================
-//  END SECTION: CORE SYSTEM UTILITIES & AUXILIARY HELPERS
+//  END SECTION: CORE UTILITY & AUXILIARY HELPERS
 // =============================================================================
 
 
 /*
  * =============================================================================
- *  SECTION: RUNTIME DIAGNOSTIC LIFE-CYCLE CORES
+ *  SECTION: RUNTIME DIAGNOSTIC LIFE-CYCLE CORE FUNCTIONS
  * =============================================================================
  *  COMPLIANCE LAYER: PSR-1 / PER 3.0 Standard Functional Architecture
  *
@@ -863,7 +1073,7 @@ function fpa_is_windows_helper(array $fpa_results): bool {
 
 /**
  * --- Joomla Instance Audit ---
- * Audits the local directory for an active Joomla installation.
+ * Mandatory Routine: Audits the local directory for an active Joomla installation.
  * Locates configuration.php, extracts system settings, and captures comparative metadata.
  *
  * @return array{
@@ -875,7 +1085,7 @@ function fpa_is_windows_helper(array $fpa_results): bool {
  *   instance_label: string
  * } Returns a structured layout mapping the active site instance properties.
  */
-function fpa_do_instance(): array {
+function fpa_do_jinstance(): array {
 
     /*
     // Core Structure Check: Maintain legacy structural validation blocks
@@ -992,23 +1202,26 @@ function fpa_do_instance(): array {
 
     // TEMPORARY FIX: Returns a blank array to satisfy the typehint requirement
     return [];
-}
+} // end: foa_do_jinstance
 
-// --- Core Folders Audit ---
-// Audit the required Joomla folders for presence, sane and functional modesets,
-// including special & standard permissions and ownership.
+/**
+ * TODO: MAY BE REPLACED BY A DUAL PURPOSE PERMISSIONS FUNCTION
+ * --- Core Folders Audit ---
+ * Mandatory Routine: Audit the required Joomla folders for presence, sane and functional modesets,
+ * including special & standard permissions and ownership.
+ */
+/* REPLACED
 function fpa_do_corefolders(): array {
 
     // TEMPORARY FIX: Returns a blank array to satisfy the typehint requirement
     return [];
-}
+} // end: fpa_do_corefolders()
+*/
 
 /**
  * --- httpserver Discovery Audit ---
- * Audits the active web server software architecture ecosystem.
+ * Mandatory Routine: Audits the active web server software architecture ecosystem.
  * Normalizes technology signatures and aggregates advanced server-specific data assets.
- *
- * This is a mandatory baseline check.
  *
  * @param array $lang The global translation dictionary
  * @return array Presentation dataset tracking web server infrastructure properties
@@ -1179,8 +1392,10 @@ function fpa_do_httpserver(array $lang): array {
     ];
 } // end: fpa_do_httpserver()
 
-// --- Database-server Discovery Audit ---
-// Discover the database-server configuration and setup.
+/**
+ * --- Database-server Discovery Audit ---
+ * Mandatory Routine: Discover the database-server configuration and setup.
+ */
 function fpa_do_database(): array {
 
     // TEMPORARY FIX: Returns a blank array to satisfy the typehint requirement
@@ -1189,10 +1404,8 @@ function fpa_do_database(): array {
 
 /**
  * --- PHP Modules Discovery Audit ---
- * Loops through a required and recommended list of PHP extensions and fetches
+ * Mandatory Routine: Loops through a required and recommended list of PHP extensions and fetches
  * their installed versions.
- *
- * This is a mandatory baseline check.
  *
  * @param array $checklist A flat list of (required & recommended) extension names, e.g. ['openssl', 'json']
  * @param array $lang The global translation dictionary
@@ -1243,11 +1456,9 @@ function fpa_do_php(array $checklist, array $lang): array {
 
 /**
  * --- PHP Directives Discovery Report ---
- * Audits core ini configuration directives and generates a comparative matrix
+ * Mandatory Routine: Audits core ini configuration directives and generates a comparative matrix
  * tracking overrides across global, local, and recursive application files.
  * This scans both web-root and administrator paths for .user.ini & php.ini.
- *
- * This is a mandatory baseline check.
  *
  * @param array $ini_directives List of specific ini options to audit (from the blueprint array)
  * @param array $lang The global translation dictionary
@@ -1428,11 +1639,9 @@ function fpa_do_ini_matrix(array $ini_directives, array $lang, string $base_path
 
 /**
  * --- PHP Directive Value Sanity Checks ---
- * Evaluates the live active runtime values of the directive matrix against
+ * Mandatory Routine: Evaluates the live active runtime values of the directive matrix against
  * safe environment thresholds to flag security, performance, compatibility and
  * functionality risks.
- *
- * This is a mandatory baseline check.
  *
  * @param array $matrix The compiled directive matrix from fpa_do_ini_matrix()
  * @param array $lang The global translation dictionary
@@ -1581,10 +1790,8 @@ function fpa_do_ini_sanity(array $matrix, array $lang): array {
 
 /**
  * --- PHP Memory Usage/Footprint ---
- * Audits live memory usage parameters of the active running script execution.
+ * Mandatory Routine: Audits live memory usage parameters of the active running script execution.
  * Measures live usage against the server's absolute configuration limit.
- *
- * This is a mandatory baseline check.
  *
  * @param array $lang The global translation dictionary
  * @return array Presentation dataset tracking live resource footprints
@@ -1635,10 +1842,8 @@ function fpa_do_php_memory_footprint(array $lang): array {
 
 /**
  * --- PHP TMP Folder Check ---
- * Resolves and validates the active write permissions configuration on
+ * Mandatory Routine: Resolves and validates the active write permissions configuration on
  * PHP's temporary staging folder layer used for tracking file updates.
- *
- * This is a mandatory baseline check.
  *
  * @param array $lang The global translation dictionary
  * @return array Status array tracking path accessibility rules
@@ -1676,19 +1881,22 @@ function fpa_do_php_upload_tmp_audit(array $lang): array {
     ];
 } // end: fpa_do_php_upload_tmp_audit()
 
-// --- Compatibility Analysis ---
-// With some basic host information we may be able to achieve a comparitive
-// analysis of the environment and joomla minimum requirements, if an instance
-// is found though, we can perform a number of compatibility checks for the actual
-// installed instance version.
+/**
+ * --- Compatibility Analysis ---
+ * Mandatory Routine: With some basic host information we may be able to achieve a comparitive
+ * analysis of the environment and joomla minimum requirements, if an instance
+ * is found though, we can perform a number of compatibility checks for the actual
+ * installed instance version.
+ */
 function fpa_do_compatibility(): array {
 
     // TEMPORARY FIX: Returns a blank array to satisfy the typehint requirement
     return [];
-}
+} // end: fpa_do_compatibility()
 
 /**
- * Processes environment checkpoints to calculate percentage health scores
+ * --- Key Metric Dashboard Calculations ---
+ * Mandatory Routine: Processes environment checkpoints to calculate percentage health scores
  * across four distinct architectural pillars, compiling a final cumulative rating.
  *
  * @param array $fpa_results The current working master array data structure
@@ -1728,8 +1936,8 @@ function fpa_do_keymetrics(array $fpa_results, array $lang): array {
     }
 
     // 4. Incorporate Optional Network & DNS Security Audit results
-    if (!empty($fpa_results['dns_security']['data'])
-        && $fpa_results['dns_security']['data']['status'] === 'executed') {
+    if (!empty($fpa_results['dns_security']['data']['rows'])
+        && $fpa_results['dns_security']['data']['rows']['status'] === 'executed') {
         $dns = $fpa_results['dns_security']['data'];
 
         // Aggregate potential DNS or routing flaws straight into Security math
@@ -1749,6 +1957,19 @@ function fpa_do_keymetrics(array $fpa_results, array $lang): array {
         if ($fpm['slow_requests'] > 0) {
             $categories['performance']['total']++;
         }
+    }
+
+    // 6. Deduct Security scores for permissions issues
+    if (!empty($fpa_results['corefolders']['data'])) {
+        $core_data = $fpa_results['corefolders']['data'];
+
+        // Add permissions failures to the Security Pillar denominator tally
+        $categories['security']['total'] += ($core_data['danger_count'] + $core_data['warning_count']);
+    }
+
+    if (!empty($fpa_results['permissions']['data'])) {
+        $ext_data = $fpa_results['permissions']['data'];
+        $categories['security']['total'] += ($ext_data['danger_count'] + $ext_data['warning_count']);
     }
 
     $report = [];
@@ -1781,59 +2002,340 @@ function fpa_do_keymetrics(array $fpa_results, array $lang): array {
     }
 
     // 7. Calculate Total Stack Health Core (Mean aggregate index)
-    $readiness_score = (int)round($cumulative_percentage_sum / 4);
+    $health_score = (int)round($cumulative_percentage_sum / 4);
 
     // Evaluate explicit grade tiers and assign detailed status text descriptions
-    if ($readiness_score >= 96) {
+    if ($health_score >= 96) {
         $grade = 'A+';
-        $readiness_color = 'success';
+        $health_color = 'success';
         $description = $lang['FPA_GRADE_DESC_APLUS'] ?? 'Excellent. Full environment compliance verified. Joomla will execute at maximum performance with zero architectural bottlenecks.';
-    } elseif ($readiness_score >= 90) {
+    } elseif ($health_score >= 90) {
         $grade = 'A';
-        $readiness_color = 'success';
+        $health_color = 'success';
         $description = $lang['FPA_GRADE_DESC_A'] ?? 'Optimal. Server satisfies all core prerequisites. Joomla will run smoothly, though minor configuration tweaks could optimize performance.';
-    } elseif ($readiness_score >= 80) {
+    } elseif ($health_score >= 80) {
         $grade = 'B';
-        $readiness_color = 'info';
+        $health_color = 'info';
         $description = $lang['FPA_GRADE_DESC_B'] ?? 'Good. Joomla will boot and run, but sub-optimal allocations or missing recommended extensions may degrade processing speeds.';
-    } elseif ($readiness_score >= 70) {
+    } elseif ($health_score >= 70) {
         $grade = 'C';
-        $readiness_color = 'warning';
+        $health_color = 'warning';
         $description = $lang['FPA_GRADE_DESC_C'] ?? 'Caution. Reduced functionality risk. Restricted execution limits or low field variables could crash heavy form saves and backend updates.';
-    } elseif ($readiness_score >= 50) {
+    } elseif ($health_score >= 50) {
         $grade = 'D';
-        $readiness_color = 'warning';
+        $health_color = 'warning';
         $description = $lang['FPA_GRADE_DESC_D'] ?? 'Unstable. High risk of operation failure. Restrictive upload or memory limits will block extension installations and patch updates.';
-    } elseif ($readiness_score >= 25) {
+    } elseif ($health_score >= 25) {
         $grade = 'E';
-        $readiness_color = 'warning';
+        $health_color = 'warning';
         $description = $lang['FPA_GRADE_DESC_E'] ?? 'Critical. Server environment is severely misconfigured. Expect persistent runtime crashes and structural database connection blocks.';
     } else {
         $grade = 'F';
-        $readiness_color = 'danger';
+        $health_color = 'danger';
         $description = $lang['FPA_GRADE_DESC_F'] ?? 'Incompatible. Absolute system failure. Vital core PHP extensions are completely missing. Joomla cannot execute or install in this environment.';
     }
 
     // SVG Horseshoe graph geometry configuration angles
     $dash_array  = 352;
-    $dash_offset = (int)round($dash_array - (($readiness_score / 100) * $dash_array));
+    $dash_offset = (int)round($dash_array - (($health_score / 100) * $dash_array));
 
     // Map data points directly to subkeys to keep your meta array safe
     $fpa_results['key_metrics']['pillars'] = $report;
-    $fpa_results['key_metrics']['readiness'] = [
-        'score'        => $readiness_score,
+    $fpa_results['key_metrics']['health'] = [
+        'score'        => $health_score,
         'grade'        => $grade,
-        'status_color' => $readiness_color,
+        'status_color' => $health_color,
         'description'  => $description,
         'dash_array'   => $dash_array,
         'dash_offset'  => $dash_offset
     ];
 
     return $fpa_results;
-} // fpa_do_keymetrics()
+} // end: fpa_do_keymetrics()
 // =============================================================================
-//  END SECTION: MANDATORY RUNTIME DIAGNOSTIC FUNCTIONS
+//  END SUBSECTION: MANDATORY RUNTIME DIAGNOSTIC FUNCTIONS
 // =============================================================================
+
+
+// =============================================================================
+//  END SUBSECTION: MANDATORY RUNTIME DIAGNOSTIC FUNCTIONS
+// =============================================================================
+
+
+/*
+ * =============================================================================
+ *  SUBSECTION: HYBRID / DUAL-PURPOSE FUNCTIONS
+ * =============================================================================
+ *  COMPLIANCE LAYER: PER 3.0 / PSR-12 Global Procedural Workspace Paradigm
+ *
+ *  These versatile modules serve double duty across the application lifecycle.
+ *  They execute as a mandatory baseline check during Phase 1 to audit core
+ *  system pathways, but can be safely re-triggered during Phase 2 as an
+ *  optional deep-dive scanner if requested by settings panel checkboxes.
+ * =============================================================================
+ */
+
+/**
+ * --- Permissions Audit ---
+ * Hybrid Routine: Audits targeted directory paths for architectural presence,
+ * core operational writeability, advanced POSIX bitmasks, and system process
+ * user ownership alignment across local sandboxes and production environments.
+ *
+ * @param array $fpa_results Master diagnostic tracking data structure
+ * @param array $lang Global translation dictionary string matrix
+ * @param array $target_paths Flat list of absolute directory paths to inspect
+ * @param array $exclude_list Optional paths to skip during recursive passes
+ * @param int $max_errors Safe ceiling to abort scanning on flooded systems
+ * @return array Presentation dataset tracking permission compliance metrics
+ */
+function fpa_do_permissions(
+    array &$fpa_results,
+    array $lang,
+    array $target_paths,
+    array $exclude_list = [],
+    int $max_errors = 50
+): array {
+    $report = [
+        'inspected_count' => 0,
+        'failed_count'    => 0,
+        'danger_count'    => 0,
+        'warning_count'   => 0,
+        'aborted'         => false,
+        'folders'         => [] // Will store our paths as an associative map
+    ];
+
+    $is_windows   = fpa_is_windows_helper($fpa_results);
+    $process_user = $fpa_results['ref']['data']['php']['process_user'] ?? 'unknown';
+
+    foreach ($target_paths as $path) {
+        if ($report['failed_count'] >= $max_errors) {
+            $report['aborted'] = true;
+            break;
+        }
+
+        if (in_array($path, $exclude_list, true)) {
+            continue;
+        }
+
+        $report['inspected_count']++;
+
+        $relative_path = str_replace(dirname(__FILE__), '', $path);
+        if ($relative_path === '') {
+            $relative_path = '/';
+        }
+
+        $exists = file_exists($path);
+
+        if (!$exists) {
+            $report['failed_count']++;
+            $report['danger_count']++;
+
+            //$report['folders'][] = [
+            //    'path'        => $relative_path,
+            //$report['data']['rows']['folders'][$relative_path] = [
+            $report['rows']['folders'][$relative_path] = [
+                'exists'      => ['value' => false, 'text' => $lang['FPA_TXT_NO'] ?? 'No', 'color' => 'danger'],
+                'owner'       => '-',
+                'group'       => '-',
+                'mode'        => '----',
+                'mode_color'  => 'danger',
+                'is_readable' => ['value' => false, 'text' => $lang['FPA_TXT_NO'] ?? 'No', 'color' => 'danger'],
+                'is_owner_w'  => ['value' => false, 'text' => $lang['FPA_TXT_NO'] ?? 'No', 'color' => 'muted'],
+                'is_group_w'  => ['value' => false, 'text' => $lang['FPA_TXT_NO'] ?? 'No', 'color' => 'muted'],
+                'is_world_w'  => ['value' => false, 'text' => $lang['FPA_TXT_NO'] ?? 'No', 'color' => 'muted'],
+                'is_sane'     => ['value' => false, 'text' => $lang['FPA_TXT_NO'] ?? 'No', 'color' => 'danger'],
+                'owner_match' => ['value' => false, 'text' => $lang['FPA_TXT_NO'] ?? 'No', 'color' => 'muted'],
+                'has_suid'    => ['value' => false, 'text' => $lang['FPA_TXT_NO'] ?? 'No', 'color' => 'muted'],
+                'has_guid'    => ['value' => false, 'text' => $lang['FPA_TXT_NO'] ?? 'No', 'color' => 'muted'],
+                'has_sticky'  => ['value' => false, 'text' => $lang['FPA_TXT_NO'] ?? 'No', 'color' => 'muted'],
+                'row_class'   => 'danger-subtle',
+                'tooltip'     => $lang['FPA_PERM_ERR_MISSING'] ?? 'Critical: Target folder is missing.'
+            ];
+
+            $fpa_results['issue_queue']['data']['rows'][] = [
+                'id'        => 'perm_missing_' . md5($path),
+                'type'      => 'danger',
+                'text'      => 'Critical: Missing Required Core Folder.',
+                'solution'  => 'The path (' . htmlspecialchars($relative_path) . ') is missing. Re-upload this directory via your file manager to restore stability.',
+                'target_id' => 'fpa_issues_drawer'
+            ];
+            continue;
+        }
+
+        $is_readable   = is_readable($path);
+        $is_writable   = is_writable($path);
+        $is_executable = is_executable($path);
+
+        $owner_name  = 'unknown';
+        $group_name  = 'unknown';
+        $owner_match = false;
+
+        if (function_exists('posix_getpwuid') && function_exists('fileowner')) {
+            $owner_id   = @fileowner($path);
+            $owner_info = $owner_id !== false ? @posix_getpwuid($owner_id) : null;
+            $owner_name = $owner_info ? $owner_info['name'] : (string)$owner_id;
+
+            $group_id   = @filegroup($path);
+            $group_info = $group_id !== false ? @posix_getgrgid($group_id) : null;
+            $group_name = $group_info ? $group_info['name'] : (string)$group_id;
+
+            if ($owner_name !== 'unknown' && $owner_name === $process_user) {
+                $owner_match = true;
+            }
+        } else {
+            $owner_name  = $process_user;
+            $group_name  = 'N/A';
+            $owner_match = true;
+        }
+
+        $perms_raw   = @fileperms($path);
+        $mode_octal = $perms_raw ? sprintf('%04o', $perms_raw & 07777) : '0000';
+        $mode_short  = substr($mode_octal, -3);
+
+        $is_owner_w  = (bool)($perms_raw & 000200);
+        $is_group_w  = (bool)($perms_raw & 000020);
+        $is_world_w  = (bool)($perms_raw & 000002);
+
+        $has_suid    = (bool)($perms_raw & 004000);
+        $has_guid    = (bool)($perms_raw & 002000);
+        $has_sticky  = (bool)($perms_raw & 001000);
+
+        $sanity_state = 'success';
+        $tooltip      = $lang['FPA_PERM_TOOLTIP_OK'] ?? 'Secure and healthy folder settings.';
+
+        // If it's Microsoft, nothing shows up correctly/properly due to their
+        // proprietary ACL's, so we just check for effective rights on Windows.
+        if ($is_windows) {
+            // Basic rights, best we can do is determine if we access and can we write to it?
+            if (!$is_writable) {
+                $sanity_state = 'danger';
+                $tooltip      = $lang['FPA_PERM_TOOLTIP_WIN_LOCKED'] ??
+                    'Critical: Path unwritable on Windows.';
+            }
+            $mode_short   = 'N/A';
+            $perms_octal  = 'N/A';
+            $has_suid     = false; $has_guid = false; $has_sticky = false;
+        } else {
+        // Every other OS in the known real sane world reacts the same way and
+        // delivers hard actual & effective rights for us to work with.
+
+            // Simplistic Core I/O Accessibility Triggers (can we do the basics?)
+            if (!$is_readable || !$is_executable) {
+                $sanity_state = 'danger';
+                $tooltip      = $lang['FPA_PERM_TOOLTIP_LOCKED'] ??
+                    'Critical: Directory unreadable or unexecutable.';
+            } elseif (!$is_writable) {
+                $sanity_state = 'danger';
+                $tooltip      = $lang['FPA_PERM_TOOLTIP_UNWRITABLE'] ??
+                    'Critical: Folder is unwritable by web server.';
+            }
+
+            // High-Risk Special Privileges Elevation Bits
+            // SUID on a folder is non-functional but points to an attack footprint
+            elseif ($has_suid) {
+                $sanity_state = 'danger';
+                $tooltip      = $lang['FPA_PERM_TOOLTIP_SUID_ACTIVE'] ??
+                    'Critical Security Anomaly: SUID bit active. While ignored ' .
+                    'on directories by Unix kernels, its presence indicates ' .
+                    'unauthorized filesystem manipulation or an attack footprint.';
+            }
+
+            // SGID actively forces downward group inheritance
+            elseif ($has_guid) {
+                $sanity_state = 'warning'; // Warning or danger based on severity
+                $tooltip      = $lang['FPA_PERM_TOOLTIP_GUID_ACTIVE'] ??
+                    'Security Notice: SGID bit active. All new files created ' .
+                    'here will forcefully inherit this parent folder\'s group ' .
+                    'ownership. Common in shared cloud arrays, but check shared hosts.';
+            }
+
+            // Standard: Octal Vulnerability Checks
+            elseif ($mode_short === '777') {
+                $sanity_state = 'danger';
+                $tooltip      = $lang['FPA_PERM_TOOLTIP_777'] ??
+                    'Critical: World-writable (777) security leak. This modeset ' .
+                    'should be corrected immediately due to extreme risk of host ' .
+                    'and site compromise. Many hosts will raise a White-Screen/Error ' .
+                    'for this condition.';
+            } elseif ($mode_short === '757') {
+                $sanity_state = 'danger';
+                $tooltip      = $lang['FPA_PERM_TOOLTIP_757'] ??
+                    'Critical: Other-writable (757). Major risk on all public ' .
+                    'hosting platforms (Shared, VPS, Dedicated & Cloud).';
+            } elseif ($mode_short === '775') {
+                $sanity_state = 'warning';
+                $tooltip      = $lang['FPA_PERM_TOOLTIP_775'] ??
+                    'Warning: Group writable (775). Risk on shared hosting platforms, ' .
+                    'but may be acceptable on some Cloud platforms with development ' .
+                    'or staging functionality.';
+            }
+
+            // Secure Extra Restriction Boundary Bit
+            elseif ($has_sticky) {
+                $sanity_state = 'info';
+                $tooltip      = $lang['FPA_PERM_TOOLTIP_STICKY_ACTIVE'] ??
+                    'Secured Path: The Sticky Bit is active. Whilst this is ' .
+                    'unusual, it does restrict directory file deletion strictly ' .
+                    'to the genuine file owner and is not a concern.';
+            }
+
+            // Final Baseline: Other Funky Mode Fallback Check
+            elseif ($mode_short !== '755') {
+                $sanity_state = 'warning';
+                $tooltip      = $lang['FPA_PERM_TOOLTIP_NON_STANDARD'] ??
+                    'Warning: Non-standard permissions were detected but ' .
+                    'further investigation is required to fully assess implications.';
+            }
+        }
+
+        if ($sanity_state === 'danger') {
+            $report['failed_count']++;
+            $report['danger_count']++;
+
+            $fpa_results['issue_queue']['data']['rows'][] = [
+                'id'        => 'perm_failure_' . md5($path),
+                'type'      => 'danger',
+                'text'      => 'Critical: Security Risk or Write Block on ' . htmlspecialchars($relative_path),
+                'solution'  => 'Directory configuration error (' . $mode_short . '). ' . $tooltip . ' Reset to 0755 immediately.',
+                'target_id' => 'fpa_issues_drawer'
+            ];
+        } elseif ($sanity_state === 'warning') {
+            $report['failed_count']++;
+            $report['warning_count']++;
+        }
+
+        //$report['rows']['folders'][$relative_path] = [
+        //$report['rows']['folders'][$relative_path] = [
+        $report['folders'][$relative_path] = [
+            //'path'        => $relative_path,
+            'exists'      => ['value' => true, 'text' => $lang['FPA_TXT_YES'] ?? 'Yes', 'color' => 'success'],
+            'owner'       => $owner_name,
+            'group'       => $group_name,
+            //'mode'        => $mode_short,
+            'mode'        => $mode_octal,
+            'mode_color'  => $sanity_state,
+            'is_readable' => ['value' => $is_readable, 'text' => $is_readable ? 'Yes' : 'No', 'color' => $is_readable ? 'success' : 'danger'],
+            'is_owner_w'  => ['value' => $is_owner_w, 'text' => $is_owner_w ? 'Yes' : 'No', 'color' => $is_owner_w ? 'success' : 'muted'],
+            'is_group_w'  => ['value' => $is_group_w, 'text' => $is_group_w ? 'Yes' : 'No', 'color' => $is_group_w ? 'warning' : 'success'],
+            'is_world_w'  => ['value' => $is_world_w, 'text' => $is_world_w ? 'Yes' : 'No', 'color' => $is_world_w ? 'danger' : 'success'],
+            'is_sane'     => ['value' => ($sanity_state === 'success' || $sanity_state === 'info'), 'text' => ($sanity_state === 'success' || $sanity_state === 'info') ? 'Yes' : 'No', 'color' => ($sanity_state === 'success' || $sanity_state === 'info') ? 'success' : $sanity_state],
+            'owner_match' => ['value' => $owner_match, 'text' => $owner_match ? 'Yes' : 'No', 'color' => $owner_match ? 'success' : 'warning'],
+            'has_suid'    => ['value' => $has_suid, 'text' => $has_suid ? 'Yes' : 'No', 'color' => $has_suid ? 'danger' : 'success'],
+            'has_guid'    => ['value' => $has_guid, 'text' => $has_guid ? 'Yes' : 'No', 'color' => $has_guid ? 'warning' : 'success'],
+            'has_sticky'  => ['value' => $has_sticky, 'text' => $has_sticky ? 'Yes' : 'No', 'color' => $has_sticky ? 'info' : 'success'],
+            'row_class'   => $sanity_state,
+            'tooltip'     => $tooltip
+        ];
+    } // end foreach loop
+
+    return $report;
+} // end function fpa_do_permissions()
+
+
+// =============================================================================
+//  END SUBSECTION: HYBRID / DUAL-PURPOSE FUNCTIONS
+// =============================================================================
+
 
 
 /*
@@ -1851,7 +2353,8 @@ function fpa_do_keymetrics(array $fpa_results, array $lang): array {
  */
 
 /**
- * Optional Module: Audits domain text record security postures, checks for
+ * --- DNS Audit ---
+ * Optional Routine: Audits domain text record security postures, checks for
  * reverse DNS IP mismatches, and logs external third-party platform
  * verification tags.
  *
@@ -1939,8 +2442,9 @@ function fpa_audit_dns_security(array $fpa_results, array $lang): array {
 
 /**
  * --- PHP Extended Audit ---
- * Scans the server for all currently loaded PHP extensions, completely excluding
- * the mandatory required extensions to prevent duplicate data displays.
+ * Optional Routine: Scans the server for all currently loaded PHP extensions,
+ * completely excluding the mandatory required or recommended extensions to
+ * prevent duplicate data displays.
  *
  * @param array $required_extensions The list of mandatory core extensions to exclude.
  * @return array A dynamically built, alphabetical list of extra extensions and their versions.
@@ -1992,119 +2496,172 @@ function fpa_audit_php_extended(array $required_extensions): array {
     return $extended_report;
 } // end: fpa_audit_php_extended()
 
-// --- Database Extended Audit ---
-// If an instance is found and confgured we can access the database to retrieve
-// extended table and stats info, otherwise, even if selected this function will
-// be unable to return very much, if any, useful data.
+/**
+ * --- Database Extended Audit ---
+ * Optional Routine: If an Joomla instance is found and confgured we can access
+ * the database credentials to retrieve extended table and stats info, otherwise,
+ * even if selected this function will be unable to return very much, if any,
+ * useful data.
+ */
 function fpa_audit_database_extended(): array {
 
     // TEMPORARY FIX: Returns a blank array to satisfy the typehint requirement
     return [];
 } // end: fpa_audit_extended_database()
 
-// --- Permissions Audit ---
-// If an instance is found, we run a recursive permissions (modeset) audit on
-// the file-system, excluding Joomla Core Folders. However, if more than
-// $max_violations is met, the routine reports it found an excessive number of
-// poorly configured folders and exits to conserve time, energy, effort and save
-// the penguins on phillip island.
-//
-// NOTE: This is a Report-By-Exception only routine, by this we mean it only
-// reports folders in violation of what is considered a sane and safe configuration.
+/**
+ * TODO: MAY BE REPLACED BY A DUAL PURPOSE PERMISSIONS FUNCTION
+ * --- Permissions Audit ---
+ * Optional Routine: If an instance is found, we run a recursive permissions
+ * (modeset) audit on the file-system, excluding Joomla Core Folders. However, if
+ * more than $max_violations is met, the routine reports it found an excessive
+ * number of poorly configured folders and exits to conserve time, energy, effort
+ * and save a few penguins on phillip island.
+ *
+ * NOTE: This is a Report-By-Exception only routine, by this we mean it only
+ * reports folders in violation of what is considered a sane and safe configuration.
+ */
 function fpa_audit_permissions_extended(): array {
 
     // TEMPORARY FIX: Returns a blank array to satisfy the typehint requirement
     return [];
 } // end: fpa_audit_extended_permissions()
 
-// --- Components Audit (Site & Admin) ---
-// If an instance is found, we can iterate through the components folders to find
-// the installed components and collect relevant details, versioning, etc.
-//
-// NOTE: By default this audit does not include core components unless the option
-// Include Core Extensions is selected in the FPA Runtime Settings.
+/**
+ * --- Filesystem Size Audit ---
+ * Optional Module: Calculates the total cumulative disk space utilized by
+ * the Joomla! installation directory from the webroot downwards.
+ *
+ * Deferred execution: Triggers exclusively when explicitly registered inside
+ * the active tests array via the interactive runtime options panel.
+ *
+ * ⚠️ PERFORMANCE NOTE: This routine scans individual files recursively. It is
+ * isolated from core permission checks to protect system I/O bounds and prevent
+ * catastrophic execution timeouts on slow hosting storage arrays.
+ *
+ * @param array $fpa_results Master diagnostic tracking array
+ * @param array $lang Global translation dictionary
+ * @return array Presentation dataset tracking total file footprints and counts
+ */
+function fpa_audit_filesystem(array $fpa_results, array $lang): array {
+    // 🛠️ DEVELOPER PLACEHOLDER: Returns a clean, inactive view state structure
+    return [
+        'status'         => 'deferred',
+        'total_bytes'    => 0,
+        'formatted_size' => '0 B',
+        'file_count'     => 0,
+        'folder_count'   => 0,
+        'sanity_state'   => 'info',
+        'summary_notes'  => $lang['FPA_DISK_SPACE_PLACEHOLDER'] ??
+            'Disk capacity scanner initialized. Logic deferred to future file iterator implementation.'
+    ];
+} // end: fpa_audit_filesystem()
+
+/**
+ * --- Components Audit (Site & Admin) ---
+ * Optional Routine: If an instance is found, we can iterate through the components folders to find
+ * the installed components and collect relevant details, versioning, etc.
+ *
+ * NOTE: By default this audit does not include core components unless the option
+ * Include Core Extensions is selected in the FPA Runtime Settings.
+ */
 function fpa_audit_components(): array {
 
     // TEMPORARY FIX: Returns a blank array to satisfy the typehint requirement
     return [];
 } // end: fpa_audit_components()
 
-// --- Modules Audit (Site & Admin) ---
-// If an instance is found, we can iterate through the modules folders to find
-// the installed modules and collect relevant details, versioning, etc.
-//
-// NOTE: By default this audit does not include core modules unless the option
-// Include Core Extensions is selected in the FPA Runtime Settings.
+/**
+ * --- Modules Audit (Site & Admin) ---
+ * Optional Routine: If an instance is found, we can iterate through the modules folders to find
+ * the installed modules and collect relevant details, versioning, etc.
+ *
+ * NOTE: By default this audit does not include core modules unless the option
+ * Include Core Extensions is selected in the FPA Runtime Settings.
+ */
 function fpa_audit_modules(): array {
 
     // TEMPORARY FIX: Returns a blank array to satisfy the typehint requirement
     return [];
 } // end: fpa_audit_modules()
 
-// --- Plugins Audit (Site) ---
-// If an instance is found, we can iterate through the plugins folder to find
-// the installed plugins and collect relevant details, versioning, etc.
-//
-// NOTE: By default this audit does not include core plugins unless the option
-// Include Core Extensions is selected in the FPA Runtime Settings.
+/**
+ * --- Plugins Audit (Site) ---
+ * Optional Routine: If an instance is found, we can iterate through the plugins folder to find
+ * the installed plugins and collect relevant details, versioning, etc.
+ *
+ * NOTE: By default this audit does not include core plugins unless the option
+ * Include Core Extensions is selected in the FPA Runtime Settings.
+ */
 function fpa_audit_plugins(): array {
 
     // TEMPORARY FIX: Returns a blank array to satisfy the typehint requirement
     return [];
 } // end: fpa_audit_plugins()
 
-// --- Languages Audit (Site & Admin) ---
-// If an instance is found, we can iterate through the language folders to find
-// the installed languages and collect relevant details, versioning, etc.
+/**
+ * --- Languages Audit (Site & Admin) ---
+ * Optional Routine: If an instance is found, we can iterate through the language folders to find
+ * the installed languages and collect relevant details, versioning, etc.
+ */
 function fpa_audit_languages(): array {
 
     // TEMPORARY FIX: Returns a blank array to satisfy the typehint requirement
     return [];
 } // end: fpa_audit_languages()
 
-// --- Libraries Audit (Site) ---
-// If an instance is found, we can iterate through the libraries folder to find
-// the installed libraries and collect relevant details, versioning, etc.
-//
-// NOTE: By default this audit does not include core libraries unless the option
-// Include Core Extensions is selected in the FPA Runtime Settings.
+/**
+ * --- Libraries Audit (Site) ---
+ * Optional Routine: If an instance is found, we can iterate through the libraries folder to find
+ * the installed libraries and collect relevant details, versioning, etc.
+ *
+ * NOTE: By default this audit does not include core libraries unless the option
+ * Include Core Extensions is selected in the FPA Runtime Settings.
+ */
 function fpa_audit_libraries(): array {
 
     // TEMPORARY FIX: Returns a blank array to satisfy the typehint requirement
     return [];
 } // end: fpa_audit_libraries()
 
-// --- Manifest Audit (Admin) ---
-// If an instance is found, we can iterate through the manifests folders to find
-// the manifests and collect relevant details, versioning, etc.
+/**
+ * --- Manifest Audit (Admin) ---
+ * Optional Routine: If an instance is found, we can iterate through the manifests folders to find
+ * the manifests and collect relevant details, versioning, etc.
+ */
 function fpa_audit_manifests(): array {
 
     // TEMPORARY FIX: Returns a blank array to satisfy the typehint requirement
     return [];
 } // end: fpa_audit_manifests()
 
-// --- Templates Audit (Site & Admin) ---
-// If an instance is found, we can iterate through the templates folders to find
-// the installed templates and collect relevant details, versioning, etc.
+/**
+ * --- Templates Audit (Site & Admin) ---
+ * Optional Routine: If an instance is found, we can iterate through the templates folders to find
+ * the installed templates and collect relevant details, versioning, etc.
+ */
 function fpa_audit_templates(): array {
 
     // TEMPORARY FIX: Returns a blank array to satisfy the typehint requirement
     return [];
 } // end: fpa_audit_templates()
 
-// --- Joomla Statistics Audit (Site & Admin) ---
-// If an instance is found and configured, we can iterate through a variety of
-// settings and database tables with a view to collecting and analysing relevant
-// statistical and/or log information, etc.
+/**
+ * --- Joomla Statistics Audit (Site & Admin) ---
+ * Optional Routine: If an instance is found and configured, we can iterate through a variety of
+ * settings and database tables with a view to collecting and analysing relevant
+ * statistical and/or log information, etc.
+ */
 function fpa_audit_joomlastats(): array {
 
     // TEMPORARY FIX: Returns a blank array to satisfy the typehint requirement
     return [];
 } // end: fpa_audit_joomlastats()
 // =============================================================================
-//  END SECTION: OPTIONAL RUNTIME DIAGNOSTIC FUNCTIONS
+//  END SUBSECTION: OPTIONAL RUNTIME DIAGNOSTIC FUNCTIONS
 // =============================================================================
-
+//  END SECTION: RUNTIME DIAGNOSTIC LIFE-CYCLE CORE FUNCTIONS
+// =============================================================================
 
 /*
  * =============================================================================
@@ -2168,98 +2725,138 @@ function fpa_audit_joomlastats(): array {
  */
 function fpa_runtime_tests(array $lang, array $active_tests, array $registry, string $base_path, array $exclude_list): array {
 
-    /**
-     * --- Master Results Array ---
-     * Initialise the master array with explicit base blueprint elements for
-     * every section (this avoids php fatals in older php versions if the primary
-     * key is not present)
+    /*
+     * --- Master Results Blueprint Registry Array ---
+     *
+     * Compliance Layer: PER 3.0 / PSR-12 Normalized Schema Matrix
+     *
+     * Initializes the global tracking array with explicit base structural elements
+     * for every operational segment. Pre-defining these standard secondary keys
+     * prevents runtime "Undefined Index" notices and ensures strict type-safety
+     * across all modern and legacy PHP environments.
      *
      * Usage:
-     * as new test sections / functions are added, add an appropriate primary
-     * key here, subkeys and results are then dynamically added at the test
-     * routine level using that primary key.
+     * As new diagnostic modules or optional processing passes are added, append
+     * a unique primary key to this tree. All downstream evaluation functions and
+     * frontend HTML presentation templates then reference data using an identical,
+     * completely predictable 3-tier mapping grid.
+     *
+     * Standard Unified 3-Tier Array Structure Schema:
+     * -----------------------------------------------
+     * $fpa_results['section_key']['meta']    // HTML title, notes & attribute_slug
+     * $fpa_results['section_key']['targets'] // Flat list of reference input items
+     * $fpa_results['section_key']['data']    // Uniform metrics results & rows
      */
     $fpa_results = [
-
-        // Commonly referenced or compared information, used across multiple functions
+        // Commonly referenced environment data used across multiple functions
         'ref' => [
+            // TIER 1: Presentation metadata layer for UI headers and toggles
             'meta' => [
-                'section_title' => $lang['FPA_META_TITLE_REF'],
-                'section_intro' => 'Common reference and comparison data for use across all functions and output.'
+                'section_title'  => $lang['FPA_META_TITLE_REF'],
+                'section_intro'  => 'Common reference and comparison data for use across all functions and output.',
+                'attribute_slug' => 'fpa_ref_discovery'
             ],
+
+            // TIER 2: Input target operational registries (Empty for global ref)
+            'targets' => [],
+
+            // TIER 3: Normalized environment results payloads
             'data' => [
+                // Active PHP engine and running system process identities
                 'php' => [
-                    'version'             => PHP_VERSION,
-                    'interface_sapi'      => PHP_SAPI, // e.g. cgi-fcgi, fpm-fcgi, apache2handler
-                    'process_user'        => function_exists('posix_getpwuid') && function_exists('posix_getuid')
-                                             ? posix_getpwuid(posix_getuid())['name']
-                                             : (getenv('USER') ?: getenv('USERNAME')),
-                    'process_uid'         => function_exists('posix_getuid') ? posix_getuid() : fileowner(__FILE__),
-                    'process_gid'         => function_exists('posix_getgid') ? posix_getgid() : filegroup(__FILE__),
-                    'disabled_functions'  => ini_get('disable_functions') ?: $lang['FPA_TXT_NONE'],
+                    'version'            => PHP_VERSION,
+                    'interface_sapi'     => PHP_SAPI,
+                    // Resolves the system user executing this PHP script instance
+                    'process_user'       => function_exists('posix_getpwuid') && function_exists('posix_getuid') ? posix_getpwuid(posix_getuid())['name'] : (getenv('USER') ?: getenv('USERNAME')),
+                    'process_uid'        => function_exists('posix_getuid') ? posix_getuid() : fileowner(__FILE__),
+                    'process_uid_color'  => 'success', // Semantic UI badge token
+                    'process_gid'        => function_exists('posix_getgid') ? posix_getgid() : filegroup(__FILE__),
+                    'process_gid_color'  => 'success', // Semantic UI badge token
+                    // Tracks disabled core functions restricting script depth
+                    'disabled_functions' => ini_get('disable_functions') ?: $lang['FPA_TXT_NONE'],
                 ],
+
+                // Core host operating system and web server parameters
                 'server' => [
-                    'os_family'           => PHP_OS_FAMILY, // Windows, Linux, Darwin, etc.
-            	    'os_family_short'     => strtolower(substr( PHP_OS, 0, 3)), // win, dar, lin, sol, etc.
+                    'os_family'           => PHP_OS_FAMILY,
+                    'os_family_short'     => strtolower(substr(PHP_OS, 0, 3)),
                     'os_release'          => php_uname('r'),
                     'hostname'            => function_exists('gethostname') ? gethostname() : (php_uname('n') ?: $lang['FPA_TXT_UNKNOWN']),
                     'host_ip'             => gethostbyname(gethostname()),
                     'technology'          => php_uname('m'),
-                    'web_server'          => $_SERVER['SERVER_SOFTWARE'] ?? $lang['FPA_TXT_UNKNOWN'],
-                	'web_server_short'    => strtolower(substr( $_SERVER['SERVER_SOFTWARE'], 0, 3 )), // apa = Apache, mic = Microsoft IIS, lit = LiteSpeed etc
-                    'web_server_encoding' => $_SERVER["HTTP_ACCEPT_ENCODING"] ?? $lang['FPA_TXT_NONE'],
-                    'umask'               => sprintf('%04o', umask()), // e.g. "0022"
+                    'web_server'          => 'Pending Execution',
+                    'web_server_short'    => 'unknown',
+                    'web_server_encoding' => $_SERVER['HTTP_ACCEPT_ENCODING'] ?? $lang['FPA_TXT_NONE'],
+                    'umask'               => sprintf('%04o', umask(umask())),
                     'is_localhost'        => false,
                     'is_windows'          => false,
                     'is_win_local'        => false,
-                    'web_server'          => 'Pending Execution',
-                    'web_server_short'    => 'unknown',
                 ],
+
+                // Network routing parameters and connection port numbers
                 'network' => [
-                    'domain_ip'           => gethostbyname($_SERVER['SERVER_NAME']),
-                    'raw_domain'          => $_SERVER['HTTP_HOST'] ?? ($_SERVER['SERVER_NAME'] ?? $lang['FPA_TXT_UNKNOWN']),
-                    'domain_name'         => strtolower(strtok($_SERVER['HTTP_HOST'] ?? ($_SERVER['SERVER_NAME'] ?? $lang['FPA_TXT_UNKNOWN']), ':')),
-                    'server_port'         => isset($_SERVER['SERVER_PORT']) ? (int)$_SERVER['SERVER_PORT'] : 0,
-                    'visitor_port'        => isset($_SERVER['REMOTE_PORT']) ? (int)$_SERVER['REMOTE_PORT'] : 0,
+                    'domain_ip'    => gethostbyname($_SERVER['SERVER_NAME']),
+                    'raw_domain'   => $_SERVER['HTTP_HOST'] ?? ($_SERVER['SERVER_NAME'] ?? $lang['FPA_TXT_UNKNOWN']),
+                    // Extracts base domain string, dropping any trailing port numbers
+                    'domain_name'  => strtolower(strtok($_SERVER['HTTP_HOST'] ?? ($_SERVER['SERVER_NAME'] ?? $lang['FPA_TXT_UNKNOWN']), ':')),
+                    'server_port'  => isset($_SERVER['SERVER_PORT']) ? (int)$_SERVER['SERVER_PORT'] : 0,
+                    'visitor_port' => isset($_SERVER['REMOTE_PORT']) ? (int)$_SERVER['REMOTE_PORT'] : 0,
                 ]
             ] // Mostly self-populated or added to by any other helper and primary functions as discovered
-        ],
+        ], // Populated dynamically via global execution context rules up-front
 
         // Latest available versions/releases, if enabled by FPA_LIVECHECKS constant
         'livechecks' => [
+            // TIER 1: Presentation metadata layer for UI headers and toggles
             'meta' => [
-                'section_title' => $lang['FPA_META_TITLE_LIVE_CHECKS'],
-                'section_intro' => 'Core specifications and configuration rules running on this web server architecture.'
+                'section_title'  => $lang['FPA_META_TITLE_LIVE_CHECKS'],
+                'section_intro'  => 'Compares active local installation versions against official remote release repositories.',
+                'attribute_slug' => 'fpa_live_checks'
             ],
-            'data' => [
 
+            // TIER 2: Input target operational registries (Empty for live checks)
+            'targets' => [],
+
+            // TIER 3: Normalized environment results payloads
+            'data' => [
+                // Structural tracking profile for the Forum Post Assistant engine itself
                 'fpa' => [
-                    'label'   => $lang['FPA_LABEL_FPA'],
-                    'current' => FPA_VERSION,
-                    'latest'  => $lang['FPA_TXT_UNKNOWN'],
-                    'status'  => $lang['FPA_TXT_UNKNOWN']
+                    'label'        => $lang['FPA_LABEL_FPA'],
+                    'current'      => FPA_VERSION,
+                    'latest'       => $lang['FPA_TXT_UNKNOWN'],
+                    'status'       => $lang['FPA_TXT_UNKNOWN'],
+                    'status_color' => 'muted' // Neutral semantic UI badge token
                 ],
+
+                // Discovered core parameters for the target Joomla! CMS instance
                 'joomla' => [
-                    'label'   => $lang['FPA_LABEL_JOOMLA'],
-                    'current' => $lang['FPA_TXT_UNKNOWN'],
-                    'latest'  => $lang['FPA_TXT_UNKNOWN'],
-                    'status'  => $lang['FPA_TXT_UNKNOWN']
+                    'label'        => $lang['FPA_LABEL_JOOMLA'],
+                    'current'      => $lang['FPA_TXT_UNKNOWN'],
+                    'latest'       => $lang['FPA_TXT_UNKNOWN'],
+                    'status'       => $lang['FPA_TXT_UNKNOWN'],
+                    'status_color' => 'muted' // Neutral semantic UI badge token
                 ],
+
+                // Local PHP processing engine runtime lifecycle statistics
                 'php' => [
-                    'label'   => $lang['FPA_LABEL_PHP'],
-                    'current' => PHP_VERSION,
-                    'latest'  => $lang['FPA_TXT_UNKNOWN'],
-                    'status'  => $lang['FPA_TXT_UNKNOWN']
+                    'label'        => $lang['FPA_LABEL_PHP'],
+                    'current'      => PHP_VERSION,
+                    'latest'       => $lang['FPA_TXT_UNKNOWN'],
+                    'status'       => $lang['FPA_TXT_UNKNOWN'],
+                    'status_color' => 'muted' // Neutral semantic UI badge token
                 ]
             ] // Populated by fpa_live_checks()
-        ],
+        ], // Populated dynamically via remote repository cURL API streams if enabled
 
+        // TODO: CONFIRM THIS IS NO LONGER NEEDED
         // Gather the metrics scores and calculated readiness rating from environment, performance & security
         'metrics' => [
             'meta' => [
                 'section_title' => $lang['FPA_META_TITLE_KEY_METRICS'],
-                'section_intro' => 'will be the readiness message'
+                'section_intro' => 'will be the readiness message',
+                'attribute_slug' => 'fpa_key_metrics' // used for section id and toggle buttons
             ],
+            'targets' => [],
             'data' => [
                 'readiness_rating'  => $lang['FPA_READINESS_F'],   // rating based on overall_score (A+, A, B ... F)
                 'overall_score'     => '0',   // %'age, combined scores from env, sec, perf category scores
@@ -2270,180 +2867,316 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
             'compatibility'   => [] // Populated by fpa_do_compatibility()
         ],
 
-        // If found, gather joomla information and configuration
-        'instance' => [
+        // If found, gather joomla core information and structural configurations
+        'jinstance' => [
+            // TIER 1: Presentation metadata layer for UI headers and toggles
             'meta' => [
-                'section_title' => $lang['FPA_META_TITLE_JOOMLA_INSTANCE'],
-                'section_intro' => 'Core specifications and configuration rules running on this web server architecture.'
+                'section_title'  => $lang['FPA_META_TITLE_JOOMLA_INSTANCE'],
+                'section_intro'  => 'Audits core software versions, tracking active components, system plugins, database configurations and template footprints.',
+                'attribute_slug' => 'fpa_jinstance_discovery'
             ],
-            'data'   => [
-                'extensions' => [
-                    'site' => [
-                        'components' => [],
-                        'modules'    => [],
-                        'plugins'    => [],
-                        'languages'  => [],
-                        'libraries'  => []
-                    ],
-                    'admin' => [
-                        'components' => [],
-                        'modules'    => [],
-                        'languages'  => [],
-                        'manifests'  => []
-                    ],
-                ],
-                'templates' => [
-                    'site'  => [],
-                    'admin' => []
-                ],
-                'languages' => [
-                    'site'  => [],
-                    'admin' => []
-                ],
-            ], // Populated by fpa_do_instance()
-            'jstats' => [], // Populated by fpa_audit_joomlastats
-            'jconfig' => [] // Populated by importing joomla configuration.php
-        ],
 
-        // Review and missed tuning or optimisation opportunities within the site, php, database, webserver or host
-        'httpserver' => [
-            'meta' => [
-                'section_title' => $lang['FPA_META_TITLE_WEBSERVER'],
-                'section_intro' => $lang['FPA_META_INTRO_WEBSERVER']
-            ],
-            'data' => [] // Populated by fpa_do_httpserver() & fpa_get_fpm_pool_metrics()
-        ],
+            // TIER 2: Input target operational registries (Initialized for compliance)
+            'targets' => [],
 
-        // php extension and ini settings
-        'php' => [
-            'meta' => [
-                'section_title'  => $lang['FPA_META_TITLE_PHP_DISCOVERY'],
-                'section_intro'  => 'Core specifications and configuration rules running on this web server architecture.',
-                'attribute_slug' => 'php_discovery' // used for section id and toggle buttons
-            ],
-            // initial extensions to test for
-            'database_extensions'    => ['mysql', 'mysqli', 'pdo_mysql', 'pdo_pgsql', 'pgsql', 'mysqlnd', 'wilma'],
-            'required_extensions'    => ['json', 'dom', 'SimpleXML', 'zlib', 'gd', 'openssl', 'mcrypt', 'sodium', 'fred', 'barney', 'betty'],
-            'recommended_extensions' => ['curl', 'filter', 'iconv', 'mbstring', 'zip', 'fileinfo', 'libxml', 'xml'],
-            // location of any discovered php.ini & .user.ini files
-            'ini_files' => [
-                'web_root_php_ini'  => null,
-                'web_root_user_ini' => null,
-                'admin_php_ini'     => null,
-                'admin_user_ini'    => null,
-            ],
-            // php directives to test for (categorised for later key metrics scoring)
-            'ini_directives' => [
-                // security
-                'display_errors'               => 'security',
-                'open_basedir'                 => 'security',
-                'allow_url_include'            => 'security',
-                'allow_url_fopen'              => 'security',
-                'session.cookie_httponly'      => 'security',
-                'session.cookie_secure'        => 'security',
-                'expose_php'                   => 'security',
-                'disable_functions'            => 'security',
-                // performance
-                'memory_limit'                 => 'performance',
-                'max_execution_time'           => 'performance',
-                'opcache.enable'               => 'performance',
-                'opcache.max_accelerated_files' => 'performance',
-                'max_input_time'               => 'performance',
-                // functionality
-                'upload_max_filesize'           => 'functionality',
-                'post_max_size'                => 'functionality',
-                'max_input_vars'               => 'functionality',
-                'default_socket_timeout'       => 'functionality',
-                // compatibility
-                'short_open_tag'               => 'compatibility',
-                'mbstring.func_overload'       => 'compatibility',
-                'file_uploads'                  => 'compatibility',
-                'request_order'                => 'compatibility',
-                'zlib.output_compression'      => 'compatibility'
-            ],
+            // TIER 3: Normalized environment results payloads
             'data' => [
-                'required_extensions'    => [], // Populated by fpa_do_php()
-                'recommended_extensions' => [], // Populated by fpa_do_php()
-                'loaded_extensions'      => [], // Populated by fpa_audit_php_extended()
-                'ini_matrix'             => [], // Populated by fpa_do_ini_matrix(), fpa_do_ini_sanity()
-                'memory_footprint'       => [], // Populated by fpa_do_php_memory_footprint()
-                'upload_tmp'             => []  // Populated by fpa_php_upload_tmp_audit()
+                'rows' => [
+                    // Standardised master components index map (Rows store 'client' property)
+                    'components' => [],
+
+                    // Standardised master modules index map (Rows store 'client' property)
+                    'modules'    => [],
+
+                    // Global plugin array nodes grouped natively by system type
+                    'plugins'    => [],
+
+                    // Layout blueprints for templates, dropping messy site/admin wrappers
+                    'templates'  => [],
+
+                    // Core language packs currently active across installation boundaries
+                    'languages'  => [],
+
+                    // Stores the configuration values imported securely from configuration.php
+                    'jconfig'     => [],
+
+                    // Summary baseline engine statistical tracking calculations metrics
+                    'jstats'     => []
+                ],    // Stores joomla extension & content discovery
+
+                // Core tally counters allow sorting tools to scan this node instantly
+                'failed_count'  => 0,     // Consolidated tracking total error count
+                'danger_count'  => 0,     // Total critical threat tracking tally
+                'warning_count' => 0,     // Total warning status tracking tally
+                'is_complete'   => false  // State flag tracking module lifecycle
+            ] // Populated by fpa_do_jinstance(), fpa_audit_joomlastats() and configuration imports
+        ], // Fully processes active local application framework profiles if discovered
+
+        // Web server infrastructure diagnostics and HTTP environment audits
+        'httpserver' => [
+            // TIER 1: Presentation metadata layer for UI headers and toggles
+            'meta' => [
+                'section_title'  => $lang['FPA_META_TITLE_WEBSERVER'],
+                'section_intro'  => $lang['FPA_META_INTRO_WEBSERVER'],
+                'attribute_slug' => 'fpa_httpserver_discovery'
+            ],
+
+            // TIER 2: Input target operational registries (Empty for web server)
+            'targets' => [],
+
+            // TIER 3: Normalized environment results payloads
+            'data' => [
+                'rows' => [],    // Stores server engine directive metrics
+
+                // Core tally counters allow sorting tools to scan this node instantly
+                'failed_count'  => 0,     // Consolidated tracking total error count
+                'danger_count'  => 0,     // Total critical threat tracking tally
+                'warning_count' => 0,     // Total warning status tracking tally
+                'is_complete'   => false  // State flag tracking module lifecycle
+            ] // Populated by fpa_do_httpserver() & fpa_get_fpm_pool_metrics()
+        ], // Fully audits SAPI extensions, execution pools and server software profiles
+
+        // DNS Evaluation & Security (Optional)
+        'dns_security' => [
+            // TIER 1: Presentation metadata layer for UI headers and toggles
+            'meta' => [
+                'section_title'  => $lang['FPA_META_TITLE_LIVE_CHECKS'],
+                'section_intro'  => 'Compares active local installation versions against official remote release repositories.',
+                'attribute_slug' => 'fpa_live_checks'
+            ],
+
+            // TIER 2: Input target operational registries
+            'targets' => [],
+
+            // TIER 3: Normalized environment results payloads
+            'data' => [
+                'rows' => [],    // Stores server engine directive metrics
+
+                // Core tally counters allow sorting tools to scan this node instantly
+                'failed_count'  => 0,     // Consolidated tracking total error count
+                'danger_count'  => 0,     // Total critical threat tracking tally
+                'warning_count' => 0,     // Total warning status tracking tally
+                'is_complete'   => false  // State flag tracking module lifecycle
             ]
         ],
 
-        // database configuration, table-space structure and statistics
-        'database' => [
+        // PHP engine environmental profiles, extension states, and ini directives
+        'php' => [
+            // TIER 1: Presentation metadata layer for UI headers and toggles
             'meta' => [
-                'section_title' => $lang['FPA_META_TITLE_PLATFORM_INTEGRITY'],
-                'section_intro' => 'Core specifications and configuration rules running on this web server architecture.'
+                'section_title'  => $lang['FPA_META_TITLE_PHP_DISCOVERY'],
+                'section_intro'  => 'Audits runtime PHP configurations, verifying extension availability and mapping runtime directives against security or performance baselines.',
+                'attribute_slug' => 'fpa_php_discovery'
             ],
-            'data' => [] // Populated by fpa_do_database()
-        ],
 
-        // Discover and report on installed applications, such as php, database server
-        /*
-        'applications' => [
-            'meta' => [
-                'section_title' => 'FPA_META_TITLE_APPLICATIONS',
-                'section_intro' => 'Core specifications and configuration rules running on this web server architecture.'
-            ],
-            'data' => [] // Populated by fpa_audit_compatibility() & fpa_audit_ssl_certificate()
-        ],
-        */
+            // TIER 2: Input target operational registries (Strict reference criteria lists)
+            'targets' => [
+                // Core database interface extension layers to test against
+                'database_extensions'    => ['mysql', 'mysqli', 'pdo_mysql', 'pdo_pgsql', 'pgsql', 'mysqlnd', 'wilma'],
+                // Mandatory technical prerequisites required for basic Joomla operations
+                'required_extensions'    => ['json', 'dom', 'SimpleXML', 'zlib', 'gd', 'openssl', 'mcrypt', 'sodium', 'fred', 'barney', 'betty'],
+                // Highly recommended packages required for optimal framework execution
+                'recommended_extensions' => ['curl', 'filter', 'iconv', 'mbstring', 'zip', 'fileinfo', 'libxml', 'xml'],
 
-        // Confirm the presence of required core folders and their permissions
-        'corefolders' => [
-            'meta' => [
-                'section_title' => $lang['FPA_META_TITLE_CORE_FOLDERS'],
-                'section_intro' => 'Audits the presence of the required Joomla! core folders ensuring they conform to safe operational standards.'
+                // Map of directives to evaluate (Keys are checked, values define their dashboard pillar categorization)
+                'ini_directives' => [
+                    'display_errors'               => 'security',
+                    'open_basedir'                 => 'security',
+                    'allow_url_include'            => 'security',
+                    'allow_url_fopen'              => 'security',
+                    'session.cookie_httponly'      => 'security',
+                    'session.cookie_secure'        => 'security',
+                    'expose_php'                   => 'security',
+                    'disable_functions'            => 'security',
+                    'memory_limit'                 => 'performance',
+                    'max_execution_time'           => 'performance',
+                    'opcache.enable'               => 'performance',
+                    'opcache.max_accelerated_files' => 'performance',
+                    'max_input_time'               => 'performance',
+                    'upload_max_filesize'           => 'functionality',
+                    'post_max_size'                => 'functionality',
+                    'max_input_vars'               => 'functionality',
+                    'default_socket_timeout'       => 'functionality',
+                    'short_open_tag'               => 'compatibility',
+                    'mbstring.func_overload'       => 'compatibility',
+                    'file_uploads'                  => 'compatibility',
+                    'request_order'                => 'compatibility',
+                    'zlib.output_compression'      => 'compatibility'
+                ]
             ],
+
+            // TIER 3: Normalized environment results payloads
             'data' => [
-                'api/'                      => [],
-                'cache/'                    => [],
-                'components/'               => [],
-                'images/'                   => [],
-                'language/'                 => [],
-                'libraries/'                => [],
-                'logs/'                     => [],
-                'media/'                    => [],
-                'media/cache/'              => [],
-                'modules/'                  => [],
-                'plugins/'                  => [],
-                'templates/'                => [],
-                'tmp/'                      => [],
-                'administrator/cache/'      => [],
-                'administrator/components/' => [],
-                'administrator/logs/'       => [],
-                'administrator/manifests/'  => [],
-                'administrator/modules/'    => [],
-                'administrator/language/'   => [],
-                'administrator/templates/'  => []
-            ] // Populated by fpa_do_corefolders()
-        ],
+                'rows' => [],   // Unified compilation grid for both extensions and ini directives
+                'ini_files' => [
+                    'web_root_php_ini'  => null, // Absolute path to webroot php.ini if discovered
+                    'web_root_user_ini' => null, // Absolute path to webroot .user.ini if discovered
+                    'admin_php_ini'     => null, // Absolute path to administrator php.ini if discovered
+                    'admin_user_ini'    => null  // Absolute path to administrator .user.ini if discovered
+                ],
+                'memory_footprint' => [], // Populated dynamically by fpa_do_php_memory_footprint()
+                'upload_tmp'       => [], // Populated dynamically by fpa_php_upload_tmp_audit()
 
-        // Audit permissions of the rest of the site-root file-system folders
-        'permissions' => [
+                // Core tally counters allow sorting tools to scan this node instantly
+                'failed_count'     => 0,    // Consolidated tracking total error count tally
+                'danger_count'     => 0,    // Total critical threat tracking tally count
+                'warning_count'    => 0,    // Total warning status tracking tally count
+                'is_complete'      => false  // State flag tracking module execution lifecycle
+            ] // Populated by fpa_do_php(), fpa_audit_php_extended(), and directive validation routines
+        ], // Fully compiles internal server configurations and environment restrictions
+
+        // Database configuration metrics, table-space allocations and engine statistics
+        'database' => [
+            // TIER 1: Presentation metadata layer for UI headers and toggles
             'meta' => [
-                'section_title' => $lang['FPA_META_TITLE_FOLDER_PERMS'],
-                'section_intro' => 'Audits system folders to ensure security boundaries conform to safe operational standards.'
+                'section_title'  => $lang['FPA_META_TITLE_PLATFORM_INTEGRITY'],
+                'section_intro'  => 'Audits target database engine parameters, analyzing tablespace allocation, schema structures, collations and operational statistics.',
+                'attribute_slug' => 'fpa_database_discovery'
             ],
-            'data' => [] // Populated by fpa_audit_permissions()
-        ],
 
-        // key metrics dashboard
+            // TIER 2: Input target operational registries (Initialized for compliance)
+            'targets' => [],
+
+            // TIER 3: Normalized environment results payloads
+            'data' => [
+                'rows' => [
+                    'engine_variables' => [],  // Raw directive profiles (e.g. sql_mode, character_set)
+                    'tables'           => [],  // Maps individual table names, rows, sizes and collations
+                    'tablespace_stats' => [
+                        'total_data_bytes'  => 0, // Consolidated data footprint capacity used
+                        'total_index_bytes' => 0, // Consolidated indexing footprint allocation
+                        'free_space_bytes'  => 0  // Leftover open memory fragments reported
+                    ]
+                ],
+
+                // Core tally counters allow sorting tools to scan this node instantly
+                'failed_count'   => 0,     // Consolidated tracking total error count tally
+                'danger_count'   => 0,     // Total critical threat tracking tally count
+                'warning_count'  => 0,     // Total warning status tracking tally count
+                'is_complete'    => false  // State flag tracking module execution lifecycle
+            ] // Populated by fpa_do_database() and fpa_audit_database()
+        ], // Fully processes active local database schema configurations if discovered
+
+        // Confirm the operational presence of required core folders and their bitmask permissions
+        'corefolders' => [
+            // TIER 1: Presentation metadata layer for UI headers and toggles
+            'meta' => [
+                'section_title'  => $lang['FPA_META_TITLE_CORE_FOLDERS'],
+                'section_intro'  => 'Audits the presence of required Joomla! core folders, ensuring they conform to safe operational standards.',
+                'attribute_slug' => 'fpa_core_folders'
+            ],
+
+            // TIER 2: Input target operational registries (Strict reference criteria lists)
+            'targets' => [
+                // Structural framework directories required for baseline application execution
+                'required_folders' => [
+                    'api/', 'cache/', 'components/', 'images/', 'language/', 'libraries/', 'logs/', 'media/',
+                    'media/cache/', 'modules/', 'plugins/', 'templates/', 'tmp/', 'administrator/cache/',
+                    'administrator/components/', 'administrator/logs/', 'administrator/manifests/',
+                    'administrator/modules/', 'administrator/language/', 'administrator/templates/'
+                ]
+            ],
+
+            // TIER 3: Normalised environment results payloads
+            'data' => [
+                'rows' => [
+                    'folders' => [],
+                ],    // Associative paths map populated by fpa_do_permissions()
+
+                // Core tally counters allow sorting tools to scan this node instantly
+                'failed_count'  => 0,     // Consolidated tracking total error count
+                'danger_count'  => 0,     // Total critical threat tracking tally
+                'warning_count' => 0,     // Total warning status tracking tally
+                'is_complete'   => false  // State flag tracking module lifecycle
+            ] // Populated by fpa_do_permissions() on the Phase 1 mandatory baseline pass
+        ], // Fully verifies system pathways before allowing advanced secondary tests to execute
+
+        // Audit the bitmask permissions of all remaining site-root filesystem directories
+        'permissions' => [
+            // TIER 1: Presentation metadata layer for UI headers and toggles
+            'meta' => [
+                'section_title'  => $lang['FPA_META_TITLE_FOLDER_PERMS'],
+                'section_intro'  => 'Audits remaining system directories recursively, ensuring extended security boundaries conform to safe operational standards.',
+                'attribute_slug' => 'fpa_permissions'
+            ],
+
+            // TIER 2: Input target operational registries (Populated dynamically during runtime)
+            'targets' => [],
+
+            // TIER 3: Normalized environment results payloads
+            'data' => [
+                'rows' => [
+                    'folders' => [],
+                ],    // Associative paths map populated by fpa_do_permissions()
+
+                // Core tally counters allow sorting tools to scan this node instantly
+                'failed_count'  => 0,     // Consolidated tracking total error count
+                'danger_count'  => 0,     // Total critical threat tracking tally
+                'warning_count' => 0,     // Total warning status tracking tally
+                'is_complete'   => false  // State flag tracking module lifecycle
+            ] // Populated by fpa_do_permissions() on the Phase 2 optional recursive pass,
+              // using $fpa_results['corefolders']['targets']['required_folders'] as an exclude list
+        ], // Fully processes background directories up to your safe max_errors circuit ceiling
+
+        // Key metrics dashboard matrix tracking individual score pillars
         'key_metrics' => [
+            // TIER 1: Presentation metadata layer for UI headers and toggles
             'meta' => [
                 'section_title'  => $lang['FPA_META_TITLE_KEY_METRICS'],
-                'section_intro'  => 'Core specifications and configuration rules running on this web server architecture.',
-                'attribute_slug' => 'fpa_key_metrics' // used for section id and toggle buttons
+                'section_intro'  => 'Compiles systemic environmental audits into quantifiable security, functionality, performance and compatibility scores.',
+                'attribute_slug' => 'fpa_key_metrics'
             ],
-            'pillars'   => [],
-            'readiness' => [],
-        ],
 
-        // Raise and log any issues/alerts found to display in the navbar notifications dropdown tray
-        'issue_queue' => [] // Populated at any time by any function or routine
+            // TIER 2: Input target operational registries (Empty for cockpit)
+            'targets' => [],
 
+            // TIER 3: Normalized environment results payloads
+            'data' => [
+                'rows'          => [],    // Empty placeholder: Keeps all system sorting tools silent!
+                'failed_count'  => 0,     // Consolidated tracking total metric warnings tally
+                'danger_count'  => 0,     // Total critical metric alerts tracking tally count
+                'warning_count' => 0,     // Total warning status metrics tracking tally count
+                'is_complete'   => false, // State flag tracking module execution lifecycle
+
+                // Pillar Calculations: Grouped
+                'pillars' => [
+                    'security'      => ['passed' => 0, 'total' => 0, 'score' => 100, 'state' => 'success'],
+                    'functionality' => ['passed' => 0, 'total' => 0, 'score' => 100, 'state' => 'success'],
+                    'compatibility' => ['passed' => 0, 'total' => 0, 'score' => 100, 'state' => 'success'],
+                    'performance'   => ['passed' => 0, 'total' => 0, 'score' => 100, 'state' => 'success']
+                ],
+
+                // System ecosystem health tracking gauges summary configurations
+                'health' => [
+                    'overall_score' => 100,
+                    'overall_state' => 'success',
+                    'summary_notes' => 'Awaiting operational test cycles initialization execution.'
+                ]
+            ] // Populated by fpa_do_keymetrics()
+        ], // Fully compiles consolidated infrastructure status analytics indices
+
+        // Raise and log any exceptions/alerts found to display in the offcanvas error log notifications drawer
+        'issue_queue' => [
+            // TIER 1: Presentation metadata layer for UI headers and toggles
+            'meta' => [
+                'section_title'  => $lang['FPA_META_TITLE_ERROR_LOG'] ?? 'Actionable System Issues',
+                'section_intro'  => 'Review and resolve the following risks and issues logged by the Forum Post Assistant.',
+                'attribute_slug' => 'fpa_errorlog'
+            ],
+
+            // TIER 2: Input target operational registries (Empty for issue log)
+            'targets' => [],
+
+            // TIER 3: Normalised environment results payloads
+            'data' => [
+                // 🚀 STANDARDISED ALERTS CONTAINER: Every single logged error lives here!
+                'rows'          => [],    // Sequential alert records map populated dynamically across execution cycles
+                'failed_count'  => 0,     // Consolidated tracking total error count tally
+                'danger_count'  => 0,     // Total critical threat tracking tally count
+                'warning_count' => 0,     // Total warning status tracking tally count
+                'is_complete'   => false  // State flag tracking module execution lifecycle
+            ] // Populated at any time by any function or routine, utilizing fpa_format_logs() function
+        ], // Fully compiles internal server configurations and environment restrictions
     ];
 
 
@@ -2469,33 +3202,33 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
      * =========================================================================
      */
     // Run Joomla instance discovery
-    if (function_exists(__NAMESPACE__ . '\\fpa_do_instance')) {
+    if (function_exists('fpa_do_instance')) {
         //$fpa_results['instance']['data'] = fpa_do_instance();
     } // end: fpa_do_instance()
 
     // Run php extension discovery
-    if (function_exists(__NAMESPACE__ . '\\fpa_do_php')) {
+    if (function_exists('fpa_do_php')) {
 
         // 1. Pull the flat list out of our blueprint array
         $required_checklist = array_merge(
-            $fpa_results['php']['required_extensions'],
-            $fpa_results['php']['database_extensions']
+            $fpa_results['php']['targets']['required_extensions'],
+            $fpa_results['php']['targets']['database_extensions']
         );
 
         // 2. Call the function for the first time, passing the combined required list
         $required_output = fpa_do_php($required_checklist, $lang);
 
         // 3. Save that exact data block into the designated required target key
-        $fpa_results['php']['data']['required_extensions'] = $required_output;
+        $fpa_results['php']['data']['rows']['required_extensions'] = $required_output;
 
         // 4. Extract the static recommended list out of the blueprint
-        $recommended_checklist = $fpa_results['php']['recommended_extensions'];
+        $recommended_checklist = $fpa_results['php']['targets']['recommended_extensions'];
 
         // 5. Call the same function a second time, passing the recommended list instead
         $recommended_output = fpa_do_php($recommended_checklist, $lang);
 
         // 6. Save this separate data block into your designated recommended target key
-        $fpa_results['php']['data']['recommended_extensions'] = $recommended_output;
+        $fpa_results['php']['data']['rows']['recommended_extensions'] = $recommended_output;
 
         // 7. Add the HTML sections dynamic id slug, also used for data attribute
         //    if any toggle buttons are to be used within the HTML section
@@ -2504,9 +3237,9 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
         // --- OPTIONAL SAFETY NET: Automatic Issue Queue Generation ---
         // Loop through the required extensions output. If any critical item is missing, flag it!
         $i = 0;
-        foreach ($fpa_results['php']['data']['required_extensions'] as $name => $metrics) {
+        foreach ($fpa_results['php']['data']['rows']['required_extensions'] as $name => $metrics) {
             if ($metrics['is_missing']) {
-                $fpa_results['issue_queue'][] = [
+                $fpa_results['issue_queue']['data']['rows'][] = [
                     'id'        => 'missing_req_' . $name,
                     'type'      => 'danger',
                     'text'      => ($lang['FPA_ERR_CRITICAL_MISSING'] ?? 'Critical Component Missing: ') . $name,
@@ -2517,6 +3250,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
             }
         }
 
+        // TODO: check if this is still needed or a better way of doing it
         if ($i == 0) {
             $fpa_results['php']['exceptions']['required_extensions']['msg'] = 'All Required Extensions Available';
         }
@@ -2524,9 +3258,9 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
 
         // Loop through the recommened extensions output. If any items are missing, flag it!
         $i = 0;
-        foreach ($fpa_results['php']['data']['recommended_extensions'] as $name => $metrics) {
+        foreach ($fpa_results['php']['data']['rows']['recommended_extensions'] as $name => $metrics) {
             if ($metrics['is_missing']) {
-                $fpa_results['issue_queue'][] = [
+                $fpa_results['issue_queue']['data']['rows'][] = [
                     'id'        => 'missing_rec_' . $name,
                     'type'      => 'danger',
                     'text'      => ($lang['FPA_ERR_CRITICAL_MISSING'] ?? 'Critical Component Missing: ') . $name,
@@ -2537,6 +3271,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
             }
         }
 
+        // TODO: check if this is still needed or a better way of doing this
         if ($i == 0) {
             $fpa_results['php']['exceptions']['recommended_extensions']['msg'] = 'All Recommended Extensions Available';
         }
@@ -2544,16 +3279,16 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
     } // end: fpa_do_php()
 
     // Run php ini directive (matrix) discovery
-    if (function_exists(__NAMESPACE__ . '\\fpa_do_ini_matrix')) {
+    if (function_exists('fpa_do_ini_matrix')) {
 
-        $ini_checklist  = $fpa_results['php']['ini_directives'];
+        $ini_checklist  = $fpa_results['php']['targets']['ini_directives'];
 
         // Call the function, passing the base system directory path argument
         $matrix_payload = fpa_do_ini_matrix($ini_checklist, $lang, $base_path);
 
         // Distribute the collected parameters straight to their descriptive key locations!
         $fpa_results['php']['ini_files']           = $matrix_payload['ini_files'];
-        $fpa_results['php']['data']['ini_matrix'] = $matrix_payload['ini_matrix'];
+        $fpa_results['php']['data']['rows']['ini_matrix'] = $matrix_payload['ini_matrix'];
 
         // 4. Add the HTML sections dynamic id slug, also used for data attribute
         //    if any toggle buttons are to be used within the HTML section
@@ -2562,9 +3297,9 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
         // --- OPTIONAL SAFETY NET: Automatic Issue Queue Generation ---
         // Loop through the required extensions output. If any critical item is missing, flag it!
         $i = 0;
-        foreach ($fpa_results['php']['data']['ini_matrix'] as $name => $metrics) {
+        foreach ($fpa_results['php']['data']['rows']['ini_matrix'] as $name => $metrics) {
             if ($metrics['override_status'] == 'failed') {
-                $fpa_results['issue_queue'][] = [
+                $fpa_results['issue_queue']['data']['rows'][] = [
                     'id'        => 'unapplied_override_' . $name,
                     'type'      => 'warning',
                     'text'      => ($lang['FPA_ERR_UNAPPLIED_OVERRIDE'] ?? 'Unapplied override: ') . $name,
@@ -2582,41 +3317,41 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
     } // end: fpa_do_ini_matrix()
 
     // Run php directive sanity checks
-    if (function_exists(__NAMESPACE__ . '\\fpa_do_ini_matrix') && function_exists('fpa_do_ini_sanity')) {
-        $matrix_payload = fpa_do_ini_matrix($fpa_results['php']['ini_directives'], $lang, $base_path);
+    if (function_exists('fpa_do_ini_matrix') && function_exists('fpa_do_ini_sanity')) {
+        $matrix_payload = fpa_do_ini_matrix($fpa_results['php']['targets']['ini_directives'], $lang, $base_path);
         $sanity_payload = fpa_do_ini_sanity($matrix_payload['ini_matrix'], $lang);
 
-        $fpa_results['php']['ini_files']          = $matrix_payload['ini_files'];
-        $fpa_results['php']['data']['ini_matrix'] = $sanity_payload['results'];
+        $fpa_results['php']['targets']['ini_files']        = $matrix_payload['ini_files'];
+        $fpa_results['php']['data']['rows']['ini_matrix'] = $sanity_payload['results'];
 
         // Push To Meta: Store counters
-        $fpa_results['php']['meta']['all_sane']      = $sanity_payload['all_sane'];
-        $fpa_results['php']['meta']['danger_count']  = $sanity_payload['danger_count'];
-        $fpa_results['php']['meta']['warning_count'] = $sanity_payload['warning_count'];
+        $fpa_results['php']['data']['all_sane']      = $sanity_payload['all_sane'];
+        $fpa_results['php']['data']['danger_count']  = $sanity_payload['danger_count'];
+        $fpa_results['php']['data']['warning_count'] = $sanity_payload['warning_count'];
     } // end: fpa_do_ini_sanity()
 
     // Run php memory usage
-    if (function_exists(__NAMESPACE__ . '\\fpa_do_php_memory_footprint')) {
+    if (function_exists('fpa_do_php_memory_footprint')) {
         $fpa_results['php']['data']['memory_footprint'] = fpa_do_php_memory_footprint($lang);
     } // end: fpa_do_php_memory_footprint()
 
     // Run php upload tmp folder access
-    if (function_exists(__NAMESPACE__ . '\\fpa_do_php_upload_tmp_audit')) {
+    if (function_exists('fpa_do_php_upload_tmp_audit')) {
         $tmp_payload = fpa_do_php_upload_tmp_audit($lang);
         $fpa_results['php']['data']['upload_tmp'] = $tmp_payload;
 
         // Directly push to the global Navbar Message Queue if the directory is broken!
         if ($tmp_payload['ui_alert'] !== null) {
-            $fpa_results['issue_queue'][] = $tmp_payload['ui_alert'];
+            $fpa_results['issue_queue']['data']['rows'][] = $tmp_payload['ui_alert'];
         }
     } // end: fpa_do_php_upload_tmp_audit()
 
     // Run httpserver discovery
-    if (function_exists(__NAMESPACE__ . '\\fpa_do_httpserver')) {
+    if (function_exists('fpa_do_httpserver')) {
         $server_payload = fpa_do_httpserver($lang);
 
         // Lock the data packet into its designated results slot!
-        $fpa_results['httpserver']['data'] = $server_payload;
+        $fpa_results['httpserver']['data']['rows'] = $server_payload;
 
         // Correlate and bridge data in to the 'ref' key as well
         $fpa_results['ref']['data']['server']['web_server']          = $server_payload['web_server'];
@@ -2632,7 +3367,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
             // Issue Condition A: Workers max limit breached
             // If the maximum number of active processes matches or exceeds the total available workers (causes 503 errors)
             if ($fpm['total_workers'] > 0 && $fpm['max_reached'] >= $fpm['total_workers']) {
-                $fpa_results['issue_queue'][] = [
+                $fpa_results['issue_queue']['data']['rows'][] = [
                     'id'        => 'fpm_workers_exhausted',
                     'type'      => 'warning',
                     'text'      => 'Warning: PHP-FPM Process Pool Max Worker Limit Breached.',
@@ -2643,7 +3378,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
 
             // Issue Condition B: Active slow request logging (causes slow/delayed/spikey site loading)
             if ($fpm['slow_requests'] > 0) {
-                $fpa_results['issue_queue'][] = [
+                $fpa_results['issue_queue']['data']['rows'][] = [
                     'id'        => 'fpm_slow_requests_logged',
                     'type'      => 'warning',
                     'text'      => 'Warning: PHP-FPM has intercepted ' . $fpm['slow_requests'] . ' slow execution loops.',
@@ -2656,17 +3391,36 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
     } // end: fpa_do_httpserver()
 
     // Run database discovery
-    if (function_exists(__NAMESPACE__ . '\\fpa_do_database')) {
+    if (function_exists('fpa_do_database')) {
         //$fpa_results['database']['data'] = fpa_do_database();
     } // end: fpa_do_database()
 
     // Run required Joomla folders permissions
-    if (function_exists(__NAMESPACE__ . '\\fpa_do_corefolders')) {
+    /* REPLACED BY fpa_do_permissions
+    if (function_exists('fpa_do_corefolders')) {
         //$fpa_results['corefolders']['data'] = fpa_do_corefolders();
     } // end: fpa_do_corefolders()
+     */
+
+    // Run required Joomla core folder permissions
+    if (function_exists('fpa_do_permissions')) {
+        // Reads directly from the core folders list keys
+        $core_paths = $fpa_results['corefolders']['targets']['required_folders'] ?? [];
+
+        if (!empty($core_paths)) {
+            // Triggers the baseline check pass (No limits, no exclusions)
+            $fpa_results['corefolders']['data']['rows'] = fpa_do_permissions(
+                $fpa_results,
+                $lang,
+                $core_paths,
+                [],
+                999 // High threshold protection for vital baseline folders
+            );
+        }
+    } // end: fpa_do_permissions() - Mandatory Core Folders
 
     // Run Joomla minimum requirements and application version comparison
-    if (function_exists(__NAMESPACE__ . '\\fpa_do_compatibility')) {
+    if (function_exists('fpa_do_compatibility')) {
         //$fpa_results['metrics']['data']['compatibility'] = fpa_do_compatibility();
     } // end: fpa_do_compatibilty()
 
@@ -2674,7 +3428,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
     // Finalise overall and category rating and scoring
     // NOTE: ALLTHOUGH THIS IS A MANDATORY FUNCTION IT NEEDS TO RUN LAST TO
     //       ENSURE IT CAPTURES BOTH MANDATORY AND OPTIONAL METRICS.
-    if (function_exists(__NAMESPACE__ . '\\fpa_do_keymetrics')) {
+    if (function_exists('fpa_do_keymetrics')) {
         $fpa_results = fpa_do_keymetrics($fpa_results, $lang);
     } // end: fpa_do_metrics()
     // =========================================================================
@@ -2684,7 +3438,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
 
     /*
      * =========================================================================
-     * RUNTIME PHASE 2: Execute Optional Tests
+     * RUNTIME PHASE 3: Execute Optional Tests
      * =========================================================================
      * Called from the $active_tests_to_run array after being selected from the
      * FPA Runtime Settings form (offcanvas) and via the Registry loop.
@@ -2707,12 +3461,12 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
     // =========================================================================
     // LINEAR OPTIONAL TEST SEQUENCE: DUAL-TABLE DNS SECURITY AUDIT
     // =========================================================================
-    if (function_exists(__NAMESPACE__ . '\\fpa_audit_dns_security')) {
+    if (function_exists('fpa_audit_dns_security')) {
         // Execute your combined network analytics pass
         $dns_payload = fpa_audit_dns_security($fpa_results, $lang);
 
         // Save the data packet straight into its matching master results slot
-        $fpa_results['dns_security']['data'] = $dns_payload;
+        $fpa_results['dns_security']['data']['rows'] = $dns_payload;
 
         // =====================================================================
         // 🚨 AUTOMATED ISSUES DRAWER INJECTIONS: NETWORK EXCEPTIONS
@@ -2722,7 +3476,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
 
             // Alert A: Domain Phishing Exposure (Missing BOTH SPF and DMARC)
             if ($dns_payload['has_spf'] === false && $dns_payload['has_dmarc'] === false) {
-                $fpa_results['issue_queue'][] = [
+                $fpa_results['issue_queue']['data']['rows'][] = [
                     'id'        => 'net_email_unauthenticated',
                     'type'      => 'danger',
                     'text'      => 'Critical: Domain Email Spoof Shields Absent.',
@@ -2732,7 +3486,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
             }
             // Alert B: Spoofing Vulnerability (Missing DMARC only)
             elseif ($dns_payload['has_dmarc'] === false) {
-                $fpa_results['issue_queue'][] = [
+                $fpa_results['issue_queue']['data']['rows'][] = [
                     'id'        => 'net_dmarc_missing',
                     'type'      => 'warning',
                     'text'      => 'Warning: Domain Lacks DMARC Enforcement Protection.',
@@ -2743,7 +3497,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
 
             // Alert C: Severe IP Routing Failure (Reverse PTR Mismatch)
             if ($dns_payload['is_ip_mismatch'] === true) {
-                $fpa_results['issue_queue'][] = [
+                $fpa_results['issue_queue']['data']['rows'][] = [
                     'id'        => 'net_ip_routing_mismatch',
                     'type'      => 'danger',
                     'text'      => 'Critical: Reverse DNS Pointer IP Routing Mismatch.',
@@ -2754,12 +3508,12 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
         }
     }
 
-    if (function_exists(__NAMESPACE__ . '\\fpa_audit_php_extended')) {
+    if (function_exists('fpa_audit_php_extended')) {
         // Pull the flat list out of our blueprint array
         $checklist = array_merge(
-            $fpa_results['php']['database_extensions'],
-            $fpa_results['php']['required_extensions'],
-            $fpa_results['php']['recommended_extensions']
+            $fpa_results['php']['targets']['database_extensions'],
+            $fpa_results['php']['targets']['required_extensions'],
+            $fpa_results['php']['targets']['recommended_extensions']
         );
 
         // Feed the checklist directly into our standalone function
@@ -2767,8 +3521,26 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
         $extended_data = fpa_audit_php_extended($checklist);
 
         // Save the final result output into the exact designated subkey block
-        $fpa_results['php']['data']['loaded_extensions'] = $extended_data;
+        $fpa_results['php']['data']['rows']['loaded_extensions'] = $extended_data;
     }
+
+    ///if (in_array('permissions', $fpa_active_tests_to_run, true)) {
+    /* temp disabled
+    if (function_exists('fpa_do_permissions')) {
+        // Dynamic scan loader collects all directories below your siteroot
+        $all_discovered_directories = fpa_glob_recursive_utility($base_path);
+
+        // Triggers the optional filesystem pass
+        $fpa_results['permissions']['data'] = fpa_do_permissions(
+            $fpa_results,
+            $lang,
+            $all_discovered_directories,
+            $core_paths ?? [], // Exclusion List
+            40                 // Circuit Breaker: Aborts scan if errors flood logs
+        );
+    } // end: fpa_do_permissions() - filesystem folders, excluding core folders
+     */ // TEMP DUSABLED
+    ///}
     // =========================================================================
     //  END RUNTIME PHASE 2: OPTIONAL TEST EXECUTION
     // =========================================================================
@@ -2776,19 +3548,28 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
 
     /*
      * =========================================================================
-     * RUNTIME PHASE 3: FINAL METRICS ENGINE AGGREGATION
+     * RUNTIME PHASE 3: FINAL ISSUE & METRICS ENGINE AGGREGATION
      * =========================================================================
      * Trigger stack health and pillar calculations after every single baseline
-     * and optional test finishes!
+     * and optional test finishes, plus sort the issues_queue.
      * =========================================================================
      */
-    if (function_exists(__NAMESPACE__ . '\\fpa_do_keymetrics')) {
+    if (function_exists('fpa_do_keymetrics')) {
         // Feed the completely filled master results array into the metric calculator
         $fpa_results = fpa_do_keymetrics($fpa_results, $lang);
     }
 
+    // Triage & sort the issue queue by severity
+    if (function_exists('fpa_triage_issue_queue')) {
+        // Extract the compiled raw exceptions map
+        $raw_issue_rows = $fpa_results['issue_queue']['data']['rows'] ?? [];
+
+        // Sort the exception rows automatically before rendering the frontend drawer.
+        $fpa_results['issue_queue']['data']['rows'] = fpa_triage_issue_queue($raw_issue_rows);
+    }
+
     // =========================================================================
-    //  END RUNTIME PHASE 3: FINAL METRICS AGGREGATION EXECUTION
+    //  END RUNTIME PHASE 3: FINAL ISSUE & METRICS AGGREGATION EXECUTION
     // =========================================================================
 
 
@@ -2849,7 +3630,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
  *    This is the literal name string of the standalone PHP function defined at
  *    the top of the file that processes the specific audit logic.
  *
- * VOLUNTEER MAINTENANCE NOTE:
+ * MAINTAINER NOTE:
  * To add a brand-new optional check section to the FPA tomorrow:
  *   Step A: Write the standalone function at the top of the file.
  *   Step B: Add a single row mapping line to this registry array below.
@@ -2865,7 +3646,7 @@ $fpa_test_registry = [
     'show_joomlastats'           => 'fpa_audit_joomlastats',
     'show_php_extended'          => 'fpa_audit_php_extended',
     'show_database_extended'     => 'fpa_audit_database_extended',
-    'show_permissions_extended'  => 'fpa_audit_permissions_extended',
+    'show_permissions'           => 'fpa_do_permissions', // hybrid, mandatory & optional routine
     'show_components'            => 'fpa_audit_components',
     'show_modules'               => 'fpa_audit_modules',
     'show_plugins'               => 'fpa_audit_plugins',
@@ -2873,6 +3654,7 @@ $fpa_test_registry = [
     'show_libraries'             => 'fpa_audit_libraries',
     'show_manifests'             => 'fpa_audit_manifests',
     'show_templates'             => 'fpa_audit_templates',
+    'show_filesystem'             => 'fpa_audit_filesystem',
 ];
 
 
@@ -2979,8 +3761,69 @@ $fpa_data = fpa_runtime_tests($lang, $fpa_active_tests_to_run, $fpa_test_registr
  * This section triggers exclusively when the global FPA_SIM constant is true.
  * =============================================================================
  */
+
+/*
+ * =============================================================================
+ * DEVELOPER MODE: SIMULATOR DATA HARVESTER EXPORT (button) CONTROLLER
+ * =============================================================================
+ * Checks that developer mode is active before granting export paths and the
+ * simulator data harvest button has passed a valid array key to dump in to a
+ * troubleshooting simulator file (for use by FPA_SIM utility below the Master
+ * Runner function).
+ */
+if (defined('FPA_DEV') && FPA_DEV === true && isset($_GET['fpa_export_sim'])) {
+
+    // Wipe any early whitespace or server compression buffers cleanly
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+
+    $target_key = trim((string)$_GET['fpa_export_sim']);
+
+    // Safely check both the module data nodes and the root references node
+    if (isset($fpa_data[$target_key]['data'])) {
+        $export_payload = $fpa_data[$target_key]['data'];
+    } elseif ($target_key === 'ref' && isset($fpa_data['ref'])) {
+        $export_payload = $fpa_data['ref'];
+    } else {
+        $export_payload = null;
+    }
+
+    if ($export_payload !== null) {
+        $filename = 'fpasim_' . $target_key . '_' . date('Y-m-d') . '.php';
+
+        // Build an executable, production-ready, clean dataset array string
+        $output  = "<?php\n";
+        $output .= "declare(strict_types=1);\n\n";
+        $output .= "/**\n * Captured FPA Environment Simulation Dataset\n";
+        $output .= " * Target Node: \$fpa_data['" . $target_key . "']['data']\n";
+        $output .= " * Generated: " . date('Y-m-d H:i:s UTC') . "\n */\n\n";
+        $output .= "return " . var_export($export_payload, true) . ";\n";
+
+        // Enforce the universal binary octet-stream attachment headers
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        header('Content-Length: ' . strlen($output));
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Pragma: no-cache');
+
+        echo $output;
+        exit(); // HARD BREAK: Permanently blocks HTML text from appending!
+    }
+} // Developer Simulation Data Export Controller
+
+/*
+ * =============================================================================
+ * DEVELOPER MODE: DATA SIMULATION INJECTION ENGINE OVERRIDES
+ * =============================================================================
+ * To run simulation matrices locally, clone the 'fpa_simulation_datasets' GitHub
+ * folder into a local folder named 'fpa_simulation_datasets' right next to this file.
+ * Uncomment the specific target include paths below to override data states.
+ * This section triggers exclusively when the global FPA_SIM constant is true.
+ * =============================================================================
+ */
 // STEP 1: Enable the FPA_SIM constant on line 159 (waaay back at the top)
-if (defined(__NAMESPACE__ . '\\FPA_SIM') && \ForumPostAssistant\FPA_SIM === true) {
+if (defined('FPA_SIM') && FPA_SIM === true) {
     $fpa_sim_path = __DIR__ . '/fpa_simulation_datasets';
     $sim_active   = false;
 
@@ -3015,7 +3858,7 @@ if (defined(__NAMESPACE__ . '\\FPA_SIM') && \ForumPostAssistant\FPA_SIM === true
     // STEP 3: Re-trigger the master key metrics calculator on top of the spoofed
     // dataset. This forces the Stack Health Horseshoe Gauge and Pillars to adapt
     // to the scenario automatically!
-    if (function_exists('ForumPostAssistant\fpa_do_keymetrics')) {
+    if (function_exists('fpa_do_keymetrics')) {
         $fpa_data = fpa_do_keymetrics($fpa_data, $lang);
     } // end: re-run the key metrics to update the pillar scores etc.
 } // end: FPA_SIM enabled
@@ -3492,17 +4335,19 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 
         //phpinfo();
         echo '<pre>';
-        //var_dump($fpa_results);
+        print_r($fpa_data['issue_queue']);
         //print_r($fpa_data['ref']);
         //print_r($fpa_data['httpserver']);
-        //print_r($fpa_data['dns_security']);
-        print_r($fpa_data['corefolders']);
+        //print_r($fpa_data['php']);
+        //print_r($fpa_data['corefolders']);
+        //print_r($fpa_data['permissions']);
         //var_dump($nrequired_extensions);
-        //var_dump($fpa_reference);
+        //var_dump($fpa_data['metrics']);
+        print_r($fpa_data['key_metrics']);
         //var_dump($fpa_active_feeds);
         //var_dump($do_live_checks);
         //var_dump($fpa_latest_versions);
-        var_dump($fpa_joomla_folders);
+        //var_dump($fpa_joomla_folders);
         //var_dump($fpa_joomla_instance);
         //var_dump($fpa_exception_queue);
         //var_dump($fpa_security);
@@ -3584,26 +4429,26 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                                                 <!-- Dynamic Foreground Level Indicator Ring Layer -->
                                                 <circle cx="80" cy="80" r="60"
                                                     fill="transparent"
-                                                    stroke="var(--bs-<?php echo $fpa_data['key_metrics']['readiness']['status_color']; ?>)"
+                                                    stroke="var(--bs-<?php echo $fpa_data['key_metrics']['health']['status_color']; ?>)"
                                                     stroke-width="14"
                                                     stroke-dasharray="377"
-                                                    stroke-dashoffset="<?php echo max(126, $fpa_data['key_metrics']['readiness']['dash_offset']); ?>"
+                                                    stroke-dashoffset="<?php echo max(126, $fpa_data['key_metrics']['health']['dash_offset']); ?>"
                                                     stroke-linecap="round"
                                                     style="transition: stroke-dashoffset 0.8s ease-in-out;" />
                                             </svg>
 
                                             <div class="position-absolute top-50 start-50 translate-middle text-center mt-2">
                                                 <div class="display-5 fw-bold text-dark-emphasis lh-1" style="letter-spacing: -0.2rem;">
-                                                    <?php echo $fpa_data['key_metrics']['readiness']['score']; ?><span class="fs-5 text-muted">%</span>
+                                                    <?php echo $fpa_data['key_metrics']['health']['score']; ?><span class="fs-5 text-muted">%</span>
                                                 </div>
-                                                <div class="badge mt-2 fs-6 bg-<?php echo $fpa_data['key_metrics']['readiness']['status_color']; ?>-subtle text-<?php echo $fpa_data['key_metrics']['readiness']['status_color']; ?>-emphasis border">
-                                                    Grade <?php echo htmlspecialchars($fpa_data['key_metrics']['readiness']['grade']); ?>
+                                                <div class="badge mt-2 fs-6 bg-<?php echo $fpa_data['key_metrics']['health']['status_color']; ?>-subtle text-<?php echo $fpa_data['key_metrics']['health']['status_color']; ?>-emphasis border">
+                                                    Grade <?php echo htmlspecialchars($fpa_data['key_metrics']['health']['grade']); ?>
                                                 </div>
                                             </div>
                                         </div><!-- /horseshoe svg guage container -->
 
-                                        <div class="alert alert-<?php echo $fpa_data['key_metrics']['readiness']['status_color']; ?> my-0 lh-sm">
-                                            <?php echo htmlspecialchars($fpa_data['key_metrics']['readiness']['description']); ?>
+                                        <div class="alert alert-<?php echo $fpa_data['key_metrics']['health']['status_color']; ?> my-0 lh-sm">
+                                            <?php echo htmlspecialchars($fpa_data['key_metrics']['health']['description']); ?>
                                         </div>
 
                                     </div><!-- /card-body -->
@@ -3672,143 +4517,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
             </div><!-- /container fpa_metrics_dashboard -->
         </div><!-- /container-fluid -->
 
-        <!-- OLD READINESS --
-        <div class="container-fluid bg-secondary bg-opacity-10 pt-3 pb-5">
 
-            <?php
-            // include if GRAPHICAL METRICS
-            // TODO: change the bar colours though
-            // Sample Rating value (Replace with your database rating variable)
-            $score_value = $fpa_joomla_instance['readiness_score'];
-
-            // Mathematical scale transform calculation: Maps 0-100 straight to 45-225 degrees
-            $degreesRotation = 45 + ($score_value * 1.8);
-            ?>
-
-            <div id="keyMetricsPanel" class="container my-4 pt-0">
-
-                <h2 class="border-bottom border-secondary p-2">
-                    <i class="bi bi-speedometer text-secondary"></i> <?php echo htmlspecialchars($lang['FPA_KEYMETRICS']); ?>
-                </h2>
-
-                -- Combined flex row on MD+, standard stacked row on SM and below --
-                <div class="row g-4 d-md-flex align-items-md-stretch mt-2">
-
-
-                    -- TEXT COLUMN --
-                    -- Full width below MD (col-12) | Takes up remaining space next to cards on LG+ (col-lg) --
-                    <div class="col-12 col-sm-12 Xcol-md-5 col-lg d-flex flex-column Xjustify-content-center">
-
-                        <div class="pe-xl-3 mb-2 mb-md-0">
-
-                            <h3 class="fs-5 fw-light Xtext-secondary text-uppercase tracking-wider mb-2">
-                                <span class="fw-bold"><?php echo htmlspecialchars($lang['FPA_READINESS']); ?></span> <?php echo htmlspecialchars($lang['FPA_TXT_SUMMARY']); ?>
-                            </h3>
-
-                            <p class="Xtext-secondary Xsmall Xmb-0">
-                                <?php echo htmlspecialchars($fpa_readiness_summary); ?>
-                            </p>
-                        </div>
-
-                    </div>
-
-                    -- CARDS CONTAINER COLUMN --
-                    -- Full width below MD (col-12) | 50% width on MD | 75% width on LG+ (col-lg-9) --
-                    <div class="col-12 col-sm-12 Xcol-md-7 col-lg-9">
-                        -- Inner Grid: 1 column on XS | 2 columns on SM and MD | 4 columns straight across on LG --
-                        <div class="row row-cols-2 Xrow-cols-sm-2 row-cols-lg-4 g-4 h-100">
-
-                            -- CARD 1 --
-                            <div class="col-">
-                                <div class="card readiness-card h-100 shadow-sm text-center border-<?php echo $fpa_readiness_color; ?> Xbg-<?php echo $fpa_readiness_color; ?>-subtle" style="border-left-width: 10px;">
-                                    <div class="card-body p-3 d-flex flex-column justify-content-between">
-
-                                        <div class="d-flex justify-content-center align-items-baseline Xmt-2">
-
-                                            --  if not using graphical UI setting
-                                            <span class="text-<?php //echo $fpa_readiness_color; ?> fw-semibold" style="font-size: 4em; Xfont-weight: 700; line-height: 1;"><?php //echo $fpa_joomla_instance['readinessGrade']; ?></span>
-                                            --
-
-                                            -- TODO : if GraphicalUI option selected --
-                                            <div class="d-flex flex-column align-items-center">
-                                                -- The Semi-Circle Gauge --
-                                                <div class="gauge-wrapper mb-1">
-                                                    <div class="gauge-body border-<?php echo $fpa_readiness_color; ?>"></div>
-                                                    <div class="gauge-fill" style="transform: rotate(<?php echo $degreesRotation; ?>deg);"></div>
-                                                </div>
-
-                                                -- Centred Rating Value Label Display --
-                                                <div class="text-center Xmt-2 position-absolute" style="top: 35%;">
-                                                    <span class="fs-3 fw-bold tracking-tight"><?php echo $score_value; ?>%</span>
-                                                </div>
-                                            </div>
-
-
-                                            --
-                                            <span class="fs-3 fw-bold tracking-tight">42%</span>
-                                            <span class="badge bg-success-subtle text-success ms-2 font-monospace" style="font-size: 0.7rem;">-3%</span>
-                                            --
-                                        </div>
-                                        <h3 class="fs-6 Xtext-center fw-bold text-uppercase m-0" style="Xfont-size: 0.7rem;"><?php echo $lang['FPA_READINESS']; ?></h3>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                            -- CARD 2 --
-                            <div class="col">
-                                <div class="card readiness-card h-100 shadow-sm border-warning bg-warning-subtle" style="border-left-width: 10px;">
-                                    <div class="card-body p-3 d-flex flex-column justify-content-between">
-
-                                        <div class="d-flex align-items-baseline mt-2">
-                                            <span class="fs-3 fw-bold tracking-tight"><?php echo $fpa_environment['score']; ?>%</span>
-                                            <span class="badge bg-success-subtle text-success ms-2 font-monospace" style="font-size: 0.7rem;">Stable</span>
-                                        </div>
-                                        <small class="fw-semibold text-uppercase d-block" style="font-size: 0.7rem;"><?php echo $fpa_environment['meta']['name']; ?></small>
-                                        <?php echo render_score_bar($fpa_environment['score']); ?>
-                                    </div>
-                                </div>
-                            </div>
-
-                            -- CARD 3 --
-                            <div class="col">
-                                <div class="card readiness-card h-100 shadow-sm border-warning bg-warning-subtle" style="border-left-width: 10px;">
-                                    <div class="card-body p-3 d-flex flex-column justify-content-between">
-
-                                        <div class="d-flex align-items-baseline mt-2">
-                                            <span class="fs-3 fw-bold tracking-tight"><?php echo $fpa_performance['score']; ?>%</span>
-                                            <span class="badge bg-danger-subtle text-danger ms-2 font-monospace" style="font-size: 0.7rem;">+14%</span>
-                                        </div>
-                                        <small class="fw-semibold text-uppercase d-block" style="font-size: 0.7rem;">Tuning & Optimisation<?php //echo $fpaPerformance['meta']['name']; ?></small>
-                                        <?php echo render_score_bar($fpa_performance['score']); ?>
-                                    </div>
-                                </div>
-                            </div>
-
-                            -- CARD 4 --
-                            <div class="col">
-                                <div class="card readiness-card h-100 shadow-sm border-info bg-info-subtle" style="border-left-width: 10px;">
-                                    <div class="card-body p-3 d-flex flex-column justify-content-between">
-
-                                        <div class="d-flex align-items-baseline mt-2">
-                                            <span class="fs-3 fw-bold tracking-tight"><?php echo $fpa_security['score']; ?>%</span>
-                                            <span class="badge bg-success-subtle text-success ms-2 font-monospace" style="font-size: 0.7rem;">+2%</span>
-                                        </div>
-                                        <small class="fw-semibold text-uppercase d-block" style="font-size: 0.7rem;"><?php echo $fpa_security['meta']['name']; ?></small>
-                                        <?php echo render_score_bar($fpa_security['score']); ?>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                </div>-- /row --
-
-            </div>-- /container #keyMetricsPanel --
-
-        </div>
-        --/container-fluid-->
 
 
 
@@ -4023,7 +4732,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                                         <?php echo $fpa_data['php']['data']['upload_tmp']['sanity_state'] === 'success' ? 'Functional' : 'Staging Locked'; ?>
                                     </span>
                                     <div class="text-muted small lh-sm">
-                                        File system integrity: Core upload temporary directories must be writeable by the active PHP service engine [A].
+                                        File system integrity: Core upload temporary directories must be writeable by the active PHP service engine.
                                     </div>
                                 </div>
 
@@ -4062,7 +4771,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
     </div>
     <!-- Clean, neutral subtle counter badge -->
     <span class="badge border bg-body-secondary text-dark-emphasis rounded-pill font-monospace small">
-      <?php echo count($fpa_data['php']['data']['required_extensions']); ?> Checked
+      <?php echo count($fpa_data['php']['data']['rows']['required_extensions']); ?> Checked
     </span>
   </div>
 
@@ -4076,7 +4785,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 
   <!-- 📦 THE CRISP SEPARATION GRID: Keeps highly defined physical item boxes intact -->
   <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-3 g-3 text-center">
-    <?php foreach ($fpa_data['php']['data']['required_extensions'] as $extension => $value): ?>
+    <?php foreach ($fpa_data['php']['data']['rows']['required_extensions'] as $extension => $value): ?>
       <?php
         $fpa_toggle_all_class = '';
         if ($value['version'] !== $lang['FPA_TXT_MISSING']) {
@@ -4084,7 +4793,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
         }
       ?>
 
-      <div class="col <?php echo $fpa_toggle_all_class; ?>">
+      <div class="col <?php //echo $fpa_toggle_all_class; ?>">
         <div class="card w-100 h-100 shadow-sm border rounded overflow-hidden border-<?php echo $value['status_color']; ?>">
 
           <!-- Extension Name Title Tag (Uses high-contrast accessible styling tokens) -->
@@ -4109,7 +4818,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
         Internal Data Stream Blueprint Debug
       </div>
       <pre class="bg-dark text-success p-3 rounded overflow-auto mb-0" style="max-height: 250px; font-size: 0.8rem; line-height: 1.4;">
-        <?php print_r($fpa_data['php']['data']['required_extensions']); ?>
+        <?php print_r($fpa_data['php']['data']['rows']['required_extensions']); ?>
       </pre>
     </div>
   <?php endif; ?>
@@ -4132,7 +4841,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
     </div>
     <!-- Clean, neutral subtle counter badge -->
     <span class="badge border bg-body-secondary text-dark-emphasis rounded-pill font-monospace small">
-      <?php echo count($fpa_data['php']['data']['recommended_extensions']); ?> Checked
+      <?php echo count($fpa_data['php']['data']['rows']['recommended_extensions']); ?> Checked
     </span>
   </div>
 
@@ -4146,7 +4855,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 
   <!-- 📦 THE CRISP SEPARATION GRID: Keeps highly defined physical item boxes intact -->
   <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-3 g-3 text-center">
-    <?php foreach ($fpa_data['php']['data']['recommended_extensions'] as $extension => $value): ?>
+    <?php foreach ($fpa_data['php']['data']['rows']['recommended_extensions'] as $extension => $value): ?>
       <?php
         $fpa_toggle_all_class = '';
         if ($value['version'] !== $lang['FPA_TXT_MISSING']) {
@@ -4154,7 +4863,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
         }
       ?>
 
-      <div class="col <?php echo $fpa_toggle_all_class; ?>">
+      <div class="col <?php //echo $fpa_toggle_all_class; ?>">
         <div class="card w-100 h-100 shadow-sm border rounded overflow-hidden border-<?php echo $value['status_color']; ?>">
 
           <!-- Extension Name Title Tag (Uses high-contrast accessible styling tokens) -->
@@ -4179,7 +4888,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
         Internal Data Stream Blueprint Debug
       </div>
       <pre class="bg-dark text-success p-3 rounded overflow-auto mb-0" style="max-height: 250px; font-size: 0.8rem; line-height: 1.4;">
-        <?php print_r($fpa_data['php']['data']['recommended_extensions']); ?>
+        <?php print_r($fpa_data['php']['data']['rows']['recommended_extensions']); ?>
       </pre>
     </div>
   <?php endif; ?>
@@ -4204,13 +4913,13 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
     </div>
     <!-- Clean, neutral subtle counter badge -->
     <span class="badge border bg-body-secondary text-dark-emphasis rounded-pill font-monospace small">
-      <?php echo count($fpa_data['php']['data']['loaded_extensions']); ?> Discovered
+      <?php echo count($fpa_data['php']['data']['rows']['loaded_extensions']); ?> Discovered
     </span>
   </div>
 
   <!-- 📦 THE CRISP SEPARATION GRID: Keeps your highly defined physical item boxes intact! -->
   <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-3 text-center">
-    <?php foreach ($fpa_data['php']['data']['loaded_extensions'] as $extension => $value): ?>
+    <?php foreach ($fpa_data['php']['data']['rows']['loaded_extensions'] as $extension => $value): ?>
 
       <div class="col">
         <!-- Individual, highly-defined child card with accessible status borders -->
@@ -4239,7 +4948,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
         Internal Data Stream Blueprint Debug
       </div>
       <pre class="bg-dark text-success p-3 rounded overflow-auto mb-0" style="max-height: 250px; font-size: 0.8rem; line-height: 1.4;">
-        <?php print_r($fpa_data['php']['data']['loaded_extensions']); ?>
+        <?php print_r($fpa_data['php']['data']['rows']['loaded_extensions']); ?>
       </pre>
     </div>
   <?php endif; ?>
@@ -4330,7 +5039,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 
                                 <tbody>
                                   <?php $current_category = ''; ?>
-                                  <?php foreach ($fpa_data['php']['data']['ini_matrix'] as $directive => $value): ?>
+                                  <?php foreach ($fpa_data['php']['data']['rows']['ini_matrix'] as $directive => $value): ?>
 
                                     <!-- Category Divider Header rows -->
                                     <?php if ($current_category !== $value['category']): ?>
@@ -4467,14 +5176,14 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 
     <!-- Header Badge Counter Grid -->
     <div class="d-flex gap-2">
-      <?php if ($fpa_data['php']['meta']['danger_count'] > 0): ?>
+      <?php if ($fpa_data['php']['data']['danger_count'] > 0): ?>
         <span class="badge border border-danger bg-danger-subtle text-danger-emphasis rounded-pill px-2 py-1 small font-monospace">
-          <?php echo $fpa_data['php']['meta']['danger_count']; ?> Critical Risk<?php echo $fpa_data['php']['meta']['danger_count'] > 1 ? 's' : ''; ?>
+          <?php echo $fpa_data['php']['data']['danger_count']; ?> Critical Risk<?php echo $fpa_data['php']['data']['danger_count'] > 1 ? 's' : ''; ?>
         </span>
       <?php endif; ?>
-      <?php if ($fpa_data['php']['meta']['warning_count'] > 0): ?>
+      <?php if ($fpa_data['php']['data']['warning_count'] > 0): ?>
         <span class="badge border border-warning bg-warning-subtle text-warning-emphasis rounded-pill px-2 py-1 small font-monospace">
-          <?php echo $fpa_data['php']['meta']['warning_count']; ?> Notice<?php echo $fpa_data['php']['meta']['warning_count'] > 1 ? 's' : ''; ?>
+          <?php echo $fpa_data['php']['data']['warning_count']; ?> Notice<?php echo $fpa_data['php']['data']['warning_count'] > 1 ? 's' : ''; ?>
         </span>
       <?php endif; ?>
     </div>
@@ -4501,7 +5210,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
             $has_exceptions = false;
           ?>
 
-          <?php foreach ($fpa_data['php']['data']['ini_matrix'] as $directive => $value): ?>
+          <?php foreach ($fpa_data['php']['data']['rows']['ini_matrix'] as $directive => $value): ?>
 
             <!-- 📌 EXCEPTION GATE: Skip rendering if the directive matches our optimal success baseline rules -->
             <?php if ($value['sanity_state'] === 'success') continue; ?>
@@ -4570,7 +5279,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
         Internal Data Stream Blueprint Debug (Sanity Checks)
       </div>
       <pre class="bg-dark text-success p-3 rounded overflow-auto mb-0" style="max-height: 250px; font-size: 0.8rem; line-height: 1.4;">
-        <?php print_r($fpa_data['php']['data']['ini_matrix']); ?>
+        <?php print_r($fpa_data['php']['data']['rows']['ini_matrix']); ?>
       </pre>
     </div>
   <?php endif; ?>
@@ -4596,7 +5305,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php if ($fpa_data['php']['meta']['all_sane'] === true): ?>
+                                            <?php if ($fpa_data['php']['data']['all_sane'] === true): ?>
                                                 <tr>
                                                     <td colspan="4" class="py-3 text-success-emphasis">
                                                         <div class="alert alert-success w-100 text-center mb-0" role="alert">
@@ -4607,7 +5316,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                                                 </tr>
                                             <?php endif; ?>
 
-                                            <?php foreach ($fpa_data['php']['data']['ini_matrix'] as $directive => $value): ?>
+                                            <?php foreach ($fpa_data['php']['data']['rows']['ini_matrix'] as $directive => $value): ?>
 
                                                 <?php
                                                 if ($value['sanity_state'] != 'success'):
@@ -4651,7 +5360,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                             if (defined('FPA_DEV') && FPA_DEV) {
                                 echo '<div class="card-footer text-small">';
                                 echo '<pre class="overflow-auto" style="max-height: 250px;">';
-                                print_r($fpa_data['php']['data']['ini_matrix']);
+                                print_r($fpa_data['php']['data']['rows']['ini_matrix']);
                                 echo '</pre>';
                                 echo '</div>';
                             } // end Developer Mode
@@ -4720,7 +5429,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 
                     <div class="pe-xl-3 mb-2 mb-md-0">
                         <h3 class="fs-5 fw-light Xtext-secondary text-uppercase tracking-wider mb-2">
-                            <span class="fw-bold"><?php echo htmlspecialchars($fpa_joomla_folders['meta']['name']); ?></span> <?php echo htmlspecialchars($lang['FPA_TXT_SUMMARY']); ?>
+                            <span class="fw-bold"><?php echo htmlspecialchars($fpa_data['corefolders']['meta']['section_title']); ?></span> <?php echo htmlspecialchars($lang['FPA_TXT_SUMMARY']); ?>
                         </h3>
                         <p class="text-secondary Xsmall Xmb-0">
                             Joomla! required folders audit, including prescence, ownership, prescence, standard and permission (mode) exception report displays up to 10 folders not conforming to normal or excepted sane standard and special permissions.
@@ -4743,14 +5452,34 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 
                     <div class="d-flex flex-wrap">
                         <span class="badge bg-body-tertiary text-secondary border fw-medium font-monospace ms-auto mb-2" style="font-size: 0.72rem;">
-                            PHP User: <strong class="Xtext-dark"><?php echo htmlspecialchars($fpa_reference['php']['process_user']); ?></strong>
-                            &nbsp;|&nbsp;System umask: <strong class="Xtext-dark"><?php echo htmlspecialchars($fpa_reference['server']['umask']); ?></strong>
+                            PHP User: <strong class="Xtext-dark"><?php echo htmlspecialchars($fpa_data['ref']['data']['php']['process_user']); ?></strong>
+                            &nbsp;|&nbsp;System umask: <strong class="Xtext-dark"><?php echo htmlspecialchars($fpa_data['ref']['data']['server']['umask']); ?></strong>
                         </span>
                     </div>
 
                     <div class="table-responsive rounded">
 
                         <table class="table table-hover align-middle table-striped table-bordered mb-0" style="Xfont-size: 0.9rem;">
+                            <thead class="Xtable-light table-dark text-uppercase tracking-wider" style="font-size: 0.8rem; font-weight: 700;">
+                                <tr>
+                                    <th scope="col" class="ps-3" rowspan="2">Path</th>
+                                    <th scope="col" class="text-center Xps-3 Xd-none Xfpa-toggle-permsaudit" colspan="3">Special Permissions</th>
+                                    <th scope="col" class="text-center" style="width: 84px;" rowspan="2">Mode</th>
+                                    <th scope="col" class="text-center" style="width: 64px;" rowspan="2">Owner Match</th>
+                                    <th scope="col" class="text-center" style="width: 64px;" rowspan="2">Read</th>
+                                    <th scope="col" class="text-center Xpe-3" colspan="3">Writable</th>
+                                    <th scope="col" class="text-center bg-fpa Xpe-3" rowspan="2" style="width: 64px;">Sane</th>
+                                </tr>
+                                <tr>
+                                    <th class="text-center small Xd-none Xfpa-toggle-permsaudit" style="width: 64px;">SUID</th>
+                                    <th class="text-center small Xd-none Xfpa-toggle-permsaudit" style="width: 64px;">SGID</th>
+                                    <th class="text-center small Xd-none Xfpa-toggle-permsaudit" style="width: 64px;">Sticky</th>
+                                    <th class="text-center small" style="width: 64px;">Owner</th>
+                                    <th class="text-center small" style="width: 64px;">Group</th>
+                                    <th class="text-center small" style="width: 64px;">World</th>
+                                </tr>
+                            </thead>
+                            <!--
                             <thead class="Xtable-light table-dark text-uppercase tracking-wider" style="font-size: 0.8rem; font-weight: 700;">
                                 <tr>
                                     <th scope="col" class="ps-3">Path</th>
@@ -4760,143 +5489,219 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                                     <th scope="col" class="text-center Xpe-3" style="width: 100px;">Writable</th>
                                 </tr>
                             </thead>
+                            -->
                             <tbody>
-                                <?php foreach ($fpa_joomla_folders['folders'] as $path => $perms_info): ?>
+                                <?php foreach ($fpa_data['corefolders']['data']['rows']['folders'] as $path => $perms_info): ?>
 
                                     <?php
-                                    if ($perms_info['perms'] != '0755') {
-                                        $non_rbe = '';
+                                    $mode_color = $perms_info['mode_color'];
+                                    $mode_icon  = ($mode_color === 'danger')
+                                        ? 'shield-slash-fill'
+                                        : 'exclamation-triangle-fill';
+                                    $row_color  = ($perms_info['row_class'] !== 'success')
+                                        ? $perms_info['row_class']
+                                        : '';
+                                    $sane_color = $perms_info['is_sane']['color'];
+
+                                    if ($perms_info['mode_color'] != 'success') {
+                                        $rbe_show_corefolders = '';
                                     } else {
-                                        $non_rbe = 'd-none fpa-toggle-allcorefolders';
+                                        $rbe_show_corefolders = 'd-none fpa-toggle-allcorefolders';
                                     }
                                     ?>
-                                    <tr class="<?php echo $non_rbe; ?>">
+                                    <tr class="table-<?php //echo $row_color; ?> <?php //echo $rbe_show_corefolders; ?>">
                                         <td class="ps-3 Xfont-monospace Xfw-semibold Xtext-secondary text-break" style="Xfont-size: 0.82rem;">
                                             <?php echo htmlspecialchars($path); ?>
                                         </td>
 
+                                        <!-- special permisisons -->
+                                        <td class="text-center text-uppercase">
+                                            <?php if (!$perms_info['exists']['value']): ?>
+                                                <i class="bi bi-dash-circle-dotted text-secondary" style="font-size: 1.04rem;"></i>
+                                            <?php else: ?>
+                                                <span class="badge border border-<?php echo $perms_info['has_suid']['color']; ?> bg-<?php echo $perms_info['has_suid']['color']; ?>-subtle text-<?php echo $perms_info['has_suid']['color']; ?>-emphasis w-100">
+                                                    <?php echo $perms_info['has_suid']['text']; ?>
+                                                </span>
+                                            <?php endif; ?>
+                                        </td>
 
-                                        <td class="d-none Xd-md-table-cell text-muted text-end Xd-none fpa-toggle-corefolders">
+                                        <td class="text-center text-uppercase">
+                                            <?php if (!$perms_info['exists']['value']): ?>
+                                                <i class="bi bi-dash-circle-dotted text-secondary" style="font-size: 1.04rem;"></i>
+                                            <?php else: ?>
+                                                <span class="badge border border-<?php echo $perms_info['has_guid']['color']; ?> bg-<?php echo $perms_info['has_guid']['color']; ?>-subtle text-<?php echo $perms_info['has_guid']['color']; ?>-emphasis w-100">
+                                                    <?php echo $perms_info['has_guid']['text']; ?>
+                                                </span>
+                                            <?php endif; ?>
+                                        </td>
+
+                                        <td class="text-center text-uppercase">
+                                            <?php if (!$perms_info['exists']['value']): ?>
+                                                <i class="bi bi-dash-circle-dotted text-secondary" style="font-size: 1.04rem;"></i>
+                                            <?php else: ?>
+                                                <span class="badge border border-<?php echo $perms_info['has_sticky']['color']; ?> bg-<?php echo $perms_info['has_sticky']['color']; ?>-subtle text-<?php echo $perms_info['has_sticky']['color']; ?>-emphasis w-100">
+                                                    <?php echo $perms_info['has_sticky']['text']; ?>
+                                                </span>
+                                            <?php endif; ?>
+                                        </td>
+
+                                        <!-- standard permissions with conditional tier warning badges & icons -->
+                                        <td class="text-center">
+                                            <?php if (!$perms_info['exists']['value']): ?>
+                                                <span class="badge border border-<?php echo $mode_color; ?>
+                                                    bg-<?php echo $mode_color; ?>-subtle
+                                                    text-<?php echo $mode_color; ?>-emphasis text-uppercase w-100">
+                                                    <?php echo htmlspecialchars($lang['FPA_TXT_MISSING']); ?>
+                                                </span>
+                                            <?php else: ?>
+                                                <span class="badge border border-<?php echo $mode_color; ?>
+                                                    <?php echo 'bg-' . $mode_color . ' X-subtle Xtext-' . $mode_color; ?>-emphasis w-100"
+                                                    style="Xfont-size: 0.72rem;"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="left"
+                                                    title="<?php echo htmlspecialchars($perms_info['tooltip']); ?>">
+
+                                                    <?php if ($mode_color === 'danger' || $mode_color === 'warning'): ?>
+                                                        <i class="bi bi-<?php echo $mode_icon; ?> me-1"></i>
+                                                    <?php endif; ?>
+
+                                                    <?php echo htmlspecialchars($perms_info['mode']); ?>
+                                                </span>
+                                            <?php endif; ?>
+
+
+                                            <!--
+                                            <?php if (!$perms_info['exists']['value']): ?>
+                                                <span class="badge border border-secondary bg-secondary-subtle text-secondary text-uppercase w-100" style="font-size: 0.72rem;">
+                                                    <?php echo $lang['FPA_TXT_MISSING']; ?>
+                                                </span>
+                                            <?php elseif (!$perms_info['is_sane']['value'] && $perms_info['mode_color'] != 'success'): ?>
+                                                -- CRITICAL & WARNING BADGE (e.g., 757, 775, 777 etc) --
+                                                <?php $mode_icon = $perms_info == 'danger' ? 'shield-slash-fill' : 'exclamation-triangle-fill'; ?>
+                                                <span class="badge border border-<?php echo $perms_info['mode_color']; ?> bg-<?php echo $perms_info['mode_color']; ?>-subtle text-<?php echo $perms_info['mode_color'];?>-emphasis w-100" style="Xfont-size: 0.72rem;"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="left"
+                                                    data-bs-title="<?php echo $perms_info['tooltip']; ?>">
+                                                    <i class="bi bi-<?php echo $mode_icon; ?> me-1"></i><?php echo $perms_info['mode']; ?>
+                                                </span>
+                                            <?php else: ?>
+                                                -- CLEAN SANE SAFE BADGE (e.g., 0755) --
+                                                <span class="badge border border-<?php echo $perms_info['mode_color']; ?> bg-<?php echo $perms_info['mode_color']; ?>-subtle text-<?php echo $perms_info['mode_color'];?>-emphasis w-100" style="Xfont-size: 0.72rem;"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="left"
+                                                    data-bs-title="<?php echo $perms_info['tooltip']; ?>">
+                                                    <?php echo $perms_info['mode']; ?>
+                                                </span>
+                                            <?php endif; ?>
+                                            -->
+
+                                            <!--
+                                            <?php //elseif (!$perms_info['is_sane']['value'] && $perms_info['mode_color'] == 'danger'): ?>
+                                                -- CRITICAL DANGER BADGE (World Writable / 777) --
+                                                <span class="badge bg-danger fw-black px-2.5 py-1.5 shadow-sm text-white w-100" style="font-size: 0.72rem;"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="left"
+                                                    data-bs-title="Critical: World-writable or insecure mode detected!">
+                                                    <i class="bi bi-shield-slash-fill me-1"></i><?php echo $perms_info['mode']; ?>
+                                                </span>
+                                            <?php //elseif (!$perms_info['is_sane']['value'] && $perms_info['mode_color'] == 'warning'): ?>
+                                                -- SECURITY WARNING BADGE (Group Writable / Loose Permissions) --
+                                                <span class="badge bg-warning text-dark border border-warning-subtle fw-bold px-2.5 py-1.5 shadow-sm w-100" style="font-size: 0.72rem;"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="left"
+                                                    data-bs-title="Warning: Loose group or owner permissions detected.">
+                                                    <i class="bi bi-exclamation-triangle-fill me-1"></i><?php echo $perms_info['mode']; ?>
+                                                </span>
+                                            -->
+                                        </td>
+
+                                        <td class="text-center text-uppercase Xd-none Xfpa-toggle-corefolders">
                                             <?php if (@!$perms_info['owner_match'] && $perms_info['exists']): ?>
                                                 <i class="bi bi-exclamation-diamond-fill text-info me-1" style="font-size: 0.85rem;"
                                                     data-bs-toggle="tooltip"
                                                     data-bs-placement="left"
                                                     data-bs-title="Ownership Mismatch: This directory is owned by a different user than the account executing PHP code."></i>
                                             <?php endif; ?>
-                                            <span class="<?php echo !$perms_info['owner_match'] ? 'text-secondary fw-medium' : ''; ?>">
-                                                <?php echo htmlspecialchars($perms_info['owner']); ?>
-                                            </span>
+                                            <?php if (!$perms_info['exists']['value']): ?>
+                                                <i class="bi bi-dash-circle-dotted text-secondary" style="font-size: 1.04rem;"></i>
+                                            <?php else: ?>
+                                                <span class="badge border border-<?php echo $perms_info['owner_match']['color']; ?> bg-<?php echo $perms_info['owner_match']['color']; ?>-subtle text-<?php echo $perms_info['owner_match']['color']; ?>-emphasis w-100">
+                                                    <?php echo htmlspecialchars($perms_info['owner_match']['text']); ?>
+                                                    <?php //echo htmlspecialchars($perms_info['owner']); ?>
+                                                </span>
+                                            <?php endif; ?>
                                         </td>
 
-                                        <td class="d-none Xd-md-table-cell text-muted Xd-none fpa-toggle-corefolders">
-                                            <?php echo htmlspecialchars($perms_info['group']); ?>
+                                        <td class="text-center text-uppercase Xd-none Xfpa-toggle-corefolders">
+                                            <?php if (!$perms_info['exists']['value']): ?>
+                                                <i class="bi bi-dash-circle-dotted text-secondary" style="font-size: 1.04rem;"></i>
+                                            <?php else: ?>
+                                                <span class="badge border border-<?php echo $perms_info['is_readable']['color']; ?> bg-<?php echo $perms_info['is_readable']['color']; ?>-subtle text-<?php echo $perms_info['is_readable']['color']; ?>-emphasis w-100">
+                                                    <?php echo htmlspecialchars($perms_info['is_readable']['text']); ?>
+                                                </span>
+                                            <?php endif; ?>
                                         </td>
+
+                                        <!--
+                                        <td class="Xd-md-table-cell text-muted Xd-none Xfpa-toggle-corefolders">
+                                            <?php //echo htmlspecialchars($perms_info['group']); ?>
+                                        </td>
+                                        -->
 
                                         <!--
                                         <td class="text-center">
                                             <?php if (!$perms_info['exists']): ?>
                                                 <span class="badge bg-secondary-subtle text-secondary fw-bold px-2.5 py-1.5 text-uppercase" style="font-size: 0.72rem;">Missing</span>
-                                            <?php elseif (!$perms_info['sane']): ?>
+                                            <?php elseif (!$perms_info['is_sane']): ?>
                                                 <span class="badge bg-danger fw-black px-2.5 py-1.5 shadow-sm" style="font-size: 0.72rem;" title="Dangerous Mode Detected!">
-                                                    <i class="bi bi-exclamation-triangle-fill me-1"></i><?php echo $perms_info['perms']; ?>
+                                                    <i class="bi bi-exclamation-triangle-fill me-1"></i><?php echo $perms_info['mode']; ?>
                                                 </span>
                                             <?php else: ?>
                                                 <span class="badge bg-light text-dark border fw-bold px-2.5 py-1.5" style="font-size: 0.72rem;">
-                                                    <?php echo $perms_info['perms']; ?>
+                                                    <?php echo $perms_info['mode']; ?>
                                                 </span>
                                             <?php endif; ?>
                                         </td>
                                         -->
 
-                                        <!-- Permissions Column with Conditional Tier Warning Badges -->
-                                        <td class="text-center">
-                                            <?php if (!$perms_info['exists']): ?>
-                                                <span class="badge bg-secondary-subtle text-secondary fw-bold px-2.5 py-1.5 text-uppercase w-100" style="font-size: 0.72rem;">
-                                                    Missing
-                                                </span>
-                                            <?php elseif (!$perms_info['sane']): ?>
-                                                <!-- CRITICAL DANGER BADGE (World Writable / 777) -->
-                                                <span class="badge bg-danger fw-black px-2.5 py-1.5 shadow-sm text-white w-100" style="font-size: 0.72rem;"
-                                                    data-bs-toggle="tooltip"
-                                                    data-bs-placement="left"
-                                                    data-bs-title="Critical: World-writable or insecure mode detected!">
-                                                    <i class="bi bi-shield-slash-fill me-1"></i><?php echo $perms_info['perms']; ?>
-                                                </span>
-
-
-                                                <!-- TESTING issues -->
-                                                <?php
-                                                $fpa_exception_queue[] = [
-                                                    'category'    => 'Permissions',
-                                                    'type'        => 'danger', // Bootstrap color code
-                                                    'text'        => 'At least one folder has world writable permissions.',
-                                                    'solution'    => 'Reset permissions to to the system default (usually 755).',
-                                                    'target_id'   => 'standardPermissions' // Matches the ID of the checkbox in your offcanvas layout!
-                                                ];
-                                                ?>
-                                                <!-- TESTING issues -->
-
-                                            <?php elseif (isset($perms_info['warning']) && $perms_info['warning']): ?>
-                                                <!-- SECURITY WARNING BADGE (Group Writable / Loose Permissions) -->
-                                                <span class="badge bg-warning text-dark border border-warning-subtle fw-bold px-2.5 py-1.5 shadow-sm w-100" style="font-size: 0.72rem;"
-                                                    data-bs-toggle="tooltip"
-                                                    data-bs-placement="left"
-                                                    data-bs-title="Warning: Loose group or owner permissions detected.">
-                                                    <i class="bi bi-exclamation-triangle-fill me-1"></i><?php echo $perms_info['perms']; ?>
-                                                </span>
-
-                                                <!-- TESTING issues -->
-                                                <?php
-                                                $fpa_exception_queue[] = [
-                                                    'category'    => 'Permissions',
-                                                    'type'        => 'warning', // Bootstrap color code
-                                                    'text'        => 'At least one folder has group writable permissions.',
-                                                    'solution'    => 'Reset permissions to to the system default (usually 755).',
-                                                    'target_id'   => 'standardPermissions' // Matches the ID of the checkbox in your offcanvas layout!
-                                                ];
-                                                ?>
-                                                <!-- TESTING issues -->
-
-                                            <?php else: ?>
-                                                <!-- CLEAN STANDARD SAFE BADGE (e.g., 0755) -->
-                                                <span class="badge bg-light text-dark border fw-bold px-2.5 py-1.5 w-100" style="font-size: 0.72rem;">
-                                                    <?php echo $perms_info['perms']; ?>
+                                        <td class="text-center text-uppercase">
+                                            <?php if (!$perms_info['exists']['value']): ?>
+                                                <i class="bi bi-dash-circle-dotted text-secondary" style="font-size: 1.04rem;"></i>
+                                            <?php elseif ($perms_info['is_owner_w']): ?>
+                                                <span class="badge bg-<?php echo $perms_info['is_owner_w']['color']; ?>-subtle text-<?php echo $perms_info['is_owner_w']['color']; ?> border border-<?php echo $perms_info['is_owner_w']['color']; ?>-subtle w-100" style="font-size: 0.68rem; letter-spacing: 0.3px; width: 66px;">
+                                                    <?php echo $perms_info['is_owner_w']['text']; ?>
                                                 </span>
                                             <?php endif; ?>
                                         </td>
 
-                                        <td class="text-center Xtext-end Xpe-3">
-                                            <?php if (!$perms_info['exists']): ?>
+                                        <td class="text-center text-uppercase">
+                                            <?php if (!$perms_info['exists']['value']): ?>
                                                 <i class="bi bi-dash-circle-dotted text-secondary" style="font-size: 1.04rem;"></i>
-                                            <?php elseif ($perms_info['writable']): ?>
-
-                                                <?php
-                                                    // warn about being writable if perms aren't sane, else success
-                                                    if (!$perms_info['sane'] || (isset($perms_info['warning']) && $perms_info['warning'])) {
-                                                        $writable_color = "warning";
-                                                    } else {
-                                                        $writable_color = "success";
-                                                    }
-                                                ?>
-                                                <!--<i class="bi bi-check-square-fill text-<?php echo $writable_color; ?> fs-5"></i>-->
-                                                <span class="badge bg-<?php echo $writable_color; ?>-subtle text-<?php echo $writable_color; ?> border border-<?php echo $writable_color; ?>-subtle fw-semibold px-2 py-1 text-uppercase Xw-100" style="font-size: 0.68rem; letter-spacing: 0.3px; width: 66px;"><?php echo $lang['FPA_TXT_YES']; ?></span>
-                                            <?php else: ?>
-                                                <!--<i class="bi bi-x-square-fill text-danger fs-5"></i>-->
-                                                <span class="badge bg-<?php echo $writable_color; ?>-subtle text-<?php echo $writable_color; ?> border border<?php echo $writable_color; ?>-subtle fw-semibold px-2 py-1 text-uppercase Xw-100" style="font-size: 0.68rem; letter-spacing: 0.3px; width: 66px;"><?php echo $lang['FPA_TXT_NO']; ?></span>
-
-                                                <!-- TESTING issues -->
-                                                <?php
-                                                $fpa_exception_queue[] = [
-                                                    'type'        => 'warning', // Bootstrap color code
-                                                    'text'        => 'At least one folder is not writable to your account user.',
-                                                    'solution'    => 'Reset permissions to to the system default (usually 755).',
-                                                    'target_id'   => 'standardPermissions' // Matches the ID of the checkbox in your offcanvas layout!
-                                                ];
-                                                ?>
-                                                <!-- TESTING issues -->
-
+                                            <?php elseif ($perms_info['is_owner_w']): ?>
+                                                <span class="badge bg-<?php echo $perms_info['is_group_w']['color']; ?>-subtle text-<?php echo $perms_info['is_group_w']['color']; ?>-emphasis border border-<?php echo $perms_info['is_group_w']['color']; ?>-subtle w-100" style="font-size: 0.68rem; letter-spacing: 0.3px;">
+                                                    <?php echo $perms_info['is_group_w']['text']; ?>
+                                                </span>
                                             <?php endif; ?>
+                                        </td>
 
+                                        <td class="text-center text-uppercase">
+                                            <?php if (!$perms_info['exists']['value']): ?>
+                                                <i class="bi bi-dash-circle-dotted text-secondary" style="font-size: 1.04rem;"></i>
+                                            <?php elseif ($perms_info['is_owner_w']): ?>
+                                                <span class="badge bg-<?php echo $perms_info['is_world_w']['color']; ?>-subtle text-<?php echo $perms_info['is_world_w']['color']; ?> border border-<?php echo $perms_info['is_world_w']['color']; ?>-subtle w-100" style="font-size: 0.68rem; letter-spacing: 0.3px;">
+                                                    <?php echo $perms_info['is_world_w']['text']; ?>
+                                                </span>
+                                            <?php endif; ?>
+                                        </td>
+
+                                        <td class="text-center text-uppercase">
+                                            <?php if (!$perms_info['exists']['value']): ?>
+                                                <i class="bi bi-dash-circle-dotted text-secondary" style="font-size: 1.04rem;"></i>
+                                            <?php elseif ($perms_info['is_sane']): ?>
+                                                <span class="badge bg-<?php echo $sane_color; ?>-subtle text-<?php echo $sane_color; ?>-emphasis border border-<?php echo $sane_color; ?> w-100" style="font-size: 0.68rem; letter-spacing: 0.3px;">
+                                                    <?php echo $perms_info['is_sane']['text']; ?>
+                                                </span>
+                                            <?php endif; ?>
                                         </td>
 
                                     </tr>
@@ -4904,6 +5709,56 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                             </tbody>
                         </table>
                     </div>
+
+                    <?php
+                    /*
+                     * DEVELOPER MODE: Displays the selected relevant $fpa_data
+                     * associative array primary key and populate the simulator
+                     * data export argument.
+                     */
+                    // ADD THE DEBUG ARRAY PRIMARY KEY HERE
+                    // ONLY pass the master data array node object you are currently
+                    // inspecting! (e.g., $fpa_data['corefolder'])
+                    $debug_array_data = $fpa_data['corefolders'] ?? [];
+
+                    // Nothing to do below here...
+                    if (defined('FPA_DEV') && FPA_DEV === true) {
+                        // Perform the memory scan look-up pass
+                        $export_sim_key = array_search($debug_array_data, $fpa_data, true);
+
+                        // GATING: If the data is empty OR the key lookup fails, it means a typo
+                        // occurred or the background test module was skipped.
+                        if (!empty($debug_array_data) && $export_sim_key !== false):
+                            $print_payload = isset($debug_array_data['data'])
+                                ? $debug_array_data['data']
+                                : $debug_array_data;
+                            ?>
+                            <div class="card border-info-subtle my-4">
+                                <div class="card-header bg-info-subtle d-flex justify-content-between align-items-center py-2">
+                                    <span class="text-info-emphasis fw-bold">
+                                        <i class="bi bi-bug-fill me-1"></i><?php echo htmlspecialchars($lang['FPA_TITLE_DEBUG_NODE']); ?>: [<?php echo htmlspecialchars($export_sim_key); ?>]
+                                    </span>
+                                    <a href="?fpa_export_sim=<?php echo htmlspecialchars($export_sim_key); ?>"
+                                       download="fpasim_<?php echo htmlspecialchars($export_sim_key); ?>.php"
+                                       class="btn btn-primary btn-sm px-3 shadow-sm border border-primary">
+                                        <i class="bi bi-cloud-arrow-down-fill me-1"></i><?php echo htmlspecialchars($lang['FPA_BTN_EXPORT_SIM_FILE']); ?>
+                                    </a>
+                                </div>
+                                <div class="card-body bg-dark text-light p-0 rounded-bottom">
+                                    <pre class="m-0 p-3" style="font-size: 0.78rem; max-height: 350px; overflow-y: auto;">
+                                        <code>
+                                            <?php echo htmlspecialchars(print_r($print_payload, true)); ?>
+                                        </code>
+                                    </pre>
+                                </div>
+                            </div>
+                        <?php else: ?>
+                            <div class="alert alert-info text-center text-uppercase fw-bold shadow-sm my-4"
+                                 style="font-size: 0.75rem; letter-spacing: 0.05rem;">
+                                <i class="bi bi-exclamation-octagon-fill me-2"></i>Debug Node Panel: Nothing To Display.<br>Check Array Primary Key Exists or is correctly typed.
+                            </div>
+                        <?php endif; ?>
+                    <?php } // end: DEVELOPER MODE ?>
 
                 </div>
 
@@ -4943,7 +5798,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 
                     <div class="pe-xl-3 mb-2 mb-md-0">
                         <h3 class="fs-5 fw-light Xtext-secondary text-uppercase tracking-wider mb-2">
-                            <span class="fw-bold"><?php echo htmlspecialchars($fpa_elevated_permissions['meta']['name']); ?></span> <?php echo htmlspecialchars($lang['FPA_TXT_AUDIT']); ?>
+                            <span class="fw-bold"><?php //echo htmlspecialchars($fpa_elevated_permissions['meta']['name']); ?></span> <?php //echo htmlspecialchars($lang['FPA_TXT_AUDIT']); ?>
                         </h3>
                         <p class="text-secondary Xsmall Xmb-0">
                             Extended folder permission (mode) exception report displays up to 10 folders not conforming to normal or excepted sane standard and special permissions.
@@ -4961,8 +5816,8 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 
                     <div class="d-flex flex-wrap">
                         <span class="badge bg-body-tertiary text-secondary border fw-medium font-monospace ms-auto mb-2" style="font-size: 0.72rem;">
-                            PHP User: <strong class="Xtext-dark"><?php echo htmlspecialchars($fpa_reference['php']['process_user']); ?></strong>
-                            &nbsp;|&nbsp;System umask: <strong class="Xtext-dark"><?php echo htmlspecialchars($fpa_reference['server']['umask']); ?></strong>
+                            PHP User: <strong class="Xtext-dark"><?php echo htmlspecialchars($fpa_data['ref']['data']['php']['process_user']); ?></strong>
+                            &nbsp;|&nbsp;System umask: <strong class="Xtext-dark"><?php echo htmlspecialchars($fpa_data['ref']['data']['server']['umask']); ?></strong>
                         </span>
                     </div>
 
@@ -4988,7 +5843,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                             </thead>
                             <tbody>
 
-                                <?php foreach ($fpa_elevated_permissions['folders'] as $eperms_info): ?>
+                                <?php foreach ($fpa_data['permissions']['data']['rows']['folders'] as $eperms_info): ?>
                                     <tr>
                                         <td class="ps-3 Xfont-monospace Xfw-semibold Xtext-secondary text-break Xtext-truncate" style="Xfont-size: 0.82rem;">
 
@@ -5303,7 +6158,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
     // Floating issue notification trigger button
     // Only renders on screen if the master issue queue contains active exceptions
     ?>
-    <?php if (!empty($fpa_data['issue_queue'])): ?>
+    <?php if (!empty($fpa_data['issue_queue']['data']['rows'])): ?>
     <button class="btn btn-danger position-fixed end-0 translate-middle-y shadow d-flex flex-column align-items-center justify-content-center z-4 px-3 py-2 border border-danger-subtle rounded-start"
         type="button"
         data-bs-toggle="offcanvas"
@@ -5315,7 +6170,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
         <span class="position-relative d-inline-block mb-0">
             <i class="bi bi-exclamation-triangle-fill fs-5"></i>
             <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-white text-danger font-monospace border border-danger px-1 small" style="font-size: 0.65rem;">
-                <?php echo count($fpa_data['issue_queue']); ?>
+                <?php echo count($fpa_data['issue_queue']['data']['rows']); ?>
             </span>
         </span>
 
@@ -5328,7 +6183,11 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 <?php
 // Actionable issue notification offcanvas drawer
 ?>
-<div class="offcanvas offcanvas-end bg-body-tertiary border-start shadow-lg" tabindex="-1" id="fpa_issues_drawer" aria-labelledby="fpa_issues_drawer_title" style="width: 420px; max-width: 100vw;">
+<div class="offcanvas offcanvas-end bg-body-tertiary border-start shadow-lg"
+    tabindex="-1"
+    id="fpa_issues_drawer"
+    aria-labelledby="fpa_issues_drawer_title"
+    style="width: 420px; max-width: 100vw;">
 
     <!-- Drawer Header Block with Advanced Export Actions Toolbar -->
 <div class="offcanvas-header bg-dark text-white p-3 d-flex flex-column gap-3 w-100">
@@ -5338,7 +6197,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
     <div class="d-flex align-items-center gap-2">
       <i class="bi bi-shield-slash-fill text-danger fs-5"></i>
       <h5 class="offcanvas-title h6 text-uppercase tracking-wide mb-0 fw-bold" id="fpa_issues_drawer_title">
-        System Action Items
+        Action Items
       </h5>
     </div>
     <!-- Pinned perfectly to the far right edge of the offcanvas drawer -->
@@ -5383,7 +6242,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 
         <!-- 📋 DYNAMIC EXCEPTION LOOP BLOCK -->
         <div class="d-flex flex-column gap-3">
-            <?php foreach ($fpa_data['issue_queue'] as $issue): ?>
+            <?php foreach ($fpa_data['issue_queue']['data']['rows'] as $issue): ?>
 
             <!-- Individual Action Item Report Card panel wrapper -->
             <div class="card shadow-sm border border-light-subtle rounded overflow-hidden" id="<?php echo htmlspecialchars($issue['id']); ?>">
@@ -5401,7 +6260,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                     </p>
 
                     <!-- Resolution Advice Block Panel -->
-                    <div class="bg-light p-2 rounded border border-light-subtle font-sans-serif small text-muted lh-sm" style="font-size: 0.775rem;">
+                    <div class="p-2 rounded border border-light-subtle font-sans-serif small lh-sm" style="font-size: 0.775rem;">
                         <strong class="text-dark-emphasis d-block mb-1 text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.3px;">
                             How to resolve:
                         </strong>
@@ -5441,10 +6300,13 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
      * display function (below)
      *
      */
+    // TODO: REMOVE WHEN TETED WITHOUT
     ?>
-    <script nonce="<?php echo $fpa_nonce; ?>" id="php-queue-data" type="application/json">
-      <?php echo json_encode($fpa_exception_queue); ?>
-    </script>
+    <!--
+    ///<script nonce="<?php echo $fpa_nonce; ?>" id="php-queue-data" type="application/json">
+    ///  <?php //echo json_encode($fpa_exception_queue); ?>
+    ///</script>
+    -->
 
 
     <script nonce="<?php echo $fpa_nonce; ?>">

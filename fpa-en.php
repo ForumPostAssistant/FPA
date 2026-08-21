@@ -123,12 +123,14 @@ declare(strict_types = 1);
 // Generate a runtime cryptographic nonce for secure inline execution checks
 $fpa_nonce = bin2hex(random_bytes(16));
 
-// Implement a variety of headers and policies
+// Implement a variety of security/operational headers and policies
 if (!headers_sent()) {
     // Strict anti-clickjacking baseline
     header('X-Frame-Options: SAMEORIGIN');
     // Prevent the browser from guessing media mime-types
     header('X-Content-Type-Options: nosniff');
+    // Prevent crawlers from indexing and following links
+    header('X-Robots-Tag: noindex, nofollow, noarchive, noarchive');
     // Absolute referrer leak protection
     header('Referrer-Policy: no-referrer');
     // Force browser cache expiration of sensitive system audit outputs
@@ -212,6 +214,8 @@ define('FPA_COPYRIGHT_STMT', 'Copyright &copy; 2011-2026 Russell Winter, Phil De
 define('FPA_SELF', basename(__FILE__));
 // use this shortcut url to reduce link clutter and self-referencing URL code injection attacks
 $fpa_self_url = htmlspecialchars(FPA_SELF, ENT_QUOTES, 'UTF-8');
+define('FPA_RUN_TIMESTAMP', time());
+define('FPA_RUN_UTC_STRING', gmdate('d-m-Y H:i:s', FPA_RUN_TIMESTAMP) . ' UTC');
 // =============================================================================
 
 /*
@@ -231,8 +235,8 @@ define('_JEXEC', 1);     // for >= J!1.5
  */
 define('FPA_DEV', true); // true = Enables backend array print_r & debug logs
 define('FPA_DIA', false); // true = Enforces local ini_set php error profiling
-define('FPA_SIM', true);  // true = Activates mock dataset injection pipelines,
-                         // dataset selection below master runner function.
+define('FPA_SIM', false); // true = Activates mock dataset injection pipelines,
+                        // dataset selection below master runner function.
 // =============================================================================
 
 
@@ -241,13 +245,16 @@ define('FPA_SIM', true);  // true = Activates mock dataset injection pipelines,
  *  GLOBAL FPA APPLICATION FEATURE CONFIGURATION
  * =============================================================================
  */
-const FPA_SELF_DESTRUCT     = true;  // self-destruct, attempts to self-delete on next run if file older than configured duration
-const FPA_SELF_DESTRUCT_AGE = 3;     // self-destruct filetime age duration
-const FPA_SSL_REDIRECT      = false; // SSL Redirect - when possible and if a valid SSL certificate is found FPA attempts to redirect to the SSL version of the site
-const FPA_PROJECT_URL       = 'https://github.com/ForumPostAssistant/FPA/'; // github project/repository url
-const FPA_DOCS_URL          = 'https://forumpostassistant.github.io/docs/'; // github documention site url
-const FPA_DOWNLOAD_ZIP_URL  = 'https://github.com/ForumPostAssistant/FPA/zipball/en-GB/'; // github latest download url (zip file)
-const FPA_DOWNLOAD_TAR_URL  = 'https://github.com/ForumPostAssistant/FPA/tarball/en-GB/'; // github latest download url (tar file)
+const FPA_SELF_DESTRUCT       = true;  // self-destruct, attempts to self-delete on next run if file older than configured duration
+const FPA_SELF_DESTRUCT_AGE   = 3;     // self-destruct filetime age duration
+const FPA_SSL_REDIRECT        = false; // SSL Redirect - when possible and if a valid SSL certificate is found FPA attempts to redirect to the SSL version of the site
+const FPA_PROJECT_URL         = 'https://github.com/ForumPostAssistant/FPA/';   // github project/repository url
+const FPA_DOWNLOAD_ZIP_URL    = 'https://github.com/ForumPostAssistant/FPA/zipball/en-GB/'; // github latest download url (zip file)
+const FPA_DOWNLOAD_TAR_URL    = 'https://github.com/ForumPostAssistant/FPA/tarball/en-GB/'; // github latest download url (tar file)
+const FPA_DOCS_URL            = 'https://forumpostassistant.github.io/docs/';   // github documention site url
+const FPA_PROJECT_URL_EU      = 'https://codeberg.org/ForumPostAssistant/FPA/'; // codeberg, EU download mirror
+const FPA_DOWNLOAD_ZIP_URL_EU = 'https://codeberg.org/ForumPostAssistant/FPA/zipball/en-GB/'; // codeberg EU, latest download url (zip file)
+const FPA_DOWNLOAD_TAR_URL_EU = 'https://codeberg.org/ForumPostAssistant/FPA/tarball/en-GB/'; // codeberg EU, latest download url (tar file)
 // --- fpa live checks configuration array constants ---
 const FPA_LIVE_CHECK = [
     'enabled' => true,
@@ -280,6 +287,67 @@ const FPA_LIVE_CHECK_VEL = [
 ];
 // =============================================================================
 //  END SECTION: FPA CONFIGURATION CONSTANTS
+// =============================================================================
+
+
+/**
+ * =============================================================================
+ *  SECTION: DEFENSIVE ERROR HANDLING, GLOBAL FAIL-SAFE ENGINE
+ * =============================================================================
+ * Global Exception Interceptor: Captures uncaught runtime exceptions, converts
+ * the payload into an actionable UI alert, and prevents script crash states.
+ * What These Do: Avoid WSoD (White Screen of Death) and fatal php errors from
+ * completely stopping processing, so anything following that isn't in error
+ * still runs and produces some form of output.
+ */
+function fpa_global_exception_handler(Throwable $exception): void {
+    // If the error happens deep in execution, clear output buffers to print clean HTML
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+
+    $error_msg  = $exception->getMessage();
+    $error_file = str_replace(dirname(__FILE__), '', $exception->getFile());
+    $error_line = $exception->getLine();
+
+    // Output a clean, isolated, highly descriptive recovery panel to the operator
+    echo '<div style="font-family:sans-serif; padding:2rem; max-width:800px; margin:2rem auto; '
+        . 'background:#fff5f5; border-left:6px solid #e53e3e; border-radius:4px; box-shadow:0 4px 6px rgba(0,0,0,0.05);">';
+    echo '<h3 style="color:#c53030; margin-top:0; text-transform:uppercase; font-size:0.9rem; letter-spacing:0.05rem;">'
+        . 'Critical Engine Recovery Intercept</h3>';
+    echo '<p style="color:#2d3748; font-size:1rem; font-weight:600; margin-bottom:1rem;">'
+        . htmlspecialchars($error_msg) . '</p>';
+    echo '<div style="font-size:0.8rem; color:#718096; background:#edf2f7; padding:1rem; border-radius:4px;">';
+    echo '<strong>Location:</strong> ' . htmlspecialchars($error_file) . ' | <strong>Line:</strong> ' . (int)$error_line;
+    echo '</div>';
+    echo '<p style="font-size:0.85rem; color:#4a5568; margin-top:1rem; margin-bottom:0;">'
+        . 'The engine intercepted this error safely. Please report these metrics to the FPA developers.</p>';
+    echo '</div>';
+
+    // Safe shutdown loop execution sequence
+    exit();
+}
+
+/**
+ * Global Error Interceptor: Because we need to be backward compatible to PHP7.4,
+ * this converts old procedural PHP errors (like notices or warnings) into
+ * standard ErrorExceptions so the compiler can trap them safely.
+ */
+function fpa_global_error_handler(int $severity, string $message, string $file, int $line): bool {
+    // Respect error_reporting settings (especially during suppression passes)
+    if (!(error_reporting() & $severity)) {
+        return false;
+    }
+
+    // Natively convert the procedural error into an object-oriented Exception
+    throw new ErrorException($message, 0, $severity, $file, $line);
+}
+
+// Bind the interceptor mechanics to your active PHP runtime core instance
+set_exception_handler('fpa_global_exception_handler');
+set_error_handler('fpa_global_error_handler');
+// =============================================================================
+//  END SECTION: DEFENSIVE ERROR HANDLING, GLOBAL FAIL-SAFE ENGINE
 // =============================================================================
 
 
@@ -422,7 +490,6 @@ $lang = [
     'FPA_TXT_INFO'              => 'Info',
     'FPA_TXT_FAILED'            => 'Failed',
     'FPA_TXT_CRITICAL'          => 'Critical',
-    'FPA_TXT_WARNING'           => 'Warning',
     'FPA_TXT_OK'                => 'OK',
     'FPA_TXT_AVAILABLE'         => 'Available',
     'FPA_TXT_UNAVAILABLE'       => 'Unavailable',
@@ -768,13 +835,13 @@ function fpm_get_fpm_pool_metrics(array $lang): ?array {
     }
 
     return [
-        'pool_name'      => $status['pool'] ?? 'unknown',
-        'manager_type'   => $status['process-manager'] ?? 'dynamic',
-        'active_workers' => $status['active-processes'] ?? 0,
-        'idle_workers'   => $status['idle-processes'] ?? 0,
-        'total_workers'  => $status['total-processes'] ?? 0,
-        'max_reached'    => $status['max-active-processes'] ?? 0,
-        'slow_requests'  => $status['slow-requests'] ?? 0,
+        'pool_name'             => $status['pool'] ?? 'unknown',
+        'manager_type'          => $status['process-manager'] ?? 'dynamic',
+        'active_workers'        => $status['active-processes'] ?? 0,
+        'idle_workers'          => $status['idle-processes'] ?? 0,
+        'total_workers'         => $status['total-processes'] ?? 0,
+        'max_reached'           => $status['max-active-processes'] ?? 0,
+        'slow_requests'         => $status['slow-requests'] ?? 0,
         'slow_requests_tooltip' => $lang['FPA_TOOLTIP_FPM_SLOW_REQUESTS'] ?? 'Tracks requests exceeding the server request_slowlog_timeout barrier. If higher than 0, it confirms PHP scripts (such as heavy Joomla queries, slow background cron tasks, or hanging third-party API extensions) are actively stalling server execution execution paths.'
     ];
 } // end: fpa_get_fpm_pool_metrics()
@@ -998,34 +1065,92 @@ function fpa_translate(array $lang, string $key): string {
     return '[MISSING_STRING: ' . htmlspecialchars($key) . ']';
 } // fpa_translate()
 
+
 /**
- * UTILITY HELPER: Sorts the issue queue dynamically by technical severity weight.
- * Ensures that critical danger blocks bubble to the absolute top of the user
- * interface layout, followed by warnings, and then informational notes.
+ * UTILITY HELPER: Compiles real-time structural health statistics for any
+ * standard component, scanning rows dynamically for anomalies while defending
+ * against zero-divisions.
  *
- * @param array $rows The raw, sequential issue queue rows collection to sort
- * @return array The triaged issue queue array ordered by high-priority severity
+ * @param array $rows Sequential or associative array of section rows
+ * @return array Compiled layout metrics containing raw counts and formatted percentages
  */
-function fpa_triage_issue_queue(array $rows): array {
-    // Severity Wieight Map: Define static priorities using integers.
-    // Assigning a higher integer ensures the status bubbles to the top.
+function fpa_compile_section_metrics(array $rows): array {
+    $total   = count($rows);
+    $failures = 0;
+
+    foreach ($rows as $item) {
+        // Dynamically track failures by checking your standardized color mapping tokens
+        $status = $item['status_color'] ?? 'secondary';
+
+        if ($status === 'danger' || $status === 'warning' || !empty($item['is_missing'])) {
+            $failures++;
+        }
+    }
+
+    $success_count = $total - $failures;
+    $success_rate  = ($total > 0) ? ($success_count / $total) * 100 : 100.0;
+
+    return [
+        'total'       => $total,
+        'failed'      => $failures,
+        'passed'      => $success_count,
+        'success_pct' => number_format($success_rate, 1) . '%'
+    ];
+} // end: fpa_compile_section_metrics
+
+
+/**
+ * UTILITY HELPER: Sorts the issue queue dynamically by technical severity weight
+ * and recalculates module data counter tallies inside the global tracking array.
+ * Ensures that critical danger blocks bubble to the absolute top of the user
+ * interface layout, followed by warnings, and then informational notices.
+ *
+ * @param array $fpa_results Master diagnostic tracking data registry array
+ * @return array The triaged and fully quantified issue queue rows collection
+ */
+function fpa_triage_issue_queue(array &$fpa_results): array {
+    $rows = $fpa_results['issue_queue']['data']['rows'] ?? [];
+
+    if (empty($rows)) {
+        return [];
+    }
+
+    // EXECUTING SEVERITY SORTING LOOP PASS
     $severity_weights = [
         'danger'  => 3,
         'warning' => 2,
         'info'    => 1
     ];
 
-    // Execute native binary comparison sorting pass
-    \usort($rows, function (array $a, array $b) use ($severity_weights): int {
-        $type_a = $a['type'] ?? 'info';
-        $type_b = $b['type'] ?? 'info';
-
-        $weight_a = $severity_weights[$type_a] ?? 0;
-        $weight_b = $severity_weights[$type_b] ?? 0;
-
-        // Use the native spaceship operator for rapid descending order sorting
+    usort($rows, function (array $a, array $b) use ($severity_weights): int {
+        $weight_a = $severity_weights[$a['type'] ?? 'info'] ?? 0;
+        $weight_b = $severity_weights[$b['type'] ?? 'info'] ?? 0;
         return $weight_b <=> $weight_a;
     });
+
+    // EXECUTING SEVERITY ACCUMULATOR PASS
+    $danger_tally  = 0;
+    $warning_tally = 0;
+    $info_tally    = 0;
+
+    foreach ($rows as $row) {
+        $type = $row['type'] ?? 'info';
+        if ($type === 'danger') {
+            $danger_tally++;
+        } elseif ($type === 'warning') {
+            $warning_tally++;
+        } elseif ($type === 'info') {
+            $info_tally++;
+        }
+    }
+
+    // SYNCHRONISING MASTER SCHEMA DATA PLACEMENTS
+    $fpa_results['issue_queue']['data']['danger_count']  = $danger_tally;
+    $fpa_results['issue_queue']['data']['warning_count'] = $warning_tally;
+    $fpa_results['issue_queue']['data']['info_count']    = $info_tally;
+
+    // The failed_count aggregate totals both structural errors and warnings (NOT info notices)
+    $fpa_results['issue_queue']['data']['failed_count']  = $danger_tally + $warning_tally;
 
     return $rows;
 }
@@ -1864,6 +1989,7 @@ function fpa_do_php_upload_tmp_audit(array $lang): array {
         $ui_alert = [
             'id'        => 'tmp_dir_locked_alert',
             'type'      => 'danger',
+            'category'  => 'Functionality',
             'text'      => 'Critical: PHP Upload Temporary Directory Is Not Writable.',
             'solution'  => 'Your upload path (' . htmlspecialchars($tmp_dir) . ') lacks permission attributes. File uploads and component installation frameworks will crash. Contact your web host provider to restore write access boundaries.',
             'target_id' => 'notification-wrapper'
@@ -2057,11 +2183,6 @@ function fpa_do_keymetrics(array $fpa_results, array $lang): array {
 // =============================================================================
 
 
-// =============================================================================
-//  END SUBSECTION: MANDATORY RUNTIME DIAGNOSTIC FUNCTIONS
-// =============================================================================
-
-
 /*
  * =============================================================================
  *  SUBSECTION: HYBRID / DUAL-PURPOSE FUNCTIONS
@@ -2155,6 +2276,7 @@ function fpa_do_permissions(
             $fpa_results['issue_queue']['data']['rows'][] = [
                 'id'        => 'perm_missing_' . md5($path),
                 'type'      => 'danger',
+                'category'  => 'Functionality',
                 'text'      => 'Critical: Missing Required Core Folder.',
                 'solution'  => 'The path (' . htmlspecialchars($relative_path) . ') is missing. Re-upload this directory via your file manager to restore stability.',
                 'target_id' => 'fpa_issues_drawer'
@@ -2188,17 +2310,17 @@ function fpa_do_permissions(
             $owner_match = true;
         }
 
-        $perms_raw   = @fileperms($path);
-        $mode_octal = $perms_raw ? sprintf('%04o', $perms_raw & 07777) : '0000';
-        $mode_short  = substr($mode_octal, -3);
+        $perms_raw    = @fileperms($path);
+        $mode_octal   = $perms_raw ? sprintf('%04o', $perms_raw & 07777) : '0000';
+        $mode_short   = substr($mode_octal, -3);
 
-        $is_owner_w  = (bool)($perms_raw & 000200);
-        $is_group_w  = (bool)($perms_raw & 000020);
-        $is_world_w  = (bool)($perms_raw & 000002);
+        $is_owner_w   = (bool)($perms_raw & 000200);
+        $is_group_w   = (bool)($perms_raw & 000020);
+        $is_world_w   = (bool)($perms_raw & 000002);
 
-        $has_suid    = (bool)($perms_raw & 004000);
-        $has_guid    = (bool)($perms_raw & 002000);
-        $has_sticky  = (bool)($perms_raw & 001000);
+        $has_suid     = (bool)($perms_raw & 004000);
+        $has_guid     = (bool)($perms_raw & 002000);
+        $has_sticky   = (bool)($perms_raw & 001000);
 
         $sanity_state = 'success';
         $tooltip      = $lang['FPA_PERM_TOOLTIP_OK'] ?? 'Secure and healthy folder settings.';
@@ -2295,6 +2417,7 @@ function fpa_do_permissions(
             $fpa_results['issue_queue']['data']['rows'][] = [
                 'id'        => 'perm_failure_' . md5($path),
                 'type'      => 'danger',
+                'category'  => 'Security, Functionality',
                 'text'      => 'Critical: Security Risk or Write Block on ' . htmlspecialchars($relative_path),
                 'solution'  => 'Directory configuration error (' . $mode_short . '). ' . $tooltip . ' Reset to 0755 immediately.',
                 'target_id' => 'fpa_issues_drawer'
@@ -2850,6 +2973,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
 
         // TODO: CONFIRM THIS IS NO LONGER NEEDED
         // Gather the metrics scores and calculated readiness rating from environment, performance & security
+        /*
         'metrics' => [
             'meta' => [
                 'section_title' => $lang['FPA_META_TITLE_KEY_METRICS'],
@@ -2866,6 +2990,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
              ], // Populated by fpa_do_metrics()
             'compatibility'   => [] // Populated by fpa_do_compatibility()
         ],
+        */
 
         // If found, gather joomla core information and structural configurations
         'jinstance' => [
@@ -2908,6 +3033,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
                 'failed_count'  => 0,     // Consolidated tracking total error count
                 'danger_count'  => 0,     // Total critical threat tracking tally
                 'warning_count' => 0,     // Total warning status tracking tally
+                'info_count'    => 0,     // Total info status tracking tally
                 'is_complete'   => false  // State flag tracking module lifecycle
             ] // Populated by fpa_do_jinstance(), fpa_audit_joomlastats() and configuration imports
         ], // Fully processes active local application framework profiles if discovered
@@ -2932,6 +3058,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
                 'failed_count'  => 0,     // Consolidated tracking total error count
                 'danger_count'  => 0,     // Total critical threat tracking tally
                 'warning_count' => 0,     // Total warning status tracking tally
+                'info_count'    => 0,     // Total info status tracking tally
                 'is_complete'   => false  // State flag tracking module lifecycle
             ] // Populated by fpa_do_httpserver() & fpa_get_fpm_pool_metrics()
         ], // Fully audits SAPI extensions, execution pools and server software profiles
@@ -2956,6 +3083,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
                 'failed_count'  => 0,     // Consolidated tracking total error count
                 'danger_count'  => 0,     // Total critical threat tracking tally
                 'warning_count' => 0,     // Total warning status tracking tally
+                'info_count'    => 0,     // Total info status tracking tally
                 'is_complete'   => false  // State flag tracking module lifecycle
             ]
         ],
@@ -3050,10 +3178,11 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
                 ],
 
                 // Core tally counters allow sorting tools to scan this node instantly
-                'failed_count'   => 0,     // Consolidated tracking total error count tally
-                'danger_count'   => 0,     // Total critical threat tracking tally count
-                'warning_count'  => 0,     // Total warning status tracking tally count
-                'is_complete'    => false  // State flag tracking module execution lifecycle
+                'failed_count'  => 0,     // Consolidated tracking total error count tally
+                'danger_count'  => 0,     // Total critical threat tracking tally count
+                'warning_count' => 0,     // Total warning status tracking tally count
+                'info_count'    => 0,     // Total info status tracking tally
+                'is_complete'   => false  // State flag tracking module execution lifecycle
             ] // Populated by fpa_do_database() and fpa_audit_database()
         ], // Fully processes active local database schema configurations if discovered
 
@@ -3087,6 +3216,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
                 'failed_count'  => 0,     // Consolidated tracking total error count
                 'danger_count'  => 0,     // Total critical threat tracking tally
                 'warning_count' => 0,     // Total warning status tracking tally
+                'info_count'    => 0,     // Total info status tracking tally
                 'is_complete'   => false  // State flag tracking module lifecycle
             ] // Populated by fpa_do_permissions() on the Phase 1 mandatory baseline pass
         ], // Fully verifies system pathways before allowing advanced secondary tests to execute
@@ -3113,6 +3243,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
                 'failed_count'  => 0,     // Consolidated tracking total error count
                 'danger_count'  => 0,     // Total critical threat tracking tally
                 'warning_count' => 0,     // Total warning status tracking tally
+                'info_count'    => 0,     // Total info status tracking tally
                 'is_complete'   => false  // State flag tracking module lifecycle
             ] // Populated by fpa_do_permissions() on the Phase 2 optional recursive pass,
               // using $fpa_results['corefolders']['targets']['required_folders'] as an exclude list
@@ -3136,6 +3267,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
                 'failed_count'  => 0,     // Consolidated tracking total metric warnings tally
                 'danger_count'  => 0,     // Total critical metric alerts tracking tally count
                 'warning_count' => 0,     // Total warning status metrics tracking tally count
+                'info_count'    => 0,     // Total info status tracking tally
                 'is_complete'   => false, // State flag tracking module execution lifecycle
 
                 // Pillar Calculations: Grouped
@@ -3169,11 +3301,12 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
 
             // TIER 3: Normalised environment results payloads
             'data' => [
-                // 🚀 STANDARDISED ALERTS CONTAINER: Every single logged error lives here!
+                // 🚀 Standardised Alert Messages: Every single logged error lives here!
                 'rows'          => [],    // Sequential alert records map populated dynamically across execution cycles
                 'failed_count'  => 0,     // Consolidated tracking total error count tally
                 'danger_count'  => 0,     // Total critical threat tracking tally count
                 'warning_count' => 0,     // Total warning status tracking tally count
+                'info_count'    => 0,     // Total info status tracking tally
                 'is_complete'   => false  // State flag tracking module execution lifecycle
             ] // Populated at any time by any function or routine, utilizing fpa_format_logs() function
         ], // Fully compiles internal server configurations and environment restrictions
@@ -3242,6 +3375,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
                 $fpa_results['issue_queue']['data']['rows'][] = [
                     'id'        => 'missing_req_' . $name,
                     'type'      => 'danger',
+                    'category'  => 'Functionality',
                     'text'      => ($lang['FPA_ERR_CRITICAL_MISSING'] ?? 'Critical Component Missing: ') . $name,
                     'solution'  => ($lang['FPA_SOL_ENABLE_EXT'] ?? 'Enable this module inside your server php.ini file.'),
                     'target_id' => 'notification-wrapper'
@@ -3263,6 +3397,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
                 $fpa_results['issue_queue']['data']['rows'][] = [
                     'id'        => 'missing_rec_' . $name,
                     'type'      => 'danger',
+                    'category'  => 'Functionality',
                     'text'      => ($lang['FPA_ERR_CRITICAL_MISSING'] ?? 'Critical Component Missing: ') . $name,
                     'solution'  => ($lang['FPA_SOL_ENABLE_EXT'] ?? 'Enable this module inside your server php.ini file.'),
                     'target_id' => 'notification-wrapper'
@@ -3302,6 +3437,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
                 $fpa_results['issue_queue']['data']['rows'][] = [
                     'id'        => 'unapplied_override_' . $name,
                     'type'      => 'warning',
+                    'category'  => 'Functionality',
                     'text'      => ($lang['FPA_ERR_UNAPPLIED_OVERRIDE'] ?? 'Unapplied override: ') . $name,
                     'solution'  => ($lang['FPA_SOL_ENABLE_EXT'] ?? 'Check override syntax. Contact your host for assistance.'),
                     'target_id' => 'notification-wrapper'
@@ -3370,6 +3506,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
                 $fpa_results['issue_queue']['data']['rows'][] = [
                     'id'        => 'fpm_workers_exhausted',
                     'type'      => 'warning',
+                    'category'  => 'Functionality',
                     'text'      => 'Warning: PHP-FPM Process Pool Max Worker Limit Breached.',
                     'solution'  => 'Your server has hit its maximum concurrency ceiling (' . $fpm['total_workers'] . ' workers). Subsequent visitor requests are being forcefully queued or dropped, causing severe site latency or 503 Service Unavailable errors. Request your host to scale up the pm.max_children allocation.',
                     'target_id' => 'fpa_issues_drawer'
@@ -3381,6 +3518,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
                 $fpa_results['issue_queue']['data']['rows'][] = [
                     'id'        => 'fpm_slow_requests_logged',
                     'type'      => 'warning',
+                    'category'  => 'Performance',
                     'text'      => 'Warning: PHP-FPM has intercepted ' . $fpm['slow_requests'] . ' slow execution loops.',
                     'solution'  => 'The process manager has forced script terminations due to timeouts. This points directly to hanging database queries, broken third-party update curl tasks, or bloated components dragging down system threads. Review your server slowlog files to isolate the broken script paths.',
                     'target_id' => 'fpa_issues_drawer'
@@ -3479,6 +3617,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
                 $fpa_results['issue_queue']['data']['rows'][] = [
                     'id'        => 'net_email_unauthenticated',
                     'type'      => 'danger',
+                    'category'  => 'Security',
                     'text'      => 'Critical: Domain Email Spoof Shields Absent.',
                     'solution'  => 'Your domain (' . htmlspecialchars($dns_payload['domain_checked']) . ') lacks both SPF and DMARC TXT records. Spammers can easily forge mail headers using your brand name, ruining your email delivery reputation. Log into your registrar DNS panel and add valid v=spf1 and v=dmarc1 protection records.',
                     'target_id' => 'fpa_issues_drawer'
@@ -3489,6 +3628,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
                 $fpa_results['issue_queue']['data']['rows'][] = [
                     'id'        => 'net_dmarc_missing',
                     'type'      => 'warning',
+                    'category'  => 'Security',
                     'text'      => 'Warning: Domain Lacks DMARC Enforcement Protection.',
                     'solution'  => 'Without a valid DMARC policy record, your server cannot instruct downstream mail networks on how to handle failed message authentication checks. Add a text entry pointing to _dmarc.' . htmlspecialchars($dns_payload['domain_checked']) . ' configured with a baseline pass policy like p=quarantine.',
                     'target_id' => 'fpa_issues_drawer'
@@ -3500,6 +3640,7 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
                 $fpa_results['issue_queue']['data']['rows'][] = [
                     'id'        => 'net_ip_routing_mismatch',
                     'type'      => 'danger',
+                    'category'  => 'Functionality',
                     'text'      => 'Critical: Reverse DNS Pointer IP Routing Mismatch.',
                     'solution'  => 'Your domain name resolves to an IP address that points to an asymmetrical or different physical hardware system hostname (' . htmlspecialchars($dns_payload['reverse_ptr_record']) . '). This network discrepancy frequently trips spam blacklists and drops active payment webhook notifications. Contact your hosting support tier to coordinate a functional PTR alignment loop.',
                     'target_id' => 'fpa_issues_drawer'
@@ -3561,13 +3702,8 @@ function fpa_runtime_tests(array $lang, array $active_tests, array $registry, st
 
     // Triage & sort the issue queue by severity
     if (function_exists('fpa_triage_issue_queue')) {
-        // Extract the compiled raw exceptions map
-        $raw_issue_rows = $fpa_results['issue_queue']['data']['rows'] ?? [];
-
-        // Sort the exception rows automatically before rendering the frontend drawer.
-        $fpa_results['issue_queue']['data']['rows'] = fpa_triage_issue_queue($raw_issue_rows);
+        $fpa_results['issue_queue']['data']['rows'] = fpa_triage_issue_queue($fpa_results);
     }
-
     // =========================================================================
     //  END RUNTIME PHASE 3: FINAL ISSUE & METRICS AGGREGATION EXECUTION
     // =========================================================================
@@ -3790,14 +3926,21 @@ if (defined('FPA_DEV') && FPA_DEV === true && isset($_GET['fpa_export_sim'])) {
     }
 
     if ($export_payload !== null) {
-        $filename = 'fpasim_' . $target_key . '_' . date('Y-m-d') . '.php';
+        $filename = 'sim_' . $target_key . '_' . date('Y-m-d') . '.php';
 
+        // 💡 AUTOMATED SECURITY INJECTION PASS:
         // Build an executable, production-ready, clean dataset array string
+        // incorporating your multi-layer constant protection gate.
         $output  = "<?php\n";
+        $output .= "// Blocks unauthorised runtime execution attempts if loaded outside the parent fpa framework.\n";
+        $output .= "if (!defined('FPA_SIM') || FPA_SIM !== true) {\n";
+        $output .= "    header('HTTP/1.1 403 Forbidden');\n";
+        $output .= "    exit('Direct access to simulation datasets is strictly prohibited.');\n";
+        $output .= "}\n\n";
         $output .= "declare(strict_types=1);\n\n";
         $output .= "/**\n * Captured FPA Environment Simulation Dataset\n";
         $output .= " * Target Node: \$fpa_data['" . $target_key . "']['data']\n";
-        $output .= " * Generated: " . date('Y-m-d H:i:s UTC') . "\n */\n\n";
+        $output .= " * Generated: " . date('08-08-2026 H:i:s UTC') . "\n */\n\n";
         $output .= "return " . var_export($export_payload, true) . ";\n";
 
         // Enforce the universal binary octet-stream attachment headers
@@ -3808,9 +3951,10 @@ if (defined('FPA_DEV') && FPA_DEV === true && isset($_GET['fpa_export_sim'])) {
         header('Pragma: no-cache');
 
         echo $output;
-        exit(); // HARD BREAK: Permanently blocks HTML text from appending!
-    }
-} // Developer Simulation Data Export Controller
+        exit(); // Hard Break: Permanently blocks HTML text from appending!
+    } // Developer Simulation Data Export Controller
+} // End of Developer Simulation Data Export Controller
+
 
 /*
  * =============================================================================
@@ -3822,7 +3966,7 @@ if (defined('FPA_DEV') && FPA_DEV === true && isset($_GET['fpa_export_sim'])) {
  * This section triggers exclusively when the global FPA_SIM constant is true.
  * =============================================================================
  */
-// STEP 1: Enable the FPA_SIM constant on line 159 (waaay back at the top)
+// STEP 1: Enable the FPA_SIM constant on line 159 (waaay back at the top!)
 if (defined('FPA_SIM') && FPA_SIM === true) {
     $fpa_sim_path = __DIR__ . '/fpa_simulation_datasets';
     $sim_active   = false;
@@ -3920,17 +4064,32 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="color-scheme" content="light dark">
-    <meta name="description" content="<?php echo $lang['FPA_DESC']; ?>">
+
+    <!-- Anti-Crawler request metadata -->
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow, noarchive">
+    <meta name="bingbot" content="noindex, nofollow, noarchive">
+    <meta name="nocache" content="noindex, nofollow">
+    <meta name="claudebot" content="noindex, nofollow">
+    <meta name="gptbot" content="noindex, nofollow">
 
     <title><?php echo $lang['FPA_LONG']; ?></title>
+    <meta name="description" content="<?php echo $lang['FPA_DESC']; ?>">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.13.1/font/bootstrap-icons.min.css" integrity="sha512-t7Few9xlddEmgd3oKZQahkNI4dS6l80+eGEzFQiqtyVYdvcSG2D3Iub77R20BdotfRPA9caaRkg1tyaJiPmO0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <style>
         :root {
-            --fpa-primary-color: #660066;
+            --fpa-primary-color: #660066; /* fpa purple */
+            /* --fpa-primary-color: #aad31e; lime green */
+            /* --fpa-primary-color: #dd700b; rustic orange */
+            /* --fpa-primary-color: #245f73; teal blue */
             --fpa-primary-text: #ffffff;
+        }
+        [data-bs-theme="light"], :root:not([data-bs-theme="dark"]) {
+          --bs-body-bg: #f0f4f8;
+          --bs-body-bg-rgb: 240, 244, 248;
         }
         :target {
             scroll-margin-top: 50px; /* add a space before target id's when scrolling */
@@ -4012,6 +4171,16 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
             background-color: rgba(var(--bs-info-rgb), 0.15) !important;
             padding: 2px 5px ;
             font-size: 0.8rem;
+        }
+
+        /* Continuous Spin Effect */
+        .bi-spin {
+          animation: bi-spin 7s infinite linear;
+        }
+        /* Keyframes */
+        @keyframes bi-spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
 
         /* The semi-circle viewing window */
@@ -4117,7 +4286,8 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
             /* Strip out internal scrollers and tool buttons to save ink space */
             #fpa_issues_drawer .offcanvas-header,
             #fpa_issues_drawer .btn,
-            #fpa_issues_drawer .btn-close {
+            #fpa_issues_drawer .btn-close,
+            .no-print {
                 display: none !important;
             }
 
@@ -4335,15 +4505,15 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 
         //phpinfo();
         echo '<pre>';
-        print_r($fpa_data['issue_queue']);
+        //print_r($fpa_data['issue_queue']);
         //print_r($fpa_data['ref']);
         //print_r($fpa_data['httpserver']);
-        //print_r($fpa_data['php']);
+        print_r($fpa_data['php']);
         //print_r($fpa_data['corefolders']);
         //print_r($fpa_data['permissions']);
         //var_dump($nrequired_extensions);
         //var_dump($fpa_data['metrics']);
-        print_r($fpa_data['key_metrics']);
+        //print_r($fpa_data['key_metrics']);
         //var_dump($fpa_active_feeds);
         //var_dump($do_live_checks);
         //var_dump($fpa_latest_versions);
@@ -4758,70 +4928,135 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 
                         <div id="inner_php_req_ext" class="col mb-3">
 
+                            <!-- REQUIRED PHP EXTENSIONS AUDIT -->
+                            <?php
+                            // Assign appropriate section array elements to standard variables
+                            $this_section     = $fpa_data['php'] ?? [];
+                            $this_meta        = $this_section['meta'] ?? [];
+                            $this_data        = $this_section['data']['rows']['required_extensions'] ?? [];
+                            //$this_data_errors = (int)($this_section['data']['failed_count'] ?? 0);
+                            //$this_data_total  = (int)count($this_data) ?? 0;
 
-<!-- REQUIRED PHP EXTENSIONS AUDIT SECTION -->
+                            // count/aggregate total number of checks and isolate failure tallies (if any)
+                            $this_metrics     = fpa_compile_section_metrics($this_data);
+                            ?>
 
-  <!-- 📌 MODERN SLEEK HEADING LAYOUT: Borderless, clean, and free of card clutter -->
-  <div class="d-flex justify-content-between align-items-baseline mb-3 border-bottom pb-2">
-    <div>
-      <h3 class="h5 text-dark-emphasis mb-0 text-uppercase tracking-wide small font-semibold">
-        <?php echo htmlspecialchars($lang['FPA_LABEL_PHP_REQ_EXTENSIONS']); ?>
-      </h3>
-      <p class="text-muted small mb-0">Mandatory system modules required for baseline application execution.</p>
-    </div>
-    <!-- Clean, neutral subtle counter badge -->
-    <span class="badge border bg-body-secondary text-dark-emphasis rounded-pill font-monospace small">
-      <?php echo count($fpa_data['php']['data']['rows']['required_extensions']); ?> Checked
-    </span>
-  </div>
+                            <div class="section-subheading d-flex justify-content-between align-items-baseline mb-3 border-bottom pb-2">
+                                <div>
+                                    <h3 class="h5 text-dark-emphasis mb-0 text-uppercase tracking-wide small font-semibold">
+                                        <?php echo htmlspecialchars($lang['FPA_LABEL_PHP_REQ_EXTENSIONS']); ?>
+                                    </h3>
+                                    <p class="text-muted small mb-0">Mandatory system modules required for baseline application execution.</p>
+                                </div>
 
-  <!-- 🟢 Conditional Overall Success Exception Alert Banner Row -->
-  <?php if (isset($fpa_data['php']['exceptions']['required_extensions']['msg']) && !empty($fpa_data['php']['exceptions']['required_extensions']['msg'])): ?>
-    <div class="alert alert-success border border-success-subtle text-success-emphasis text-center mb-3 d-flex flex-column align-items-center gap-2 py-3 shadow-sm" role="alert">
-      <i class="bi bi-shield-check text-success fs-1 lh-1"></i>
-      <div class="fw-medium"><?php echo htmlspecialchars($fpa_data['php']['exceptions']['required_extensions']['msg']); ?></div>
-    </div>
-  <?php endif; ?>
+                                <!-- success/fail metric count(s) -->
+                                <?php if ($this_metrics['failed'] > 0): ?>
+                                    <!-- errors: highlighted issue count -->
+                                    <span class="badge bg-danger-subtle text-danger-emphasis border border-danger border-opacity-20 rounded-pill Xpx-2 Xpy-1"
+                                          style="font-size: 0.68rem;">
+                                        <i class="bi bi-exclamation-triangle-fill"></i>
+                                        <?php echo $this_metrics['failed']; ?> ISSUES
+                                    </span>
+                                <?php else: ?>
+                                    <!-- clean pass: quietly confirm number of checks passed -->
+                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary border-opacity-10 rounded-pill Xpx-2 Xpy-1"
+                                          style="font-size: 0.68rem;">
+                                        <i class="bi bi-check-circle-fill text-secondary-emphasis"></i>
+                                        <?php echo $this_metrics['total']; ?> CHECKS
+                                    </span>
+                                <?php endif; ?>
 
-  <!-- 📦 THE CRISP SEPARATION GRID: Keeps highly defined physical item boxes intact -->
-  <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-3 g-3 text-center">
-    <?php foreach ($fpa_data['php']['data']['rows']['required_extensions'] as $extension => $value): ?>
-      <?php
-        $fpa_toggle_all_class = '';
-        if ($value['version'] !== $lang['FPA_TXT_MISSING']) {
-            $fpa_toggle_all_class = 'd-none fpa-toggle-all' . $fpa_data['php']['meta']['attribute_slug'];
-        }
-      ?>
+                            </div><!-- /section-subheading -->
 
-      <div class="col <?php //echo $fpa_toggle_all_class; ?>">
-        <div class="card w-100 h-100 shadow-sm border rounded overflow-hidden border-<?php echo $value['status_color']; ?>">
+                            <?php if ($this_metrics['failed'] == 0): ?>
+                                <!-- everything is good message -->
+                                <div class="alert alert-success border border-success-subtle text-success-emphasis text-center mb-3 d-flex flex-column align-items-center gap-2 py-3 shadow-sm" role="alert">
+                                    <i class="bi bi-shield-check text-success fs-1 lh-1"></i>
+                                    <div class="fw-medium">
+                                        <?php echo htmlspecialchars($this_section['exceptions']['required_extensions']['msg']); ?>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
 
-          <!-- Extension Name Title Tag (Uses high-contrast accessible styling tokens) -->
-          <div class="card-header py-2 font-monospace fw-bold text-<?php echo $value['status_color']; ?>-emphasis bg-<?php echo $value['status_color']; ?>-subtle border-bottom border-<?php echo $value['status_color']; ?>">
-            <?php echo htmlspecialchars($extension); ?>
-          </div>
+                            <!-- formatted data rows -->
+                            <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-3 g-3 text-center">
 
-          <!-- Live Extracted Version Metrics Data Area Row -->
-          <div class="card-body p-2 bg-body text-dark-emphasis small fw-medium">
-            <?php echo htmlspecialchars($value['version']); ?>
-          </div>
+                                <?php foreach ($this_data as $extension => $value): ?>
 
-        </div>
-      </div>
-    <?php endforeach; ?>
-  </div><!-- /row -->
+                                    <?php
+                                    // successful item, show/hide toggle
+                                    $fpa_toggle_all_class = '';
+                                    if ($value['version'] !== $lang['FPA_TXT_MISSING']):
+                                        $fpa_toggle_all_class = 'd-none fpa-toggle-all' . $fpa_data['php']['meta']['attribute_slug'];
+                                    endif;
 
-  <!-- DEVELOPER TOOLS DIAGNOSTIC PANEL -->
-  <?php if (defined('FPA_DEV') && FPA_DEV): ?>
-    <div class="mt-4 pt-3 border-top">
-      <div class="small text-muted text-uppercase tracking-wider fw-bold mb-2 font-monospace">
-        Internal Data Stream Blueprint Debug
-      </div>
-      <pre class="bg-dark text-success p-3 rounded overflow-auto mb-0" style="max-height: 250px; font-size: 0.8rem; line-height: 1.4;">
-        <?php print_r($fpa_data['php']['data']['rows']['required_extensions']); ?>
-      </pre>
-    </div>
-  <?php endif; ?>
+                                    // only highlight non-success items (exceptions) with appropriate colour
+                                    $status_color = ($value['status_color'] !== 'success') ? $value['status_color'] : 'secondary';
+                                    ?>
+
+                                    <div class="col <?php //echo $fpa_toggle_all_class; ?>">
+
+                                        <div class="card w-100 h-100 shadow-sm border border-<?php echo $status_color; ?>-subtle rounded overflow-hidden">
+                                            <div class="card-header py-1 Xfont-monospace fw-medium text-<?php echo $status_color; ?>-emphasis bg-<?php echo $status_color; ?>-subtle border-bottom border-<?php echo $status_color; ?>-subtle">
+                                                <?php echo htmlspecialchars($extension); ?>
+                                            </div>
+                                            <div class="card-body p-1 bg-light-subtle Xtext-dark-emphasis small fw-medium">
+                                                <?php echo htmlspecialchars($value['version']); ?>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                <?php endforeach; ?>
+
+                            </div><!-- /row -->
+
+                            <?php
+                            /*
+                             * DEVELOPER MODE: Displays the selected relevant $fpa_data
+                             * associative array primary key and populate the simulator
+                             * data export argument.
+                             */
+                             $debug_array_data = $this_section ?? [];
+
+                            // Nothing to do below here...
+                            if (defined('FPA_DEV') && FPA_DEV === true) {
+                                // Perform the memory scan look-up pass
+                                $export_sim_key = array_search($debug_array_data, $fpa_data, true);
+
+                                // GATING: If the data is empty OR the key lookup fails, it means a typo
+                                // occurred or the background test module was skipped.
+                                if (!empty($debug_array_data) && $export_sim_key !== false):
+                                    $print_payload = isset($debug_array_data['data'])
+                                        ? $debug_array_data['data']
+                                        : $debug_array_data;
+                                    ?>
+                                    <div class="card border-info-subtle my-4">
+                                        <div class="card-header bg-info-subtle d-flex justify-content-between align-items-center py-2">
+                                            <span class="text-info-emphasis fw-bold">
+                                                <i class="bi bi-bug-fill me-1"></i><?php echo htmlspecialchars($lang['FPA_TITLE_DEBUG_NODE']); ?>: [<?php echo htmlspecialchars($export_sim_key); ?>]
+                                            </span>
+                                            <a href="?fpa_export_sim=<?php echo htmlspecialchars($export_sim_key); ?>"
+                                               download="fpasim_<?php echo htmlspecialchars($export_sim_key); ?>.php"
+                                               class="btn btn-primary btn-sm px-3 shadow-sm border border-primary">
+                                                <i class="bi bi-cloud-arrow-down-fill me-1"></i><?php echo htmlspecialchars($lang['FPA_BTN_EXPORT_SIM_FILE']); ?>
+                                            </a>
+                                        </div>
+                                        <div class="card-body bg-dark text-light p-0 rounded-bottom">
+                                            <pre class="m-0 p-3" style="font-size: 0.78rem; max-height: 350px; overflow-y: auto;">
+                                                <code>
+                                                    <?php echo htmlspecialchars(print_r($print_payload, true)); ?>
+                                                </code>
+                                            </pre>
+                                        </div>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="alert alert-info text-center text-uppercase fw-bold shadow-sm my-4"
+                                         style="font-size: 0.75rem; letter-spacing: 0.05rem;">
+                                        <i class="bi bi-exclamation-octagon-fill me-2"></i>Debug Node Panel: Nothing To Display.<br>Check Array Primary Key Exists or is correctly typed.
+                                    </div>
+                                <?php endif; ?>
+                            <?php } // end: DEVELOPER MODE ?>
 
 
                         </div><!-- /col inner-php_req_ext -->
@@ -4867,12 +5102,12 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
         <div class="card w-100 h-100 shadow-sm border rounded overflow-hidden border-<?php echo $value['status_color']; ?>">
 
           <!-- Extension Name Title Tag (Uses high-contrast accessible styling tokens) -->
-          <div class="card-header py-2 font-monospace fw-bold text-<?php echo $value['status_color']; ?>-emphasis bg-<?php echo $value['status_color']; ?>-subtle border-bottom border-<?php echo $value['status_color']; ?>">
+          <div class="card-header py-1 font-monospace fw-bold text-<?php echo $value['status_color']; ?>-emphasis bg-<?php echo $value['status_color']; ?>-subtle border-bottom border-<?php echo $value['status_color']; ?>">
             <?php echo htmlspecialchars($extension); ?>
           </div>
 
           <!-- Live Extracted Version Metrics Data Area Row -->
-          <div class="card-body p-2 bg-body text-dark-emphasis small fw-medium">
+          <div class="card-body p-1 bg-body text-dark-emphasis small fw-medium">
             <?php echo htmlspecialchars($value['version']); ?>
           </div>
 
@@ -6024,6 +6259,44 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 
 
     <?php
+    /* =============================================================================
+     * SECTION: DEVELOPMENT FLAGS NOTIFICATION RIBBON
+     * =============================================================================
+     * Display a fixed developer flag notification ribbon if Developer Mode, Diagnostic
+     * Mode or Simulation Mode is enabled.
+     */
+    $active_dev_flags = [];
+
+    if (defined('FPA_DEV') && FPA_DEV) {
+        $active_dev_flags[] = '<span class="badge text-bg-success Xborder Xborder-white text-white fw-bold"><i class="bi bi-bug-fill me-1"></i>DEV MODE</span>';
+    }
+    if (defined('FPA_DIA') && FPA_DIA) {
+        $active_dev_flags[] = '<span class="badge text-bg-success Xborder Xborder-white text-white fw-bold"><i class="bi bi-activity me-1"></i>DIAG MODE</span>';
+    }
+    if (defined('FPA_SIM') && FPA_SIM) {
+        $active_dev_flags[] = '<span class="badge text-bg-success Xborder Xborder-white text-white fw-bold"><i class="bi bi-node-plus-fill me-1"></i>SIM MODE</span>';
+    }
+    ?>
+
+    <?php if (!empty($active_dev_flags)): ?>
+        <!-- Flag notification ribbon -->
+        <div class="fixed-bottom bg-info-subtle Xbg-opacity-75 Xtext-white border-top border-info-subtle py-2 shadow-lg"
+             style="backdrop-filter: blur(8px); z-index: 2000;">
+            <div class="container-fluid px-4 d-flex justify-content-center align-items-center">
+                <div class="d-flex align-items-center gap-2">
+                    <?php echo implode('<span class="Xtext-white-50">|</span>', $active_dev_flags); ?>
+                </div>
+            </div>
+        </div>
+        <!-- Add matching safety padding to the page container so content isn't buried underneath -->
+        <style>body { padding-bottom: 42px !important; }</style>
+    <?php endif; ?>
+
+
+
+
+
+    <?php
     /*
      * =============================================================================
      * SECTION: OFFCANVAS SETTINGS PANEL
@@ -6039,8 +6312,8 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                 data-bs-toggle="offcanvas"
                 data-bs-target="#settingsOffcanvas"
                 aria-controls="settingsOffcanvas"
-                style="top: 120px; left: -52px; width: 52px; height: 54px; border-color: var(--fpa-primary-color); border-radius: 8px 0 0 8px; border-right: 0; z-index: 1060;">
-            <i class="bi bi-gear-wide-connected fs-3"></i>
+                style="top: 120px; left: -64px; width: 64px; height: 54px; border-color: var(--fpa-primary-color); border-radius: 8px 0 0 8px; border-right: 0; z-index: 1060;">
+            <i class="bi bi-gear-wide-connected bi-spin d-inline-block fs-3"></i>
         </button>
 
         <!-- Header -->
@@ -6159,24 +6432,29 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
     // Only renders on screen if the master issue queue contains active exceptions
     ?>
     <?php if (!empty($fpa_data['issue_queue']['data']['rows'])): ?>
-    <button class="btn btn-danger position-fixed end-0 translate-middle-y shadow d-flex flex-column align-items-center justify-content-center z-4 px-3 py-2 border border-danger-subtle rounded-start"
+    <button class="btn btn-light border position-fixed end-0 translate-middle-y shadow d-flex flex-column align-items-center justify-content-center z-3 py-2 rounded-start no-print"
         type="button"
         data-bs-toggle="offcanvas"
         data-bs-target="#fpa_issues_drawer"
         aria-controls="fpa_issues_drawer"
-        style="top: 220px; width: 52px; height: 54px; border-radius: 8px 0 0 8px;">
+        style="top: 225px; width: 64px; /*height: 54px;*/ border-radius: 8px 0 0 8px;">
 
-        <!-- Pulse badge tracker animation indicator -->
-        <span class="position-relative d-inline-block mb-0">
-            <i class="bi bi-exclamation-triangle-fill fs-5"></i>
-            <span class="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-white text-danger font-monospace border border-danger px-1 small" style="font-size: 0.65rem;">
-                <?php echo count($fpa_data['issue_queue']['data']['rows']); ?>
+        <i class="bi bi-exclamation-triangle-fill d-block text-warning fs-4 Xme-2"></i>
+        <span class="small fw-bold d-block lh-1 Xme-2" style="letter-spacing:-0.5px; font-size:0.75rem;">ISSUES</span>
+        <span class="position-relative d-inline m-0">
+            <span class="badge bg-primary border Xborder-white Xtext-white"
+                style="font-size:0.6rem;"
+                data-bs-toggle="tooltip"
+                data-bs-placement="left"
+                data-bs-title="Total Action Items">
+                <!-- Total items that require action or review (critical, warning, info) -->
+                <?php
+                $total_count = (int)$fpa_data['issue_queue']['data']['danger_count'] + (int)$fpa_data['issue_queue']['data']['warning_count'] + (int)$fpa_data['issue_queue']['data']['info_count'] ?? 0;
+                echo ($total_count > 25) ? '25+' : $total_count;
+                ?>
             </span>
         </span>
 
-        <span class="text-uppercase tracking-wider fw-bold text-white small" style="font-size: 0.6rem; letter-spacing: 0.25px;">
-            Issues
-        </span>
     </button>
     <?php endif; ?>
 
@@ -6190,39 +6468,163 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
     style="width: 420px; max-width: 100vw;">
 
     <!-- Drawer Header Block with Advanced Export Actions Toolbar -->
-<div class="offcanvas-header bg-dark text-white p-3 d-flex flex-column gap-3 w-100">
+<div class="offcanvas-header bg-dark text-white p-3 d-flex flex-column gap-1 w-100">
 
   <!-- 📌 ROW 1: TITLE & CLOSE BUTTON (Pushed to the absolute outer edges) -->
   <div class="d-flex align-items-center justify-content-between w-100">
     <div class="d-flex align-items-center gap-2">
       <i class="bi bi-shield-slash-fill text-danger fs-5"></i>
       <h5 class="offcanvas-title h6 text-uppercase tracking-wide mb-0 fw-bold" id="fpa_issues_drawer_title">
-        Action Items
+        <?php echo $fpa_data['issue_queue']['meta']['section_title']; ?>
       </h5>
     </div>
-    <!-- Pinned perfectly to the far right edge of the offcanvas drawer -->
     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close Issue Drawer Window"></button>
   </div>
 
+        <!-- 💡 PURE COMPLIANT SPLIT BADGE TIMING SUBTITLE -->
+        <div class="small text-secondary font-monospace" style="font-size: 0.7rem;">
+            <span class="text-white-50">Executed:</span> <?php echo FPA_RUN_UTC_STRING; ?>
+            <!--<span class="mx-1 text-muted">|</span>--><br>
+            <span class="text-white-50">Local:</span>
+            <time datetime="<?php echo gmdate('c', FPA_RUN_TIMESTAMP); ?>" class="fpa-local-time fw-semibold text-warning">
+                Calculating...
+            </time>
+        </div>
+
+
+
+<?php
+// 💡 PRE-COMPILE EXPORT PAYLOADS COMFORTABLY ABOVE THE INTERFACE GRID
+$issue_rows = $fpa_data['issue_queue']['data']['rows'] ?? [];
+
+// 📄 1. COMPILE PLAIN TEXT (TXT) STRING MATRIX DATA
+$txt_content = "FORUM POST ASSISTANT (FPA) v2 — ISSUE LOG\r\n";
+$txt_content .= "Generated: " . date('d-m-Y H:i:s UTC') . "\r\n";
+$txt_content .= "-----------------------------------------------------------------------------\r\n";
+
+// 📊 2. COMPILE SPREADSHEET (CSV) STRING MATRIX DATA
+$csv_content = "ID,Type,Issue Description,Recommended Resolution\r\n";
+
+if (!empty($issue_rows)) {
+    foreach ($issue_rows as $index => $alert) {
+        $count = $index + 1;
+        ///$type  = strtoupper(htmlspecialchars($alert['type'] ?? 'info'));
+        // Extract the parameters and swap 'danger' to 'CRITICAL' on the severity type variable
+        $raw_type = $alert['type'] ?? 'info';
+        $type     = ($raw_type === 'danger') ? 'CRITICAL' : strtoupper(htmlspecialchars($raw_type));
+        $id    = htmlspecialchars($alert['id'] ?? 'general');
+        $text  = htmlspecialchars($alert['text'] ?? '');
+        $sol   = htmlspecialchars($alert['solution'] ?? '');
+
+        // Append text report line rows cleanly using strict CRLF line endings
+        $txt_content .= "{$count}. [{$type}] Component Target: {$id}\r\n";
+        $txt_content .= "   Observed Risk: {$text}\r\n";
+        $txt_content .= "   Action Needed: {$sol}\r\n";
+        $txt_content .= "-----------------------------------------------------------------------------\r\n";
+
+        // Append spreadsheet record strings, wrapping text nodes securely in quotes
+        $csv_content .= "\"{$id}\",\"{$type}\",\"{$text}\",\"{$sol}\"\r\n";
+    }
+} else {
+    $txt_content .= "No issue or event exceptions logged.\r\n";
+}
+?>
+
+<!-- 📌 ROW 2: THE EXPORT TOOLBAR (Evenly spaced across the next line) -->
+<?php
+// 💡 PRE-COMPILE EXPORT PAYLOADS COMFORTABLY ABOVE THE INTERFACE GRID
+$issue_rows = $fpa_data['issue_queue']['data']['rows'] ?? [];
+
+// 📄 1. COMPILE PLAIN TEXT (TXT) STRING MATRIX DATA
+$txt_content = "FORUM POST ASSISTANT (FPA) v2 — ISSUE LOG\r\n";
+$txt_content .= "Generated: " . date('d-m-Y H:i:s UTC') . "\r\n";
+$txt_content .= "-----------------------------------------------------------------------------\r\n";
+
+// 📊 2. COMPILE SPREADSHEET (CSV) STRING MATRIX DATA
+$csv_content = "ID,Type,Issue Description,Recommended Resolution\r\n";
+
+if (!empty($issue_rows)) {
+    foreach ($issue_rows as $index => $alert) {
+        $count = $index + 1;
+        ///$type  = strtoupper(htmlspecialchars($alert['type'] ?? 'info'));
+        // Extract the parameters and swap 'danger' to 'CRITICAL' on the severity type variable
+        $raw_type = $alert['type'] ?? 'info';
+        $type     = ($raw_type === 'danger') ? 'CRITICAL' : strtoupper(htmlspecialchars($raw_type));
+        $id    = htmlspecialchars($alert['id'] ?? 'general');
+        $text  = htmlspecialchars($alert['text'] ?? '');
+        $sol   = htmlspecialchars($alert['solution'] ?? '');
+
+        // Append text report line rows cleanly using strict CRLF line endings
+        $txt_content .= "{$count}. [{$type}] Component Target: {$id}\r\n";
+        $txt_content .= "   Observed Risk: {$text}\r\n";
+        $txt_content .= "   Action Needed: {$sol}\r\n";
+        $txt_content .= "-----------------------------------------------------------------------------\r\n";
+
+        // Append spreadsheet record strings, wrapping text nodes securely in quotes
+        $csv_content .= "\"{$id}\",\"{$type}\",\"{$text}\",\"{$sol}\"\r\n";
+    }
+} else {
+    $txt_content .= "No error or event items to display.\r\n";
+}
+?>
+
+<!-- 📌 ROW 2: THE EXPORT TOOLBAR (Evenly spaced across the next line) -->
+<div class="row row-cols-3 g-1 w-100 mx-0 mt-1">
+    <!-- Column 1: Print Button -->
+    <div class="col px-1">
+        <button type="button"
+                id="fpa_print_log_btn"
+                class="btn btn-outline-light btn-sm text-uppercase tracking-wider fw-bold w-100 text-truncate"
+                style="font-size: 0.65rem; padding: 6px 4px; letter-spacing: 0.3px;"
+                aria-label="Print Current Issue Log">
+            <i class="bi bi-printer-fill me-1"></i> Print
+        </button>
+    </div>
+
+    <!-- Column 2: Text Export Link -->
+    <div class="col px-1">
+        <a href="data:text/plain;charset=utf-8,<?php echo rawurlencode($txt_content); ?>"
+           download="fpa-issue-log.txt"
+           class="btn btn-outline-light btn-sm text-uppercase tracking-wider fw-bold w-100 text-truncate"
+           style="font-size: 0.65rem; padding: 6px 4px; letter-spacing: 0.3px;"
+           aria-label="Download Plain Text Issue Log">
+            <i class="bi bi-file-earmark-text-fill me-1"></i> TXT
+        </a>
+    </div>
+
+    <!-- Column 3: CSV Export Link -->
+    <div class="col px-1">
+        <a href="data:text/csv;charset=utf-8,<?php echo rawurlencode($csv_content); ?>"
+           download="fpa-issue-log.csv"
+           class="btn btn-outline-light btn-sm text-uppercase tracking-wider fw-bold w-100 text-truncate"
+           style="font-size: 0.65rem; padding: 6px 4px; letter-spacing: 0.3px;"
+           aria-label="Download CSV Spreadsheet Issue Log">
+            <i class="bi bi-file-earmark-spreadsheet-fill me-1"></i> CSV
+        </a>
+    </div>
+</div>
+
+
   <!-- 📌 ROW 2: THE EXPORT TOOLBAR (Evenly spaced across the next line) -->
   <!-- .row-cols-3 divides the width into 3 identical segments automatically -->
+  <!--
   <div class="row row-cols-3 g-1 w-100 mx-0 mt-1">
 
-    <!-- Column 1: Print Button -->
+    -- Column 1: Print Button --
     <div class="col px-1">
       <button type="button" id="fpa_print_log_btn" class="btn btn-outline-light btn-sm text-uppercase tracking-wider fw-bold w-100 text-truncate" style="font-size: 0.65rem; padding: 6px 4px; letter-spacing: 0.3px;" aria-label="Print Current Issues List Log">
         <i class="bi bi-printer-fill me-1"></i> Print
       </button>
     </div>
 
-    <!-- Column 2: Text Export Link -->
+    -- Column 2: Text Export Link --
     <div class="col px-1">
       <a href="data:text/plain;charset=utf-8,FORUM%20POST%20ASSISTANT%20%28FPA%29%20v2%20-%20CRITICAL%20ENVIRONMENT%20EXCEPTION%20LOG%0D%0A..." download="fpa-diagnostic-exceptions.txt" class="btn btn-outline-light btn-sm text-uppercase tracking-wider fw-bold w-100 text-truncate" style="font-size: 0.65rem; padding: 6px 4px; letter-spacing: 0.3px;" aria-label="Download Plain Text Environment Log">
         <i class="bi bi-file-earmark-text-fill me-1"></i> TXT
       </a>
     </div>
 
-    <!-- Column 3: CSV Export Link -->
+    -- Column 3: CSV Export Link --
     <div class="col px-1">
       <a href="data:text/csv;charset=utf-8,ID%2CType%2CProblem%20Metric%20Description..." download="fpa-diagnostic-matrix.csv" class="btn btn-outline-light btn-sm text-uppercase tracking-wider fw-bold w-100 text-truncate" style="font-size: 0.65rem; padding: 6px 4px; letter-spacing: 0.3px;" aria-label="Download Excel CSV Spreadsheet Matrix">
         <i class="bi bi-file-earmark-spreadsheet-fill me-1"></i> CSV
@@ -6230,36 +6632,213 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
     </div>
 
   </div>
+  -->
 
 </div>
 
+<!-- 🎛️ SYSTEM EXCEPTIONS OFF CANVAS DRAWER CONTENT -->
+<div class="offcanvas-body p-4">
+    <?php
+    // Fetch pre-calculated totals and rows natively from your database tier
+    $issue_data  = $fpa_data['issue_queue']['data'] ?? [];
+    $issue_rows  = $issue_data['rows'] ?? [];
+    $total_crit  = (int)($issue_data['danger_count'] ?? 0);
+    $total_warn  = (int)($issue_data['warning_count'] ?? 0);
+    $total_note  = (int)($issue_data['notice_count'] ?? 0);
+    ?>
 
-    <!-- Drawer Body Content Scroll Window Container Area -->
+    <?php if (empty($issue_rows)): ?>
+        <div class="alert alert-success text-center fw-bold shadow-sm py-3 mb-0">
+            <i class="bi bi-shield-check-fill me-2"></i>It's All Good! No Action Items Logged.
+        </div>
+    <?php else: ?>
+
+<!-- 💡 INTERACTIVE FILTER BUTTON GROUP -->
+<!-- Uses data-fpa-filter targets to handle multi-state toggling natively -->
+<div class="btn-group w-100 mb-4 shadow-sm" role="group" aria-label="Issue Filter Toggles">
+    <button type="button" class="btn btn-outline-danger btn-sm fw-bold py-2"
+        style="width:26%;"
+        data-fpa-filter="danger">
+        Critical <span class="badge bg-danger text-white ms-1"><?php echo ($total_crit > 25) ? '25+' : $total_crit; ?></span>
+    </button>
+    <button type="button" class="btn btn-outline-warning btn-sm fw-bold py-2"
+        style="width:26%;"
+        data-fpa-filter="warning">
+        Warnings <span class="badge bg-warning text-dark ms-1"><?php echo ($total_warn > 25) ? '25+' : $total_warn; ?></span>
+    </button>
+    <button type="button" class="btn btn-outline-info btn-sm fw-bold py-2"
+        style="width:26%;"
+        data-fpa-filter="info">
+        Notices <span class="badge bg-info text-dark ms-1"><?php echo ($total_note > 25) ? '25+' : $total_note; ?></span>
+    </button>
+    <button type="button" class="btn btn-outline-secondary btn-sm fw-bold py-2 active"
+            style="width:22%;"
+        data-fpa-filter="all">
+        <i class="bi bi-arrow-clockwise"></i> All
+    </button>
+</div>
+
+<!-- 🚨 THE CONSOLIDATED ALERTS STACK CONTAINER -->
+<div class="vstack gap-4" id="fpa_alert_container">
+    <?php foreach ($issue_rows as $alert): ?>
+        <?php
+            $alert_type = htmlspecialchars($alert['type'] ?? 'info');
+
+            // Define the heading assets in an array map.
+            $alert_map = [
+                'danger'  => ['icon' => 'x-circle-fill',           'text' => 'CRITICAL RISK DETECTED'],
+                'warning' => ['icon' => 'exclamation-circle-fill', 'text' => 'WARNING RISK ALERT'],
+                'info'    => ['icon' => 'info-circle-fill',        'text' => 'INFORMATIONAL NOTICE']
+            ];
+        ?>
+
+        <!-- 💡 DATA-ATTRIBUTE BOUNDARY CARDS: Starts fully visible as 'all' nodes -->
+        <div data-fpa-type="<?php echo $alert_type; ?>"
+             class="card fpa-issue-card border shadow-sm overflow-hidden d-print-block bg-body-panel"
+             style="box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075) !important;">
+
+            <!--
+             <div class="w-100 position-absolute top-0 start-0" style="height: 5px; background-color: var(--bs-<?php echo $alert_type; ?>); min-height: 5px;"></div>
+            -->
+
+            <div class="card-body p-3">
+                <h6 class="fw-bold text-<?php echo $alert_type; ?>-emphasis mb-2 d-flex align-items-center gap-2" style="font-size: 0.85rem; letter-spacing: 0.03rem;">
+                    <i class="bi bi-<?php echo htmlspecialchars($alert_map[$alert_type]['icon'] ?? 'info-circle-fill'); ?> fs-5 lh-1 no-print"></i>
+                    <span class="text-uppercase"><?php echo htmlspecialchars($alert_map[$alert_type]['text'] ?? ''); ?></span>
+                </h6>
+                <p class="text-body fw-medium mb-2 pe-md-3" style="font-size: 0.95rem; line-height: 1.45;">
+                    <?php echo htmlspecialchars($alert['text'] ?? ''); ?>
+                </p>
+                <div class="rounded p-2 bg-body-tertiary border border-opacity-10 d-print-block" style="font-size: 0.82rem; line-height: 1.4;">
+                    <span class="d-block fw-bold text-body-emphasis text-uppercase mb-1" style="font-size: 0.72rem; letter-spacing: 0.04rem;">
+                        Recommended Resolution:
+                    </span>
+                    <span class="text-secondary-emphasis"><?php echo htmlspecialchars($alert['solution'] ?? ''); ?></span>
+                </div>
+            </div>
+
+            <div class="card-footer bg-transparent border-0 pt-0 px-4 pb-4 d-flex flex-wrap gap-2 align-items-center">
+                <?php foreach (array_map('trim', explode(',', $alert['category'] ?? 'general')) as $pillar_token): ?>
+                    <span class="badge border border-secondary border-opacity-20 text-secondary-emphasis text-uppercase font-monospace bg-light bg-opacity-10 px-2 py-1" style="font-size: 0.65rem;">
+                        <?php echo htmlspecialchars($pillar_token); ?>
+                    </span>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endforeach; ?>
+</div>
+
+
+
+
+        <!-- Consolidated alerts stack container --
+        <div class="vstack gap-3">
+            <?php foreach ($issue_rows as $alert): ?>
+
+                <?php $alert_type = htmlspecialchars($alert['type'] ?? 'info'); ?>
+
+                -- Collapsable Alert Cards: Rendered initially as all visible 'show' items --
+                <div class="card collapse show fpa-issue-card fpa-issue-<?php echo $alert_type; ?> Xalert Xalert border border-<?php echo $alert_type; ?> shadow-sm Xmb-0" style="border-left-width: 10px !important;">
+                    <div class="card-body">
+                        <?php
+                        // Define the heading assets in an array map.
+                        $alert_map = [
+                            'danger'  => ['icon' => 'x-circle-fill',           'text' => 'CRITICAL RISK DETECTED'],
+                            'warning' => ['icon' => 'exclamation-circle-fill', 'text' => 'WARNING RISK ALERT'],
+                            'info'    => ['icon' => 'info-circle-fill',        'text' => 'INFORMATIONAL NOTICE']
+                        ];
+
+                        // Fallback to the 'info' configuration if an unmapped alert category token slips through
+                        $active_type = $alert['type'] ?? 'info';
+                        $current_map = $alert_map[$active_type] ?? $alert_map['info'];
+
+                        // Split the pillar category string by a raw comma first, then trim whitespace from each item.
+                        $raw_categories   = $alert['category'] ?? 'general';
+                        $clean_categories = array_map('trim', explode(',', $raw_categories));
+                        ?>
+                        <h6 class="fw-bold card-title text-<?php echo $active_type; ?>-emphasis mb-1">
+                            <i class="bi bi-<?php echo htmlspecialchars($current_map['icon']); ?> me-1"></i>
+                            <?php echo htmlspecialchars($current_map['text']); ?>
+                        </h6>
+
+                        <p>
+                            <?php echo htmlspecialchars($alert['text'] ?? ''); ?>
+                        </p>
+                        <p class="small border-top p-2 text-wrap mb-0" style="line-height: 1.3;">
+                            <span class="d-block fw-bold">How to resolve:</span>
+                            <?php echo htmlspecialchars($alert['solution'] ?? ''); ?>
+                        </p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <?php foreach ($clean_categories as $pillar_token): ?>
+                            <?php
+                            $clean_pillar_token = htmlspecialchars($pillar_token);
+                            ?>
+                            <span class="badge text-bg-secondary Xbg-opacity-50 Xtext-current small text-uppercase"
+                                  style="font-size: 0.62rem;">
+                                <i class="bi bi-tag-fill me-1"></i><?php echo $clean_pillar_token; ?>
+                            </span>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        -->
+
+    <?php endif; ?>
+</div>
+
+
+
+
+    <!-- Drawer Body Content Scroll Window Container Area --
     <div class="offcanvas-body p-3 overflow-auto">
+
         <p class="text-muted small mb-3 lh-sm">
             Review and systematically resolve the individual environmental infrastructure risks logged by the assistant engine below.
         </p>
 
-        <!-- 📋 DYNAMIC EXCEPTION LOOP BLOCK -->
+        <div class="btn-group d-flex w-100 mb-3" role="group" aria-label="Action items by category">
+            <button type="button" class="btn btn-sm btn-danger flex-fill">
+                Critical
+                <span class="badge border border-white">
+                    <?php echo (int)$fpa_data['issue_queue']['data']['danger_count']; ?>
+                </span>
+            </button>
+            <button type="button" class="btn btn-sm btn-warning flex-fill">
+                Warnings
+                <span class="badge border border-white">
+                    <?php echo (int)$fpa_data['issue_queue']['data']['warning_count']; ?>
+                </span>
+            </button>
+            <button type="button" class="btn btn-sm btn-info flex-fill">
+                Notices
+                <span class="badge border border-white">
+                    <?php echo (int)$fpa_data['issue_queue']['data']['info_count']; ?>
+                </span>
+            </button>
+        </div>
+
+        -- 📋 DYNAMIC EXCEPTION LOOP BLOCK --
         <div class="d-flex flex-column gap-3">
             <?php foreach ($fpa_data['issue_queue']['data']['rows'] as $issue): ?>
 
-            <!-- Individual Action Item Report Card panel wrapper -->
+            -- Individual Action Item Report Card panel wrapper --
             <div class="card shadow-sm border border-light-subtle rounded overflow-hidden" id="<?php echo htmlspecialchars($issue['id']); ?>">
 
-                <!-- Card Severity Title Accent -->
+                -- Card Severity Title Accent --
                 <div class="card-header bg-<?php echo $issue['type']; ?>-subtle text-<?php echo $issue['type']; ?>-emphasis fw-bold small border-bottom border-<?php echo $issue['type']; ?>-subtle py-2 d-flex align-items-center gap-2">
                     <i class="bi bi-<?php echo ($issue['type'] === 'danger') ? 'x-circle-fill' : 'exclamation-circle-fill'; ?>"></i>
                     <?php echo ($issue['type'] === 'danger') ? 'CRITICAL RISK DETECTED' : 'WARNING RISK ALERT'; ?>
                 </div>
 
                 <div class="card-body p-3 bg-body">
-                   <!-- Issue Message String -->
+                   -- Issue Message String --
                     <p class="card-text fw-medium text-dark-emphasis mb-2" style="font-size: 0.85rem; line-height: 1.3;">
                         <?php echo htmlspecialchars($issue['text']); ?>
                     </p>
 
-                    <!-- Resolution Advice Block Panel -->
+                    -- Resolution Advice Block Panel --
                     <div class="p-2 rounded border border-light-subtle font-sans-serif small lh-sm" style="font-size: 0.775rem;">
                         <strong class="text-dark-emphasis d-block mb-1 text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.3px;">
                             How to resolve:
@@ -6271,8 +6850,9 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
             </div>
 
           <?php endforeach; ?>
-        </div><!-- /gap layout stack container -->
-    </div><!-- /offcanvas-body -->
+        </div>-- /gap layout stack container --
+    </div>
+    -- /offcanvas-body -->
 
 </div><!-- /offcanvas -->
 
@@ -6398,6 +6978,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
          *  ];
          *
          */
+        /*
         document.addEventListener("DOMContentLoaded", () => {
             const rawData = document.getElementById("php-queue-data").textContent;
             const fpa_exception_queue = JSON.parse(rawData || "[]");
@@ -6436,7 +7017,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
             // Hook up the smart scroll helper function (scrolls to section showing the exception)
             initNotificationScroller();
         });
-
+        */
 
         /**
          * --- bootstrap and popper utilities ---
@@ -6446,12 +7027,28 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
          * add standard bootstrap tooltip & popover options to an element
          *
          */
+        document.addEventListener('DOMContentLoaded', function() {
+            const tooltipTriggerList = Array.from(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+
+            tooltipTriggerList.forEach(function(tooltipTriggerEl) {
+                // 🔒 SAFETY GATE: Validate if Bootstrap has already initialised this element
+                const existingInstance = bootstrap.Tooltip.getInstance(tooltipTriggerEl);
+
+                // Only bind a fresh instance if the coordinate memory slot is empty
+                if (existingInstance === null) {
+                    new bootstrap.Tooltip(tooltipTriggerEl);
+                }
+            });
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
-            // Delegate tooltips: This works for current and future elements
+            // Delegate tooltips
+            /*
             new bootstrap.Tooltip(document.body, {
                 selector: '[data-bs-toggle="tooltip"]',
-                container: 'body' // Prevents table styling layout breaks
+                container: 'body'
             });
+            */
 
             // Delegate popovers
             new bootstrap.Popover(document.body, {
@@ -6459,17 +7056,49 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                 container: 'body'
             });
         });
-        /* <shrug> doesn't show all tooltips when array responses are a little slow </shrug>
-        document.addEventListener('DOMContentLoaded', () => {
-            // select and initialise all tooltips
-            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
-            // select and initialise all popovers
-            const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-            const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+
+        // Intercepts UTC timestamps and translates them cleanly to the operator's local system time
+        document.addEventListener('DOMContentLoaded', function() {
+            const localTimeTargets = Array.from(document.querySelectorAll('time.fpa-local-time'));
+
+            localTimeTargets.forEach(function(timeEl) {
+                const utcString = timeEl.getAttribute('datetime');
+
+                // 🔒 SAFETY GATE: Fallback gracefully if the element lacks a valid timestamp
+                if (!utcString) {
+                    return;
+                }
+
+                try {
+                    const dateObject = new Date(utcString);
+
+                    // Validate that the string compiled into a functional date entity
+                    if (isNaN(dateObject.getTime())) {
+                        return;
+                    }
+
+                    // Format the timestamp using strict en-GB Plain Language layout parameters
+                    const localizedText = dateObject.toLocaleString('en-GB', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false
+                    });
+
+                    // Replace the server UTC placeholder string with the true user local time
+                    timeEl.textContent = localizedText.replace(/,/g, '');
+                    timeEl.removeAttribute('title');
+                    timeEl.setAttribute('title', 'Converted automatically to your system timezone.');
+
+                } catch (error) {
+                    // Defensive degradation: leave the original server UTC text intact if conversion fails
+                }
+            });
         });
-        */
 
 
         /**
@@ -6551,8 +7180,50 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
 
 
         /**
+         * Manages Issue Log severity filtering by state
+         * - critical, warning, info
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = Array.from(document.querySelectorAll('[data-fpa-filter]'));
+            const alertCards    = Array.from(document.querySelectorAll('#fpa_alert_container [data-fpa-type]'));
+
+            filterButtons.forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const targetType = this.getAttribute('data-fpa-filter');
+
+                    // 1. Synchronise active styling states across the button matrix group
+                    filterButtons.forEach(function(btn) { btn.classList.remove('active'); });
+                    this.classList.add('active');
+
+                    // 2. Triage visual layout states across individual exception cards
+                    alertCards.forEach(function(card) {
+                        const cardType = card.getAttribute('data-fpa-type');
+
+                        if (targetType === 'all' || cardType === targetType) {
+                            card.style.setProperty('display', 'block', 'important');
+                            card.classList.add('show');
+                        } else {
+                            card.style.setProperty('display', 'none', 'important');
+                            card.classList.remove('show');
+                        }
+                    });
+                });
+            });
+        });
+
+
+        /**
          * --- Issue Log Print Function ---
          */
+        const printButton = document.getElementById('fpa_print_log_btn');
+
+        if (printButton !== null) {
+            printButton.addEventListener('click', function() {
+                window.print();
+            });
+        }
+
+        /*
         (function() {
             'use strict';
             document.addEventListener('DOMContentLoaded', function() {
@@ -6564,6 +7235,7 @@ if (function_exists('brotli_compress') && isset($_SERVER['HTTP_ACCEPT_ENCODING']
                 }
             });
         })();
+        */
 
     </script>
 
